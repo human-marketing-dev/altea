@@ -1,15 +1,72 @@
 @import "tailwindcss";
+@import "./ui/tokens.css";
+@import "./ui/components.css";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/*
+ * Altea tokens that map onto a Tailwind theme namespace. Declared here — and
+ * only here — so each name has a single definition that both `var(--token)` in
+ * app/ui/components.css and the generated utilities resolve to. The remaining
+ * tokens (brand/semantic colors, spacing, motion) live in app/ui/tokens.css.
+ *
+ * Brand spec is Gotham Bold/Medium; no licensed files were supplied, so
+ * Montserrat stands in. The family is chosen in app/layout.tsx — these names
+ * only ever point at --font-brand. See design-system/readme.md.
+ */
+@theme {
+  --font-display: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono);
+
+  --text-display-1: clamp(2.75rem, 5vw, 5.5rem);
+  --text-display-2: clamp(2.25rem, 3.6vw, 3.75rem);
+  --text-h1: clamp(1.875rem, 2.6vw, 2.75rem);
+  --text-h2: clamp(1.5rem, 2vw, 2rem);
+  --text-h3: 1.375rem;
+  --text-body-lg: 1.125rem;
+  --text-body: 1rem;
+  --text-small: 0.875rem;
+  --text-eyebrow: 0.8125rem;
+
+  --tracking-tight: -0.01em;
+  --tracking-wide: 0.06em;
+
+  --leading-display: 0.98;
+  --leading-heading: 1.1;
+  --leading-body: 1.6;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 1px 2px #21222212, 0 8px 24px -8px #21222222;
+  --shadow-card-hover: 0 4px 8px #21222214, 0 16px 32px -10px #2122222e;
+}
+
+/* Colors are mapped rather than redefined — the values live in tokens.css and
+   these names don't collide, so `var()` stays valid on both sides. */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-ink: var(--altea-ink);
+  --color-ink-70: var(--altea-ink-70);
+  --color-ink-40: var(--altea-ink-40);
+  --color-cream: var(--altea-cream);
+  --color-cream-60: var(--altea-cream-60);
+  --color-coral: var(--altea-coral);
+  --color-coral-dark: var(--altea-coral-dark);
+  --color-surface-card: var(--surface-card);
+  --color-surface-card-dark: var(--surface-card-dark);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-subtle-on-dark: var(--border-subtle-on-dark);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +79,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
 }

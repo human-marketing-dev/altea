@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored, verbatim copy of the Claude Design source — reference only,
+    // not built or shipped. The app consumes the port in app/ui/ instead.
+    "design-system/**",
   ]),
 ]);
 

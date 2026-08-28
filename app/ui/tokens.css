@@ -1,0 +1,69 @@
+/*
+ * Altea design tokens — imported from the Claude Design project
+ * "Altea Design System" (4e75110c-7f68-47eb-8039-f58407737c9d).
+ *
+ * Reference copy of the upstream token files: design-system/tokens/*.css.
+ *
+ * Two deliberate differences from upstream:
+ *  1. The Google-Fonts @import is dropped — the brand face is loaded through
+ *     next/font in app/layout.tsx, which exposes --font-brand.
+ *  2. Tokens that live in a Tailwind theme namespace (font, text, tracking,
+ *     leading, radius, shadow) are declared in app/globals.css under @theme
+ *     instead of here, so they exist exactly once and also generate utilities.
+ *     Declaring them in both places would make them self-referential.
+ *
+ * Everything below is a plain custom property with no Tailwind counterpart.
+ */
+
+:root {
+  /* ---- Color: brand ---- */
+  --altea-ink: #212222;
+  --altea-ink-70: #212222b3;
+  --altea-ink-40: #21222266;
+  --altea-cream: #E7DFD1;
+  --altea-cream-60: #E7DFD199;
+  --altea-coral: #F15D4D;
+  --altea-coral-dark: #D6473A;
+  --altea-white: #FFFFFF;
+
+  /* ---- Color: semantic ---- */
+  --surface-page: var(--altea-cream);
+  --surface-page-dark: var(--altea-ink);
+  --surface-card: var(--altea-white);
+  --surface-card-dark: #2B2C2C;
+  --surface-sunken: #DED4C2;
+  --text-primary: var(--altea-ink);
+  --text-secondary: var(--altea-ink-70);
+  --text-on-dark: var(--altea-cream);
+  --text-on-dark-secondary: #E7DFD1b3;
+  --text-accent: var(--altea-coral);
+  --border-subtle: #21222226;
+  --border-subtle-on-dark: #E7DFD133;
+  --accent-primary: var(--altea-coral);
+  --accent-primary-hover: var(--altea-coral-dark);
+  --accent-on-ink: var(--altea-coral);
+
+  /* ---- Typography: weights ---- */
+  --weight-bold: 700;
+  --weight-medium: 500;
+  --weight-regular: 400;
+
+  /* ---- Spacing ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+  --container-max: 1280px;
+  --container-pad: clamp(20px, 5vw, 80px);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+}

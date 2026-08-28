@@ -1,0 +1,11 @@
+:root{
+--radius-sm:4px;
+--radius-md:8px;
+--radius-lg:16px;
+--radius-pill:999px;
+--shadow-card:0 1px 2px #21222212,0 8px 24px -8px #21222222;
+--shadow-card-hover:0 4px 8px #21222214,0 16px 32px -10px #2122222e;
+--ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+--duration-fast:150ms; /* @kind other */
+--duration-base:220ms; /* @kind other */
+}

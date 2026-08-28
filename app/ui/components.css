@@ -1,0 +1,328 @@
+/*
+ * Altea component styles.
+ *
+ * The upstream design system ships its components as inline-style JSX
+ * (design-system/components/**). Here the same declarations live in CSS so the
+ * React components can stay Server Components and so hover/focus are handled by
+ * the browser instead of useState.
+ */
+
+/* ============================ Button ============================ */
+.altea-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard);
+}
+.altea-btn:disabled { opacity: .4; cursor: not-allowed; }
+.altea-btn:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+
+.altea-btn--sm { font-size: 13px; padding: 8px 18px; }
+.altea-btn--md { font-size: 15px; padding: 12px 26px; }
+.altea-btn--lg { font-size: 16px; padding: 16px 34px; }
+
+.altea-btn--primary { background: var(--altea-coral); color: #fff; }
+.altea-btn--primary:hover:not(:disabled) { background: var(--altea-coral-dark); }
+
+.altea-btn--dark { background: var(--altea-ink); color: var(--altea-cream); }
+.altea-btn--dark:hover:not(:disabled) { background: #000; }
+
+.altea-btn--outline {
+  background: transparent;
+  color: var(--altea-ink);
+  border: 1px solid var(--border-subtle);
+}
+.altea-btn--outline:hover:not(:disabled) { background: var(--altea-cream); }
+
+/* ghost ignores size — it is an inline text link with an animated arrow */
+.altea-btn--ghost {
+  background: transparent;
+  color: var(--altea-ink);
+  padding: 0;
+  border-radius: 0;
+  font-size: 15px;
+}
+.altea-btn--ghost:hover:not(:disabled) { color: var(--altea-coral); }
+.altea-btn__arrow { transition: transform var(--duration-fast) var(--ease-standard); }
+.altea-btn--ghost:hover:not(:disabled) .altea-btn__arrow { transform: translateX(3px); }
+
+/* ============================= Input ============================= */
+.altea-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-body);
+}
+.altea-field__label {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.altea-field__control {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  color: var(--altea-ink);
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+.altea-field__control:focus { border-color: var(--altea-ink); }
+.altea-field__control::placeholder { color: var(--altea-ink-40); }
+
+/* ============================== Tag ============================== */
+.altea-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+}
+.altea-tag--ink { background: var(--altea-ink); color: var(--altea-cream); }
+.altea-tag--cream { background: var(--altea-cream); color: var(--altea-ink); }
+.altea-tag--coral { background: var(--altea-coral); color: #fff; }
+.altea-tag--outline {
+  background: transparent;
+  color: var(--altea-ink);
+  border: 1px solid var(--border-subtle);
+}
+
+/* =========================== StatBlock =========================== */
+.altea-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-display);
+}
+.altea-stat__value {
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+  color: var(--altea-ink);
+}
+.altea-stat__label {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.altea-stat--light .altea-stat__value { color: var(--altea-cream); }
+.altea-stat--light .altea-stat__label { color: var(--text-on-dark-secondary); }
+
+/* ========================== ProjectCard ========================== */
+.altea-project-card {
+  display: block;
+  background: #fff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  font-family: var(--font-body);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    box-shadow var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard);
+}
+a.altea-project-card { cursor: pointer; }
+.altea-project-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+.altea-project-card__media {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.altea-project-card__media img { object-fit: cover; }
+.altea-project-card__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  text-align: center;
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+.altea-project-card__body { padding: 20px; }
+.altea-project-card__unit {
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-accent);
+}
+.altea-project-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  margin: 6px 0 2px;
+  color: var(--altea-ink);
+}
+.altea-project-card__location { font-size: var(--text-small); color: var(--text-secondary); }
+.altea-project-card__stat {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
+
+/* ========================= SectionHeading ========================= */
+.altea-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+  align-items: flex-start;
+  max-width: 640px;
+}
+.altea-section-heading--center { text-align: center; align-items: center; }
+.altea-section-heading__eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-accent);
+}
+.altea-section-heading__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  color: var(--altea-ink);
+}
+.altea-section-heading__description {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+.altea-section-heading--light .altea-section-heading__title { color: var(--altea-cream); }
+.altea-section-heading--light .altea-section-heading__description { color: var(--text-on-dark-secondary); }
+
+/* ============================= NavBar ============================= */
+.altea-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  padding: 20px var(--container-pad);
+  background: var(--altea-cream);
+  font-family: var(--font-body);
+}
+.altea-navbar--dark { background: var(--altea-ink); }
+.altea-navbar__logo { height: 22px; width: auto; }
+.altea-navbar__links { display: flex; gap: 32px; flex-wrap: wrap; }
+.altea-navbar__link {
+  color: var(--altea-ink);
+  text-decoration: none;
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.altea-navbar--dark .altea-navbar__link { color: var(--altea-cream); }
+.altea-navbar__link:hover { color: var(--altea-coral); }
+.altea-navbar__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+
+/* ============================= Footer ============================= */
+.altea-footer {
+  background: var(--altea-ink);
+  color: var(--text-on-dark-secondary);
+  padding: 64px var(--container-pad) 32px;
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.altea-footer__top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+.altea-footer__logo { height: 26px; width: auto; }
+.altea-footer__columns { display: flex; gap: 48px; flex-wrap: wrap; }
+.altea-footer__column { display: flex; flex-direction: column; gap: 8px; }
+.altea-footer__column-title {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--altea-cream);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+.altea-footer__link {
+  color: inherit;
+  text-decoration: none;
+  font-size: var(--text-small);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.altea-footer__link:hover { color: var(--altea-cream); }
+.altea-footer__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+.altea-footer__legal {
+  border-top: 1px solid var(--border-subtle-on-dark);
+  padding-top: 20px;
+  font-size: var(--text-small);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.altea-footer__legal-links { display: flex; gap: 20px; }
+
+/* =========================== MediaSlot =========================== */
+.altea-media {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--surface-sunken);
+  color: var(--text-secondary);
+}
+.altea-media--dark {
+  background: var(--surface-card-dark);
+  color: var(--text-on-dark-secondary);
+}
+.altea-media__img { object-fit: cover; }
+.altea-media__label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+}
+.altea-media__icon { width: 28px; height: 28px; opacity: .7; }

@@ -88,7 +88,9 @@
 }
 
 /* ============================== Video ============================= */
-.home-video { background: var(--surface-page); padding: 0 var(--container-pad) var(--space-9); }
+/* A sangre: sin padding lateral ni inferior. La separación con la sección
+   siguiente la pone el padding superior de .home-why. */
+.home-video { background: var(--surface-page); padding: 0; }
 .home-video__frame { margin: 0; position: relative; }
 .home-video__player { width: 100%; display: block; border-radius: var(--radius-md); }
 .home-video__play {
@@ -106,7 +108,7 @@
 /* =============================== Why ============================== */
 .home-why {
   background: var(--surface-page);
-  padding: 0 var(--container-pad) var(--space-9);
+  padding: var(--space-9) var(--container-pad);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-8);
@@ -217,7 +219,7 @@
   margin: 0; padding: 0; list-style: none;
   display: flex;
   align-items: stretch;
-  gap: 3px;
+  gap: 0;
   min-height: clamp(300px, 40vh, 440px);
   overflow-x: auto;
   scrollbar-width: none;
@@ -226,7 +228,21 @@
   --slant: clamp(14px, 2.6vw, 32px);
 }
 .home-projects__track::-webkit-scrollbar { display: none; }
-.home-projects__item { flex: 1 0 clamp(120px, 16vw, 190px); }
+/* El recorte vive en el <li>, no en la imagen: así el paralelogramo también
+   define el área clickeable. El margen negativo de un --slant hace que el borde
+   derecho de un panel caiga exactamente sobre el izquierdo del siguiente, y
+   teselan sin separación. */
+.home-projects__item {
+  flex: 1 0 clamp(120px, 16vw, 190px);
+  margin-left: calc(var(--slant) * -1);
+  clip-path: polygon(
+    var(--slant) 0,
+    100% 0,
+    calc(100% - var(--slant)) 100%,
+    0 100%
+  );
+}
+.home-projects__item:first-child { margin-left: 0; }
 .home-projects__button {
   display: block;
   position: relative;
@@ -239,21 +255,20 @@
   color: inherit;
   font: inherit;
 }
-.home-projects__button:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+/* Un outline quedaría recortado por el paralelogramo, así que el foco se
+   marca tiñendo el panel completo. */
+.home-projects__button:focus-visible { outline: none; }
+.home-projects__button:focus-visible .home-projects__media-wrap {
+  box-shadow: inset 0 0 0 100vmax #f15d4d59;
+}
+.home-projects__button:focus-visible .home-projects__name { color: var(--altea-coral); }
 
-/* El contenedor de la imagen: paralelogramo, inclinado hacia la derecha.
-   Recorta la foto sin deformarla — nada de skew ni de escalar de más. */
 .home-projects__media-wrap {
   display: block;
   position: absolute;
   inset: 0;
-  clip-path: polygon(
-    var(--slant) 0,
-    100% 0,
-    calc(100% - var(--slant)) 100%,
-    0 100%
-  );
-  transition: filter var(--duration-base) var(--ease-standard);
+  transition: filter var(--duration-base) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
 }
 .home-projects__button:hover .home-projects__media-wrap { filter: brightness(1.12); }
 .home-projects__media-wrap .home-projects__media { position: absolute; inset: 0; }

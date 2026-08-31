@@ -40,8 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Fuentes de marca sin licencia web — solo para la maqueta local.
-# Reemplazar por los archivos con licencia de Altea antes de cualquier deploy.
-/app/fonts/*.woff2
-/app/fonts/*.otf
-/public/fonts/Gotham/
+

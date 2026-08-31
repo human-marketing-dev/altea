@@ -35,3 +35,6 @@ export type { MediaSlotProps } from "./MediaSlot";
 
 export { CountUp } from "./CountUp";
 export type { CountUpProps } from "./CountUp";
+
+export { MapaProyectos } from "./MapaProyectos";
+export type { MapaProyectosProps } from "./MapaProyectos";

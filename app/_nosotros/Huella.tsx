@@ -1,16 +1,23 @@
-import { CountUp, MediaSlot } from "@/app/ui";
+import { CountUp, MapaProyectos } from "@/app/ui";
+import {
+  ESTADOS_CON_PRESENCIA,
+  PRESENCIA_INTERNACIONAL,
+  PROYECTOS,
+} from "@/lib/proyectos";
 import { HUELLA } from "./content";
 
 /** Sección 3 — Nuestra Huella. Mapa a la izquierda, texto y cifras a la derecha. */
 export function Huella() {
   return (
     <section className="nos-huella">
-      <MediaSlot
-        label={HUELLA.mapNote}
-        ratio="1 / 1"
-        sizes="(max-width: 900px) 100vw, 45vw"
-        className="nos-huella__map"
-      />
+      <div className="nos-huella__map">
+        <MapaProyectos
+          proyectos={PROYECTOS}
+          estadosConPresencia={ESTADOS_CON_PRESENCIA}
+          paisesAdicionales={PRESENCIA_INTERNACIONAL}
+          layout="stacked"
+        />
+      </div>
       <div className="nos-huella__body">
         <h2 className="nos-huella__title">{HUELLA.title}</h2>
         <p className="nos-huella__text">{HUELLA.body}</p>

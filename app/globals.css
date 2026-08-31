@@ -47,6 +47,15 @@
 
   --shadow-card: 0 1px 2px #21222212, 0 8px 24px -8px #21222222;
   --shadow-card-hover: 0 4px 8px #21222214, 0 16px 32px -10px #2122222e;
+
+  /* Fade corto para intercambiar contenido sin animar altura. La duración se
+     sobrescribe con animationDuration donde haga falta. */
+  --animate-aparecer: aparecer 150ms cubic-bezier(.4, 0, .2, 1) both;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Colors are mapped rather than redefined — the values live in tokens.css and

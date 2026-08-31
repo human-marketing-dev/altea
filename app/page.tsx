@@ -1,4 +1,4 @@
-import { Footer, NavBar } from "@/app/ui";
+import { Footer, LeadCTA, NavBar } from "@/app/ui";
 import { BusinessUnits } from "./_home/BusinessUnits";
 import { ContactCTA } from "./_home/ContactCTA";
 import { CorporateVideo } from "./_home/CorporateVideo";
@@ -22,6 +22,7 @@ export default function Home() {
         <Emblem />
         <ContactCTA />
         <FeaturedProjects />
+        <LeadCTA />
       </main>
       <Footer />
     </>

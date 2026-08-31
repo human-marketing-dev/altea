@@ -10,9 +10,12 @@
   display: grid;
   align-items: center;
   padding: var(--space-9) var(--container-pad);
-  /* Los dos puntos que definen la diagonal: dónde corta arriba y dónde abajo. */
-  --diag-top: 42%;
-  --diag-bottom: 22%;
+  /* Los dos puntos que definen la diagonal: dónde corta arriba y dónde abajo.
+     El punto medio entre ambos es dónde queda la división; la diferencia entre
+     ellos es qué tan inclinada va. Hoy: centrada al 50%, con 20 puntos de
+     inclinación. */
+  --diag-top: 60%;
+  --diag-bottom: 40%;
 }
 .nos-banner__media,
 .nos-banner__rule {
@@ -154,6 +157,73 @@
 .nos-huella__desglose li { display: flex; justify-content: space-between; gap: var(--space-4); }
 .nos-huella__desglose-value { color: var(--altea-cream); font-variant-numeric: tabular-nums; }
 
+/* ============ 5. Qué hacemos — bloques angulados ============ */
+/*
+  Misma diagonal que el banner, en versión corta. Los dos puntos que la definen
+  son variables, igual que allá: el promedio es dónde queda la división y la
+  diferencia es la inclinación.
+  La imagen puede ir a cualquier lado — la variante `--izquierda` refleja el
+  trapecio con `100% - var(...)`, así un solo par de variables sirve para ambas.
+*/
+.nos-angulo {
+  position: relative;
+  overflow: hidden;
+  min-height: clamp(320px, 48vh, 460px);
+  display: grid;
+  align-items: center;
+  padding: var(--space-8) var(--container-pad);
+  /*
+    Dónde queda la división, medida siempre desde la izquierda de la sección,
+    vaya la imagen del lado que vaya. Se sobrescribe por bloque desde content.ts.
+  */
+  --diag-centro: 50%;
+  /* Cuánto se corre el borde superior respecto al inferior. */
+  --diag-inclinacion: 20%;
+  --diag-top: calc(var(--diag-centro) + var(--diag-inclinacion) / 2);
+  --diag-bottom: calc(var(--diag-centro) - var(--diag-inclinacion) / 2);
+}
+.nos-angulo--cream { background: var(--surface-page); }
+.nos-angulo--ink { background: var(--altea-ink); }
+
+.nos-angulo__media,
+.nos-angulo__rule { position: absolute; inset: 0; }
+.nos-angulo__media .altea-media { height: 100%; }
+.nos-angulo__rule { background: var(--altea-coral); }
+
+/* Imagen a la derecha: el corte cae en su borde izquierdo. */
+.nos-angulo--derecha .nos-angulo__media {
+  clip-path: polygon(var(--diag-top) 0, 100% 0, 100% 100%, var(--diag-bottom) 100%);
+}
+.nos-angulo--derecha .nos-angulo__rule {
+  clip-path: polygon(
+    calc(var(--diag-top) - 3px) 0,
+    100% 0,
+    100% 100%,
+    calc(var(--diag-bottom) - 3px) 100%
+  );
+}
+
+/* Imagen a la izquierda: el mismo trapecio, reflejado. */
+.nos-angulo--izquierda .nos-angulo__media {
+  clip-path: polygon(0 0, var(--diag-bottom) 0, var(--diag-top) 100%, 0 100%);
+}
+.nos-angulo--izquierda .nos-angulo__rule {
+  clip-path: polygon(
+    0 0,
+    calc(var(--diag-bottom) + 3px) 0,
+    calc(var(--diag-top) + 3px) 100%,
+    0 100%
+  );
+}
+
+.nos-angulo__content {
+  position: relative;
+  z-index: 1;
+  max-width: 42ch;
+}
+/* Con la imagen a la izquierda, el texto se va al otro extremo. */
+.nos-angulo--izquierda .nos-angulo__content { justify-self: end; }
+
 /* ================ 4. Introducción a "qué hacemos" ================ */
 .nos-intro {
   position: relative;
@@ -195,4 +265,24 @@
   .nos-banner { --diag-top: 100%; --diag-bottom: 100%; }
   .nos-banner__media,
   .nos-banner__rule { display: none; }
+
+  /* En el banner la imagen es decorativa y se oculta; aquí es contenido, así
+     que se apila arriba del texto y se le quita el recorte. */
+  .nos-angulo {
+    min-height: 0;
+    gap: var(--space-6);
+    padding: var(--space-8) var(--container-pad);
+  }
+  .nos-angulo--derecha .nos-angulo__media,
+  .nos-angulo--izquierda .nos-angulo__media {
+    position: relative;
+    inset: auto;
+    clip-path: none;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .nos-angulo__rule { display: none; }
+  .nos-angulo__content { max-width: none; }
+  .nos-angulo--izquierda .nos-angulo__content { justify-self: stretch; }
 }

@@ -17,10 +17,13 @@ export function BusinessUnits() {
               <MediaSlot
                 label={`Render ${unit.name}`}
                 src={unit.image}
-                alt={`Proyecto Altea ${unit.name}`}
+                alt={unit.alt ?? `Proyecto Altea ${unit.name}`}
                 tone="dark"
                 ratio="4 / 5"
-                sizes="(max-width: 720px) 50vw, 25vw"
+                /* Mismo caso, más leve: la tarjeta es 4/5 y la foto apaisada,
+                   así que el ancho renderizado (~480px) supera al del
+                   contenedor (~320px). */
+                sizes="(max-width: 720px) 90vw, 500px"
               />
             </Link>
           </li>

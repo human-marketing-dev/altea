@@ -27,6 +27,7 @@ export const DEFAULT_NAV_LINKS: NavLink[] = [
   { label: "Industrial", href: "/industrial" },
   { label: "Vivienda", href: "/vivienda" },
   { label: "Forestal", href: "/forestal" },
+  { label: "Contacto", href: "/contacto" },
 ];
 
 /**

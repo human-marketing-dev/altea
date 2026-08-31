@@ -55,3 +55,63 @@ export const QUE_HACEMOS_INTRO = {
   image: undefined as string | undefined,
   imageNote: "Imagen de fondo — sección a sangre",
 };
+
+/** Sección 5 del sitemap — "Qué hacemos", tres bloques angulados. */
+export interface BloqueAngulado {
+  id: string;
+  title: string;
+  description: string;
+  /** De qué lado va la imagen; el texto ocupa el otro. */
+  imagen: "izquierda" | "derecha";
+  /** Fondo del bloque. Alterna para dar ritmo a la secuencia. */
+  tono: "ink" | "cream";
+  /**
+   * Dónde cae la división, en % desde la izquierda de la sección — sin importar
+   * de qué lado esté la imagen. Más alto la corre a la derecha, más bajo a la
+   * izquierda. @default 50
+   */
+  division?: number;
+  image?: string;
+  imageNote: string;
+  alt?: string;
+}
+
+export const QUE_HACEMOS: BloqueAngulado[] = [
+  {
+    id: "territorio",
+    title:
+      "Donde otros ven un terreno, nosotros vemos el potencial para transformar un territorio.",
+    description:
+      "Antes de diseñar un proyecto, entendemos el mercado, analizamos el entorno y descubrimos cómo ese espacio puede generar valor para las personas, empresas y las comunidades.",
+    imagen: "derecha",
+    tono: "cream",
+    division: 58,
+    // PENDIENTE: no hay fotografía de terreno o reserva sin desarrollar.
+    imageNote: "Terreno o vista aérea de reserva territorial",
+  },
+  {
+    id: "talento",
+    title: "Nuestro Talento",
+    description:
+      "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
+    imagen: "izquierda",
+    tono: "ink",
+    division: 42,
+    // PENDIENTE: no hay ni una fotografía de personas en el material entregado.
+    imageNote: "Equipo de Altea",
+  },
+  {
+    id: "ecosistemas",
+    title: "Creamos mucho más que infraestructura",
+    description:
+      "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación, y turismo, generado espacios capaces de evolucionar junto con las necesidades de quienes los habitan.",
+    imagen: "derecha",
+    tono: "cream",
+    division: 58,
+    // PROVISIONAL: hotel, comercio, restaurantes y plaza pública en un mismo
+    // encuadre — es literalmente el ecosistema que describe el texto.
+    image: "/images/comercial/galeria/galeria-altea-1.webp",
+    alt: "Conjunto de Altea con hotel, comercio y plaza pública",
+    imageNote: "Ecosistema Altea",
+  },
+];

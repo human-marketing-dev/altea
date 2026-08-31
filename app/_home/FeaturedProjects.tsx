@@ -43,7 +43,16 @@ export function FeaturedProjects() {
                   src={project.image}
                   alt={project.name}
                   tone="dark"
-                  sizes="(max-width: 900px) 60vw, 20vw"
+                  /*
+                    El panel mide ~190px de ancho pero ~360 de alto, y la foto
+                    entra con object-fit: cover. En un contenedor vertical con
+                    fuente apaisada, el recorte lo manda el ALTO: la imagen se
+                    escala hasta cubrir 360px, y su ancho renderizado acaba en
+                    ~540px. Declarar el ancho del contenedor (20vw ≈ 300px)
+                    hacía que el navegador pidiera la mitad de la resolución
+                    necesaria y la estirara.
+                  */
+                  sizes="560px"
                   className="home-projects__media"
                 />
               </span>

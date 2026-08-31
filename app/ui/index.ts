@@ -38,3 +38,12 @@ export type { CountUpProps } from "./CountUp";
 
 export { MapaProyectos } from "./MapaProyectos";
 export type { MapaProyectosProps } from "./MapaProyectos";
+
+export { Select } from "./Select";
+export type { SelectProps } from "./Select";
+
+export { LeadForm } from "./LeadForm";
+export type { LeadFormProps } from "./LeadForm";
+
+export { LeadCTA } from "./LeadCTA";
+export type { LeadCTAProps } from "./LeadCTA";

@@ -1,11 +1,10 @@
 import { MediaSlot, SectionHeading } from "@/app/ui";
+import { enlaceWhatsApp } from "@/lib/contacto";
 import { CONTACT_CTA } from "./content";
 
 /** Bloque de contacto con salida directa a WhatsApp. */
 export function ContactCTA() {
-  const href = `https://wa.me/${CONTACT_CTA.whatsappNumber}?text=${encodeURIComponent(
-    CONTACT_CTA.whatsappMessage,
-  )}`;
+  const href = enlaceWhatsApp();
 
   return (
     <section className="home-cta">

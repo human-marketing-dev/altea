@@ -64,20 +64,39 @@ export interface BusinessUnitCard {
   slug: string;
   /** Sin imagen, la tarjeta muestra el hueco etiquetado. */
   image?: string;
+  alt?: string;
 }
 
+/** Fotografía de /images/home/unidades-de-negocio/, la carpeta que Altea armó
+ *  específicamente para esta sección. */
 export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
-    image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
+    image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
+    alt: "Paseo La Fe, desarrollo comercial de Altea",
   },
-  // PENDIENTE: no hay fotografía de estas tres divisiones todavía.
-  { name: "Industrial", slug: "industrial" },
-  { name: "Vivienda", slug: "vivienda" },
+  {
+    name: "Industrial",
+    slug: "industrial",
+    image:
+      "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
+    alt: "Huinala Industrial Park, desarrollo industrial de Altea",
+  },
+  {
+    name: "Vivienda",
+    slug: "vivienda",
+    image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
+    alt: "Desarrollo de vivienda de Altea",
+  },
   // Cuarta unidad del wireframe. El design system aún no tiene lockup ni color
   // para Forestal — ver app/ui/README.md.
-  { name: "Forestal", slug: "forestal" },
+  {
+    name: "Forestal",
+    slug: "forestal",
+    image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
+    alt: "Plantación de teca, división forestal de Altea",
+  },
 ];
 
 export const EMBLEM = "Creamos proyectos que materializan sueños";
@@ -90,9 +109,6 @@ export const CONTACT_CTA = {
   description:
     "Escríbenos y un asesor te contacta para revisar superficie, ubicación y tiempos de tu proyecto.",
   image: "/images/comercial/galeria/galeria-altea-4.webp",
-  /** PENDIENTE: número real de WhatsApp de Altea. */
-  whatsappNumber: "528110000000",
-  whatsappMessage: "Hola Altea, me interesa conocer más sobre sus proyectos.",
 };
 
 /**
@@ -123,10 +139,40 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea.webp",
   },
-  // PENDIENTE: los cuatro siguientes no tienen render. Deliberadamente NO se
-  // les puso una foto de otro proyecto: sería atribuir una imagen equivocada.
-  { slug: "aeropuerto-saltillo", name: "Aeropuerto Saltillo", unit: "Industrial", location: "Saltillo, Coahuila" },
-  { slug: "bajio-industrial-park", name: "Bajío Industrial Park", unit: "Industrial", location: "Bajío, México" },
-  { slug: "aeropuerto-industrial-center", name: "Aeropuerto Industrial Center", unit: "Industrial", location: "Saltillo, Coahuila" },
-  { slug: "amarantha", name: "Amarantha", unit: "Vivienda", location: "Saltillo, Coahuila" },
+  {
+    slug: "aeropuerto-saltillo",
+    name: "Aeropuerto Saltillo",
+    unit: "Industrial",
+    // PENDIENTE: ubicación sin confirmar.
+    location: "Saltillo, Coahuila",
+    image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp",
+  },
+  {
+    slug: "bajio-industrial-park",
+    name: "Bajío Industrial Park",
+    unit: "Industrial",
+    // PENDIENTE: ubicación sin confirmar.
+    location: "Bajío, México",
+    // El nombre del archivo trae una errata de origen ("undustrial").
+    image: "/images/industrial/naves-industriales/bajio-undustrial-park-altea.webp",
+  },
+  {
+    slug: "aeropuerto-industrial-center",
+    name: "Aeropuerto Industrial Center",
+    unit: "Industrial",
+    // PENDIENTE: ubicación sin confirmar.
+    location: "Saltillo, Coahuila",
+    // PENDIENTE: el archivo se llama "Aeropuerto Industrial Park" y vive en
+    // proximos-proyectos/. Confirmar si es el mismo desarrollo y qué nombre va.
+    image: "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
+  },
+  {
+    slug: "amarantha",
+    name: "Amarantha",
+    unit: "Vivienda",
+    // PENDIENTE: ubicación sin confirmar.
+    location: "Saltillo, Coahuila",
+    image: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
+  },
 ];
+

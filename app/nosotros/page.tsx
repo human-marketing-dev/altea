@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Footer, NavBar } from "@/app/ui";
+import { Footer, LeadCTA, NavBar } from "@/app/ui";
 import { Banner } from "../_nosotros/Banner";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
 import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
+import { SeccionAngulada } from "../_nosotros/SeccionAngulada";
+import { QUE_HACEMOS } from "../_nosotros/content";
 import "../_nosotros/nosotros.css";
 
 export const metadata: Metadata = {
@@ -21,8 +23,13 @@ export default function Nosotros() {
         <Origen />
         <Huella />
         <QueHacemosIntro />
-        {/* Pendientes del sitemap: 5. Qué hacemos (3 secciones) · 6. CTA
-            · 7. Responsabilidad social */}
+        {/* 5. Qué hacemos */}
+        {QUE_HACEMOS.map((bloque) => (
+          <SeccionAngulada key={bloque.id} bloque={bloque} />
+        ))}
+        {/* 6. CTA */}
+        <LeadCTA />
+        {/* Pendiente del sitemap: 7. Responsabilidad social */}
       </main>
       <Footer />
     </>

@@ -9,10 +9,32 @@
 export const HERO = {
   // Las tres palabras del wireframe, una por línea.
   words: ["Crear", "Desarrollar", "Activar"],
-  /** PROVISIONAL: foto de galería como fondo, solo para que el hero no se vea
-   *  vacío. El banner definitivo debe ser el collage de las divisiones con sus
-   *  colores, o la animación del triángulo que sugirió Humberto. */
-  image: "/images/comercial/galeria/galeria-altea-2.webp",
+  /** PENDIENTE: descripción sin confirmar por Altea. */
+  description:
+    "Diseñamos y ejecutamos proyectos comerciales, industriales, de vivienda y forestales sobre reserva territorial propia, con presencia en 21 estados de México.",
+  /**
+   * Carrusel del banner: una imagen por división, que es la idea del wireframe
+   * —"collage con nuestras tres divisiones"— resuelta como secuencia.
+   * PROVISIONAL hasta que exista el collage o la animación del triángulo.
+   */
+  slides: [
+    {
+      src: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
+      alt: "Desarrollo comercial de Altea",
+    },
+    {
+      src: "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
+      alt: "Parque industrial de Altea",
+    },
+    {
+      src: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
+      alt: "Desarrollo de vivienda de Altea",
+    },
+    {
+      src: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
+      alt: "Plantación forestal de Altea",
+    },
+  ],
   bannerNote: "Collage de divisiones / animación del triángulo",
 };
 
@@ -41,8 +63,12 @@ export const STATS_INTRO =
   "Una reserva territorial construida durante dos décadas, que hoy sostiene proyectos comerciales, industriales, de vivienda y forestales en todo el norte del país.";
 
 export const VIDEO = {
-  /** PENDIENTE: URL del video corporativo. Sin ella se renderiza el placeholder. */
-  url: undefined as string | undefined,
+  /**
+   * PROVISIONAL: video de prueba. El archivo venía con espacios y paréntesis en
+   * el nombre, que rompen la URL; se renombró y se movió a /public/video/.
+   * Reemplazar por el institucional definitivo.
+   */
+  url: "/video/institucional-prueba.mp4" as string | undefined,
   poster: undefined as string | undefined,
   caption: "Video corporativo",
 };
@@ -100,6 +126,12 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
 ];
 
 export const EMBLEM = "Creamos proyectos que materializan sueños";
+
+/**
+ * Fondo del emblema, muy atenuado: da textura sin competir con la frase.
+ * PROVISIONAL — foto de un centro comercial en operación.
+ */
+export const EMBLEM_IMAGE = "/images/comercial/galeria/galeria-altea-3.webp";
 
 export const CONTACT_CTA = {
   eyebrow: "Trabajemos juntos",

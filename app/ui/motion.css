@@ -1,0 +1,165 @@
+/*
+ * Movimiento del sitio, todo en un archivo.
+ *
+ * Reglas que impone el design system: transiciones discretas y rápidas
+ * (150–220ms, ease-standard), sólo en hover/focus y entradas — nunca bounce ni
+ * parallax. Esto se mantiene dentro de eso.
+ *
+ * Las apariciones al scroll usan `animation-timeline: view()`, sin JavaScript y
+ * sin tocar el marcado: se aplican a los selectores que ya existen. Van dentro
+ * de un @supports, así que en un navegador sin soporte (Firefox hoy) no hay
+ * animación y el contenido simplemente está visible — nunca al revés.
+ */
+
+/* Duración propia para las entradas. Los 150–220ms del sistema son para
+   hover y focus, donde la respuesta tiene que ser inmediata; una aparición al
+   entrar en pantalla necesita más recorrido para que se alcance a ver. */
+:root { --duration-revelar: 700ms; }
+
+@keyframes revelar {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ===================== Entradas al scroll ===================== */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Portada */
+    .home-stats__intro,
+    .home-stats__item,
+    .home-video__frame,
+    .home-why > *,
+    .home-units__title,
+    .home-units__grid > li,
+    .home-emblem__text,
+    .home-cta__media,
+    .home-cta__body,
+    .home-projects__title,
+    /* Nosotros */
+    .nos-origen__media,
+    .nos-origen__body,
+    .nos-huella__body,
+    .nos-intro__phrase,
+    .nos-rs__galeria > li,
+    .nos-rs__copy,
+    /* Bloque de contacto, en todas las páginas */
+    #contacto > * {
+      animation: revelar var(--duration-revelar) var(--ease-standard) both;
+      animation-timeline: view();
+      /*
+        El rango `entry` mide solo lo que tarda el elemento en terminar de
+        entrar: para un bloque de 120px eso son 120px de scroll y la animación
+        pasaba en un parpadeo. `cover` mide desde que asoma hasta que se va, o
+        sea alto de ventana + alto del elemento, y con eso la aparición ocupa
+        varios cientos de píxeles de recorrido.
+      */
+      animation-range: cover 20% cover 50%;
+    }
+
+    /* Escalonado leve donde hay varios elementos en fila. El stagger se hace
+       corriendo el rango, no con delay: en una línea de tiempo de scroll el
+       delay se mide en progreso, no en milisegundos. */
+    .home-stats__item:nth-child(2),
+    .home-units__grid > li:nth-child(2),
+    .nos-rs__galeria > li:nth-child(2) { animation-range: cover 24% cover 54%; }
+
+    .home-stats__item:nth-child(3),
+    .home-units__grid > li:nth-child(3),
+    .nos-rs__galeria > li:nth-child(3) { animation-range: cover 28% cover 58%; }
+
+    .home-stats__item:nth-child(4),
+    .home-units__grid > li:nth-child(4),
+    .nos-rs__galeria > li:nth-child(4) { animation-range: cover 32% cover 62%; }
+
+    .nos-rs__galeria > li:nth-child(5) { animation-range: cover 36% cover 66%; }
+    .nos-rs__galeria > li:nth-child(6) { animation-range: cover 40% cover 70%; }
+
+    /* Secciones anguladas: en vez del contenedor se anima cada pieza del
+       encabezado, para que el título entre antes que la descripción. */
+    .nos-angulo__content .altea-section-heading > * {
+      animation: revelar var(--duration-revelar) var(--ease-standard) both;
+      animation-timeline: view();
+      animation-range: cover 20% cover 50%;
+    }
+    .nos-angulo__content .altea-section-heading > *:nth-child(2) {
+      animation-range: cover 28% cover 58%;
+    }
+    .nos-angulo__content .altea-section-heading > *:nth-child(3) {
+      animation-range: cover 34% cover 64%;
+    }
+  }
+
+  /* ===================== Entradas al cargar ===================== */
+  /* Los héroes están sobre el pliegue: no hay scroll que los dispare. */
+  .home-hero__word,
+  .nos-banner__content > * {
+    animation: entrar var(--duration-revelar) var(--ease-standard) both;
+  }
+  .home-hero__word:nth-child(1),
+  .nos-banner__content > *:nth-child(1) { animation-delay: 80ms; }
+  .home-hero__word:nth-child(2),
+  .nos-banner__content > *:nth-child(2) { animation-delay: 200ms; }
+  .home-hero__word:nth-child(3),
+  .nos-banner__content > *:nth-child(3) { animation-delay: 320ms; }
+  .home-hero__actions { animation: entrar var(--duration-revelar) var(--ease-standard) 420ms both; }
+}
+
+/* ===================== Micro-interacciones ===================== */
+/* Sin @supports: son hover, y todos los navegadores las entienden. */
+
+/* La foto respira dentro de su marco; el marco no se mueve. */
+.altea-media__img {
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .home-units__card:hover .altea-media__img,
+  .home-projects__button:hover .altea-media__img,
+  .nos-rs__galeria > li:hover .altea-media__img {
+    transform: scale(1.04);
+  }
+}
+
+/* Subrayado que crece desde la izquierda en el nav. */
+.altea-navbar__link {
+  position: relative;
+}
+.altea-navbar__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--altea-coral);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.altea-navbar__link:hover::after,
+.altea-navbar__link:focus-visible::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .altea-navbar__link::after { transition: none; }
+}
+
+/* ============ Respaldo con JS ============ */
+/*
+ * Para navegadores sin `animation-timeline: view()`. Las clases las pone
+ * RevealOnScroll en el cliente, así que sin JavaScript nada de esto aplica y
+ * el contenido queda visible.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .js-revelar {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity var(--duration-revelar) var(--ease-standard),
+      transform var(--duration-revelar) var(--ease-standard);
+  }
+  .js-revelar--visible { opacity: 1; transform: none; }
+}

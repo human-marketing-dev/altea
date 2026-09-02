@@ -47,3 +47,17 @@ export type { LeadFormProps } from "./LeadForm";
 
 export { LeadCTA } from "./LeadCTA";
 export type { LeadCTAProps } from "./LeadCTA";
+
+export { RevealOnScroll } from "./RevealOnScroll";
+
+export { Proximamente } from "./Proximamente";
+export type { ProximamenteProps } from "./Proximamente";
+
+export { WhatsAppFab } from "./WhatsAppFab";
+export type { WhatsAppFabProps } from "./WhatsAppFab";
+
+export { Marcas } from "./Marcas";
+export type { MarcasProps } from "./Marcas";
+
+export { Publicaciones } from "./Publicaciones";
+export type { PublicacionesProps } from "./Publicaciones";

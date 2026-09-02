@@ -20,17 +20,23 @@ export function SeccionAngulada({ bloque }: { bloque: BloqueAngulado }) {
       }
     >
       <span className="nos-angulo__rule" aria-hidden="true" />
+      {/* El recorte vive en __media; la foto va dentro de __foto, ceñida al
+          área que de verdad se ve. Así `cover` encuadra la imagen en ese hueco
+          en vez de ajustarla a la sección entera y enseñar solo una rebanada. */}
       <div className="nos-angulo__media">
-        <MediaSlot
-          label={bloque.imageNote}
-          src={bloque.image}
-          alt={bloque.alt ?? ""}
-          tone={oscuro ? "dark" : "light"}
-          sizes="(max-width: 900px) 100vw, 60vw"
-        />
+        <div className="nos-angulo__foto">
+          <MediaSlot
+            label={bloque.imageNote}
+            src={bloque.image}
+            alt={bloque.alt ?? ""}
+            tone={oscuro ? "dark" : "light"}
+            sizes="(max-width: 900px) 100vw, 55vw"
+          />
+        </div>
       </div>
       <div className="nos-angulo__content">
         <SectionHeading
+          className="max-w-none"
           tone={oscuro ? "light" : "ink"}
           title={bloque.title}
           description={bloque.description}

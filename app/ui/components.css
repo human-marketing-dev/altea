@@ -228,18 +228,22 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 
 /* ============================= NavBar ============================= */
 .altea-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  flex-wrap: wrap;
-  padding: 20px var(--container-pad);
+  padding: 16px var(--container-pad);
   background: var(--altea-cream);
   font-family: var(--font-body);
 }
 .altea-navbar--dark { background: var(--altea-ink); }
+.altea-navbar__marca { display: inline-flex; }
 .altea-navbar__logo { height: 22px; width: auto; }
-.altea-navbar__links { display: flex; gap: 32px; flex-wrap: wrap; }
+
+.altea-navbar__links { display: flex; align-items: center; gap: var(--space-6); }
 .altea-navbar__link {
   color: var(--altea-ink);
   text-decoration: none;
@@ -252,6 +256,68 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 .altea-navbar--dark .altea-navbar__link { color: var(--altea-cream); }
 .altea-navbar__link:hover { color: var(--altea-coral); }
 .altea-navbar__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+.altea-navbar__link[aria-current="page"] { color: var(--altea-coral); }
+
+/* Contacto va como botón, no como enlace. */
+.altea-navbar__link--destacado,
+.altea-navbar--dark .altea-navbar__link--destacado {
+  background: var(--altea-coral);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.altea-navbar__link--destacado:hover,
+.altea-navbar--dark .altea-navbar__link--destacado:hover {
+  background: var(--altea-coral-dark);
+  color: #fff;
+}
+.altea-navbar__link--destacado[aria-current="page"] { color: #fff; }
+
+/* Botón de menú: sólo existe en pantallas chicas. */
+.altea-navbar__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.altea-navbar__toggle-barra {
+  display: block;
+  height: 2px;
+  width: 24px;
+  margin: 0 auto;
+  background: var(--altea-ink);
+  transition: transform var(--duration-fast) var(--ease-standard),
+              opacity var(--duration-fast) var(--ease-standard);
+}
+.altea-navbar--dark .altea-navbar__toggle-barra { background: var(--altea-cream); }
+.altea-navbar__toggle:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  .altea-navbar { flex-wrap: wrap; }
+  .altea-navbar__toggle { display: flex; }
+  .altea-navbar__links {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+    padding: var(--space-5) 0 var(--space-2);
+  }
+  .altea-navbar--abierto .altea-navbar__links { display: flex; }
+  .altea-navbar__link--destacado { align-self: flex-start; }
+
+  /* Aspa cuando está abierto. */
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(2) { opacity: 0; }
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
 
 /* ============================= Footer ============================= */
 .altea-footer {
@@ -264,15 +330,40 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   gap: 40px;
 }
 .altea-footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+.altea-footer__marca {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 32px;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
 }
 .altea-footer__logo { height: 26px; width: auto; }
-.altea-footer__columns { display: flex; gap: 48px; flex-wrap: wrap; }
+.altea-footer__descripcion {
+  margin: 0;
+  max-width: 42ch;
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
+}
+.altea-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+@media (max-width: 900px) {
+  .altea-footer__top { grid-template-columns: minmax(0, 1fr); }
+  .altea-footer { padding: var(--space-8) var(--container-pad) var(--space-6); }
+}
+@media (max-width: 560px) {
+  .altea-footer__columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .altea-footer__column { display: flex; flex-direction: column; gap: 8px; }
 .altea-footer__column-title {
+  margin-bottom: var(--space-1);
   font-size: var(--text-small);
   font-weight: 600;
   color: var(--altea-cream);
@@ -326,3 +417,200 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   line-height: var(--leading-body);
 }
 .altea-media__icon { width: 28px; height: 28px; opacity: .7; }
+
+/* ========================= WhatsApp flotante ========================= */
+/*
+  Coral, no el verde de WhatsApp: el manual prohíbe recolorear fuera de
+  ink / cream / coral, y este es un CTA. Si se prefiere el verde de marca por
+  reconocimiento, se cambia el `background` del botón.
+*/
+.altea-wa {
+  position: fixed;
+  right: max(var(--space-5), env(safe-area-inset-right));
+  bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+.altea-wa__boton {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  background: var(--altea-coral);
+  color: #fff;
+  box-shadow: var(--shadow-card-hover);
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard);
+}
+.altea-wa__boton:hover { background: var(--altea-coral-dark); }
+.altea-wa__boton:focus-visible { outline: 2px solid var(--altea-cream); outline-offset: 3px; }
+.altea-wa__icono { width: 28px; height: 28px; }
+.altea-wa__aspa { font-size: 30px; line-height: 1; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .altea-wa__boton:hover { transform: translateY(-2px); }
+}
+
+/* --- Panel de chat --- */
+.altea-wa__panel {
+  width: min(330px, calc(100vw - var(--space-6)));
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card-hover);
+  font-family: var(--font-body);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .altea-wa__panel { animation: aparecer 180ms var(--ease-standard) both; }
+}
+.altea-wa__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+}
+.altea-wa__avatar {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  padding: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--altea-coral);
+  color: #fff;
+}
+.altea-wa__nombre { margin: 0; font-weight: 600; font-size: var(--text-body); }
+.altea-wa__estado { margin: 0; font-size: 12px; color: var(--text-on-dark-secondary); }
+.altea-wa__cerrar {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.altea-wa__cuerpo { padding: var(--space-4); background: var(--surface-sunken); }
+.altea-wa__burbuja {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+  background: var(--surface-card);
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+.altea-wa__form { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+.altea-wa__input {
+  width: 100%;
+  font: inherit;
+  font-size: var(--text-small);
+  color: var(--altea-ink);
+  background: #fff;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  outline: none;
+}
+.altea-wa__input:focus { border-color: var(--altea-ink); }
+.altea-wa__enviar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-pill);
+  background: var(--altea-coral);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: var(--text-small);
+  padding: 11px 18px;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.altea-wa__enviar:hover { background: var(--altea-coral-dark); }
+.altea-wa__enviar-icono { width: 18px; height: 18px; }
+.altea-wa__pie {
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-4);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ============================= Marcas ============================= */
+.altea-marcas {
+  background: var(--surface-page);
+  padding: var(--space-9) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  align-items: center;
+}
+.altea-marcas__titulo {
+  margin: 0;
+  padding: 0 var(--container-pad);
+  max-width: 24ch;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  color: var(--altea-ink);
+}
+.altea-marcas__viewport {
+  width: 100%;
+  overflow: hidden;
+  /* Se desvanece en los extremos para que los logos no aparezcan y
+     desaparezcan de golpe contra el borde. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.altea-marcas__cinta {
+  display: flex;
+  width: max-content;
+  animation: marquesina 48s linear infinite;
+}
+.altea-marcas__pista {
+  margin: 0;
+  padding: 0 var(--space-7) 0 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+/* Caja uniforme: cada logo se ajusta dentro sin deformarse. */
+.altea-marcas__item {
+  position: relative;
+  flex: none;
+  width: 150px;
+  height: 44px;
+}
+.altea-marcas__logo {
+  object-fit: contain;
+  opacity: .65;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+.altea-marcas__item:hover .altea-marcas__logo { opacity: 1; }
+
+@keyframes marquesina {
+  to { transform: translateX(-50%); }
+}
+
+/* Al pasar el mouse se detiene, para poder leer un logo concreto. */
+@media (hover: hover) {
+  .altea-marcas__viewport:hover .altea-marcas__cinta { animation-play-state: paused; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .altea-marcas__cinta { animation: none; }
+  .altea-marcas__viewport { overflow-x: auto; }
+}

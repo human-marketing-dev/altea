@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, NavBar } from "@/app/ui";
+import { Footer, LeadCTA, Marcas, NavBar, Publicaciones } from "@/app/ui";
 import { Banner } from "../_nosotros/Banner";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
 import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
+import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
 import { SeccionAngulada } from "../_nosotros/SeccionAngulada";
 import { QUE_HACEMOS } from "../_nosotros/content";
 import "../_nosotros/nosotros.css";
@@ -27,9 +28,13 @@ export default function Nosotros() {
         {QUE_HACEMOS.map((bloque) => (
           <SeccionAngulada key={bloque.id} bloque={bloque} />
         ))}
-        {/* 6. CTA */}
+        {/* 7. Responsabilidad social */}
+        <ResponsabilidadSocial />
+        <Marcas />
+        <Publicaciones />
+        {/* 6. CTA — va al final para que cierre la página, como en el resto
+            del sitio. */}
         <LeadCTA />
-        {/* Pendiente del sitemap: 7. Responsabilidad social */}
       </main>
       <Footer />
     </>

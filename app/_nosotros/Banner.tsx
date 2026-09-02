@@ -10,15 +10,19 @@ export function Banner() {
     <section className="nos-banner">
       {/* La línea: mismo trapecio que la imagen, 3px a la izquierda. */}
       <span className="nos-banner__rule" aria-hidden="true" />
+      {/* El recorte vive aquí; la foto va dentro, ceñida al área visible, para
+          que `cover` la ajuste a ese hueco y no al ancho completo de la sección. */}
       <div className="nos-banner__media">
-        <MediaSlot
-          label={BANNER.imageNote}
-          src={BANNER.image}
-          alt=""
-          tone="dark"
-          sizes="60vw"
-          priority
-        />
+        <div className="nos-banner__foto">
+          <MediaSlot
+            label={BANNER.imageNote}
+            src={BANNER.image}
+            alt={BANNER.alt ?? ""}
+            tone="dark"
+            sizes="(max-width: 900px) 100vw, 60vw"
+            priority
+          />
+        </div>
       </div>
       <div className="nos-banner__content">
         <span className="nos-banner__eyebrow">{BANNER.eyebrow}</span>

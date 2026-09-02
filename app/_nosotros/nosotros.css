@@ -14,8 +14,15 @@
      El punto medio entre ambos es dónde queda la división; la diferencia entre
      ellos es qué tan inclinada va. Hoy: centrada al 50%, con 20 puntos de
      inclinación. */
-  --diag-top: 60%;
-  --diag-bottom: 40%;
+  /* Mismo sistema que las secciones anguladas: el punto medio es dónde cae la
+     división y la diferencia es la inclinación. Antes fijaba top/bottom a mano,
+     y por eso el ajuste de tablet no le hacía efecto. */
+  /* 64% y no 50%: el título va en display-2 (hasta 60px) y con la división
+     centrada solo cabían dos palabras por línea. */
+  --diag-centro: 64%;
+  --diag-inclinacion: 20%;
+  --diag-top: calc(var(--diag-centro) + var(--diag-inclinacion) * 0.5);
+  --diag-bottom: calc(var(--diag-centro) - var(--diag-inclinacion) * 0.5);
 }
 .nos-banner__media,
 .nos-banner__rule {
@@ -25,7 +32,11 @@
 .nos-banner__media {
   clip-path: polygon(var(--diag-top) 0, 100% 0, 100% 100%, var(--diag-bottom) 100%);
 }
-.nos-banner__media .altea-media { height: 100%; }
+/* La foto ocupa solo el trapecio visible: desde el punto más a la izquierda
+   del corte (--diag-bottom) hasta el borde derecho. */
+.nos-banner__foto { position: absolute; inset: 0; }
+.nos-banner__foto { left: var(--diag-bottom); }
+.nos-banner__foto .altea-media { height: 100%; }
 /* Mismo trapecio, 3px a la izquierda: lo que asoma es la línea. */
 .nos-banner__rule {
   background: var(--altea-coral);
@@ -39,7 +50,9 @@
 .nos-banner__content {
   position: relative;
   z-index: 1;
-  max-width: 34ch;
+  /* Se estira hasta el corte, como en las anguladas: con 34ch el título caía a
+     dos palabras por línea. */
+  max-width: calc(var(--diag-bottom) - var(--space-7));
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -167,7 +180,10 @@
 */
 .nos-angulo {
   position: relative;
-  overflow: hidden;
+  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
+     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
+     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
+     El recorte ya lo hacen los clip-path de dentro. */
   min-height: clamp(320px, 48vh, 460px);
   display: grid;
   align-items: center;
@@ -179,15 +195,20 @@
   --diag-centro: 50%;
   /* Cuánto se corre el borde superior respecto al inferior. */
   --diag-inclinacion: 20%;
-  --diag-top: calc(var(--diag-centro) + var(--diag-inclinacion) / 2);
-  --diag-bottom: calc(var(--diag-centro) - var(--diag-inclinacion) / 2);
+  --diag-top: calc(var(--diag-centro) + var(--diag-inclinacion) * 0.5);
+  --diag-bottom: calc(var(--diag-centro) - var(--diag-inclinacion) * 0.5);
 }
 .nos-angulo--cream { background: var(--surface-page); }
 .nos-angulo--ink { background: var(--altea-ink); }
 
 .nos-angulo__media,
 .nos-angulo__rule { position: absolute; inset: 0; }
-.nos-angulo__media .altea-media { height: 100%; }
+.nos-angulo__foto { position: absolute; inset: 0; }
+.nos-angulo__foto .altea-media { height: 100%; }
+/* Imagen a la derecha: arranca en el punto más a la izquierda del corte. */
+.nos-angulo--derecha .nos-angulo__foto { left: var(--diag-bottom); right: 0; }
+/* Imagen a la izquierda: termina en el punto más a la derecha del corte. */
+.nos-angulo--izquierda .nos-angulo__foto { left: 0; right: calc(100% - var(--diag-top)); }
 .nos-angulo__rule { background: var(--altea-coral); }
 
 /* Imagen a la derecha: el corte cae en su borde izquierdo. */
@@ -219,7 +240,19 @@
 .nos-angulo__content {
   position: relative;
   z-index: 1;
-  max-width: 42ch;
+  /* Sin tope propio: el ancho lo fija cada variante contra la diagonal. */
+  max-width: none;
+}
+/*
+  El bloque se estira hasta donde empieza el corte, menos un respiro. Sale de
+  las mismas variables de la diagonal, así que si mueves `division` en
+  content.ts el texto se reajusta solo y nunca se mete debajo de la foto.
+*/
+.nos-angulo--derecha .nos-angulo__content {
+  max-width: calc(var(--diag-bottom) - var(--space-7));
+}
+.nos-angulo--izquierda .nos-angulo__content {
+  max-width: calc(100% - var(--diag-top) - var(--space-7));
 }
 /* Con la imagen a la izquierda, el texto se va al otro extremo. */
 .nos-angulo--izquierda .nos-angulo__content { justify-self: end; }
@@ -228,7 +261,12 @@
 .nos-intro {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
+     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
+     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
+     El recorte ya lo hacen los clip-path de dentro. */
+  /* Igual que el hero: la foto queda quieta y la sección se desliza encima. */
+  clip-path: inset(0);
   background: var(--altea-ink);
   min-height: clamp(340px, 52vh, 520px);
   display: flex;
@@ -236,7 +274,7 @@
   justify-content: center;
   padding: var(--space-9) var(--container-pad);
 }
-.nos-intro__media { position: absolute; inset: 0; z-index: -1; }
+.nos-intro__media { position: fixed; inset: 0; z-index: -1; }
 .nos-intro__media .altea-media { height: 100%; }
 /* Scrim: legibilidad sobre fotografía, el único degradado que permite la marca. */
 .nos-intro__media::after {
@@ -258,10 +296,60 @@
   color: var(--altea-cream);
 }
 
+/* ============ 7. Responsabilidad social ============ */
+/* Ink: la sección anterior y el CTA que sigue son cream, así que este bloque
+   los separa. */
+.nos-rs {
+  background: var(--altea-ink);
+  padding: var(--space-9) var(--container-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: center;
+}
+.nos-rs__galeria {
+  margin: 0; padding: 0; list-style: none;
+  display: grid;
+  /* 6 fotos: 3×2 mantiene el alto parejo con el copy de al lado. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.nos-rs__foto { border-radius: var(--radius-md); }
+.nos-rs__copy { display: flex; flex-direction: column; gap: var(--space-4); }
+.nos-rs__copy p {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
+}
+
 /* ========================== Responsive ========================== */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .nos-intro { clip-path: none; }
+  .nos-intro__media { position: absolute; }
+}
+
+/* --- Tablet --- */
+@media (max-width: 1100px) {
+  /* El banner necesita más espacio para el texto antes de romperse. */
+  .nos-banner { --diag-centro: 70%; }
+  .nos-origen { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .nos-angulo { min-height: clamp(280px, 42vh, 380px); }
+}
+
+/* --- Móvil --- */
 @media (max-width: 900px) {
   .nos-origen,
-  .nos-huella { grid-template-columns: minmax(0, 1fr); }
+  .nos-huella,
+  .nos-rs { grid-template-columns: minmax(0, 1fr); }
+  .nos-banner { min-height: auto; padding-block: var(--space-8); }
+  .nos-origen,
+  .nos-huella,
+  .nos-rs,
+  .nos-intro { padding-block: var(--space-8); }
+  .nos-intro { min-height: clamp(260px, 40vh, 360px); }
+  .nos-huella__stats { gap: var(--space-6); }
+  .nos-rs__galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .nos-banner { --diag-top: 100%; --diag-bottom: 100%; }
   .nos-banner__media,
   .nos-banner__rule { display: none; }
@@ -283,6 +371,9 @@
     overflow: hidden;
   }
   .nos-angulo__rule { display: none; }
-  .nos-angulo__content { max-width: none; }
+  .nos-angulo--derecha .nos-angulo__foto,
+  .nos-angulo--izquierda .nos-angulo__foto { left: 0; right: 0; }
+  .nos-angulo--derecha .nos-angulo__content,
+  .nos-angulo--izquierda .nos-angulo__content { max-width: none; }
   .nos-angulo--izquierda .nos-angulo__content { justify-self: stretch; }
 }

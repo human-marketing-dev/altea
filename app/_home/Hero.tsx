@@ -1,23 +1,15 @@
-import { Button, MediaSlot } from "@/app/ui";
+import { Button } from "@/app/ui";
 import { HERO } from "./content";
+import { HeroSlider } from "./HeroSlider";
 
 /**
- * Banner de portada: las tres palabras de la marca a la izquierda y el collage
- * de divisiones (pendiente) al fondo.
+ * Banner de portada: las tres palabras de la marca sobre un carrusel con una
+ * imagen por división.
  */
 export function Hero() {
   return (
     <section className="home-hero">
-      <div className="home-hero__media" aria-hidden="true">
-        <MediaSlot
-          label={HERO.bannerNote}
-          src={HERO.image}
-          alt=""
-          tone="dark"
-          sizes="100vw"
-          priority
-        />
-      </div>
+      <HeroSlider slides={HERO.slides} />
       <div className="home-hero__content">
         <h1 className="home-hero__title">
           {HERO.words.map((word) => (
@@ -26,6 +18,7 @@ export function Hero() {
             </span>
           ))}
         </h1>
+        <p className="home-hero__description">{HERO.description}</p>
         <div className="home-hero__actions">
           <Button variant="primary" size="lg">
             Conocer proyectos

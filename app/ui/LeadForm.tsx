@@ -53,57 +53,63 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
       noValidate
       className={`flex flex-col gap-4 rounded-lg bg-surface-card p-6 shadow-card sm:p-8 ${className ?? ""}`}
     >
-      <div>
-        <Input
-          label="Nombre"
-          name="nombre"
-          placeholder="Tu nombre"
-          autoComplete="name"
-          required
-          aria-invalid={Boolean(errorDe("nombre"))}
-          aria-describedby={errorDe("nombre") ? `${id}-nombre` : undefined}
-        />
-        {errorDe("nombre") && (
-          <p id={`${id}-nombre`} role="alert" className="m-0 mt-1.5 text-small text-coral">
-            {errorDe("nombre")}
-          </p>
-        )}
+      {/* Nombre y correo comparten renglón: el formulario es ancho y en una sola
+          columna los campos quedaban desproporcionados. */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <Input
+            label="Nombre"
+            name="nombre"
+            placeholder="Tu nombre"
+            autoComplete="name"
+            required
+            aria-invalid={Boolean(errorDe("nombre"))}
+            aria-describedby={errorDe("nombre") ? `${id}-nombre` : undefined}
+          />
+          {errorDe("nombre") && (
+            <p id={`${id}-nombre`} role="alert" className="m-0 mt-1.5 text-small text-coral">
+              {errorDe("nombre")}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Input
+            label="Correo electrónico"
+            name="correo"
+            type="email"
+            placeholder="tu@correo.com"
+            autoComplete="email"
+            required
+            aria-invalid={Boolean(errorDe("correo"))}
+            aria-describedby={errorDe("correo") ? `${id}-correo` : undefined}
+          />
+          {errorDe("correo") && (
+            <p id={`${id}-correo`} role="alert" className="m-0 mt-1.5 text-small text-coral">
+              {errorDe("correo")}
+            </p>
+          )}
+        </div>
       </div>
 
-      <div>
+      <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Correo electrónico"
-          name="correo"
-          type="email"
-          placeholder="tu@correo.com"
-          autoComplete="email"
-          required
-          aria-invalid={Boolean(errorDe("correo"))}
-          aria-describedby={errorDe("correo") ? `${id}-correo` : undefined}
+          label="Teléfono (opcional)"
+          name="telefono"
+          type="tel"
+          placeholder="81 0000 0000"
+          autoComplete="tel"
         />
-        {errorDe("correo") && (
-          <p id={`${id}-correo`} role="alert" className="m-0 mt-1.5 text-small text-coral">
-            {errorDe("correo")}
-          </p>
-        )}
+
+        <Select label="Unidad de interés" name="unidad" defaultValue={unidadPorDefecto ?? ""}>
+          <option value="">Selecciona una</option>
+          {UNIDADES.map((unidad) => (
+            <option key={unidad} value={unidad}>
+              {unidad}
+            </option>
+          ))}
+        </Select>
       </div>
-
-      <Input
-        label="Teléfono (opcional)"
-        name="telefono"
-        type="tel"
-        placeholder="81 0000 0000"
-        autoComplete="tel"
-      />
-
-      <Select label="Unidad de interés" name="unidad" defaultValue={unidadPorDefecto ?? ""}>
-        <option value="">Selecciona una</option>
-        {UNIDADES.map((unidad) => (
-          <option key={unidad} value={unidad}>
-            {unidad}
-          </option>
-        ))}
-      </Select>
 
       <div>
         <Input

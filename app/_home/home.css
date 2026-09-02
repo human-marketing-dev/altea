@@ -18,8 +18,42 @@
   padding: var(--space-9) var(--container-pad);
   background: var(--altea-ink);
   isolation: isolate;
+  /* clip-path convierte la sección en bloque contenedor de sus hijos fixed y
+     además los recorta: es lo que deja la foto quieta dentro de este hueco
+     mientras la página se desliza encima. `overflow: hidden` no basta, no
+     recorta descendientes fixed. */
+  clip-path: inset(0);
 }
-.home-hero__media { position: absolute; inset: 0; z-index: -1; }
+.home-hero__media { position: fixed; inset: 0; z-index: -1; }
+.home-hero__slide {
+  position: absolute;
+  inset: 0;
+  transition: opacity 900ms var(--ease-standard);
+}
+.home-hero__img { object-fit: cover; }
+.home-hero__puntos {
+  position: absolute;
+  left: var(--container-pad);
+  bottom: var(--space-6);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-2);
+}
+.home-hero__punto {
+  width: 28px;
+  height: 3px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  background: var(--border-subtle-on-dark);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.home-hero__punto:hover { background: var(--altea-cream); }
+.home-hero__punto--activo { background: var(--altea-coral); }
+.home-hero__punto:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__slide { transition: none; }
+}
 /* Scrim sobre la foto para que el titular se lea. Único uso de degradado que
    permite la marca: legibilidad sobre fotografía, no decoración. */
 .home-hero__media::after {
@@ -41,6 +75,13 @@
   letter-spacing: var(--tracking-tight);
   text-transform: uppercase;
   color: var(--altea-cream);
+}
+.home-hero__description {
+  margin: 0;
+  max-width: 46ch;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
 }
 .home-hero__actions { display: flex; gap: var(--space-4); flex-wrap: wrap; }
 
@@ -69,7 +110,11 @@
 .home-stats__value {
   margin: 0;
   display: flex;
-  flex-direction: column;
+  /* La unidad va junto a la cifra, alineada por la base para que no "flote". */
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2em;
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 4.5vw, 4rem);
   font-weight: var(--weight-bold);
@@ -90,8 +135,13 @@
 /* ============================== Video ============================= */
 /* A sangre: sin padding lateral ni inferior. La separación con la sección
    siguiente la pone el padding superior de .home-why. */
-.home-video { background: var(--surface-page); padding: 0; }
-.home-video__frame { margin: 0; position: relative; }
+.home-video { background: var(--surface-page); padding: 0 var(--container-pad); }
+/* Contenido, no a sangre: a ancho completo el video se comía la pantalla. */
+.home-video__frame {
+  margin: 0 auto;
+  position: relative;
+  max-width: min(100%, 960px);
+}
 .home-video__player { width: 100%; display: block; border-radius: var(--radius-md); }
 .home-video__play {
   position: absolute;
@@ -148,29 +198,60 @@
   gap: var(--space-6);
 }
 .home-units__card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--radius-md);
   text-decoration: none;
   transition: transform var(--duration-base) var(--ease-standard);
 }
 .home-units__card:hover { transform: translateY(-4px); }
 .home-units__card:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 6px; }
+/* El nombre va encima de la foto. El degradado es el único que permite la
+   marca: scrim de legibilidad sobre fotografía, no decoración. */
 .home-units__name {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: var(--space-8) var(--space-4) var(--space-4);
+  background: linear-gradient(180deg, #21222200, #212222e6);
   font-size: var(--text-small);
   font-weight: 600;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--altea-cream);
+  transition: color var(--duration-fast) var(--ease-standard);
 }
 .home-units__card:hover .home-units__name { color: var(--altea-coral); }
 
 /* ============================= Emblema ============================ */
+/* Franja fotográfica: imagen a sangre, scrim oscuro encima y la frase en cream.
+   Mismo recurso que la frase de Nosotros. */
 .home-emblem {
-  background: var(--surface-page);
-  padding: var(--space-9) var(--container-pad);
+  position: relative;
+  isolation: isolate;
+  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
+     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
+     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
+     El recorte ya lo hacen los clip-path de dentro. */
+  clip-path: inset(0);
+  background: var(--altea-ink);
+  min-height: clamp(340px, 52vh, 520px);
   display: flex;
+  align-items: center;
   justify-content: center;
+  padding: var(--space-9) var(--container-pad);
+  /* Cuánto oscurece el scrim. Bajarlo deja ver más foto y menos texto. */
+  --emblema-scrim: 0.7;
+}
+.home-emblem__fondo { position: fixed; inset: 0; z-index: -1; }
+.home-emblem__img { object-fit: cover; }
+/* Scrim de legibilidad: el único degradado/velo que admite la marca sobre
+   fotografía. */
+.home-emblem__fondo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(33 34 34 / var(--emblema-scrim));
 }
 .home-emblem__text {
   margin: 0;
@@ -182,7 +263,7 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
-  color: var(--altea-ink);
+  color: var(--altea-cream);
 }
 
 /* =============================== CTA ============================== */
@@ -194,6 +275,7 @@
   gap: var(--space-8);
   padding: var(--space-8) var(--container-pad);
 }
+.home-cta__media .altea-media { border-radius: var(--radius-md); }
 .home-cta__body { display: flex; flex-direction: column; gap: var(--space-6); align-items: flex-start; }
 
 /* ============================ Proyectos =========================== */
@@ -243,6 +325,11 @@
   );
 }
 .home-projects__item:first-child { margin-left: 0; }
+/* El último cierra con borde vertical: la franja termina en el borde de la
+   página y una diagonal ahí se lee como un recorte a medias. */
+.home-projects__item:last-child {
+  clip-path: polygon(var(--slant) 0, 100% 0, 100% 100%, 0 100%);
+}
 .home-projects__button {
   display: block;
   position: relative;
@@ -279,7 +366,9 @@
 .home-projects__name {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  padding: var(--space-6) var(--space-3) var(--space-4);
+  /* Scrim de legibilidad: sobre renders claros el nombre se perdía. */
+  background: linear-gradient(180deg, #21222200, #212222e6);
+  padding: var(--space-7) var(--space-3) var(--space-4);
   padding-right: calc(var(--space-3) + var(--slant));
   font-size: var(--text-small);
   font-weight: 600;
@@ -344,9 +433,49 @@
 }
 
 /* ============================= Responsive ========================= */
+
+/* --- Tablet --- */
+@media (max-width: 1100px) {
+  /* El CTA daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
+  .home-cta { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .home-projects { grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr); }
+}
+
+/* --- Móvil --- */
 @media (max-width: 900px) {
   .home-why,
   .home-cta,
   .home-projects { grid-template-columns: minmax(0, 1fr); }
-  .home-projects { padding-right: 0; }
+  .home-projects {
+    padding: var(--space-7) 0 var(--space-7) var(--container-pad);
+    gap: var(--space-5);
+  }
+  .home-hero { min-height: 72vh; padding: var(--space-8) var(--container-pad); }
+  .home-stats,
+  .home-why,
+  .home-units,
+  .home-emblem { padding-block: var(--space-8); }
+  .home-cta { padding: var(--space-8) var(--container-pad); }
+  .home-stats__grid { gap: var(--space-6); }
+  .home-units__grid { gap: var(--space-4); }
+}
+
+@media (max-width: 560px) {
+  /* Dos columnas de cifras en vez de una tira larga. */
+  .home-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-units__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-projects__track { min-height: clamp(260px, 52vw, 340px); }
+}
+
+/* ============ Fondo fijo — excepciones ============ */
+/*
+  En móvil el fondo fijo cuesta caro de repintar y muchos navegadores lo
+  ignoran a medias; y con movimiento reducido no corresponde. En ambos casos
+  la foto vuelve a desplazarse con la sección.
+*/
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .home-hero { clip-path: none; }
+  .home-hero__media { position: absolute; }
+  .home-emblem { clip-path: none; }
+  .home-emblem__fondo { position: absolute; }
 }

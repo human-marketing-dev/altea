@@ -13,7 +13,6 @@ export function BusinessUnits() {
         {BUSINESS_UNITS.map((unit) => (
           <li key={unit.slug}>
             <Link href={`/${unit.slug}`} className="home-units__card">
-              <span className="home-units__name">{unit.name}</span>
               <MediaSlot
                 label={`Render ${unit.name}`}
                 src={unit.image}
@@ -25,6 +24,7 @@ export function BusinessUnits() {
                    contenedor (~320px). */
                 sizes="(max-width: 720px) 90vw, 500px"
               />
+              <span className="home-units__name">{unit.name}</span>
             </Link>
           </li>
         ))}

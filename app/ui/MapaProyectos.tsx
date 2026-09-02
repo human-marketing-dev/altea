@@ -6,8 +6,6 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
-  type CSSProperties,
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import {
@@ -18,6 +16,7 @@ import {
   type EstadoId,
 } from "@/lib/mexico-estados";
 import type { Proyecto } from "@/lib/proyectos";
+import { useMovimientoReducido } from "./useMovimientoReducido";
 
 /* ------------------------------------------------------------------ *
  * Calibración visual. Los tres niveles de jerarquía, juntos y arriba.
@@ -37,23 +36,6 @@ const TRAZO_BASE = "stroke-cream/40 [stroke-width:0.8]";
 /** Los demás bajan a este nivel cuando hay selección. */
 const OPACIDAD_ATENUADA = "opacity-60";
 
-/* ------------------------------------------------------------------ *
- * Altura reservada del panel.
- *
- * El panel cambia de contenido al seleccionar estados, y sin altura fija ese
- * cambio movía el copy de la columna de al lado. Se reserva el caso más alto y
- * lo sobrante queda en blanco.
- *
- * En vez de un número suelto, se compone de las tres piezas del panel, así que
- * si un estado llega a 3 proyectos la reserva se ajusta sola.
- * ------------------------------------------------------------------ */
-/** Eyebrow + título del estado + su gap. */
-const ALTO_ENCABEZADO_PX = 94;
-/** Una ficha de proyecto: nombre, ciudad y descripción a dos líneas. */
-const ALTO_FICHA_PX = 104;
-/** Enlace "Ver todo" más el gap que lo separa de la lista. */
-const ALTO_PIE_PX = 41;
-
 /** Fade entre contenidos. La altura ya no cambia: no hay nada más que animar. */
 const FADE_MS = 150;
 
@@ -64,24 +46,6 @@ const STAGGER_PIN_MS = 40;
 const OFFSET_TOOLTIP = 12;
 
 type Tooltip = { x: number; y: number; texto: string; voltear: boolean };
-
-/**
- * `prefers-reduced-motion` como fuente externa suscrita, no como estado que se
- * fija dentro de un efecto: así no hay render en cascada y además reacciona si
- * el usuario cambia la preferencia con la página abierta.
- * El snapshot de servidor es `false` para que el HTML no dependa del cliente.
- */
-function useMovimientoReducido() {
-  return useSyncExternalStore(
-    (alCambiar) => {
-      const consulta = window.matchMedia("(prefers-reduced-motion: reduce)");
-      consulta.addEventListener("change", alCambiar);
-      return () => consulta.removeEventListener("change", alCambiar);
-    },
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => false,
-  );
-}
 
 export interface MapaProyectosProps {
   /** Se reciben por prop, no se importan: así cambiar la fuente de datos
@@ -209,15 +173,6 @@ export function MapaProyectos({
       })),
     [conPresencia, porEstado],
   );
-
-  /** Reserva calculada sobre el estado con más proyectos. */
-  const alturaPanel = useMemo(() => {
-    const maximo = Math.max(
-      1,
-      ...[...porEstado.values()].map((lista) => lista.length),
-    );
-    return ALTO_ENCABEZADO_PX + maximo * ALTO_FICHA_PX + ALTO_PIE_PX;
-  }, [porEstado]);
 
   const estadoActivo = seleccion ? ESTADOS.find((e) => e.id === seleccion) : null;
   const proyectosActivos = seleccion ? (porEstado.get(seleccion) ?? []) : [];
@@ -400,22 +355,14 @@ export function MapaProyectos({
       </div>
 
       {/*
-        Un solo espacio que cambia de contenido, con la altura del caso más alto
-        reservada. `min-h` se aplica sólo donde las columnas van lado a lado: en
-        una sola columna sobraría hueco.
-        - split:   el propio grid del componente parte en `lg`.
-        - stacked: parte el grid de la sección que lo contiene (Nuestra Huella,
-                   a 900px). Si esa sección cambia de breakpoint, este también.
+        Un solo espacio que cambia de contenido. Crece y encoge con lo que
+        muestra: la columna de al lado no se mueve porque la sección usa
+        `align-items: start`, así que ya no hace falta reservarle altura.
       */}
       <div
         ref={panelRef}
         aria-live="polite"
-        className={`flex scroll-mt-8 flex-col justify-start gap-5 ${
-          layout === "split"
-            ? "lg:min-h-(--altura-panel)"
-            : "min-[900px]:min-h-(--altura-panel)"
-        }`}
-        style={{ "--altura-panel": `${alturaPanel}px` } as CSSProperties}
+        className="flex scroll-mt-8 flex-col justify-start gap-5"
       >
       <div
         key={seleccion ?? "__resumen"}

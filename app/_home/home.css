@@ -462,9 +462,38 @@
   .home-why,
   .home-cta,
   .home-projects { grid-template-columns: minmax(0, 1fr); }
+  /*
+    En móvil la franja deja de ser franja: sin paralelogramo, sin desplazamiento
+    horizontal y sin encimado. Seis tarjetas apiladas, cada una con su foto.
+    El corte diagonal en 350px de ancho se comía media imagen y obligaba a
+    descubrir que la tira se arrastraba de lado.
+  */
   .home-projects {
-    padding: var(--space-7) 0 var(--space-7) var(--container-pad);
+    padding: var(--space-7) var(--container-pad);
     gap: var(--space-5);
+  }
+  .home-projects__track {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    min-height: 0;
+    overflow: visible;
+  }
+  .home-projects__item {
+    flex: none;
+    margin-left: 0;
+    clip-path: none;
+  }
+  .home-projects__button { height: auto; }
+  .home-projects__media-wrap {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 3 / 2;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .home-projects__name {
+    padding: var(--space-7) var(--space-4) var(--space-4);
   }
   .home-video__frame { margin: var(--space-3); }
   .home-hero {
@@ -485,7 +514,6 @@
   /* Dos columnas de cifras en vez de una tira larga. */
   .home-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-units__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-projects__track { min-height: clamp(260px, 52vw, 340px); }
 }
 
 /* ============ Fondo fijo — excepciones ============ */

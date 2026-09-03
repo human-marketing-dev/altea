@@ -52,7 +52,7 @@ export function FeaturedProjects() {
                     hacía que el navegador pidiera la mitad de la resolución
                     necesaria y la estirara.
                   */
-                  sizes="560px"
+                  sizes="(max-width: 900px) 100vw, 560px"
                   className="home-projects__media"
                 />
               </span>

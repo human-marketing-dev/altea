@@ -4,8 +4,11 @@
 @import "./ui/motion.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Superficie de página de la marca. Se ve en el aire alrededor del hero y en
+     el rebote del scroll; en blanco desentonaba con la barra y las secciones
+     cream de arriba. */
+  --background: #E7DFD1;
+  --foreground: #212222;
 }
 
 /*
@@ -92,7 +95,7 @@
 */
 
 /* La barra es sticky: sin esto, un enlace a #contacto deja el título tapado. */
-html { scroll-padding-top: 88px; }
+html { scroll-padding-top: 104px; }
 
 body {
   background: var(--background);

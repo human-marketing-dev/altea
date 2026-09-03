@@ -45,7 +45,21 @@ export function NavBar({
 }: NavBarProps) {
   const isLight = tone === "light";
   const [abierto, setAbierto] = useState(false);
+  const [pegada, setPegada] = useState(false);
   const ruta = usePathname();
+
+  // La sombra aparece al despegarse del inicio. Se usa un listener pasivo y no
+  // un timeline de CSS para que también funcione en Firefox.
+  useEffect(() => {
+    const alScroll = () => setPegada(window.scrollY > 8);
+    window.addEventListener("scroll", alScroll, { passive: true });
+    // Por si la página carga ya desplazada, p. ej. al recargar a media altura.
+    const cuadro = requestAnimationFrame(alScroll);
+    return () => {
+      cancelAnimationFrame(cuadro);
+      window.removeEventListener("scroll", alScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (!abierto) return;
@@ -59,6 +73,7 @@ export function NavBar({
   const classes = [
     "altea-navbar",
     isLight ? null : "altea-navbar--dark",
+    pegada ? "altea-navbar--pegada" : null,
     abierto ? "altea-navbar--abierto" : null,
     className,
   ]

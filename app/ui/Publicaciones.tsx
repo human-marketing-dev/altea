@@ -50,11 +50,19 @@ export function Publicaciones({
               className="group block overflow-hidden rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-coral"
             >
               <span className="relative block aspect-square overflow-hidden bg-surface-card-dark">
+                {/*
+                  Recuerda la regla: con `object-fit: cover`, `sizes` no es el
+                  ancho de la caja sino el ancho al que queda la imagen después
+                  de escalarla para cubrirla. Estas fuentes son apaisadas (3:2 y
+                  16:9) metidas en un cuadrado, así que manda el alto: en una
+                  celda de 328px la imagen se renderiza a ~580 de ancho. Con
+                  320px declarados el navegador pedía la mitad.
+                */}
                 <Image
                   src={post.imagen}
                   alt={post.alt}
                   fill
-                  sizes="(max-width: 1024px) 45vw, 320px"
+                  sizes="(min-width: 1536px) 700px, (min-width: 1024px) 600px, 80vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </span>

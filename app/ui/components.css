@@ -229,17 +229,38 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 /* ============================= NavBar ============================= */
 .altea-navbar {
   position: sticky;
-  top: 0;
+  /* Se pega a 16px del borde, no a 0: por ese hueco pasa el contenido y es lo
+     que hace que se lea flotando y no adosada. */
+  top: var(--space-4);
   z-index: 50;
+  /* Sin margen inferior: el aire que la separa de lo que sigue lo pone el
+     margen superior del hero. Si no, quedaban 32px. */
+  margin: var(--space-4) var(--space-4) 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
   padding: 16px var(--container-pad);
   background: var(--altea-cream);
+  /*
+    Arriba del todo va limpia: sin borde ni sombra. El borde existe en
+    transparente y no en `border: none` para que al aparecer no empuje 1px el
+    contenido — solo cambia de color.
+  */
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+  transition:
+    box-shadow var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard);
   font-family: var(--font-body);
 }
+.altea-navbar--pegada {
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
 .altea-navbar--dark { background: var(--altea-ink); }
+.altea-navbar--dark.altea-navbar--pegada { border-color: var(--border-subtle-on-dark); }
 .altea-navbar__marca { display: inline-flex; }
 .altea-navbar__logo { height: 22px; width: auto; }
 
@@ -300,7 +321,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 .altea-navbar__toggle:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
 
 @media (max-width: 900px) {
-  .altea-navbar { flex-wrap: wrap; }
+  .altea-navbar {
+    flex-wrap: wrap;
+    top: var(--space-3);
+    margin: var(--space-3) var(--space-3) 0;
+  }
   .altea-navbar__toggle { display: flex; }
   .altea-navbar__links {
     display: none;

@@ -12,17 +12,23 @@
 /* ============================== Hero ============================== */
 .home-hero {
   position: relative;
+  /* Despegado de los bordes: el fondo cream de la página lo enmarca. */
+  margin: var(--space-4);
   min-height: 78vh;
   display: flex;
   align-items: center;
   padding: var(--space-9) var(--container-pad);
   background: var(--altea-ink);
+  border-radius: var(--radius-lg);
   isolation: isolate;
-  /* clip-path convierte la sección en bloque contenedor de sus hijos fixed y
-     además los recorta: es lo que deja la foto quieta dentro de este hueco
-     mientras la página se desliza encima. `overflow: hidden` no basta, no
-     recorta descendientes fixed. */
-  clip-path: inset(0);
+  /*
+    `inset(0 round …)` hace dos cosas a la vez: redondea las esquinas y
+    convierte la sección en bloque contenedor de sus hijos `fixed`, que es lo
+    que mantiene la foto quieta dentro de este hueco. `overflow: hidden` no
+    serviría: no recorta descendientes fixed.
+    El radio es 16px, el máximo que admite el manual fuera de los pills.
+  */
+  clip-path: inset(0 round var(--radius-lg));
 }
 .home-hero__media { position: fixed; inset: 0; z-index: -1; }
 .home-hero__slide {
@@ -135,14 +141,24 @@
 /* ============================== Video ============================= */
 /* A sangre: sin padding lateral ni inferior. La separación con la sección
    siguiente la pone el padding superior de .home-why. */
-.home-video { background: var(--surface-page); padding: 0 var(--container-pad); }
-/* Contenido, no a sangre: a ancho completo el video se comía la pantalla. */
-.home-video__frame {
-  margin: 0 auto;
-  position: relative;
-  max-width: min(100%, 960px);
+.home-video { background: var(--surface-page); padding: 0; }
+/* Despegado como el hero, con el mismo margen y radio. */
+.home-video__frame { margin: var(--space-4); position: relative; }
+/*
+  A sangre, pero con la altura de antes: se fija el alto y `object-fit: cover`
+  recorta arriba y abajo en vez de dejar que el video crezca con el ancho. A
+  1512px son ~545px, prácticamente lo que medía contenido a 960.
+*/
+.home-video__player {
+  display: block;
+  width: 100%;
+  height: clamp(280px, 36vw, 560px);
+  object-fit: cover;
+  /* El radio va en el <video>, no en un contenedor con overflow: hidden.
+     Ese overflow convertiría al marco en contenedor de scroll y rompería su
+     propia animación de entrada, como ya pasó en las secciones anguladas. */
+  border-radius: var(--radius-lg);
 }
-.home-video__player { width: 100%; display: block; border-radius: var(--radius-md); }
 .home-video__play {
   position: absolute;
   inset: 0;
@@ -450,7 +466,12 @@
     padding: var(--space-7) 0 var(--space-7) var(--container-pad);
     gap: var(--space-5);
   }
-  .home-hero { min-height: 72vh; padding: var(--space-8) var(--container-pad); }
+  .home-video__frame { margin: var(--space-3); }
+  .home-hero {
+    margin: var(--space-3);
+    min-height: 72vh;
+    padding: var(--space-8) var(--container-pad);
+  }
   .home-stats,
   .home-why,
   .home-units,
@@ -474,7 +495,8 @@
   la foto vuelve a desplazarse con la sección.
 */
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
-  .home-hero { clip-path: none; }
+  /* Sin fondo fijo no hace falta el clip-path; el radio lo recorta overflow. */
+  .home-hero { clip-path: none; overflow: hidden; }
   .home-hero__media { position: absolute; }
   .home-emblem { clip-path: none; }
   .home-emblem__fondo { position: absolute; }

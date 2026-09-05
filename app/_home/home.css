@@ -1,14 +1,5 @@
 /* Estilos de la portada. Todo se apoya en los tokens de la marca. */
 
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 /* ============================== Hero ============================== */
 .home-hero {
   position: relative;
@@ -191,96 +182,225 @@
 /* ========================= Unidades de negocio ===================== */
 .home-units {
   background: var(--altea-ink);
-  padding: var(--space-9) var(--container-pad);
+  padding: var(--space-9) 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
-  align-items: center;
 }
-.home-units__title {
+
+/* Encabezado a dos columnas: título a la izquierda, entrada a la derecha. */
+.home-units__encabezado {
+  padding: 0 var(--container-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: end;
+}
+.home-units__titulo {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-h1);
   font-weight: 600;
   line-height: var(--leading-heading);
   color: var(--altea-cream);
-  text-align: center;
 }
+.home-units__acento { color: var(--altea-coral); }
+.home-units__intro {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
+}
+
+/* --- Tarjetas --- */
+/*
+  Se expanden animando `flex-grow`, no el ancho: así las cuatro reparten el
+  espacio disponible entre ellas y la suma sigue siendo exactamente el ancho de
+  la fila, sin desbordes ni huecos. Sin gap ni radio, se leen como una sola
+  banda continua.
+*/
 .home-units__grid {
-  margin: 0; padding: 0; list-style: none;
+  margin: 0; padding: 0 var(--container-pad); list-style: none;
+  display: flex;
+  gap: var(--space-4);
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-6);
 }
+/*
+  Tiempos propios para esta sección. Los 150–220ms del sistema son para hover y
+  focus, donde la respuesta debe ser inmediata; aquí se mueve el ancho de cuatro
+  bloques a la vez y a esa velocidad se percibe como un salto.
+  La curva desacelera mucho al final, que es lo que hace que el reparto de
+  espacio se sienta suave en vez de mecánico.
+*/
+.home-units {
+  --tarjeta-duracion: 560ms;
+  --tarjeta-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-units__item {
+  flex: 1 1 0;
+  min-width: 0;
+  transition: flex-grow var(--tarjeta-duracion) var(--tarjeta-ease);
+}
+/*
+  Ojo con el orden de estas dos: al apuntar una tarjeta el grid también está en
+  hover, así que las dos reglas coinciden sobre el mismo elemento. La segunda
+  repite `.home-units__grid:hover` a propósito para superar en especificidad a
+  la primera —(0,4,0) contra (0,3,0)—; sin eso la tarjeta apuntada se encogía
+  con las demás y no había expansión.
+*/
+.home-units__grid:hover .home-units__item { flex-grow: 0.88; }
+.home-units__grid:hover .home-units__item:hover { flex-grow: 1.65; }
+
 .home-units__card {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-5);
+  min-height: clamp(380px, 48vh, 540px);
+  padding: var(--space-6);
   overflow: hidden;
-  border-radius: var(--radius-md);
+  /* Fuerza una capa propia: sin esto el recorte se recalcula en cada fotograma
+     mientras la tarjeta cambia de ancho. */
+  transform: translateZ(0);
   text-decoration: none;
-  transition: transform var(--duration-base) var(--ease-standard);
+  color: var(--altea-cream);
 }
-.home-units__card:hover { transform: translateY(-4px); }
-.home-units__card:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 6px; }
-/* El nombre va encima de la foto. El degradado es el único que permite la
-   marca: scrim de legibilidad sobre fotografía, no decoración. */
-.home-units__name {
+.home-units__card:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: -4px; }
+
+.home-units__media { position: absolute; inset: 0; }
+/*
+  El zoom parte de 1.03, no de 1. Con escala exacta los bordes de la imagen caen
+  justo sobre el recorte de la tarjeta, y como el ancho de la tarjeta también se
+  está animando, cada fotograma redondea distinto: de ahí el parpadeo en el
+  contorno. Arrancando un poco sobredimensionada, el borde de la foto nunca
+  coincide con el del recorte.
+  `will-change` y `backface-visibility` la mandan a su propia capa para que el
+  navegador no la vuelva a rasterizar en cada paso.
+*/
+.home-units__img {
+  object-fit: cover;
+  transform: scale(1.03);
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: transform 900ms var(--tarjeta-ease);
+}
+.home-units__item:hover .home-units__img { transform: scale(1.09); }
+
+/* Scrim de legibilidad, más denso abajo donde va el texto. */
+.home-units__velo {
   position: absolute;
-  left: 0; right: 0; bottom: 0;
-  padding: var(--space-8) var(--space-4) var(--space-4);
-  background: linear-gradient(180deg, #21222200, #212222e6);
+  inset: 0;
+  background: linear-gradient(180deg, #21222259 0%, #21222259 40%, #212222e6 100%);
+}
+
+.home-units__contenido {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: var(--space-4);
+}
+.home-units__nombre {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+/*
+  La descripción crece de 0fr a 1fr. Animar `grid-template-rows` da una apertura
+  real hasta la altura del contenido; con max-height habría que adivinar un
+  número y el cierre se sentiría desigual.
+*/
+.home-units__desc-caja {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: auto;
+  transition: grid-template-rows 640ms var(--tarjeta-ease);
+}
+.home-units__item:hover .home-units__desc-caja { grid-template-rows: 1fr; }
+.home-units__desc {
+  overflow: hidden;
+  min-height: 0;
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
+  opacity: 0;
+  /* Sin retraso al salir: cerrar tiene que sentirse inmediato. El retraso vive
+     sólo en el estado de hover, para que el texto entre cuando ya hay hueco. */
+  transition: opacity 460ms var(--tarjeta-ease);
+}
+.home-units__item:hover .home-units__desc {
+  opacity: 1;
+  transition-delay: 240ms;
+}
+
+/* Botón fantasma: sólo contorno. */
+.home-units__cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid var(--border-subtle-on-dark);
+  border-radius: var(--radius-pill);
   font-size: var(--text-small);
   font-weight: 600;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--altea-cream);
-  transition: color var(--duration-fast) var(--ease-standard);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
 }
-.home-units__card:hover .home-units__name { color: var(--altea-coral); }
+.home-units__item:hover .home-units__cta {
+  border-color: var(--altea-coral);
+  background: #f15d4d1f;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-units__item,
+  .home-units__img,
+  .home-units__desc,
+  .home-units__desc-caja { transition: none; }
+}
 
 /* ============================= Emblema ============================ */
-/* Franja fotográfica: imagen a sangre, scrim oscuro encima y la frase en cream.
-   Mismo recurso que la frase de Nosotros. */
+/* Ink sólido, sin fotografía: es la declaración de marca y el manual describe
+   la identidad como plana y tipográfica. */
 .home-emblem {
-  position: relative;
-  isolation: isolate;
-  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
-     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
-     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
-     El recorte ya lo hacen los clip-path de dentro. */
-  clip-path: inset(0);
   background: var(--altea-ink);
-  min-height: clamp(340px, 52vh, 520px);
+  min-height: clamp(380px, 58vh, 580px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-7);
   padding: var(--space-9) var(--container-pad);
-  /* Cuánto oscurece el scrim. Bajarlo deja ver más foto y menos texto. */
-  --emblema-scrim: 0.7;
 }
-.home-emblem__fondo { position: fixed; inset: 0; z-index: -1; }
-.home-emblem__img { object-fit: cover; }
-/* Scrim de legibilidad: el único degradado/velo que admite la marca sobre
-   fotografía. */
-.home-emblem__fondo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgb(33 34 34 / var(--emblema-scrim));
+.home-emblem__isotipo {
+  height: clamp(38px, 4.4vw, 60px);
+  width: auto;
 }
 .home-emblem__text {
   margin: 0;
-  max-width: 20ch;
+  max-width: 17ch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.26em;
   text-align: center;
   text-transform: uppercase;
   font-family: var(--font-display);
-  font-size: var(--text-display-2);
+  font-size: var(--text-display-1);
   font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
+  line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
   color: var(--altea-cream);
 }
+.home-emblem__palabra--acento { color: var(--altea-coral); }
 
 /* =============================== CTA ============================== */
 .home-cta {
@@ -505,15 +625,23 @@
   .home-why,
   .home-units,
   .home-emblem { padding-block: var(--space-8); }
+  .home-emblem { min-height: clamp(300px, 52vh, 420px); gap: var(--space-6); }
   .home-cta { padding: var(--space-8) var(--container-pad); }
   .home-stats__grid { gap: var(--space-6); }
-  .home-units__grid { gap: var(--space-4); }
+  .home-units__encabezado { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  /* Sin cursor no hay expansión posible: se apilan y la descripción se queda. */
+  .home-units__grid { flex-direction: column; padding: 0 var(--container-pad); }
+  .home-units__item,
+  .home-units__grid:hover .home-units__item,
+  .home-units__item:hover { flex: none; }
+  .home-units__card { min-height: clamp(300px, 62vw, 420px); }
+  .home-units__desc-caja { grid-template-rows: 1fr; }
+  .home-units__desc { opacity: 1; }
 }
 
 @media (max-width: 560px) {
   /* Dos columnas de cifras en vez de una tira larga. */
   .home-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-units__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 /* ============ Fondo fijo — excepciones ============ */
@@ -526,6 +654,4 @@
   /* Sin fondo fijo no hace falta el clip-path; el radio lo recorta overflow. */
   .home-hero { clip-path: none; overflow: hidden; }
   .home-hero__media { position: absolute; }
-  .home-emblem { clip-path: none; }
-  .home-emblem__fondo { position: absolute; }
 }

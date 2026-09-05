@@ -6,38 +6,6 @@
  * de publicar.
  */
 
-export const HERO = {
-  // Las tres palabras del wireframe, una por línea.
-  words: ["Crear", "Desarrollar", "Activar"],
-  /** PENDIENTE: descripción sin confirmar por Altea. */
-  description:
-    "Diseñamos y ejecutamos proyectos comerciales, industriales, de vivienda y forestales sobre reserva territorial propia, con presencia en 21 estados de México.",
-  /**
-   * Carrusel del banner: una imagen por división, que es la idea del wireframe
-   * —"collage con nuestras tres divisiones"— resuelta como secuencia.
-   * PROVISIONAL hasta que exista el collage o la animación del triángulo.
-   */
-  slides: [
-    {
-      src: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
-      alt: "Desarrollo comercial de Altea",
-    },
-    {
-      src: "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
-      alt: "Parque industrial de Altea",
-    },
-    {
-      src: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
-      alt: "Desarrollo de vivienda de Altea",
-    },
-    {
-      src: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
-      alt: "Plantación forestal de Altea",
-    },
-  ],
-  bannerNote: "Collage de divisiones / animación del triángulo",
-};
-
 /**
  * PENDIENTE — el wireframe muestra las cifras sin etiqueta. Los números son los
  * del dibujo; las etiquetas son suposiciones y hay que confirmarlas.
@@ -88,10 +56,21 @@ export const WHY_ALTEA = {
 export interface BusinessUnitCard {
   name: string;
   slug: string;
+  /** Se revela al pasar el cursor sobre la tarjeta. */
+  descripcion: string;
   /** Sin imagen, la tarjeta muestra el hueco etiquetado. */
   image?: string;
   alt?: string;
 }
+
+/** Encabezado de la sección: título a la izquierda, entrada a la derecha. */
+export const BUSINESS_UNITS_INTRO = {
+  /** La segunda palabra va en coral. */
+  titulo: ["Unidades de", "Negocio"] as const,
+  /** PENDIENTE: texto sin confirmar por Altea. */
+  descripcion:
+    "Cuatro divisiones que operan sobre una misma reserva territorial. Cada una con su propia visión, y con el mismo equipo detrás de cada decisión.",
+};
 
 /** Fotografía de /images/home/unidades-de-negocio/, la carpeta que Altea armó
  *  específicamente para esta sección. */
@@ -99,12 +78,16 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
+    descripcion:
+      "Activar la energía de la ciudad en un solo lugar. Paseos, puntos y locales en operación, con hoteles, hospital y educación integrados al mismo entorno urbano.",
     image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
     alt: "Paseo La Fe, desarrollo comercial de Altea",
   },
   {
     name: "Industrial",
     slug: "industrial",
+    descripcion:
+      "Desarrollar infraestructura con visión de futuro. Parques y naves industriales pensados para décadas, con el Aeropuerto Internacional de Saltillo como pieza de conectividad.",
     image:
       "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
     alt: "Huinala Industrial Park, desarrollo industrial de Altea",
@@ -112,6 +95,8 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Vivienda",
     slug: "vivienda",
+    descripcion:
+      "Crear hogares donde comienza tu historia. Desarrollos residenciales sobre una amplia reserva territorial, con un compromiso firme de reforestación.",
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
     alt: "Desarrollo de vivienda de Altea",
   },
@@ -120,18 +105,24 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Forestal",
     slug: "forestal",
+    descripcion:
+      "Plantación y manejo forestal de largo plazo. Viveros, teca y servicios que sostienen el compromiso ambiental del grupo.",
     image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
     alt: "Plantación de teca, división forestal de Altea",
   },
 ];
 
-export const EMBLEM = "Creamos proyectos que materializan sueños";
-
 /**
- * Fondo del emblema, muy atenuado: da textura sin competir con la frase.
- * PROVISIONAL — foto de un centro comercial en operación.
+ * Frase de marca de Altea.
+ *
+ * Va por palabras porque cada una entra por separado al hacer scroll, y porque
+ * una de ellas lleva el acento coral.
  */
-export const EMBLEM_IMAGE = "/images/comercial/galeria/galeria-altea-3.webp";
+export const EMBLEM = {
+  palabras: ["Creamos", "proyectos", "que", "materializan", "sueños"],
+  /** Índice de la palabra en coral. */
+  acento: 4,
+};
 
 export const CONTACT_CTA = {
   eyebrow: "Trabajemos juntos",

@@ -61,3 +61,5 @@ export type { MarcasProps } from "./Marcas";
 
 export { Publicaciones } from "./Publicaciones";
 export type { PublicacionesProps } from "./Publicaciones";
+
+export { default as IntroAltea } from "./intro/IntroAltea";

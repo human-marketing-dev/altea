@@ -16,6 +16,15 @@ export interface NavBarProps {
   links?: NavLink[];
   /** `light` sits on cream (dark logo/text), `dark` on ink. @default "light" */
   tone?: "light" | "dark";
+  /**
+   * Marca la barra para que flote sin fondo sobre la intro del home y tome
+   * cuerpo cuando ésta cierra. Quién manda es IntroAltea, que pone y quita
+   * `data-intro-done` en el <body>; aquí sólo se marca a quién le toca
+   * reaccionar. Sin esto, la regla se aplicaría también a /nosotros o
+   * /contacto, donde no hay intro que ponga la bandera y la barra se quedaría
+   * transparente para siempre.
+   */
+  transicionIntro?: boolean;
   homeHref?: string;
   className?: string;
 }
@@ -40,6 +49,7 @@ export const DEFAULT_NAV_LINKS: NavLink[] = [
 export function NavBar({
   links = DEFAULT_NAV_LINKS,
   tone = "light",
+  transicionIntro = false,
   homeHref = "/",
   className,
 }: NavBarProps) {
@@ -73,6 +83,7 @@ export function NavBar({
   const classes = [
     "altea-navbar",
     isLight ? null : "altea-navbar--dark",
+    transicionIntro ? "altea-navbar--intro" : null,
     pegada ? "altea-navbar--pegada" : null,
     abierto ? "altea-navbar--abierto" : null,
     className,
@@ -82,9 +93,13 @@ export function NavBar({
 
   return (
     <nav className={classes}>
-      <Link href={homeHref} aria-label="Altea — inicio" className="altea-navbar__marca">
+      <Link
+        href={homeHref}
+        aria-label="Altea — inicio"
+        className={`altea-navbar__marca${transicionIntro ? " altea-navbar__marca--dual" : ""}`}
+      >
         <Image
-          className="altea-navbar__logo"
+          className={`altea-navbar__logo${transicionIntro ? " altea-navbar__logo--base" : ""}`}
           src={`/brand/logos/altea-logo-${isLight ? "dark" : "light"}.svg`}
           alt="Altea"
           width={1632}
@@ -92,6 +107,19 @@ export function NavBar({
           priority
           unoptimized
         />
+        {/* Sólo decorativo: el alt del de arriba ya nombra la marca. */}
+        {transicionIntro && (
+          <Image
+            className="altea-navbar__logo altea-navbar__logo--intro"
+            src="/brand/logos/altea-logo-light.svg"
+            alt=""
+            aria-hidden
+            width={1632}
+            height={324}
+            priority
+            unoptimized
+          />
+        )}
       </Link>
 
       <button

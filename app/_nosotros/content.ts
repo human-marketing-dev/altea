@@ -50,7 +50,13 @@ export const HUELLA = {
 };
 
 export const QUE_HACEMOS_INTRO = {
-  phrase: "Quiénes somos, nuestro propósito, y el modelo integral nos distingue",
+  /** Por palabras, para poder acentuar una en coral. */
+  palabras: [
+    "Quiénes", "somos,", "nuestro", "propósito,", "y", "el", "modelo",
+    "integral", "nos", "distingue",
+  ],
+  /** Índice de la palabra en coral. */
+  acento: 7,
   /* Horizontal, con mucho cielo: aguanta bien el velo oscuro y el texto
      centrado encima. No se usa en ninguna otra sección. */
   image: "/images/industrial/galeria/galeria-industrial-altea-2.webp",

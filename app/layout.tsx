@@ -45,6 +45,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es-MX"
       className={`${brandFont.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Está en el primer cuadro de la intro: se pide antes de que el
+            componente cliente llegue a montarse. */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/altea-hero-image-edificio-prueba.webp"
+          type="image/webp"
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <WhatsAppFab />

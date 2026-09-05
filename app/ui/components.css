@@ -251,6 +251,7 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   border-radius: var(--radius-lg);
   box-shadow: none;
   transition:
+    background-color var(--duration-base) var(--ease-standard),
     box-shadow var(--duration-base) var(--ease-standard),
     border-color var(--duration-base) var(--ease-standard);
   font-family: var(--font-body);
@@ -264,9 +265,54 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 .altea-navbar__marca { display: inline-flex; }
 .altea-navbar__logo { height: 22px; width: auto; }
 
+/*
+ * Modo intro (hoy sólo el home). Sobre la escena la barra flota sin fondo y con
+ * la tinta clara, porque el cielo arranca en un azul saturado donde el ink no
+ * se lee. Al cerrar la intro recupera su aspecto normal.
+ *
+ * Se escribe como :not([data-intro-done]) y no como un par de estados a propio
+ * derecho: así el estado final no se declara aquí: simplemente deja de haber
+ * override y queda la barra `light` de siempre, idéntica a la del resto del
+ * sitio. Si se hubiera escrito al revés habría que repetir sus valores, que es
+ * como se acaban desincronizando.
+ *
+ * El interruptor es data-intro-done en el <body>, que pone y quita IntroAltea
+ * desde su propio timeline: al ir atado al scrub, subir el scroll devuelve la
+ * barra a transparente sin lógica extra.
+ */
+body:not([data-intro-done]) .altea-navbar--intro {
+  background: transparent;
+  /* La heredan los enlaces y las barras del menú; hover y página actual siguen
+     ganando por especificidad, así que el coral se conserva. */
+  --nav-tinta: var(--altea-cream);
+}
+/* Ni borde ni sombra mientras la intro corre: sobre el cielo delatarían el
+   rectángulo transparente. */
+body:not([data-intro-done]) .altea-navbar--intro,
+body:not([data-intro-done]) .altea-navbar--intro.altea-navbar--pegada {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* El wordmark no se puede recolorear (es un SVG externo), así que van los dos
+   montados en el mismo hueco y se cruzan. */
+.altea-navbar__marca--dual { position: relative; }
+.altea-navbar__logo--intro {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  opacity: 0;
+}
+.altea-navbar__logo--base,
+.altea-navbar__logo--intro {
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+body:not([data-intro-done]) .altea-navbar--intro .altea-navbar__logo--intro { opacity: 1; }
+body:not([data-intro-done]) .altea-navbar--intro .altea-navbar__logo--base { opacity: 0; }
+
 .altea-navbar__links { display: flex; align-items: center; gap: var(--space-6); }
 .altea-navbar__link {
-  color: var(--altea-ink);
+  color: var(--nav-tinta, var(--altea-ink));
   text-decoration: none;
   font-size: var(--text-small);
   font-weight: 600;
@@ -313,7 +359,7 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   height: 2px;
   width: 24px;
   margin: 0 auto;
-  background: var(--altea-ink);
+  background: var(--nav-tinta, var(--altea-ink));
   transition: transform var(--duration-fast) var(--ease-standard),
               opacity var(--duration-fast) var(--ease-standard);
 }

@@ -21,6 +21,14 @@
   to { opacity: 1; transform: none; }
 }
 
+/* Cada palabra del emblema entra por su cuenta conforme avanza el scroll. No es
+   máquina de escribir: no hay temporizador ni espera — si bajas rápido, la frase
+   ya está completa. */
+@keyframes revelar-palabra {
+  from { opacity: 0; transform: translateY(0.3em); }
+  to { opacity: 1; transform: none; }
+}
+
 @keyframes entrar {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: none; }
@@ -36,7 +44,7 @@
     .home-why > *,
     .home-units__title,
     .home-units__grid > li,
-    .home-emblem__text,
+    .home-emblem__isotipo,
     .home-cta__media,
     .home-cta__body,
     .home-projects__title,
@@ -52,13 +60,13 @@
       animation: revelar var(--duration-revelar) var(--ease-standard) both;
       animation-timeline: view();
       /*
-        El rango `entry` mide solo lo que tarda el elemento en terminar de
-        entrar: para un bloque de 120px eso son 120px de scroll y la animación
-        pasaba en un parpadeo. `cover` mide desde que asoma hasta que se va, o
-        sea alto de ventana + alto del elemento, y con eso la aparición ocupa
-        varios cientos de píxeles de recorrido.
+        `cover` mide desde que el elemento asoma hasta que se va: alto de
+        ventana más alto del elemento. Empieza al 16%, cuando ya se ve, y
+        termina al 34%, bastante antes de que llegue al centro. Con un recorrido
+        más largo había que seguir desplazándose con el contenido a media
+        opacidad, que se leía como que faltaba por cargar.
       */
-      animation-range: cover 20% cover 50%;
+      animation-range: cover 16% cover 34%;
     }
 
     /* Escalonado leve donde hay varios elementos en fila. El stagger se hace
@@ -66,31 +74,43 @@
        delay se mide en progreso, no en milisegundos. */
     .home-stats__item:nth-child(2),
     .home-units__grid > li:nth-child(2),
-    .nos-rs__galeria > li:nth-child(2) { animation-range: cover 24% cover 54%; }
+    .nos-rs__galeria > li:nth-child(2) { animation-range: cover 19% cover 37%; }
 
     .home-stats__item:nth-child(3),
     .home-units__grid > li:nth-child(3),
-    .nos-rs__galeria > li:nth-child(3) { animation-range: cover 28% cover 58%; }
+    .nos-rs__galeria > li:nth-child(3) { animation-range: cover 22% cover 40%; }
 
     .home-stats__item:nth-child(4),
     .home-units__grid > li:nth-child(4),
-    .nos-rs__galeria > li:nth-child(4) { animation-range: cover 32% cover 62%; }
+    .nos-rs__galeria > li:nth-child(4) { animation-range: cover 25% cover 43%; }
 
-    .nos-rs__galeria > li:nth-child(5) { animation-range: cover 36% cover 66%; }
-    .nos-rs__galeria > li:nth-child(6) { animation-range: cover 40% cover 70%; }
+    .nos-rs__galeria > li:nth-child(5) { animation-range: cover 28% cover 46%; }
+    .nos-rs__galeria > li:nth-child(6) { animation-range: cover 31% cover 49%; }
+
+    /* Emblema: una palabra tras otra. */
+    .home-emblem__palabra {
+      animation: revelar-palabra var(--duration-revelar) var(--ease-standard) both;
+      animation-timeline: view();
+      animation-range: cover 20% cover 34%;
+    }
+    .home-emblem__palabra:nth-child(2) { animation-range: cover 24% cover 38%; }
+    .home-emblem__palabra:nth-child(3) { animation-range: cover 28% cover 42%; }
+    .home-emblem__palabra:nth-child(4) { animation-range: cover 32% cover 46%; }
+    .home-emblem__palabra:nth-child(5) { animation-range: cover 36% cover 50%; }
+    .home-emblem__palabra:nth-child(6) { animation-range: cover 40% cover 54%; }
 
     /* Secciones anguladas: en vez del contenedor se anima cada pieza del
        encabezado, para que el título entre antes que la descripción. */
     .nos-angulo__content .altea-section-heading > * {
       animation: revelar var(--duration-revelar) var(--ease-standard) both;
       animation-timeline: view();
-      animation-range: cover 20% cover 50%;
+      animation-range: cover 16% cover 34%;
     }
     .nos-angulo__content .altea-section-heading > *:nth-child(2) {
-      animation-range: cover 28% cover 58%;
+      animation-range: cover 22% cover 40%;
     }
     .nos-angulo__content .altea-section-heading > *:nth-child(3) {
-      animation-range: cover 34% cover 64%;
+      animation-range: cover 26% cover 44%;
     }
   }
 
@@ -117,7 +137,6 @@
   transition: transform var(--duration-base) var(--ease-standard);
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .home-units__card:hover .altea-media__img,
   .home-projects__button:hover .altea-media__img,
   .nos-rs__galeria > li:hover .altea-media__img {
     transform: scale(1.04);

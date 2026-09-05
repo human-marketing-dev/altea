@@ -1,20 +1,38 @@
 import Image from "next/image";
-import { EMBLEM, EMBLEM_IMAGE } from "./content";
+import { EMBLEM } from "./content";
 
-/** Emblema de Altea, a todo lo ancho, sobre una foto muy atenuada. */
+/**
+ * Emblema de Altea: la frase sola sobre ink, sin fotografía.
+ *
+ * El manual describe la identidad como "plana y tipográfica" y prohíbe poner el
+ * logo sobre imágenes. Sobre fondo sólido esa restricción no aplica, así que la
+ * frase puede anclarse con el isotipo.
+ */
 export function Emblem() {
   return (
     <section className="home-emblem">
-      <div className="home-emblem__fondo" aria-hidden="true">
-        <Image
-          src={EMBLEM_IMAGE}
-          alt=""
-          fill
-          sizes="100vw"
-          className="home-emblem__img"
-        />
-      </div>
-      <p className="home-emblem__text">{EMBLEM}</p>
+      <Image
+        className="home-emblem__isotipo"
+        src="/brand/logos/altea-icon-light.svg"
+        alt=""
+        width={494}
+        height={430}
+        unoptimized
+      />
+      <p className="home-emblem__text">
+        {EMBLEM.palabras.map((palabra, i) => (
+          <span
+            key={`${palabra}-${i}`}
+            className={
+              i === EMBLEM.acento
+                ? "home-emblem__palabra home-emblem__palabra--acento"
+                : "home-emblem__palabra"
+            }
+          >
+            {palabra}
+          </span>
+        ))}
+      </p>
     </section>
   );
 }

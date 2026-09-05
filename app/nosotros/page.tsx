@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, Marcas, NavBar, Publicaciones } from "@/app/ui";
+import { Footer, LeadCTA, Marcas, NavBar } from "@/app/ui";
 import { Banner } from "../_nosotros/Banner";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
@@ -31,7 +31,10 @@ export default function Nosotros() {
         {/* 7. Responsabilidad social */}
         <ResponsabilidadSocial />
         <Marcas />
-        <Publicaciones />
+        {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el
+            widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
+            y lib/publicaciones.ts — para volver a mostrarla basta con importarla
+            y poner <Publicaciones /> aquí. */}
         {/* 6. CTA — va al final para que cierre la página, como en el resto
             del sitio. */}
         <LeadCTA />

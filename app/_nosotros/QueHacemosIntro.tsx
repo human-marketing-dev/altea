@@ -14,7 +14,18 @@ export function QueHacemosIntro() {
           sizes="100vw"
         />
       </div>
-      <p className="nos-intro__phrase">{QUE_HACEMOS_INTRO.phrase}</p>
+      <p className="nos-intro__phrase">
+        {QUE_HACEMOS_INTRO.palabras.map((palabra, i) => (
+          <span
+            key={`${palabra}-${i}`}
+            className={
+              i === QUE_HACEMOS_INTRO.acento ? "nos-intro__acento" : undefined
+            }
+          >
+            {palabra}
+          </span>
+        ))}
+      </p>
     </section>
   );
 }

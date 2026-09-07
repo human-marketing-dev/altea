@@ -1,8 +1,8 @@
 /* ────────────────────────────────────────────────────────────────
    LA ESTRUCTURA ES LO CRITICO.
-   .wrap  = alto del recorrido (470vh). NO lleva sticky.
+   .wrap  = alto del recorrido (470svh). NO lleva sticky.
    .stage = una pantalla, sticky dentro del wrap. Aqui vive todo.
-   Si le pones sticky al mismo elemento que mide 470vh, no pasa nada
+   Si le pones sticky al mismo elemento que mide 470svh, no pasa nada
    y el hero queda estatico.
    ──────────────────────────────────────────────────────────────── */
 
@@ -13,9 +13,14 @@
      z-index 0 toda la intro queda acotada por debajo del 50 de .altea-navbar,
      pase lo que pase dentro de la escena. */
   z-index: 0;
-  height: 470vh;
+  height: 470svh;
   /*
    * EL HUECO DEL FINAL SE CIERRA AQUÍ, NO EN EL ALTO NI EN EL TIMELINE.
+   *
+   * Todo en svh, nunca vh: en móvil `vh` es el viewport GRANDE (barra de
+   * direcciones retraída) y `svh` el chico. Mezclarlos dejaba el .stage 99px
+   * más corto que la pantalla cuando la barra se retraía, y otros 99px de
+   * scroll muerto que el margen no compensaba.
    *
    * El .stage mide una pantalla y es sticky, así que se despega cuando el borde
    * inferior del .wrap llega al inferior del viewport: en scroll = alto − 100vh.
@@ -314,7 +319,7 @@
 }
 
 @media (max-width: 768px) {
-  .wrap { height: 400vh; }
+  .wrap { height: 400svh; }
   .skip { right: var(--space-4); bottom: var(--space-4); }
 }
 

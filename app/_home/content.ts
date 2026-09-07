@@ -31,14 +31,19 @@ export const STATS_INTRO =
   "Una reserva territorial construida durante dos décadas, que hoy sostiene proyectos comerciales, industriales, de vivienda y forestales en todo el norte del país.";
 
 export const VIDEO = {
+  /** Clip mudo de 20s en 1080p, en bucle. */
+  url: "/video/altea-institucional.mp4" as string | undefined,
   /**
-   * PROVISIONAL: video de prueba. El archivo venía con espacios y paréntesis en
-   * el nombre, que rompen la URL; se renombró y se movió a /public/video/.
-   * Reemplazar por el institucional definitivo.
+   * Lo que se ve mientras carga y, en iOS con ahorro de batería, lo único que
+   * se ve si el autoplay no arranca.
    */
-  url: "/video/institucional-prueba.mp4" as string | undefined,
-  poster: undefined as string | undefined,
+  poster: "/video/poster.webp" as string | undefined,
   caption: "Video corporativo",
+  /*
+   * PENDIENTE: el video completo con audio va a Vimeo. Cuando esté, aquí va su
+   * URL y el componente ya tiene el hueco donde cuelga el enlace de "ver
+   * completo" — ver .home-video__acciones en CorporateVideo.tsx.
+   */
 };
 
 /** Sección que responde: ¿por qué confiar y hacer alianzas con nosotros? */
@@ -61,6 +66,8 @@ export interface BusinessUnitCard {
   /** Sin imagen, la tarjeta muestra el hueco etiquetado. */
   image?: string;
   alt?: string;
+  /** Isotipo de la unidad. Forestal todavía no tiene — ver app/ui/README.md. */
+  icono?: string;
 }
 
 /** Encabezado de la sección: título a la izquierda, entrada a la derecha. */
@@ -78,6 +85,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
+    icono: "/brand/logos/altea-comercial-icono.webp",
     descripcion:
       "Activar la energía de la ciudad en un solo lugar. Paseos, puntos y locales en operación, con hoteles, hospital y educación integrados al mismo entorno urbano.",
     image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
@@ -86,6 +94,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Industrial",
     slug: "industrial",
+    icono: "/brand/logos/altea-industrial-icono.webp",
     descripcion:
       "Desarrollar infraestructura con visión de futuro. Parques y naves industriales pensados para décadas, con el Aeropuerto Internacional de Saltillo como pieza de conectividad.",
     image:
@@ -95,6 +104,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Vivienda",
     slug: "vivienda",
+    icono: "/brand/logos/altea-vivienda-icono.webp",
     descripcion:
       "Crear hogares donde comienza tu historia. Desarrollos residenciales sobre una amplia reserva territorial, con un compromiso firme de reforestación.",
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
@@ -134,9 +144,14 @@ export const CONTACT_CTA = {
   image: "/images/comercial/galeria/galeria-altea-4.webp",
 };
 
+/** Dos líneas; la segunda va en un tono más apagado. */
+export const FEATURED_PROJECTS_INTRO = {
+  titulo: ["Nuestros proyectos", "más relevantes"] as const,
+};
+
 /**
- * Proyectos del wireframe. `image` queda vacío hasta tener los renders; cada
- * ficha abre con la información general al dar click.
+ * Proyectos del wireframe, en seis paneles repartidos en dos bandas de tres:
+ * los tres primeros acompañan al título en la banda de arriba.
  */
 export interface FeaturedProject {
   slug: string;
@@ -145,11 +160,18 @@ export interface FeaturedProject {
   location: string;
   /** Sin imagen, el panel muestra el hueco etiquetado. */
   image?: string;
+  /**
+   * PENDIENTE: no hay páginas por proyecto todavía, así que cada panel apunta a
+   * la página de su unidad de negocio. Cuando existan, se cambia aquí y el
+   * componente no se entera.
+   */
+  href: string;
 }
 
 export const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     slug: "paseo-la-fe",
+    href: "/comercial",
     name: "Paseo La Fe",
     unit: "Comercial",
     location: "San Nicolás, Nuevo León",
@@ -157,6 +179,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     slug: "paseo-durango",
+    href: "/comercial",
     name: "Paseo Durango",
     unit: "Comercial",
     location: "Durango, Durango",
@@ -164,6 +187,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     slug: "aeropuerto-saltillo",
+    href: "/industrial",
     name: "Aeropuerto Saltillo",
     unit: "Industrial",
     // PENDIENTE: ubicación sin confirmar.
@@ -172,6 +196,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     slug: "bajio-industrial-park",
+    href: "/industrial",
     name: "Bajío Industrial Park",
     unit: "Industrial",
     // PENDIENTE: ubicación sin confirmar.
@@ -181,6 +206,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     slug: "aeropuerto-industrial-center",
+    href: "/industrial",
     name: "Aeropuerto Industrial Center",
     unit: "Industrial",
     // PENDIENTE: ubicación sin confirmar.
@@ -191,6 +217,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     slug: "amarantha",
+    href: "/vivienda",
     name: "Amarantha",
     unit: "Vivienda",
     // PENDIENTE: ubicación sin confirmar.

@@ -65,8 +65,13 @@ export function CountUp({
   }, [to, duration]);
 
   return (
+    /*
+     * El prefijo va en su propio <span> para poder pintarlo aparte. Es un span
+     * en línea dentro del mismo texto, así que el nombre accesible sigue siendo
+     * la cifra completa —"+44M"— y no se lee entrecortada.
+     */
     <span ref={ref} className={className}>
-      {prefix}
+      {prefix && <span className="altea-count__prefijo">{prefix}</span>}
       {value.toLocaleString("es-MX")}
       {suffix}
     </span>

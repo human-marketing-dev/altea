@@ -85,14 +85,28 @@
 /* ============================== Stats ============================= */
 .home-stats {
   background: var(--surface-page);
-  padding: var(--space-9) var(--container-pad);
+  /*
+   * Más aire arriba que abajo, a propósito: es la sección que recibe el
+   * traspaso del barrido de la intro y llegaba pegada. El inferior se queda en
+   * --space-9 para no descompensar la sección.
+   *
+   * Va como propiedad local y no como token: es una medida de composición de
+   * ESTA sección, no un escalón que el resto del sistema deba poder pedir. El
+   * clamp además la ata al alto del viewport, que es lo que manda aquí — lo
+   * que hay que compensar es una pantalla de transición, no una caja fija.
+   */
+  --aire-traspaso: clamp(var(--space-9), 40vh, 560px);
+  padding: var(--aire-traspaso) var(--container-pad) var(--space-9);
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
 }
 .home-stats__intro {
-  margin: 0;
-  max-width: 720px;
+  /* Bloque centrado en su contenedor y texto centrado; el tope en ch es lo que
+     impide que las líneas se hagan demasiado largas para leerse de un tirón. */
+  margin: 0 auto;
+  text-align: center;
+  max-width: 62ch;
   font-size: var(--text-body-lg);
   line-height: var(--leading-body);
   color: var(--text-secondary);
@@ -121,6 +135,8 @@
   font-variant-numeric: tabular-nums;
 }
 .home-stats__note { font-size: .5em; }
+/* El signo, en el acento de la marca; la cifra se queda en ink. */
+.home-stats__value .altea-count__prefijo { color: var(--altea-coral); }
 .home-stats__label {
   font-size: var(--text-small);
   font-weight: 600;
@@ -143,12 +159,12 @@
 .home-video__player {
   display: block;
   width: 100%;
-  height: clamp(280px, 36vw, 560px);
+  height: clamp(320px, 46vw, 720px);
+  /* Tope por alto de ventana: en móvil el suelo del clamp (320px) manda y no
+     estorba, pero en una ventana corta o apaisada impide que el clip pida más
+     pantalla de la que hay y haya que desplazarse para verlo entero. */
+  max-height: 76svh;
   object-fit: cover;
-  /* El radio va en el <video>, no en un contenedor con overflow: hidden.
-     Ese overflow convertiría al marco en contenedor de scroll y rompería su
-     propia animación de entrada, como ya pasó en las secciones anguladas. */
-  border-radius: var(--radius-lg);
 }
 .home-video__play {
   position: absolute;
@@ -302,10 +318,33 @@
   flex: 1;
   gap: var(--space-4);
 }
+/*
+  Isotipo de la unidad, al costado del nombre.
+  El alto se ata a --text-h3 y queda por debajo de la caja de línea del título,
+  así que la fila mide lo mismo en las cuatro tarjetas y los nombres siguen
+  alineados a lo ancho aunque Forestal no tenga icono.
+*/
+.home-units__titulo-fila {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.home-units__icono {
+  flex: none;
+  /* Exactamente el tamaño de las letras del título. */
+  height: var(--text-h3);
+  width: auto;
+  display: block;
+}
+
 .home-units__nombre {
   font-family: var(--font-display);
   font-size: var(--text-h3);
   font-weight: 600;
+  /* Va en mayúsculas: con line-height normal la caja de línea reserva hueco
+     para descendentes que aquí no existen, y el icono, centrado contra esa
+     caja, queda ópticamente bajo. Ceñida al texto, el centrado cuadra. */
+  line-height: 1.1;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
@@ -411,162 +450,334 @@
   gap: var(--space-8);
   padding: var(--space-8) var(--container-pad);
 }
-.home-cta__media .altea-media { border-radius: var(--radius-md); }
 .home-cta__body { display: flex; flex-direction: column; gap: var(--space-6); align-items: flex-start; }
 
 /* ============================ Proyectos =========================== */
-.home-projects {
-  background: var(--surface-card-dark);
-  /* sin padding vertical: la franja de paneles va a sangre arriba y abajo */
-  padding: 0 0 0 var(--container-pad);
-  display: grid;
-  grid-template-columns: minmax(200px, 1fr) minmax(0, 3fr);
-  gap: var(--space-6);
-  align-items: center;
+/*
+  Seis paneles en paralelogramo, en dos bandas de tres. El título ocupa una
+  celda más de la primera banda: mismo alto y misma familia de formas.
+
+  El corte va con clip-path y no con skewX. Con skew habría que contra-inclinar
+  la foto y el texto para que no salieran torcidos, y dejar sobrante lateral
+  para que la diagonal no descubriera esquinas; con clip-path el corte es sólo
+  recorte y todo lo de adentro se queda recto.
+
+  El desplazamiento de la diagonal depende del alto real de la celda, así que
+  el polígono, el margen negativo y las medidas de la chapa los calcula el
+  componente al montar y en resize. Aquí sólo vive lo que no depende del alto.
+*/
+.home-proyectos {
+  /*
+   * LA COSTURA. Un solo valor para todo el enrejado: el hueco entre celdas, el
+   * de entre bandas y el aire de arriba y abajo. El JS que calcula el margen
+   * negativo de las diagonales lo LEE DE AQUÍ con getComputedStyle, así que no
+   * hay un 5 escrito por duplicado que se pueda desincronizar.
+   */
+  --costura: 5px;
+
+  /* Que se asome por las rendijas entre diagonales: sin esto la separación
+     entre paneles no se lee. */
+  background: var(--surface-page);
+  /* Lateral en 0 a propósito: las bandas van a sangre por los costados. */
+  padding: var(--costura) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--costura);
 }
-.home-projects__title {
+
+.home-proyectos__banda {
+  display: flex;
+  background: var(--surface-page);
+}
+
+.home-proyectos__celda {
+  position: relative;
+  flex: 1 1 0;
+  height: clamp(320px, 46vh, 520px);
+  min-width: 0;
+  overflow: hidden;
+  /* Lentos a propósito: el panel apuntado crece un 14% y los hermanos ceden. */
+  transition: flex-grow 800ms ease-in-out;
+}
+/* El crecimiento se limita a los paneles navegables: la celda del título cede
+   como cualquier hermana, pero no crece — no hay nada que apuntar en ella. */
+.home-proyectos__celda--enlace:hover { flex-grow: 1.32; }
+.home-proyectos__banda:has(.home-proyectos__celda--enlace:hover) .home-proyectos__celda:not(:hover) {
+  flex-grow: 0.86;
+}
+
+/* --- El título, como una celda más --- */
+.home-proyectos__titulo {
+  background: var(--altea-ink);
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-6);
+}
+.home-proyectos__titulo h2 {
   margin: 0;
-  padding: var(--space-8) 0;
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
-  color: var(--text-on-dark-secondary);
+  letter-spacing: var(--tracking-tight);
+  color: var(--altea-cream);
 }
-.home-projects__track {
-  margin: 0; padding: 0; list-style: none;
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  min-height: clamp(300px, 40vh, 440px);
-  overflow-x: auto;
-  scrollbar-width: none;
-  /* Corrimiento horizontal del paralelogramo: cuánto se desplaza el borde
-     superior respecto al inferior. */
-  --slant: clamp(14px, 2.6vw, 32px);
-}
-.home-projects__track::-webkit-scrollbar { display: none; }
-/* El recorte vive en el <li>, no en la imagen: así el paralelogramo también
-   define el área clickeable. El margen negativo de un --slant hace que el borde
-   derecho de un panel caiga exactamente sobre el izquierdo del siguiente, y
-   teselan sin separación. */
-.home-projects__item {
-  flex: 1 0 clamp(120px, 16vw, 190px);
-  margin-left: calc(var(--slant) * -1);
-  clip-path: polygon(
-    var(--slant) 0,
-    100% 0,
-    calc(100% - var(--slant)) 100%,
-    0 100%
-  );
-}
-.home-projects__item:first-child { margin-left: 0; }
-/* El último cierra con borde vertical: la franja termina en el borde de la
-   página y una diagonal ahí se lee como un recorte a medias. */
-.home-projects__item:last-child {
-  clip-path: polygon(var(--slant) 0, 100% 0, 100% 100%, 0 100%);
-}
-.home-projects__button {
+.home-proyectos__titulo-2 {
   display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
+  color: var(--altea-cream-60);
 }
-/* Un outline quedaría recortado por el paralelogramo, así que el foco se
-   marca tiñendo el panel completo. */
-.home-projects__button:focus-visible { outline: none; }
-.home-projects__button:focus-visible .home-projects__media-wrap {
-  box-shadow: inset 0 0 0 100vmax #f15d4d59;
-}
-.home-projects__button:focus-visible .home-projects__name { color: var(--altea-coral); }
 
-.home-projects__media-wrap {
-  display: block;
+/* --- El panel --- */
+.home-proyectos__panel {
   position: absolute;
   inset: 0;
-  transition: filter var(--duration-base) var(--ease-standard),
-              box-shadow var(--duration-fast) var(--ease-standard);
-}
-.home-projects__button:hover .home-projects__media-wrap { filter: brightness(1.12); }
-.home-projects__media-wrap .home-projects__media { position: absolute; inset: 0; }
-
-/* El nombre va superpuesto abajo. Vive FUERA del clip-path para que la
-   diagonal no lo muerda, y se recorre a la izquierda porque el borde inferior
-   del paralelogramo termina antes que el superior. */
-.home-projects__name {
-  position: absolute;
-  left: 0; right: 0; bottom: 0;
-  /* Scrim de legibilidad: sobre renders claros el nombre se perdía. */
-  background: linear-gradient(180deg, #21222200, #212222e6);
-  padding: var(--space-7) var(--space-3) var(--space-4);
-  padding-right: calc(var(--space-3) + var(--slant));
-  font-size: var(--text-small);
-  font-weight: 600;
-  text-align: center;
-  color: var(--altea-cream);
-  transition: color var(--duration-fast) var(--ease-standard);
-  pointer-events: none;
-}
-.home-projects__button:hover .home-projects__name { color: var(--altea-coral); }
-
-/* Ficha del proyecto */
-.home-projects__dialog {
-  margin: auto;
+  display: block;
+  /*
+    Es un <button>, así que hay que desandar lo que le pone el navegador:
+    tipografía propia, borde en relieve, padding, texto centrado y la
+    apariencia nativa. El preflight de Tailwind ya neutraliza casi todo, pero
+    esta sección se lee sola y no debería depender de ello.
+  */
+  appearance: none;
+  border: 0;
+  margin: 0;
   padding: 0;
-  border: none;
-  max-width: min(640px, 92vw);
-  width: 100%;
-  background: var(--surface-card);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card-hover);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  /*
+    Sólo se ve en foco. El clip-path del panel recortaría cualquier outline
+    rectangular justo en las diagonales, así que el anillo se hace al revés:
+    este fondo coral queda debajo y en foco el lienzo se encoge siguiendo la
+    MISMA forma, dejando ver 3px de coral por todo el contorno.
+  */
+  background: var(--altea-coral);
+}
+.home-proyectos__panel:focus-visible { outline: none; }
+.home-proyectos__lienzo {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
-.home-projects__dialog::backdrop { background: #212222cc; }
-.home-projects__ficha { position: relative; }
-.home-projects__close {
+.home-proyectos__panel:focus-visible .home-proyectos__lienzo {
+  clip-path: var(--recorte-foco, inset(3px));
+}
+
+/* --- La foto --- */
+/*
+  Capa aparte y con sobrante lateral: sin ese -8% a cada lado, al escalar en
+  hover se descubrirían los bordes del recorte.
+*/
+.home-proyectos__foto {
   position: absolute;
-  top: var(--space-3); right: var(--space-3);
-  z-index: 1;
-  width: 36px; height: 36px;
-  display: grid; place-items: center;
-  border: none;
-  border-radius: var(--radius-pill);
-  background: var(--altea-cream);
-  color: var(--altea-ink);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
+  inset: 0 -8%;
+  transform: scale(1.02);
+  transition: transform 900ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.home-projects__close:hover { background: var(--altea-coral); color: #fff; }
-.home-projects__ficha-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-2); }
-.home-projects__ficha-unit {
-  font-size: var(--text-eyebrow);
+.home-proyectos__celda:hover .home-proyectos__foto { transform: scale(1.09); }
+.home-proyectos__foto img { object-fit: cover; }
+
+/* Para que el nombre se lea sobre cualquier foto. */
+.home-proyectos__degradado {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #212222d9 0%, #21222259 42%, #21222200 78%);
+}
+
+/* --- La chapa del nombre --- */
+/*
+  Repite la diagonal del panel, pero calculada sobre SU propio alto: con el dx
+  del panel saldría deformada. --chipx la deja a ras del borde izquierdo.
+*/
+.home-proyectos__chapa {
+  position: absolute;
+  left: var(--chipx, 0px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 11px calc(18px + var(--chip, 0px)) 12px;
+  background: #171818e0;
+  backdrop-filter: blur(3px);
+  clip-path: polygon(var(--chip, 0px) 0, 100% 0, calc(100% - var(--chip, 0px)) 100%, 0 100%);
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-proyectos__nombre {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
   font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-accent);
+  line-height: 1.1;
+  color: var(--altea-cream);
 }
-.home-projects__ficha-title {
+.home-proyectos__giro {
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--altea-coral);
+}
+
+/* Proyectos cambia a 820px y no a 900 como el resto: el límite aquí lo pone el
+   ancho al que la diagonal deja de leerse, no el del resto de las secciones. */
+@media (max-width: 820px) {
+  /*
+    Sin clip-path: los cortes diagonales apilados en vertical se ven mal y
+    complican el tap. El componente limpia los estilos en línea que calculó,
+    porque un valor en línea le gana a cualquier regla de aquí.
+  */
+  .home-proyectos { padding: var(--costura) 0; }
+  .home-proyectos__banda { flex-direction: column; gap: var(--costura); }
+  .home-proyectos__celda { height: 210px; }
+  .home-proyectos__celda--enlace:hover,
+  .home-proyectos__banda:has(.home-proyectos__celda--enlace:hover) .home-proyectos__celda:not(:hover) {
+    flex-grow: 1;
+  }
+  .home-proyectos__titulo { height: auto; padding: var(--space-6) var(--container-pad); }
+  .home-proyectos__chapa { left: 0; }
+}
+
+/* --- La ficha --- */
+/*
+  <dialog> nativo con showModal(): el foco atrapado, el cierre con Escape y el
+  backdrop salen de serie. A escuadra, como el resto.
+*/
+.home-proyectos__dialogo {
+  /*
+   * `margin: auto` es lo que centra un <dialog> en la top layer, y es
+   * exactamente lo que el reset le estaba quitando: el preflight de Tailwind
+   * pone `margin: 0` en `*` y eso le gana al `margin: auto` del navegador
+   * (hoja de autor contra hoja de agente de usuario). Devolverlo aquí basta:
+   * una clase le gana al selector universal.
+   */
+  margin: auto;
+  padding: 0;
+  border: 0;
+  max-width: min(920px, 92vw);
+  max-height: min(86svh, 900px);
+  width: 100%;
+  /* Con el tope de alto, una ficha larga tiene que poder desplazarse. */
+  overflow: auto;
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card-hover);
+
+  /*
+   * Entrada y salida sin JavaScript. Las cuatro piezas se necesitan juntas:
+   *
+   * - @starting-style define desde dónde entra; sin él no hay estado inicial y
+   *   el diálogo simplemente aparece.
+   * - `display` con allow-discrete lo mantiene visible durante la salida en vez
+   *   de ocultarlo en el primer cuadro.
+   * - `overlay` con allow-discrete hace lo mismo con la top layer: sin él el
+   *   diálogo la abandona de golpe y el backdrop se va antes que el contenido.
+   * - El ::backdrop necesita sus propias reglas; no hereda las de aquí.
+   */
+  opacity: 0;
+  transform: translateY(12px) scale(0.98);
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1),
+    overlay 0.28s allow-discrete,
+    display 0.28s allow-discrete;
+}
+.home-proyectos__dialogo[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@starting-style {
+  .home-proyectos__dialogo[open] {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+/* Los canales van literales y no como var(--altea-ink): ::backdrop vive en la
+   top layer y de qué elemento hereda las custom properties cambió entre
+   versiones de navegador. Son los de --altea-ink (#212222). */
+.home-proyectos__dialogo::backdrop {
+  background: rgb(33 34 34 / 0);
+  transition:
+    background 0.28s ease,
+    overlay 0.28s allow-discrete,
+    display 0.28s allow-discrete;
+}
+.home-proyectos__dialogo[open]::backdrop { background: rgb(33 34 34 / 0.62); }
+@starting-style {
+  .home-proyectos__dialogo[open]::backdrop { background: rgb(33 34 34 / 0); }
+}
+
+/* Sin desplazamiento ni escala: sólo un fundido corto. */
+@media (prefers-reduced-motion: reduce) {
+  .home-proyectos__dialogo,
+  .home-proyectos__dialogo[open] {
+    transform: none;
+  }
+  .home-proyectos__dialogo {
+    transition:
+      opacity 0.12s ease,
+      overlay 0.12s allow-discrete,
+      display 0.12s allow-discrete;
+  }
+  @starting-style {
+    .home-proyectos__dialogo[open] { transform: none; }
+  }
+  .home-proyectos__dialogo::backdrop {
+    transition:
+      background 0.12s ease,
+      overlay 0.12s allow-discrete,
+      display 0.12s allow-discrete;
+  }
+}
+
+.home-proyectos__ficha { position: relative; }
+.home-proyectos__ficha-foto {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.home-proyectos__ficha-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+}
+.home-proyectos__ficha-nombre {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
-  color: var(--altea-ink);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
 }
-.home-projects__ficha-location { margin: 0; font-size: var(--text-body); color: var(--text-secondary); }
-.home-projects__ficha-note {
-  margin: var(--space-3) 0 0;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-subtle);
-  font-size: var(--text-small);
+.home-proyectos__ficha-lugar {
+  margin: 0;
+  font-size: var(--text-body);
   color: var(--text-secondary);
 }
+.home-proyectos__cerrar {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: #212222b3;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.home-proyectos__cerrar:hover { background: var(--altea-coral); }
+.home-proyectos__cerrar:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
 
 /* ============================= Responsive ========================= */
 
@@ -574,47 +785,12 @@
 @media (max-width: 1100px) {
   /* El CTA daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
   .home-cta { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .home-projects { grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr); }
 }
 
 /* --- Móvil --- */
 @media (max-width: 900px) {
   .home-why,
-  .home-cta,
-  .home-projects { grid-template-columns: minmax(0, 1fr); }
-  /*
-    En móvil la franja deja de ser franja: sin paralelogramo, sin desplazamiento
-    horizontal y sin encimado. Seis tarjetas apiladas, cada una con su foto.
-    El corte diagonal en 350px de ancho se comía media imagen y obligaba a
-    descubrir que la tira se arrastraba de lado.
-  */
-  .home-projects {
-    padding: var(--space-7) var(--container-pad);
-    gap: var(--space-5);
-  }
-  .home-projects__track {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-4);
-    min-height: 0;
-    overflow: visible;
-  }
-  .home-projects__item {
-    flex: none;
-    margin-left: 0;
-    clip-path: none;
-  }
-  .home-projects__button { height: auto; }
-  .home-projects__media-wrap {
-    position: relative;
-    inset: auto;
-    aspect-ratio: 3 / 2;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-  .home-projects__name {
-    padding: var(--space-7) var(--space-4) var(--space-4);
-  }
+  .home-cta { grid-template-columns: minmax(0, 1fr); }
   .home-video__frame { margin: var(--space-3); }
   .home-hero {
     margin: var(--space-3);
@@ -625,6 +801,15 @@
   .home-why,
   .home-units,
   .home-emblem { padding-block: var(--space-8); }
+  /* Después de la compartida a propósito: aquélla pisa `padding-block` y
+     dejaría el superior en --space-8. Las otras tres no tienen una transición
+     encima que compensar; .home-stats sí. Banda más chica que en escritorio:
+     sobre una pantalla alta y angosta el mismo coeficiente se vuelve un
+     vacío. */
+  .home-stats {
+    --aire-traspaso: clamp(var(--space-8), 28vh, 320px);
+    padding-top: var(--aire-traspaso);
+  }
   .home-emblem { min-height: clamp(300px, 52vh, 420px); gap: var(--space-6); }
   .home-cta { padding: var(--space-8) var(--container-pad); }
   .home-stats__grid { gap: var(--space-6); }

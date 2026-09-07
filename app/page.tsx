@@ -23,8 +23,8 @@ export default function Home() {
         <WhyAltea />
         <BusinessUnits />
         <Emblem />
-        <ContactCTA />
         <FeaturedProjects />
+        <ContactCTA />
         <Marcas />
         {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el
             widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx

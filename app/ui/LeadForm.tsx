@@ -34,7 +34,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
   if (estado.estado === "enviado") {
     return (
       <div
-        className={`flex flex-col gap-3 rounded-lg bg-surface-card p-8 shadow-card ${className ?? ""}`}
+        className={`flex flex-col gap-3 bg-surface-card p-8 shadow-card ${className ?? ""}`}
         role="status"
       >
         <p className="m-0 font-display text-h3 font-semibold text-ink">
@@ -51,7 +51,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
     <form
       action={accion}
       noValidate
-      className={`flex flex-col gap-4 rounded-lg bg-surface-card p-6 shadow-card sm:p-8 ${className ?? ""}`}
+      className={`flex flex-col gap-4 bg-surface-card p-6 shadow-card sm:p-8 ${className ?? ""}`}
     >
       {/* Nombre y correo comparten renglón: el formulario es ancho y en una sola
           columna los campos quedaban desproporcionados. */}

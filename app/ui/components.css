@@ -248,7 +248,6 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     contenido — solo cambia de color.
   */
   border: 1px solid transparent;
-  border-radius: var(--radius-lg);
   box-shadow: none;
   transition:
     background-color var(--duration-base) var(--ease-standard),
@@ -406,9 +405,18 @@ body:not([data-intro-done]) .altea-navbar--intro {
 
 /* ============================= Footer ============================= */
 .altea-footer {
+  /*
+   * El aire va como propiedad local y en clamp, igual que --aire-traspaso: es
+   * una medida de composición de esta pieza, no un escalón que el sistema deba
+   * poder pedir, y atarla al alto de la ventana es lo que le da presencia sin
+   * ahogar una pantalla corta. El inferior sale siempre de la mitad del
+   * superior, que es la proporción que ya tenía (64/32).
+   */
+  --aire-footer: clamp(80px, 12vh, 160px);
+
   background: var(--altea-ink);
   color: var(--text-on-dark-secondary);
-  padding: 64px var(--container-pad) 32px;
+  padding: var(--aire-footer) var(--container-pad) calc(var(--aire-footer) / 2);
   font-family: var(--font-body);
   display: flex;
   flex-direction: column;
@@ -441,7 +449,7 @@ body:not([data-intro-done]) .altea-navbar--intro {
 }
 @media (max-width: 900px) {
   .altea-footer__top { grid-template-columns: minmax(0, 1fr); }
-  .altea-footer { padding: var(--space-8) var(--container-pad) var(--space-6); }
+  .altea-footer { --aire-footer: clamp(var(--space-8), 9vh, 112px); }
 }
 @media (max-width: 560px) {
   .altea-footer__columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }

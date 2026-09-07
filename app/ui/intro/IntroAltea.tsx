@@ -10,6 +10,13 @@ import styles from './IntroAltea.module.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+/*
+ * La barra de direcciones de móvil, al retraerse, dispara un `resize` y con él
+ * un refresh de ScrollTrigger: el mapeo scroll→timeline se recalcula a media
+ * animación y se ve como un salto. Esta opción existe justamente para eso.
+ */
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 const PHOTO = '/hero/edificio-altea-home.webp';
 
 /** La secuencia se recorre una vez por visita. */
@@ -32,6 +39,42 @@ const T = {
 /* Recorrido del edificio. svgOrigin y no transformOrigin: dentro de un SVG el
    origen va en coordenadas del viewBox. */
 const ORIGEN_CIUDAD = '600 720';
+
+/*
+ * ENCAJE DEL LOGOTIPO — un solo valor para los tres sitios donde aparece.
+ *
+ * Las dos capas SVG comparten viewBox y `slice`, y eso no se toca: es lo único
+ * que garantiza que la foto caiga dentro de las letras. El precio es que en
+ * vertical `slice` recorta por los lados, y el logotipo —900 de 1200 unidades—
+ * se sale de cuadro: en 390x844 sólo entra el 41%.
+ *
+ * La salida es reescalarlo según la relación del viewport. Lo crítico es que la
+ * silueta de la máscara y el logotipo visible salgan del MISMO cálculo: si se
+ * computaran por separado, en algún punto divergirían y la foto se saldría de
+ * las letras. Por eso hay una función y una clase, no tres transforms.
+ */
+const LOGO_ANCHO = 1536.62;          // ancho del logotipo en su espacio local
+const LOGO_CENTRO = { x: 768.31, y: 224.05 };  // centro del conjunto, local
+const ESCENA_CENTRO = { x: 600.26, y: 399.73 }; // dónde cae hoy ese centro
+const ESCALA_BASE = 0.586;           // la del diseño; nunca se agranda por encima
+const MARGEN = 0.88;                 // 6% de aire a cada lado de la ventana visible
+
+/**
+ * Devuelve el `transform` del logotipo para una caja de escena dada.
+ *
+ * Con `slice`, la ventana visible en x mide 1200 × min(1, ratio / 1.5). El
+ * logotipo tiene que caber ahí; si no cabe, se encoge y se recentra.
+ *
+ * A la escala base reproduce exactamente `translate(150.03 268.44) scale(0.586)`,
+ * así que en escritorio no cambia un pixel.
+ */
+function encajeLogo(ratio: number) {
+  const ventana = 1200 * Math.min(1, ratio / 1.5);
+  const escala = Math.min(ESCALA_BASE, (ventana * MARGEN) / LOGO_ANCHO);
+  const x = ESCENA_CENTRO.x - escala * LOGO_CENTRO.x;
+  const y = ESCENA_CENTRO.y - escala * LOGO_CENTRO.y;
+  return { escala, transform: `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${escala.toFixed(4)})` };
+}
 
 export default function IntroAltea() {
   const root = useRef<HTMLDivElement>(null);
@@ -84,6 +127,28 @@ export default function IntroAltea() {
         p.style.strokeDashoffset = `${len}px`;
       });
 
+      /*
+       * Un único cálculo aplicado a los tres grupos. La caja se mide sobre el
+       * .stage y no sobre window: el .stage va en `svh`, así que su relación no
+       * cambia cuando la barra de direcciones se retrae y el logo no baila.
+       *
+       * El grosor del trazo se compensa a la inversa: sin esto, en vertical la
+       * escala baja a ~0.21 y el trazo del logotipo quedaría en medio pixel.
+       */
+      const encajar = () => {
+        const caja = q('.js-stage')[0]?.getBoundingClientRect();
+        if (!caja?.height) return;
+        const { escala, transform } = encajeLogo(caja.width / caja.height);
+        q('.js-logo-fit').forEach((g) => g.setAttribute('transform', transform));
+        q('.js-logo-trazo').forEach((g) => {
+          const base = Number(g.getAttribute('data-trazo-base'));
+          g.setAttribute('stroke-width', String(base * (ESCALA_BASE / escala)));
+        });
+      };
+      encajar();
+      window.addEventListener('resize', encajar);
+      const limpiar = () => window.removeEventListener('resize', encajar);
+
       const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       /* Deriva de ambiente, independiente del scroll: sin esto las nubes quedan
@@ -132,7 +197,7 @@ export default function IntroAltea() {
            más adelante desde otro lado. */
         gsap.set(outro, { yPercent: 71, y: 0 });
         document.body.dataset.introDone = 'true';
-        return;
+        return limpiar;
       }
 
       /* Determinista: si se vuelve al home desde otra página, el <body> puede
@@ -244,6 +309,8 @@ export default function IntroAltea() {
         },
         T.under,
       );
+
+      return limpiar;
     },
     { scope: root },
   );
@@ -296,7 +363,7 @@ export default function IntroAltea() {
             {/* Difumina los costados: en esta foto el recorte corta contenido a
                 izquierda y derecha. Es lo que permite usarla sin sangrar a todo
                 lo ancho. */}
-            <linearGradient id="gCitySides" gradientUnits="userSpaceOnUse" x1="-70" y1="0" x2="1270" y2="0">
+            <linearGradient id="gCitySides" gradientUnits="userSpaceOnUse" x1="-130" y1="0" x2="1330" y2="0">
               <stop offset="0" stopColor="#000" />
               <stop offset="0.07" stopColor="#fff" />
               <stop offset="0.93" stopColor="#fff" />
@@ -310,7 +377,7 @@ export default function IntroAltea() {
                 único que queda visible es lo que cae dentro de las letras. */}
             <mask id="mCityReveal" maskUnits="userSpaceOnUse" x="-800" y="-600" width="2800" height="2200">
               <rect id="cityAll" x="-800" y="-600" width="2800" height="2200" fill="#fff" />
-              <g transform={ENCAJE}>
+              <g className="js-logo-fit" transform={ENCAJE}>
                 <path id="cityInLogo" d={SILUETA} fill="#fff" fillRule="evenodd" fillOpacity={1} />
               </g>
             </mask>
@@ -321,11 +388,15 @@ export default function IntroAltea() {
               <g mask="url(#mCitySides)">
                 {/* xMidYMin ancla arriba y recorta por abajo: conserva las torres
                     y saca de cuadro la calle. */}
+                {/* 1460 de ancho y no 1340: en el arranque el grupo va en
+                    scale .82, y con la caja anterior la foto se quedaba 51
+                    unidades corta a cada lado del viewBox — cielo desnudo en
+                    pantallas anchas. Sigue centrada en x=600. */}
                 <image
                   href={PHOTO}
-                  x="-70"
+                  x="-130"
                   y="250"
-                  width="1340"
+                  width="1460"
                   height="560"
                   preserveAspectRatio="xMidYMin slice"
                 />
@@ -359,8 +430,13 @@ export default function IntroAltea() {
             </filter>
           </defs>
 
-          <g filter="url(#markShadow)" transform={ENCAJE}>
-            <g fill="none" stroke="#fff" strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round">
+          <g className="js-logo-fit" filter="url(#markShadow)" transform={ENCAJE}>
+            <g
+              className="js-logo-trazo"
+              data-trazo-base="2.6"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2.6" strokeLinejoin="round" strokeLinecap="round">
               {CONTORNOS.map((d, i) => (
                 <path key={i} className="js-draw" d={d} />
               ))}
@@ -371,6 +447,8 @@ export default function IntroAltea() {
               expandir y el trazo se ve como estática. Entra con fade. */}
           <g
             id="tagline"
+            className="js-logo-fit js-logo-trazo"
+            data-trazo-base="2"
             opacity="0"
             filter="url(#markShadow)"
             fill="none"

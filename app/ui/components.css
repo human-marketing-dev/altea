@@ -266,53 +266,67 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 .altea-navbar__logo { height: 22px; width: auto; }
 
 /*
- * Modo intro (hoy sólo el home). Sobre la escena la barra flota sin fondo y con
- * la tinta clara, porque el cielo arranca en un azul saturado donde el ink no
- * se lee. Al cerrar la intro recupera su aspecto normal.
+ * Modo intro (hoy sólo el home).
  *
- * Se escribe como :not([data-intro-done]) y no como un par de estados a propio
- * derecho: así el estado final no se declara aquí: simplemente deja de haber
- * override y queda la barra `light` de siempre, idéntica a la del resto del
- * sitio. Si se hubiera escrito al revés habría que repetir sus valores, que es
- * como se acaban desincronizando.
+ * ESTADO A, mientras la intro corre: de la barra sólo se ven las letras
+ * flotando sobre el cielo. Sin fondo, sin borde, sin sombra.
  *
- * El interruptor es data-intro-done en el <body>, que pone y quita IntroAltea
- * desde su propio timeline: al ir atado al scrub, subir el scroll devuelve la
- * barra a transparente sin lógica extra.
+ * ESTADO B, al cerrar: la barra por defecto, la misma de /nosotros y
+ * /contacto. No se declara en ninguna parte — y ésa es la idea. Las reglas de
+ * abajo cuelgan de :not([data-intro-done]) y sólo QUITAN cosas; cuando aparece
+ * la bandera dejan de aplicar y no queda nada que haya que mantener en sincronía
+ * con el original. Escrito al revés habría que repetir aquí sus valores, que es
+ * exactamente como se acaban desincronizando.
+ *
+ * El interruptor lo pone y lo quita IntroAltea desde su propio timeline: al ir
+ * atado al scrub, subir el scroll revierte el estado sin lógica extra.
+ *
+ * La tinta, el wordmark y el coral del hover no aparecen aquí porque ya son los
+ * de la barra `light` por defecto: no hay nada que cambiar.
+ */
+
+/*
+ * Fuera del flujo. Un sticky sigue midiendo su alto en el documento, y ese hueco
+ * era el que se veía encima de la escena; además empujaba el .wrap hacia abajo,
+ * así que la intro no arrancaba en la coordenada 0 y el `start: top top` del
+ * ScrollTrigger quedaba desfasado.
+ *
+ * Fijo TODA la página, no sólo mientras la intro está abierta: ver la nota en
+ * el reporte. Visualmente da igual —en el home no hay contenido en la
+ * coordenada 0 fuera de la intro, así que fija y pegada se ven idénticas una
+ * vez cerrada—, pero alternar a media pasada devolvería la barra al flujo,
+ * empujaría ~86px todo lo que va debajo y movería las medidas del ScrollTrigger
+ * justo en el punto donde se dispara la bandera.
+ *
+ * `top` no se toca: lo hereda de .altea-navbar, que lo baja a --space-3 en
+ * móvil. Sí hay que anular el margen superior, que en el flujo hacía el trabajo
+ * del `top` y aquí se sumaría a él. Doble clase porque el bloque de móvil
+ * reescribe `margin` sobre .altea-navbar más abajo en el archivo.
+ */
+.altea-navbar.altea-navbar--intro {
+  position: fixed;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+}
+
+/*
+ * Un solo bloque, y gana por especificidad (0,2,1) tanto a .altea-navbar como a
+ * .altea-navbar--pegada, así que no hace falta repetirlo para el estado pegado.
+ *
+ * `border: none` y no `border-color: transparent`: un borde transparente sigue
+ * midiendo, y la lista pide ancho 0. El precio es que el contenido se asienta
+ * 1px cuando el borde vuelve, invisible en medio del fundido del fondo.
  */
 body:not([data-intro-done]) .altea-navbar--intro {
-  background: transparent;
-  /* La heredan los enlaces y las barras del menú; hover y página actual siguen
-     ganando por especificidad, así que el coral se conserva. */
-  --nav-tinta: var(--altea-cream);
-}
-/* Ni borde ni sombra mientras la intro corre: sobre el cielo delatarían el
-   rectángulo transparente. */
-body:not([data-intro-done]) .altea-navbar--intro,
-body:not([data-intro-done]) .altea-navbar--intro.altea-navbar--pegada {
-  border-color: transparent;
+  background: none;
+  border: none;
   box-shadow: none;
 }
 
-/* El wordmark no se puede recolorear (es un SVG externo), así que van los dos
-   montados en el mismo hueco y se cruzan. */
-.altea-navbar__marca--dual { position: relative; }
-.altea-navbar__logo--intro {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  opacity: 0;
-}
-.altea-navbar__logo--base,
-.altea-navbar__logo--intro {
-  transition: opacity var(--duration-base) var(--ease-standard);
-}
-body:not([data-intro-done]) .altea-navbar--intro .altea-navbar__logo--intro { opacity: 1; }
-body:not([data-intro-done]) .altea-navbar--intro .altea-navbar__logo--base { opacity: 0; }
-
 .altea-navbar__links { display: flex; align-items: center; gap: var(--space-6); }
 .altea-navbar__link {
-  color: var(--nav-tinta, var(--altea-ink));
+  color: var(--altea-ink);
   text-decoration: none;
   font-size: var(--text-small);
   font-weight: 600;
@@ -359,7 +373,7 @@ body:not([data-intro-done]) .altea-navbar--intro .altea-navbar__logo--base { opa
   height: 2px;
   width: 24px;
   margin: 0 auto;
-  background: var(--nav-tinta, var(--altea-ink));
+  background: var(--altea-ink);
   transition: transform var(--duration-fast) var(--ease-standard),
               opacity var(--duration-fast) var(--ease-standard);
 }

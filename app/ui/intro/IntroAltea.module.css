@@ -1,102 +1,155 @@
 /* ────────────────────────────────────────────────────────────────
    LA ESTRUCTURA ES LO CRITICO.
-   .wrap  = alto del recorrido (550vh). NO lleva sticky.
+   .wrap  = alto del recorrido (470vh). NO lleva sticky.
    .stage = una pantalla, sticky dentro del wrap. Aqui vive todo.
-   Si le pones sticky al mismo elemento que mide 550vh, no pasa nada
+   Si le pones sticky al mismo elemento que mide 470vh, no pasa nada
    y el hero queda estatico.
    ──────────────────────────────────────────────────────────────── */
 
 .wrap {
   position: relative;
+  /* El .stage es sticky y eso le crea contexto de apilado propio; como el .wrap
+     va después del NavBar en el DOM, sin esto pintaba encima de la barra. Con
+     z-index 0 toda la intro queda acotada por debajo del 50 de .altea-navbar,
+     pase lo que pase dentro de la escena. */
+  z-index: 0;
   height: 470vh;
+  /*
+   * EL HUECO DEL FINAL SE CIERRA AQUÍ, NO EN EL ALTO NI EN EL TIMELINE.
+   *
+   * El .stage mide una pantalla y es sticky, así que se despega cuando el borde
+   * inferior del .wrap llega al inferior del viewport: en scroll = alto − 100vh.
+   * Ahí es también donde el ScrollTrigger llega a progreso 1 ('bottom bottom'),
+   * o sea donde la animación termina. Pero el .wrap sigue hasta su alto
+   * completo, y ese último tramo —exactamente 100vh, sea cual sea el alto— es
+   * la escena ya vacía saliendo por arriba mientras la sección siguiente sube.
+   *
+   * Bajar el alto NO lo quita: el tramo muerto siempre mide una pantalla, sólo
+   * se comprimiría la animación. Lo que lo quita es subir la sección siguiente
+   * justo hasta donde la animación termina. Como el .wrap está posicionado y en
+   * z-index 0, sigue pintando por encima, así que durante la secuencia la
+   * sección queda tapada detrás de la escena y aparece cuando el barrido pasa
+   * — que es lo que el barrido dice que hace: entregar la siguiente sección.
+   *
+   * El margen no toca al sticky (se acota a la caja de padding, no a la de
+   * margen) ni a las medidas del ScrollTrigger, que van sobre la caja del
+   * borde. La animación queda idéntica: mismos tiempos, mismas escalas.
+   */
+  margin-bottom: -100svh;
 }
 
 .stage {
+  /*
+   * Cielo, sol y barrido son escena, no interfaz: no salen del sistema de
+   * diseño ni deberían, pero tampoco son hex sueltos repartidos por el archivo.
+   * Todo el color que no es token vive aquí.
+   *
+   * --cielo-base sólo se ve mientras carga la foto del cielo. --velo-texto va
+   * como triplete para poder darle alfas distintos en cada parada del scrim.
+   */
+  --cielo-base: #9dc0d6;
+  --sol: rgba(255, 246, 220, 0.5);
+  --sol-borde: rgba(255, 238, 196, 0.22);
+  --velo-texto: 238 246 250;
+  --barrido-hoja: #fbfaf8;
+
   position: sticky;
   top: 0;
   height: 100svh;      /* svh y no vh: en movil la barra de direcciones rompe vh */
   overflow: hidden;
 }
 
-/* La escena. Estos colores no son de interfaz sino de una fotografia,
-   por eso viven aqui como custom properties y no como tokens del sistema. */
-.stage {
-  --sky-top: #1f6fa8;
-  --sky-mid: #79b4d4;
-  --sky-low: #dbe4dd;
-  --sky-horizon: #ece0c9;
-  --sun-glow: rgba(255, 246, 220, 0.52);
-}
-
+/* ── 1 · el cielo ───────────────────────────────────────────────── */
+/* Foto, no degradado: un degradado CSS a esta escala hace bandas visibles.
+   El resplandor del sol sí es CSS — la foto viene deliberadamente sin sol. */
 .sky {
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background:
-    radial-gradient(closest-side, var(--sun-glow) 0%, rgba(255, 238, 196, 0.26) 44%, rgba(255, 234, 186, 0) 100%)
-      no-repeat 76% 10% / 108vw 108vw,
-    linear-gradient(178deg, var(--sky-top) 0%, #3f8fbf 20%, var(--sky-mid) 42%, #b3d2e0 64%, var(--sky-low) 84%, var(--sky-horizon) 100%);
+    radial-gradient(closest-side, var(--sol) 0%, var(--sol-borde) 46%, rgba(255, 234, 186, 0) 100%)
+      no-repeat 76% 8% / 104vw 104vw,
+    url("/hero/background-cloud-altea-hero.webp") no-repeat center / cover,
+    var(--cielo-base);
 }
 
-/* Las dos capas SVG comparten viewBox y preserveAspectRatio.
-   Es lo que garantiza que la foto caiga exacta dentro de las letras. */
+/* ── 2 · las nubes de ambiente ──────────────────────────────────── */
+.clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+/* El interior existe para separar las dos animaciones: el contenedor lo mueve
+   el scroll, esto lleva la deriva continua. */
+.cloudsInner {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.nube {
+  position: absolute;
+  height: auto;
+  /* Sin esto, el navegador reserva el alto intrínseco del archivo. */
+  max-width: none;
+  pointer-events: none;
+}
+
+/* ── 3 y 5 · las dos capas SVG ──────────────────────────────────── */
+/* Comparten viewBox y preserveAspectRatio. Es lo que garantiza que la foto
+   caiga exacta dentro de las letras. */
 .layer {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.clouds {
-  position: absolute;
-  inset: 0;
+  /* Son decorativas y una de ellas queda por encima del hero: sin esto, su caja
+     se come el clic del CTA. */
   pointer-events: none;
-  overflow: hidden;
 }
 
-.cloud {
-  position: absolute;
-  inset: -14%;
-  width: 128%;
-  height: 128%;
-  opacity: 0;
-  will-change: transform, opacity;
-}
+.cityLayer { z-index: 3; }
+.veil { z-index: 5; }
 
-/* El svg interior existe para separar las dos animaciones: el contenedor lo
-   mueve el scroll, esto lleva la deriva continua. */
-.cloudInner {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  will-change: transform;
-}
-
-/* ── contenido del hero ──────────────────────────────────────── */
+/* ── 4 · contenido del hero ─────────────────────────────────────── */
 .hero {
   position: absolute;
   inset: 0;
-  z-index: 5;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 0 6vw;
+  /* El tope en vh lo mantiene proporcionado en pantallas altas; el mínimo en px
+     evita que se meta debajo del header en las bajas. */
+  padding: clamp(104px, 19vh, 210px) 6vw 0;
   pointer-events: none;
 }
 
+/* Velo del texto. Un degradado anclado al tope, no un disco centrado: el disco
+   caía justo encima del edificio y lo lavaba. Si el contraste del título queda
+   corto con la foto definitiva, sube el primer stop; no la altura. */
 .hero::before {
   content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: min(1100px, 96vw);
-  height: min(700px, 88vh);
-  background: radial-gradient(closest-side, rgba(247, 250, 252, 0.8), rgba(247, 250, 252, 0.3) 58%, rgba(247, 250, 252, 0) 100%);
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 74%;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--velo-texto) / 0.7) 0%,
+    rgb(var(--velo-texto) / 0.44) 30%,
+    rgb(var(--velo-texto) / 0.16) 56%,
+    rgb(var(--velo-texto) / 0) 100%
+  );
   pointer-events: none;
 }
 
@@ -127,9 +180,7 @@
 
 /* TOKEN DEL SISTEMA, no un hex: aqui va el coral de la marca */
 /* --color-coral, --color-ink y --color-cream salen del @theme inline de
-   app/globals.css y apuntan a --altea-coral / -ink / -cream. Los tres
-   existen, asi que los fallbacks sobraban: si algun dia se renombra un
-   token, mejor que se note en pantalla a que pinte un gris ajeno. */
+   app/globals.css y apuntan a --altea-coral / -ink / -cream. */
 .accent {
   color: var(--color-coral);
   font-weight: 500;
@@ -146,16 +197,139 @@
   cursor: pointer;
   background: var(--color-ink);
   color: var(--color-cream);
+  text-decoration: none;
 }
 
 .cta:hover {
   background: var(--color-coral);
 }
 
-@media (max-width: 768px) {
-  .wrap { height: 400vh; }
+/* ── 6 · el barrido de salida ───────────────────────────────────── */
+/*
+ * Sube desde abajo y sale por arriba entregando la siguiente sección. Tres
+ * cosas tienen que ir juntas o no funciona:
+ *
+ * 1. mask-repeat: no-repeat. Por defecto es repeat, y el degradado se repite
+ *    fuera de la caja creando un canto duro nuevo.
+ * 2. Los dos extremos difuminados: el de abajo es el frente que entra, el de
+ *    arriba el que sale. Los dos cruzan la pantalla y los dos dejan línea.
+ * 3. 240% de alto. Con los extremos en degradado, la banda opaca va del 26% al
+ *    80% — 130% de pantalla. Más baja, a media pasada se vería el fondo detrás.
+ */
+.outro {
+  position: absolute;
+  inset: -70% 0;
+  z-index: 8;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 8%,
+    rgba(0, 0, 0, 0.85) 18%,
+    #000 26%,
+    #000 80%,
+    rgba(0, 0, 0, 0.85) 88%,
+    rgba(0, 0, 0, 0.3) 95%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.3) 8%,
+    rgba(0, 0, 0, 0.85) 18%,
+    #000 26%,
+    #000 80%,
+    rgba(0, 0, 0, 0.85) 88%,
+    rgba(0, 0, 0, 0.3) 95%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  will-change: transform;
+  /*
+   * FUERA DE CUADRO DESDE EL CSS, no desde el gsap.set.
+   *
+   * La caja cubre el viewport (inset -70% 0), así que lo único que la mantiene
+   * escondida es esta traslación. Mientras vivió sólo en el fromTo del
+   * timeline, cualquier camino que no montara el timeline —la rama de
+   * sessionStorage, un error antes de construirlo, JS deshabilitado— dejaba la
+   * hoja y sus nubes tapando la pantalla completa.
+   *
+   * 71% del alto propio (240% de pantalla) baja la caja 170.4%: su borde
+   * superior queda justo debajo del viewport. Es el mismo valor con el que
+   * arranca el fromTo, así que GSAP no da un salto al tomar el control.
+   */
+  transform: translateY(71%);
 }
 
+.sheet {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--barrido-hoja) 90%, transparent);
+}
+
+/* ── saltar ─────────────────────────────────────────────────────── */
+.skip {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-cream) 62%, transparent);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+.skip:hover {
+  background: var(--color-cream);
+  border-color: var(--color-ink);
+}
+.skip:focus-visible { outline: 2px solid var(--color-coral); outline-offset: 3px; }
+
+/* El logotipo de la escena es decorativo para el lector de pantalla; el nombre
+   de la marca tiene que existir igual como texto real. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 768px) {
+  .wrap { height: 400vh; }
+  .skip { right: var(--space-4); bottom: var(--space-4); }
+}
+
+/* Ya vista en esta sesión, o con movimiento reducido: una sola pantalla, sin
+   recorrido. Va como atributo porque la decisión se toma después de montar; si
+   dependiera del render, servidor y cliente no coincidirían. */
+.wrap[data-static] { height: 100svh; margin-bottom: 0; }
+.wrap[data-static] .skip { display: none; }
+
+/* Ver la nota del margen: la escena solapa el arranque de la sección siguiente.
+   Ya cerrada no hay nada que pulsar en ella, y sus restos invisibles —el botón
+   de saltar, el CTA en opacidad 0— se quedarían interceptando los clics. Se
+   excluye el estado estático, donde la escena SÍ es el hero y su CTA funciona. */
+:global(body[data-intro-done]) .wrap:not([data-static]) { pointer-events: none; }
+
 @media (prefers-reduced-motion: reduce) {
-  .wrap { height: 100svh; }
+  .wrap { height: 100svh; margin-bottom: 0; }
 }

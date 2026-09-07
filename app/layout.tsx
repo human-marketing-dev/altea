@@ -46,12 +46,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${brandFont.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Está en el primer cuadro de la intro: se pide antes de que el
-            componente cliente llegue a montarse. */}
+        {/* Las dos están en el primer cuadro de la intro: se piden antes de que
+            el componente cliente llegue a montarse. El cielo va como
+            background-image en el CSS module, así que sin esto ni siquiera
+            empieza a descargarse hasta que el navegador resuelve la hoja. */}
         <link
           rel="preload"
           as="image"
-          href="/hero/altea-hero-image-edificio-prueba.webp"
+          href="/hero/background-cloud-altea-hero.webp"
+          type="image/webp"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/edificio-altea-home.webp"
           type="image/webp"
         />
       </head>

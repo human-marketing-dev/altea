@@ -87,14 +87,15 @@
   modificador de cada campo: Input y Select se usan en varias páginas y no
   deberían tener que saber sobre qué fondo cayeron.
 
-  La tarjeta va en ink y el campo en surface-card-dark: dos tokens que ya
-  existen y que dan el hueco sin inventar un tercer gris. Es el par invertido
-  respecto a la sección, que lleva el tono de tarjeta para despegarse del footer.
+  Ya no hay tarjeta: los campos flotan directamente sobre la sección, que va en
+  surface-card-dark. Por eso el campo toma ink — el tono que antes tenía la
+  tarjeta—, que es lo que lo mantiene legible como campo contra ese fondo. Dos
+  tokens que ya existen, sin inventar un tercer gris.
 */
 .altea-form--on-dark .altea-field__label { color: var(--text-on-dark-secondary); }
 .altea-form--on-dark .altea-field__control {
   color: var(--text-on-dark);
-  background: var(--surface-card-dark);
+  background: var(--altea-ink);
   border-color: var(--border-subtle-on-dark);
 }
 /* El campo con error se marca en coral: ahí el coral es señal, no texto, y como

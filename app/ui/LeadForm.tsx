@@ -34,7 +34,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
   if (estado.estado === "enviado") {
     return (
       <div
-        className={`flex flex-col gap-3 bg-ink p-8 shadow-card ${className ?? ""}`}
+        className={`flex flex-col gap-3 ${className ?? ""}`}
         role="status"
       >
         <p className="m-0 font-display text-h3 font-semibold text-cream">
@@ -51,10 +51,11 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
     <form
       action={accion}
       noValidate
-      /* `altea-form--on-dark` retiñe los campos desde el contenedor: Input y
-             Select se montan en varios sitios y no tiene sentido que cada uno
-             tenga que saber sobre qué fondo cayó. */
-      className={`altea-form--on-dark flex flex-col gap-4 bg-ink p-6 shadow-card sm:p-8 ${className ?? ""}`}
+      /* Sin tarjeta: fondo, sombra y padding se van juntos, que es lo
+             que la hacía tarjeta. `altea-form--on-dark` retiñe los campos desde
+             el contenedor: Input y Select se montan en varios sitios y no tiene
+             sentido que cada uno tenga que saber sobre qué fondo cayó. */
+      className={`altea-form--on-dark flex flex-col gap-4 ${className ?? ""}`}
     >
       {/* Nombre y correo comparten renglón: el formulario es ancho y en una sola
           columna los campos quedaban desproporcionados. */}

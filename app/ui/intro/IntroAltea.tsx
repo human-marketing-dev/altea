@@ -191,7 +191,7 @@ export default function IntroAltea() {
          * primero es el hero completo, que es lo que sirve como apertura.
          */
         root.current?.setAttribute('data-static', '');
-        gsap.set(city, { scale: 0.62, y: 108, svgOrigin: ORIGEN_CIUDAD });
+        gsap.set(city, { scale: 0.62, y: -25, svgOrigin: ORIGEN_CIUDAD });
         /* El CSS ya lo deja fuera de cuadro; esto lo repite para que la caché
            interna de GSAP coincida con lo pintado si alguien anima el barrido
            más adelante desde otro lado. */
@@ -243,11 +243,14 @@ export default function IntroAltea() {
          textura y el título se ve sucio mientras se desvanece. */
       tl.to(q('.js-hero'), { opacity: 0, y: -34, duration: 1.5, ease: 'power2.in', force3D: false }, T.heroOut);
 
-      /* 1.8 → 7.5 — el edificio sube y crece. */
+      /* 1.8 → 7.5 — el edificio sube y crece.
+         El -272 está cerca del tope: el pie de la foto acaba en 539.8 y el de
+         las letras está en 531, o sea 8.8 unidades de margen. Subirlo más deja
+         el logotipo con hueco por abajo. */
       tl.fromTo(
         city,
-        { scale: 0.62, y: 108, svgOrigin: ORIGEN_CIUDAD },
-        { scale: 1.02, y: -244, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
+        { scale: 0.62, y: -25, svgOrigin: ORIGEN_CIUDAD },
+        { scale: 1.02, y: -272, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
         T.cityRise,
       );
 
@@ -269,7 +272,7 @@ export default function IntroAltea() {
       tl.to(q('#cityAll'), { fillOpacity: 0, duration: 0.4 }, T.cityOut);
 
       /* 7.6 — parallax dentro de las letras. */
-      tl.to(city, { y: -244, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
+      tl.to(city, { y: -272, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
 
       /*
        * 7.92 — se aparta el desvanecido de la base.
@@ -390,8 +393,17 @@ export default function IntroAltea() {
           <defs>
             {/* Disuelve la base de la foto. userSpaceOnUse lo ancla a las
                 coordenadas de la foto, así que VIAJA CON ELLA: por más que suba,
-                su canto inferior nunca aparece. */}
-            <linearGradient id="gCityFade" gradientUnits="userSpaceOnUse" x1="0" y1="600" x2="0" y2="772">
+                su canto inferior nunca aparece.
+
+                Arranca en 810 —el pie que tenía la caja antes de ampliarla— y no
+                en el 750 que saldría de escalar el degradado anterior en
+                proporción. La diferencia importa en el punto más alto de la
+                subida: con 750 el desvanecido empieza en 478.6 y el pie de las
+                letras (531) se queda al 79% de opacidad; con 810 empieza en
+                539.8 y las letras se llenan al 100%. El desvanecido mide casi lo
+                mismo (240 contra 246) pero ocurre entero en el material que la
+                caja acaba de revelar, no sobre el edificio que se ve. */}
+            <linearGradient id="gCityFade" gradientUnits="userSpaceOnUse" x1="0" y1="810" x2="0" y2="1050">
               <stop offset="0" stopColor="#fff" />
               <stop offset="0.45" stopColor="#dcdcdc" />
               <stop offset="0.78" stopColor="#5e5e5e" />
@@ -429,16 +441,22 @@ export default function IntroAltea() {
               <g mask="url(#mCitySides)">
                 {/* xMidYMin ancla arriba y recorta por abajo: conserva las torres
                     y saca de cuadro la calle. */}
-                {/* 1460 de ancho y no 1340: en el arranque el grupo va en
-                    scale .82, y con la caja anterior la foto se quedaba 51
-                    unidades corta a cada lado del viewBox — cielo desnudo en
-                    pantallas anchas. Sigue centrada en x=600. */}
+                {/* 1460 de ancho y no 1340: en el arranque el grupo se encoge y
+                    con la caja anterior la foto se quedaba 51 unidades corta a
+                    cada lado del viewBox — cielo desnudo en pantallas anchas.
+                    Sigue centrada en x=600.
+
+                    800 de alto y no 560: el slice escala por el ancho, así que
+                    la foto se renderiza a 1299 de alto y una caja de 560 sólo
+                    mostraba el 43% del archivo, cortándolo a media construcción.
+                    Con 800 muestra el 62%. La foto no cambia de tamaño —el
+                    ancho manda—, la caja sólo revela más material hacia abajo. */}
                 <image
                   href={PHOTO}
                   x="-130"
                   y="250"
                   width="1460"
-                  height="560"
+                  height="800"
                   preserveAspectRatio="xMidYMin slice"
                 />
               </g>

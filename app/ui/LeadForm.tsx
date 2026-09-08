@@ -34,13 +34,13 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
   if (estado.estado === "enviado") {
     return (
       <div
-        className={`flex flex-col gap-3 bg-surface-card p-8 shadow-card ${className ?? ""}`}
+        className={`flex flex-col gap-3 bg-ink p-8 shadow-card ${className ?? ""}`}
         role="status"
       >
-        <p className="m-0 font-display text-h3 font-semibold text-ink">
+        <p className="m-0 font-display text-h3 font-semibold text-cream">
           Gracias, recibimos tu mensaje.
         </p>
-        <p className="m-0 text-body leading-relaxed text-ink-70">
+        <p className="m-0 text-body leading-relaxed text-cream-60">
           Un asesor de Altea te contactará para revisar tu proyecto.
         </p>
       </div>
@@ -51,7 +51,10 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
     <form
       action={accion}
       noValidate
-      className={`flex flex-col gap-4 bg-surface-card p-6 shadow-card sm:p-8 ${className ?? ""}`}
+      /* `altea-form--on-dark` retiñe los campos desde el contenedor: Input y
+             Select se montan en varios sitios y no tiene sentido que cada uno
+             tenga que saber sobre qué fondo cayó. */
+      className={`altea-form--on-dark flex flex-col gap-4 bg-ink p-6 shadow-card sm:p-8 ${className ?? ""}`}
     >
       {/* Nombre y correo comparten renglón: el formulario es ancho y en una sola
           columna los campos quedaban desproporcionados. */}
@@ -67,7 +70,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
             aria-describedby={errorDe("nombre") ? `${id}-nombre` : undefined}
           />
           {errorDe("nombre") && (
-            <p id={`${id}-nombre`} role="alert" className="m-0 mt-1.5 text-small text-coral">
+            <p id={`${id}-nombre`} role="alert" className="m-0 mt-1.5 text-small text-cream">
               {errorDe("nombre")}
             </p>
           )}
@@ -85,7 +88,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
             aria-describedby={errorDe("correo") ? `${id}-correo` : undefined}
           />
           {errorDe("correo") && (
-            <p id={`${id}-correo`} role="alert" className="m-0 mt-1.5 text-small text-coral">
+            <p id={`${id}-correo`} role="alert" className="m-0 mt-1.5 text-small text-cream">
               {errorDe("correo")}
             </p>
           )}
@@ -122,7 +125,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
           aria-describedby={errorDe("mensaje") ? `${id}-mensaje` : undefined}
         />
         {errorDe("mensaje") && (
-          <p id={`${id}-mensaje`} role="alert" className="m-0 mt-1.5 text-small text-coral">
+          <p id={`${id}-mensaje`} role="alert" className="m-0 mt-1.5 text-small text-cream">
             {errorDe("mensaje")}
           </p>
         )}

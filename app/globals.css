@@ -55,6 +55,23 @@
   /* Fade corto para intercambiar contenido sin animar altura. La duración se
      sobrescribe con animationDuration donde haga falta. */
   --animate-aparecer: aparecer 150ms cubic-bezier(.4, 0, .2, 1) both;
+
+  /*
+   * Botones flotantes. Van en :root y no junto a cada botón porque los apila más
+   * de un componente —el de WhatsApp vive en components.css y el de saltar intro
+   * en un CSS module— y una custom property de clase no cruza esa frontera.
+   *
+   * Antes eran dos posiciones independientes escritas a ojo, y por eso acabaron
+   * uno encima del otro. Ahora el de saltar se coloca CON la medida del de
+   * WhatsApp: si éste cambia de tamaño o de margen, el otro lo sigue solo.
+   */
+  --fab-margen: var(--space-5);
+  --fab-tamano: 56px;
+  --fab-separacion: var(--space-4);
+
+  /* El borde inferior real del que va abajo del todo, respetando la barra del
+     sistema en móvil. Los dos botones parten de aquí. */
+  --fab-base: max(var(--fab-margen), env(safe-area-inset-bottom));
 }
 
 @keyframes aparecer {

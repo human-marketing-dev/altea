@@ -82,6 +82,35 @@
 .altea-field__control:focus { border-color: var(--altea-ink); }
 .altea-field__control::placeholder { color: var(--altea-ink-40); }
 
+/*
+  Los mismos campos sobre fondo oscuro. Va desde el contenedor y no como
+  modificador de cada campo: Input y Select se usan en varias páginas y no
+  deberían tener que saber sobre qué fondo cayeron.
+
+  La tarjeta va en ink y el campo en surface-card-dark: dos tokens que ya
+  existen y que dan el hueco sin inventar un tercer gris. Es el par invertido
+  respecto a la sección, que lleva el tono de tarjeta para despegarse del footer.
+*/
+.altea-form--on-dark .altea-field__label { color: var(--text-on-dark-secondary); }
+.altea-form--on-dark .altea-field__control {
+  color: var(--text-on-dark);
+  background: var(--surface-card-dark);
+  border-color: var(--border-subtle-on-dark);
+}
+/* El campo con error se marca en coral: ahí el coral es señal, no texto, y como
+   elemento de interfaz le basta con 3:1. El mensaje va en cream. */
+.altea-form--on-dark .altea-field__control[aria-invalid="true"] {
+  border-color: var(--altea-coral);
+}
+.altea-form--on-dark .altea-field__control::placeholder { color: var(--altea-cream-60); }
+/* El cambio de borde solo es demasiado tenue contra el oscuro: se le suma el
+   anillo coral que ya usan botones y enlaces en todo el sitio. */
+.altea-form--on-dark .altea-field__control:focus { border-color: var(--altea-cream); }
+.altea-form--on-dark .altea-field__control:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
+
 /* ============================== Tag ============================== */
 .altea-tag {
   display: inline-flex;
@@ -442,6 +471,32 @@ body:not([data-intro-done]) .altea-navbar--intro {
   line-height: var(--leading-body);
   color: var(--text-on-dark-secondary);
 }
+/*
+  Área de toque de 44x44 aunque el icono mida 24: el mínimo para el dedo, y lo
+  que separa un enlace pulsable de uno que hay que apuntar.
+*/
+.altea-footer__redes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: var(--space-1);
+  /* Compensa el aire propio del área de toque para que el primer icono quede a
+     ras del wordmark y de la descripción. */
+  margin-left: -10px;
+}
+.altea-footer__red {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: inherit;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.altea-footer__red svg { width: 24px; height: 24px; display: block; }
+.altea-footer__red:hover { color: var(--altea-coral); }
+.altea-footer__red:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+
 .altea-footer__columns {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -469,6 +524,25 @@ body:not([data-intro-done]) .altea-navbar--intro {
   font-size: var(--text-small);
   transition: color var(--duration-fast) var(--ease-standard);
 }
+/*
+  `flex-start` y no `center`: el domicilio puede irse a dos líneas y con
+  `center` el icono se descolgaría al medio del bloque. El margen superior lo
+  sube al centro óptico de la PRIMERA línea — media caja de línea menos medio
+  icono, en unidades `lh`, así que se recalcula solo si cambia la tipografía.
+*/
+.altea-footer__link--con-icono {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.altea-footer__icono {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: calc((1lh - 16px) / 2);
+  color: var(--altea-coral);
+}
+.altea-footer__icono svg { width: 100%; height: 100%; display: block; }
 .altea-footer__link:hover { color: var(--altea-cream); }
 .altea-footer__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
 .altea-footer__legal {
@@ -519,8 +593,8 @@ body:not([data-intro-done]) .altea-navbar--intro {
 */
 .altea-wa {
   position: fixed;
-  right: max(var(--space-5), env(safe-area-inset-right));
-  bottom: max(var(--space-5), env(safe-area-inset-bottom));
+  right: max(var(--fab-margen), env(safe-area-inset-right));
+  bottom: var(--fab-base);
   z-index: 45;
   display: flex;
   flex-direction: column;
@@ -530,8 +604,8 @@ body:not([data-intro-done]) .altea-navbar--intro {
 .altea-wa__boton {
   display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: var(--fab-tamano);
+  height: var(--fab-tamano);
   padding: 0;
   border: none;
   cursor: pointer;

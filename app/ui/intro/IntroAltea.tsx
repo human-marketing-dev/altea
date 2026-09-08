@@ -33,7 +33,7 @@ const T = {
   cityFade: 7.92,
   tagline: 8.1,
   outro: 8.4,
-  under: 9.25,
+  under: 9.5,
 };
 
 /* Recorrido del edificio. svgOrigin y no transformOrigin: dentro de un SVG el
@@ -191,7 +191,7 @@ export default function IntroAltea() {
          * primero es el hero completo, que es lo que sirve como apertura.
          */
         root.current?.setAttribute('data-static', '');
-        gsap.set(city, { scale: 0.82, y: 108, svgOrigin: ORIGEN_CIUDAD });
+        gsap.set(city, { scale: 0.62, y: 108, svgOrigin: ORIGEN_CIUDAD });
         /* El CSS ya lo deja fuera de cuadro; esto lo repite para que la caché
            interna de GSAP coincida con lo pintado si alguien anima el barrido
            más adelante desde otro lado. */
@@ -246,8 +246,8 @@ export default function IntroAltea() {
       /* 1.8 → 7.5 — el edificio sube y crece. */
       tl.fromTo(
         city,
-        { scale: 0.82, y: 108, svgOrigin: ORIGEN_CIUDAD },
-        { scale: 1.02, y: -152, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
+        { scale: 0.62, y: 108, svgOrigin: ORIGEN_CIUDAD },
+        { scale: 1.02, y: -244, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
         T.cityRise,
       );
 
@@ -269,7 +269,7 @@ export default function IntroAltea() {
       tl.to(q('#cityAll'), { fillOpacity: 0, duration: 0.4 }, T.cityOut);
 
       /* 7.6 — parallax dentro de las letras. */
-      tl.to(city, { y: -172, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
+      tl.to(city, { y: -244, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
 
       /*
        * 7.92 — se aparta el desvanecido de la base.
@@ -292,7 +292,21 @@ export default function IntroAltea() {
        */
       tl.fromTo(outro, { yPercent: 71, y: 0 }, { yPercent: -71, y: 0, duration: 1.7 }, T.outro);
 
-      /* 9.25 — bajo el barrido se apaga todo lo demás. */
+      /*
+       * 9.5 — bajo el barrido se apaga todo lo demás.
+       *
+       * Con 0.6 de duración cierra en 10.10, el instante exacto en que el
+       * barrido termina de salir. Antes empezaba en 9.25 y cerraba en 9.85: esas
+       * 0.25 unidades de más eran el solape, porque durante ellas ya no quedaba
+       * nada opaco debajo y por el borde de salida del barrido se veía la
+       * sección siguiente.
+       *
+       * No se cierra del todo, y no puede: la hoja del barrido va al 90% y sus
+       * dos extremos son degradado, así que no hay ningún momento en que tape la
+       * pantalla por completo. Lo que sí se logra es correr el punto en que la
+       * sección siguiente pasa a verse más de la mitad, del progreso 0.949 al
+       * 0.971 — la mitad de lo que quedaba.
+       */
       tl.to([q('.js-sky'), q('#cityLayer'), veil, nubes], { opacity: 0, duration: 0.6 }, T.under);
 
       /* Avisa al header cuando la intro cerró; reversible con el scrub. */
@@ -314,6 +328,33 @@ export default function IntroAltea() {
     },
     { scope: root },
   );
+
+  /*
+   * El desplazamiento suave va aquí y no como `scroll-behavior: smooth` en el
+   * <html>.
+   *
+   * Esa regla no afecta a la rueda, cierto, pero sí a CUALQUIER escritura
+   * programática de la posición de scroll — y ScrollTrigger hace varias por su
+   * cuenta: en cada `refresh()` guarda y restaura el scroll. Con la regla
+   * global esas restauraciones pasarían a animarse, que es justo el conflicto
+   * que la documentación de GSAP advierte. En esta página el ScrollTrigger
+   * gobierna 470svh de secuencia, así que no vale la pena arriesgarlo.
+   *
+   * Y no hace falta: `#unidades` es el ÚNICO ancla dentro de página de todo el
+   * sitio, así que una regla global se pagaría por un solo enlace.
+   *
+   * `scroll-padding-top: 104px` del <html> sigue valiendo: scrollIntoView lo
+   * respeta igual que un salto de ancla.
+   */
+  const irAUnidades = (evento: React.MouseEvent<HTMLAnchorElement>) => {
+    const destino = document.querySelector<HTMLElement>('#unidades');
+    if (!destino) return; // sin destino, que el navegador haga lo suyo
+    evento.preventDefault();
+    const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    destino.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth' });
+    // El salto de ancla también cambia el hash; sin esto se pierde.
+    history.pushState(null, '', '#unidades');
+  };
 
   const saltar = () => {
     const nodo = root.current;
@@ -365,8 +406,8 @@ export default function IntroAltea() {
                 lo ancho. */}
             <linearGradient id="gCitySides" gradientUnits="userSpaceOnUse" x1="-130" y1="0" x2="1330" y2="0">
               <stop offset="0" stopColor="#000" />
-              <stop offset="0.07" stopColor="#fff" />
-              <stop offset="0.93" stopColor="#fff" />
+              <stop offset="0.16" stopColor="#fff" />
+              <stop offset="0.84" stopColor="#fff" />
               <stop offset="1" stopColor="#000" />
             </linearGradient>
             <mask id="mCitySides" maskUnits="userSpaceOnUse" x="-800" y="-600" width="2800" height="2200">
@@ -412,7 +453,13 @@ export default function IntroAltea() {
             Proyectos <span className={styles.accent}>comerciales, industriales, de vivienda y forestales</span> sobre
             reserva territorial propia, en 21 estados de México.
           </p>
-          <a className={styles.cta} href="#unidades">Conoce los proyectos</a>
+          <a
+            className={`altea-btn altea-btn--md ${styles.cta}`}
+            href="#unidades"
+            onClick={irAUnidades}
+          >
+            Conoce los proyectos
+          </a>
         </div>
 
         {/* 5 · el logotipo */}

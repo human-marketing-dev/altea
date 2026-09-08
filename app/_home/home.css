@@ -95,7 +95,7 @@
    * clamp además la ata al alto del viewport, que es lo que manda aquí — lo
    * que hay que compensar es una pantalla de transición, no una caja fija.
    */
-  --aire-traspaso: clamp(var(--space-9), 40vh, 560px);
+  --aire-traspaso: clamp(var(--space-9), 55vh, 720px);
   padding: var(--aire-traspaso) var(--container-pad) var(--space-9);
   display: flex;
   flex-direction: column;
@@ -807,7 +807,7 @@
      sobre una pantalla alta y angosta el mismo coeficiente se vuelve un
      vacío. */
   .home-stats {
-    --aire-traspaso: clamp(var(--space-8), 28vh, 320px);
+    --aire-traspaso: clamp(var(--space-8), 38vh, 420px);
     padding-top: var(--aire-traspaso);
   }
   .home-emblem { min-height: clamp(300px, 52vh, 420px); gap: var(--space-6); }

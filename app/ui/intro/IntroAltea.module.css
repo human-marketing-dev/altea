@@ -1,8 +1,8 @@
 /* ────────────────────────────────────────────────────────────────
    LA ESTRUCTURA ES LO CRITICO.
-   .wrap  = alto del recorrido (470svh). NO lleva sticky.
+   .wrap  = alto del recorrido (400svh). NO lleva sticky.
    .stage = una pantalla, sticky dentro del wrap. Aqui vive todo.
-   Si le pones sticky al mismo elemento que mide 470svh, no pasa nada
+   Si le pones sticky al mismo elemento que mide 400svh, no pasa nada
    y el hero queda estatico.
    ──────────────────────────────────────────────────────────────── */
 
@@ -13,7 +13,7 @@
      z-index 0 toda la intro queda acotada por debajo del 50 de .altea-navbar,
      pase lo que pase dentro de la escena. */
   z-index: 0;
-  height: 470svh;
+  height: 400svh;
   /*
    * EL HUECO DEL FINAL SE CIERRA AQUÍ, NO EN EL ALTO NI EN EL TIMELINE.
    *
@@ -191,18 +191,20 @@
   font-weight: 500;
 }
 
+/*
+ * Hereda de .altea-btn: tipografía, radio, tamaño y —lo que faltaba— la
+ * transición del sistema. Aquí sólo queda lo que el sistema no cubre.
+ *
+ * Va sin variante de color a propósito: .altea-btn no declara `background` ni
+ * `color` (los ponen las variantes), así que estas dos reglas no compiten con
+ * nada. Con `--dark` sí habría pelea: su hover es (0,3,0) y llevaría el botón a
+ * negro en vez de al coral.
+ */
 .cta {
+  /* El .hero es pointer-events: none; el CTA es lo único pulsable de la capa. */
   pointer-events: auto;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 13px 27px;
-  border-radius: 99px;
-  border: none;
-  cursor: pointer;
   background: var(--color-ink);
   color: var(--color-cream);
-  text-decoration: none;
 }
 
 .cta:hover {
@@ -278,8 +280,11 @@
 /* ── saltar ─────────────────────────────────────────────────────── */
 .skip {
   position: absolute;
-  right: var(--space-5);
-  bottom: var(--space-5);
+  /* Apilado sobre el botón de WhatsApp, no a un valor a ojo: su borde inferior,
+     más su alto, más la separación. Las tres medidas salen de :root, así que si
+     aquél cambia de tamaño o de margen, éste lo sigue solo. */
+  right: max(var(--fab-margen), env(safe-area-inset-right));
+  bottom: calc(var(--fab-base) + var(--fab-tamano) + var(--fab-separacion));
   z-index: 9;
   display: inline-flex;
   align-items: center;
@@ -319,8 +324,7 @@
 }
 
 @media (max-width: 768px) {
-  .wrap { height: 400svh; }
-  .skip { right: var(--space-4); bottom: var(--space-4); }
+  .wrap { height: 340svh; }
 }
 
 /* Ya vista en esta sesión, o con movimiento reducido: una sola pantalla, sin

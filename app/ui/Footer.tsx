@@ -1,10 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
+import { CANALES, REDES, enlaceWhatsApp } from "@/lib/contacto";
+import { ICONOS, ICONOS_RED, type NombreIcono } from "./Iconos";
+
+export interface FooterLink {
+  label: string;
+  /** Sin `href` la fila es texto, no enlace. */
+  href?: string;
+  externo?: boolean;
+  icono?: NombreIcono;
+}
 
 export interface FooterColumn {
   title: string;
-  links: { label: string; href: string; externo?: boolean }[];
+  links: FooterLink[];
 }
 
 export interface FooterProps {
@@ -45,9 +54,10 @@ const DEFAULT_COLUMNS: FooterColumn[] = [
   {
     title: "Contacto",
     links: [
-      { label: CANALES.correo, href: `mailto:${CANALES.correo}` },
-      { label: CANALES.telefono, href: `tel:${CANALES.telefono.replace(/\s/g, "")}` },
-      { label: "WhatsApp", href: enlaceWhatsApp(), externo: true },
+      { label: CANALES.correo, href: `mailto:${CANALES.correo}`, icono: "correo" },
+      { label: CANALES.telefono, href: `tel:${CANALES.telefono.replace(/\s/g, "")}`, icono: "telefono" },
+      { label: "WhatsApp", href: enlaceWhatsApp(), externo: true, icono: "whatsapp" },
+      { label: CANALES.domicilio, icono: "ubicacion" },
     ],
   },
 ];
@@ -82,29 +92,70 @@ export function Footer({
             />
           </Link>
           {description && <p className="altea-footer__descripcion">{description}</p>}
+
+          {/* Fila propia: las redes son navegación, no datos de contacto. */}
+          {REDES.length > 0 && (
+            <ul className="altea-footer__redes">
+              {REDES.map((red) => (
+                <li key={red.nombre}>
+                  <a
+                    className="altea-footer__red"
+                    href={red.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {/* El icono ES el contenido del enlace, así que no va
+                        `aria-hidden`: el nombre de la red lo pone el aria-label
+                        y es lo único que tiene que anunciar el lector. */}
+                    <span aria-hidden="true">{ICONOS_RED[red.icono]}</span>
+                    <span className="sr-only">{red.nombre}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="altea-footer__columns">
           {columns.map((column) => (
             <div key={column.title} className="altea-footer__column">
               <span className="altea-footer__column-title">{column.title}</span>
-              {column.links.map((link) =>
-                link.externo ? (
+              {column.links.map((link) => {
+                const contenido = (
+                  <>
+                    {link.icono && (
+                      <span className="altea-footer__icono">{ICONOS[link.icono]}</span>
+                    )}
+                    <span>{link.label}</span>
+                  </>
+                );
+                const clase = link.icono
+                  ? "altea-footer__link altea-footer__link--con-icono"
+                  : "altea-footer__link";
+
+                if (!link.href) {
+                  return (
+                    <span key={link.label} className={clase}>
+                      {contenido}
+                    </span>
+                  );
+                }
+                return link.externo ? (
                   <a
                     key={link.href}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="altea-footer__link"
+                    className={clase}
                   >
-                    {link.label}
+                    {contenido}
                   </a>
                 ) : (
-                  <Link key={link.href} href={link.href} className="altea-footer__link">
-                    {link.label}
+                  <Link key={link.href} href={link.href} className={clase}>
+                    {contenido}
                   </Link>
-                ),
-              )}
+                );
+              })}
             </div>
           ))}
         </div>

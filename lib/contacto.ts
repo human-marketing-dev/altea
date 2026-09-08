@@ -6,12 +6,18 @@
  * WhatsApp y domicilio son provisionales.
  */
 
+import { INSTAGRAM_URL } from "./publicaciones";
+
 export const CONTACTO = {
   eyebrow: "Contacto",
   title: "Cuéntanos qué quieres construir",
   description:
     "Déjanos tus datos y un asesor te contacta para revisar superficie, ubicación y tiempos de tu proyecto.",
-  datos: ["ventas@altea.mx", "Saltillo, Coahuila, México"],
+  /** Cada línea con el icono que le toca; el texto sale de CANALES. */
+  datos: [
+    { texto: "ventas@altea.mx", icono: "correo" },
+    { texto: "Saltillo, Coahuila, México", icono: "ubicacion" },
+  ],
 } as const;
 
 export const CANALES = {
@@ -22,6 +28,18 @@ export const CANALES = {
   telefono: "+52 81 1000 0000",
   domicilio: "Saltillo, Coahuila, México",
 } as const;
+
+/**
+ * Redes sociales.
+ *
+ * PENDIENTE: sólo hay una, y la cuenta NO está confirmada — sale de
+ * INSTAGRAM_USUARIO en lib/publicaciones.ts, que está marcado ahí mismo como
+ * dato que Altea todavía no entregó. Agregar el resto es una línea por red y su
+ * icono en ICONOS_RED.
+ */
+export const REDES = [
+  { nombre: "Instagram", url: INSTAGRAM_URL, icono: "instagram" },
+] as const;
 
 /** Enlace de WhatsApp ya armado, para no repetir el encodeURIComponent. */
 export const enlaceWhatsApp = (mensaje: string = CANALES.whatsappMensaje) =>

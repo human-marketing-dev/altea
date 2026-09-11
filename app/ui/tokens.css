@@ -36,14 +36,36 @@
   --text-secondary: var(--altea-ink-70);
   --text-on-dark: var(--altea-cream);
   --text-on-dark-secondary: #E7DFD1b3;
-  --text-accent: var(--altea-coral);
+  /*
+   * EL PAR DEL ACENTO. El coral de marca no rinde igual sobre las dos
+   * superficies, así que hay uno para cada una y no se intercambian:
+   *
+   *   --text-accent   texto de acento sobre superficie CLARA (cream, blanco).
+   *                   Usa la variante oscura: el coral normal da 2.48 sobre
+   *                   cream y 3.27 sobre blanco — ni el mínimo de texto grande.
+   *   --accent-on-ink texto de acento sobre superficie OSCURA (ink).
+   *                   Usa el coral normal: da 4.87. La variante oscura daría
+   *                   3.66, peor, así que no vale como reemplazo global.
+   *
+   * Esto es sólo para TEXTO. Como fondo de un elemento —botones, etiquetas,
+   * pines— el coral normal se usa en los dos casos: ahí lo que se mide es el
+   * blanco encima, no el coral contra lo que tiene detrás.
+   */
+  --text-accent: var(--altea-coral-dark);
   --border-subtle: #21222226;
   --border-subtle-on-dark: #E7DFD133;
   --accent-primary: var(--altea-coral);
   --accent-primary-hover: var(--altea-coral-dark);
+  /* Ver el par documentado arriba, en --text-accent. */
   --accent-on-ink: var(--altea-coral);
 
   /* ---- Typography: weights ---- */
+  /* ---- Geometría ---- */
+  /* Grados del corte en paralelogramo. Lo comparten la sección de proyectos del
+     home y "Quiénes somos" en nosotros; vive aquí para que no diverjan. Las
+     secciones pueden bajarlo localmente donde el corte se coma demasiado. */
+  --angulo: 11;
+
   --weight-bold: 700;
   --weight-medium: 500;
   --weight-regular: 400;

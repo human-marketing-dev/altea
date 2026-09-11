@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Footer, LeadCTA, Marcas, NavBar } from "@/app/ui";
+import { MOSTRAR_MARCAS } from "@/lib/marcas";
 import { Banner } from "../_nosotros/Banner";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
 import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
+import { QuienesSomos } from "../_nosotros/QuienesSomos";
 import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
-import { SeccionAngulada } from "../_nosotros/SeccionAngulada";
-import { QUE_HACEMOS } from "../_nosotros/content";
 import "../_nosotros/nosotros.css";
 
 export const metadata: Metadata = {
@@ -24,13 +24,11 @@ export default function Nosotros() {
         <Origen />
         <Huella />
         <QueHacemosIntro />
-        {/* 5. Qué hacemos */}
-        {QUE_HACEMOS.map((bloque) => (
-          <SeccionAngulada key={bloque.id} bloque={bloque} />
-        ))}
+        {/* 5. Quiénes somos */}
+        <QuienesSomos />
         {/* 7. Responsabilidad social */}
         <ResponsabilidadSocial />
-        <Marcas />
+        {MOSTRAR_MARCAS && <Marcas />}
         {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el
             widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
             y lib/publicaciones.ts — para volver a mostrarla basta con importarla

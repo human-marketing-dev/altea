@@ -63,67 +63,58 @@ export const QUE_HACEMOS_INTRO = {
   imageNote: "Imagen de fondo — sección a sangre",
 };
 
-/** Sección 5 del sitemap — "Qué hacemos", tres bloques angulados. */
-export interface BloqueAngulado {
+/** Sección 5 del sitemap — "Quiénes somos". */
+export interface BloqueQuienesSomos {
   id: string;
+  /** Se pinta en coral junto al título. */
+  numero: string;
   title: string;
   description: string;
-  /** De qué lado va la imagen; el texto ocupa el otro. */
-  imagen: "izquierda" | "derecha";
-  /** Fondo del bloque. Alterna para dar ritmo a la secuencia. */
-  tono: "ink" | "cream";
   /**
-   * Dónde cae la división, en % desde la izquierda de la sección — sin importar
-   * de qué lado esté la imagen. Más alto la corre a la derecha, más bajo a la
-   * izquierda. @default 50
+   * PENDIENTE: las tres fotos no existen todavía. Mientras el campo esté vacío
+   * el bloque pinta un relleno; poner la ruta aquí es todo lo que hace falta
+   * para que salga la imagen.
    */
-  division?: number;
   image?: string;
-  imageNote: string;
   alt?: string;
 }
 
-export const QUE_HACEMOS: BloqueAngulado[] = [
-  {
-    id: "territorio",
-    title:
-      "Donde otros ven un terreno, nosotros vemos el potencial para transformar un territorio.",
-    description:
-      "Antes de diseñar un proyecto, entendemos el mercado, analizamos el entorno y descubrimos cómo ese espacio puede generar valor para las personas, empresas y las comunidades.",
-    imagen: "derecha",
-    tono: "cream",
-    division: 58,
-    image: "/images/stock/donde-otros-ven-terreno-altea.webp",
-    alt: "Equipo de proyecto analizando planos y mediciones sobre una mesa de trabajo",
-    imageNote: "Terreno o vista aérea de reserva territorial",
-  },
-  {
-    id: "talento",
-    title: "Nuestro Talento",
-    description:
-      "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
-    imagen: "izquierda",
-    tono: "ink",
-    division: 42,
-    image: "/images/stock/nuestro-talento-altea.webp",
-    alt: "Equipo multidisciplinario revisando juntos un proyecto en la oficina",
-    imageNote: "Equipo de Altea",
-  },
-  {
-    id: "ecosistemas",
-    title: "Creamos mucho más que infraestructura",
-    description:
-      "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación, y turismo, generado espacios capaces de evolucionar junto con las necesidades de quienes los habitan.",
-    imagen: "derecha",
-    tono: "cream",
-    division: 58,
-    // PROVISIONAL: hotel, comercio, restaurantes y plaza pública en un mismo
-    // encuadre — es literalmente el ecosistema que describe el texto.
-    image: "/images/comercial/galeria/galeria-altea-1.webp",
-    alt: "Conjunto de Altea con hotel, comercio y plaza pública",
-    imageNote: "Ecosistema Altea",
-  },
-];
+export const QUIENES_SOMOS = {
+  /** Va en la columna fija, y entra letra por letra. */
+  titulo:
+    "Quiénes somos, nuestro propósito y el modelo integral que nos distingue",
+  bloques: [
+    {
+      id: "territorio",
+      numero: "01",
+      title:
+        "Donde otros ven un terreno, nosotros vemos el potencial para transformar un territorio.",
+      description:
+        "Antes de diseñar un proyecto, entendemos el mercado, analizamos el entorno y descubrimos cómo ese espacio puede generar valor para las personas, las empresas y las comunidades.",
+      image: "/images/stock/donde-otros-ven-terreno-altea.webp",
+      alt: "Equipo de proyecto analizando planos y mediciones sobre una mesa de trabajo",
+    },
+    {
+      id: "talento",
+      numero: "02",
+      title: "Nuestro talento",
+      description:
+        "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
+      image: "/images/stock/nuestro-talento-altea.webp",
+      alt: "Equipo multidisciplinario revisando juntos un proyecto en la oficina",
+    },
+    {
+      id: "ecosistemas",
+      numero: "03",
+      title: "Creamos mucho más que infraestructura",
+      description:
+        "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación y turismo, generando espacios capaces de evolucionar junto con las necesidades de quienes los habitan.",
+      image: "/images/comercial/galeria/galeria-altea-1.webp",
+      alt: "Conjunto de Altea con hotel, comercio y plaza pública",
+    },
+  ] satisfies BloqueQuienesSomos[],
+};
+
 
 /** Sección 7 del sitemap — Responsabilidad social. */
 export interface FotoGaleria {

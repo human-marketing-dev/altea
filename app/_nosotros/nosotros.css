@@ -170,93 +170,6 @@
 .nos-huella__desglose li { display: flex; justify-content: space-between; gap: var(--space-4); }
 .nos-huella__desglose-value { color: var(--altea-cream); font-variant-numeric: tabular-nums; }
 
-/* ============ 5. Qué hacemos — bloques angulados ============ */
-/*
-  Misma diagonal que el banner, en versión corta. Los dos puntos que la definen
-  son variables, igual que allá: el promedio es dónde queda la división y la
-  diferencia es la inclinación.
-  La imagen puede ir a cualquier lado — la variante `--izquierda` refleja el
-  trapecio con `100% - var(...)`, así un solo par de variables sirve para ambas.
-*/
-.nos-angulo {
-  position: relative;
-  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
-     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
-     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
-     El recorte ya lo hacen los clip-path de dentro. */
-  min-height: clamp(320px, 48vh, 460px);
-  display: grid;
-  align-items: center;
-  padding: var(--space-8) var(--container-pad);
-  /*
-    Dónde queda la división, medida siempre desde la izquierda de la sección,
-    vaya la imagen del lado que vaya. Se sobrescribe por bloque desde content.ts.
-  */
-  --diag-centro: 50%;
-  /* Cuánto se corre el borde superior respecto al inferior. */
-  --diag-inclinacion: 20%;
-  --diag-top: calc(var(--diag-centro) + var(--diag-inclinacion) * 0.5);
-  --diag-bottom: calc(var(--diag-centro) - var(--diag-inclinacion) * 0.5);
-}
-.nos-angulo--cream { background: var(--surface-page); }
-.nos-angulo--ink { background: var(--altea-ink); }
-
-.nos-angulo__media,
-.nos-angulo__rule { position: absolute; inset: 0; }
-.nos-angulo__foto { position: absolute; inset: 0; }
-.nos-angulo__foto .altea-media { height: 100%; }
-/* Imagen a la derecha: arranca en el punto más a la izquierda del corte. */
-.nos-angulo--derecha .nos-angulo__foto { left: var(--diag-bottom); right: 0; }
-/* Imagen a la izquierda: termina en el punto más a la derecha del corte. */
-.nos-angulo--izquierda .nos-angulo__foto { left: 0; right: calc(100% - var(--diag-top)); }
-.nos-angulo__rule { background: var(--altea-coral); }
-
-/* Imagen a la derecha: el corte cae en su borde izquierdo. */
-.nos-angulo--derecha .nos-angulo__media {
-  clip-path: polygon(var(--diag-top) 0, 100% 0, 100% 100%, var(--diag-bottom) 100%);
-}
-.nos-angulo--derecha .nos-angulo__rule {
-  clip-path: polygon(
-    calc(var(--diag-top) - 3px) 0,
-    100% 0,
-    100% 100%,
-    calc(var(--diag-bottom) - 3px) 100%
-  );
-}
-
-/* Imagen a la izquierda: el mismo trapecio, reflejado. */
-.nos-angulo--izquierda .nos-angulo__media {
-  clip-path: polygon(0 0, var(--diag-bottom) 0, var(--diag-top) 100%, 0 100%);
-}
-.nos-angulo--izquierda .nos-angulo__rule {
-  clip-path: polygon(
-    0 0,
-    calc(var(--diag-bottom) + 3px) 0,
-    calc(var(--diag-top) + 3px) 100%,
-    0 100%
-  );
-}
-
-.nos-angulo__content {
-  position: relative;
-  z-index: 1;
-  /* Sin tope propio: el ancho lo fija cada variante contra la diagonal. */
-  max-width: none;
-}
-/*
-  El bloque se estira hasta donde empieza el corte, menos un respiro. Sale de
-  las mismas variables de la diagonal, así que si mueves `division` en
-  content.ts el texto se reajusta solo y nunca se mete debajo de la foto.
-*/
-.nos-angulo--derecha .nos-angulo__content {
-  max-width: calc(var(--diag-bottom) - var(--space-7));
-}
-.nos-angulo--izquierda .nos-angulo__content {
-  max-width: calc(100% - var(--diag-top) - var(--space-7));
-}
-/* Con la imagen a la izquierda, el texto se va al otro extremo. */
-.nos-angulo--izquierda .nos-angulo__content { justify-self: end; }
-
 /* ================ 4. Introducción a "qué hacemos" ================ */
 .nos-intro {
   position: relative;
@@ -302,6 +215,133 @@
   color: var(--altea-cream);
 }
 
+/* ===================== Quiénes somos ======================== */
+/*
+  Columna fija a la izquierda y bloques que pasan a la derecha. El revelado en
+  paralelogramo lo pinta QuienesSomos.tsx en línea (depende del alto en píxeles,
+  que depende del ancho); aquí vive todo lo que no.
+*/
+.nos-quienes {
+  background: var(--surface-page);
+  padding: var(--space-9) var(--container-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.nos-quienes__fijo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.nos-quienes__titulo {
+  margin: 0;
+  /* 22ch deja la frase en tres líneas. El recuento no depende del tamaño: `ch`
+     escala con la tipografía, así que vale para todo el clamp. Medido sobre
+     Gotham Bold — por debajo de 20ch se va a cuatro y por encima de 26ch a dos. */
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-size: var(--text-display-2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+/* Una caja por palabra: `inline-block` es lo que permite el yPercent. Y sin
+   `overflow: hidden` en el título — con el interlineado de 0.98 recortaba el
+   descendente de la última línea ("distingue"), y como la entrada lleva fundido
+   de opacidad no hace falta enmascarar nada. */
+.nos-quienes__palabra { display: inline-block; }
+
+.nos-quienes__indice {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.nos-quienes__bloques {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+.nos-quienes__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.nos-quienes__numero {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-accent);
+  font-variant-numeric: tabular-nums;
+}
+.nos-quienes__titulo-bloque {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.nos-quienes__texto {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+
+/* La caja del recorte. El clip-path lo escribe el componente. */
+.nos-quienes__media {
+  position: relative;
+  width: 100%;
+  /* 2/1 y no 16/9: el desplazamiento de la diagonal sale del ALTO, así que una
+     imagen más baja la suaviza. A 2/1 el corte queda en ~10% del ancho, cerca
+     del 11% de proyectos; a 21/9 bajaría al 8% y pasaría de rasgo a detalle. */
+  aspect-ratio: 2 / 1;
+  margin-top: var(--space-2);
+}
+/*
+  El sobrante lateral es obligatorio: sin él, al mover el recorte se descubren
+  las esquinas de la caja. El fondo se ve mientras la foto carga y en los
+  bloques que todavía no tengan una.
+*/
+.nos-quienes__foto {
+  position: absolute;
+  inset: 0 -5%;
+  background: var(--surface-sunken);
+}
+.nos-quienes__foto img { object-fit: cover; }
+
+@media (max-width: 900px) {
+  .nos-quienes {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-7);
+    padding: var(--space-8) var(--container-pad);
+  }
+  /* Deja de ser fija y pasa arriba, en flujo normal. */
+  .nos-quienes__fijo {
+    position: static;
+    height: auto;
+    gap: var(--space-4);
+  }
+  .nos-quienes__titulo { max-width: none; font-size: var(--text-h1); }
+  .nos-quienes__bloques { gap: var(--space-9); }
+}
+
 /* ============ 7. Responsabilidad social ============ */
 /* Ink: la sección anterior y el CTA que sigue son cream, así que este bloque
    los separa. */
@@ -340,7 +380,6 @@
   /* El banner necesita más espacio para el texto antes de romperse. */
   .nos-banner { --diag-centro: 70%; }
   .nos-origen { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  .nos-angulo { min-height: clamp(280px, 42vh, 380px); }
 }
 
 /* --- Móvil --- */
@@ -359,27 +398,4 @@
   .nos-banner { --diag-top: 100%; --diag-bottom: 100%; }
   .nos-banner__media,
   .nos-banner__rule { display: none; }
-
-  /* En el banner la imagen es decorativa y se oculta; aquí es contenido, así
-     que se apila arriba del texto y se le quita el recorte. */
-  .nos-angulo {
-    min-height: 0;
-    gap: var(--space-6);
-    padding: var(--space-8) var(--container-pad);
-  }
-  .nos-angulo--derecha .nos-angulo__media,
-  .nos-angulo--izquierda .nos-angulo__media {
-    position: relative;
-    inset: auto;
-    clip-path: none;
-    aspect-ratio: 16 / 9;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-  .nos-angulo__rule { display: none; }
-  .nos-angulo--derecha .nos-angulo__foto,
-  .nos-angulo--izquierda .nos-angulo__foto { left: 0; right: 0; }
-  .nos-angulo--derecha .nos-angulo__content,
-  .nos-angulo--izquierda .nos-angulo__content { max-width: none; }
-  .nos-angulo--izquierda .nos-angulo__content { justify-self: stretch; }
 }

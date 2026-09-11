@@ -12,9 +12,8 @@ import { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } from "./content";
 export function BusinessUnits() {
   const [inicio, acento] = BUSINESS_UNITS_INTRO.titulo;
 
-  // El id es el destino del CTA del hero.
   return (
-    <section id="unidades" className="home-units">
+    <section className="home-units">
       <div className="home-units__encabezado">
         <h2 className="home-units__titulo">
           {inicio} <span className="home-units__acento">{acento}</span>
@@ -40,21 +39,7 @@ export function BusinessUnits() {
               <span className="home-units__velo" aria-hidden="true" />
 
               <span className="home-units__contenido">
-                <span className="home-units__titulo-fila">
-                  {/* Decorativo: el nombre de la unidad va justo al lado como
-                      texto, y anunciarlo dos veces sólo estorba. */}
-                  {unit.icono && (
-                    <Image
-                      className="home-units__icono"
-                      src={unit.icono}
-                      alt=""
-                      aria-hidden
-                      width={230}
-                      height={230}
-                    />
-                  )}
-                  <span className="home-units__nombre">{unit.name}</span>
-                </span>
+                <span className="home-units__nombre">{unit.name}</span>
 
                 <span className="home-units__desc-caja">
                   <span className="home-units__desc">{unit.descripcion}</span>

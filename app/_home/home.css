@@ -101,20 +101,6 @@
   flex-direction: column;
   gap: var(--space-8);
 }
-/* La cita: comillas centradas encima del párrafo. */
-.home-stats__cita {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-}
-.home-stats__comillas {
-  flex: none;
-  width: clamp(28px, 2.6vw, 40px);
-  height: auto;
-  color: var(--altea-coral);
-}
-
 .home-stats__intro {
   /* Bloque centrado en su contenedor y texto centrado; el tope en ch es lo que
      impide que las líneas se hagan demasiado largas para leerse de un tirón. */
@@ -151,7 +137,7 @@
 }
 .home-stats__note { font-size: .5em; }
 /* El signo, en el acento de la marca; la cifra se queda en ink. */
-.home-stats__value .altea-count__prefijo { color: var(--altea-coral); }
+.home-stats__value .altea-count__prefijo { color: var(--text-accent); }
 .home-stats__label {
   font-size: var(--text-small);
   font-weight: 600;
@@ -333,32 +319,13 @@
   flex: 1;
   gap: var(--space-4);
 }
-/*
-  Isotipo de la unidad, al costado del nombre.
-  El alto se ata a --text-h3 y queda por debajo de la caja de línea del título,
-  así que la fila mide lo mismo en las cuatro tarjetas y los nombres siguen
-  alineados a lo ancho aunque Forestal no tenga icono.
-*/
-.home-units__titulo-fila {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-.home-units__icono {
-  flex: none;
-  /* Exactamente el tamaño de las letras del título. */
-  height: var(--text-h3);
-  width: auto;
-  display: block;
-}
-
 .home-units__nombre {
   font-family: var(--font-display);
   font-size: var(--text-h3);
   font-weight: 600;
   /* Va en mayúsculas: con line-height normal la caja de línea reserva hueco
-     para descendentes que aquí no existen, y el icono, centrado contra esa
-     caja, queda ópticamente bajo. Ceñida al texto, el centrado cuadra. */
+     para descendentes que aquí no existen. Ceñida al texto, el bloque se
+     compacta. */
   line-height: 1.1;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
@@ -434,10 +401,6 @@
   gap: var(--space-7);
   padding: var(--space-9) var(--container-pad);
 }
-.home-emblem__isotipo {
-  height: clamp(38px, 4.4vw, 60px);
-  width: auto;
-}
 .home-emblem__text {
   margin: 0;
   max-width: 17ch;
@@ -489,6 +452,8 @@
    * hay un 5 escrito por duplicado que se pueda desincronizar.
    */
   --costura: 5px;
+  /* El valor base vive en tokens.css; aquí sólo se baja en móvil, donde sobre
+     una tarjeta angosta el mismo ángulo se come un cuarto del ancho. */
 
   /* Que se asome por las rendijas entre diagonales: sin esto la separación
      entre paneles no se lee. */
@@ -504,6 +469,9 @@
   display: flex;
   background: var(--surface-page);
 }
+
+/* El titular suelto sólo existe en móvil; aquí lo lleva la celda de la banda 1. */
+.home-proyectos__titulo-suelto { display: none; }
 
 .home-proyectos__celda {
   position: relative;
@@ -522,8 +490,19 @@
 }
 
 /* --- El título, como una celda más --- */
+/*
+  Sin fondo propio: el titular se lee como texto sobre el fondo de la sección y
+  no como una tarjeta más de la fila. La banda arranca visualmente en la primera
+  foto y el título la introduce desde fuera.
+
+  El padding derecho reserva el solape del vecino. Sin fondo, el corte diagonal
+  de esta celda no dibuja nada —sólo recortaba texto— así que el componente se
+  lo salta; pero el panel de al lado sigue montado encima por el margen
+  negativo, y sin este hueco la primera línea del titular se le metería debajo.
+  --space-10 (128px) cubre el dx incluso con la celda en su alto máximo (101px).
+*/
 .home-proyectos__titulo {
-  background: var(--altea-ink);
+  padding-right: var(--space-10);
   display: flex;
   align-items: flex-end;
   padding: var(--space-6);
@@ -535,11 +514,13 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  color: var(--text-primary);
 }
+/* La segunda línea en el acento de la marca. Sobre cream manda --text-accent,
+   que ya es la variante oscura — ver el par en tokens.css. */
 .home-proyectos__titulo-2 {
   display: block;
-  color: var(--altea-cream-60);
+  color: var(--text-accent);
 }
 
 /* --- El panel --- */
@@ -638,20 +619,58 @@
    ancho al que la diagonal deja de leerse, no el del resto de las secciones. */
 @media (max-width: 820px) {
   /*
-    Sin clip-path: los cortes diagonales apilados en vertical se ven mal y
-    complican el tap. El componente limpia los estilos en línea que calculó,
-    porque un valor en línea le gana a cualquier regla de aquí.
+    Apiladas en vertical, y el corte diagonal gira con ellas: pasa a los bordes
+    superior e inferior, que es donde queda la costura entre tarjetas contiguas.
+    En fila esa costura es vertical y el corte va a los lados; dejarlo ahí al
+    apilar lo convertiría en dos cuñas vacías contra las orillas de la pantalla.
+
+    4 grados y no 7: apiladas la tarjeta ocupa la pantalla entera, y el
+    desplazamiento sale del ANCHO. Sobre 390px, 7° dan 48px de mordida vertical
+    —un 20% del alto— y 4° dan 27px, un 11%.
   */
-  .home-proyectos { padding: var(--costura) 0; }
-  .home-proyectos__banda { flex-direction: column; gap: var(--costura); }
-  .home-proyectos__celda { height: 210px; }
+  .home-proyectos {
+    --angulo: 4;
+    padding: var(--costura) 0;
+    /* Sin gap: la separación la pone el margen negativo de cada tarjeta, y un
+       gap encima se sumaría a él y descuadraría la costura. */
+    gap: 0;
+  }
+
+  .home-proyectos__titulo { display: none; }
+  .home-proyectos__titulo-suelto {
+    display: block;
+    margin: 0;
+    padding: var(--space-7) var(--container-pad) var(--space-6);
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-tight);
+    color: var(--altea-ink);
+  }
+  .home-proyectos__titulo-suelto .home-proyectos__titulo-2 { color: var(--altea-ink-40); }
+
+  /* Las bandas desaparecen de la caja y las seis celdas quedan como hijas
+     directas de la sección: una sola columna con costuras continuas. */
+  .home-proyectos__banda { display: contents; }
+
+  .home-proyectos__celda {
+    /*
+      Base explícita, nunca `1 1 0` heredado: en una columna el eje principal es
+      el vertical, `flex-basis: 0` gobernaría el alto y la sección colapsaría a
+      cero. Con `0 0 auto` manda el `height`.
+    */
+    flex: 0 0 auto;
+    height: 240px;
+  }
+  /* Sin cursor no hay hover que valga; que no cambien de tamaño al tocarlas. */
   .home-proyectos__celda--enlace:hover,
   .home-proyectos__banda:has(.home-proyectos__celda--enlace:hover) .home-proyectos__celda:not(:hover) {
-    flex-grow: 1;
+    flex-grow: 0;
   }
-  .home-proyectos__titulo { height: auto; padding: var(--space-6) var(--container-pad); }
-  .home-proyectos__chapa { left: 0; }
 }
+
+
 
 /* --- La ficha --- */
 /*

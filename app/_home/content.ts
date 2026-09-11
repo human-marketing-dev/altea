@@ -66,8 +66,6 @@ export interface BusinessUnitCard {
   /** Sin imagen, la tarjeta muestra el hueco etiquetado. */
   image?: string;
   alt?: string;
-  /** Isotipo de la unidad. Forestal todavía no tiene — ver app/ui/README.md. */
-  icono?: string;
 }
 
 /** Encabezado de la sección: título a la izquierda, entrada a la derecha. */
@@ -85,7 +83,6 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
-    icono: "/brand/logos/altea-comercial-icono.webp",
     descripcion:
       "Activar la energía de la ciudad en un solo lugar. Paseos, puntos y locales en operación, con hoteles, hospital y educación integrados al mismo entorno urbano.",
     image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
@@ -94,7 +91,6 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Industrial",
     slug: "industrial",
-    icono: "/brand/logos/altea-industrial-icono.webp",
     descripcion:
       "Desarrollar infraestructura con visión de futuro. Parques y naves industriales pensados para décadas, con el Aeropuerto Internacional de Saltillo como pieza de conectividad.",
     image:
@@ -104,7 +100,6 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Vivienda",
     slug: "vivienda",
-    icono: "/brand/logos/altea-vivienda-icono.webp",
     descripcion:
       "Crear hogares donde comienza tu historia. Desarrollos residenciales sobre una amplia reserva territorial, con un compromiso firme de reforestación.",
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",

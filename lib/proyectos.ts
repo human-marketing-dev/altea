@@ -117,6 +117,12 @@ export const PROYECTOS: Proyecto[] = [
 ];
 
 /** Presencia fuera de México. El mapa solo cubre el territorio nacional. */
+/*
+ * NOTA — sin consumir en código desde que el mapa dejó de mostrar la cifra de
+ * países. Hoy los tres sólo aparecen escritos dentro del cuerpo de la sección
+ * Nuestra Huella (app/_nosotros/content.ts). Se conserva porque es información
+ * real, y porque ese texto debería poder derivarse de aquí en vez de repetirlo.
+ */
 export const PRESENCIA_INTERNACIONAL = [
   "Estados Unidos",
   "España",

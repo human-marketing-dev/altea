@@ -1,9 +1,5 @@
 import { CountUp, MapaProyectos } from "@/app/ui";
-import {
-  ESTADOS_CON_PRESENCIA,
-  PRESENCIA_INTERNACIONAL,
-  PROYECTOS,
-} from "@/lib/proyectos";
+import { ESTADOS_CON_PRESENCIA } from "@/lib/proyectos";
 import { HUELLA } from "./content";
 
 /** Sección 3 — Nuestra Huella. Mapa a la izquierda, texto y cifras a la derecha. */
@@ -11,12 +7,7 @@ export function Huella() {
   return (
     <section className="nos-huella">
       <div className="nos-huella__map">
-        <MapaProyectos
-          proyectos={PROYECTOS}
-          estadosConPresencia={ESTADOS_CON_PRESENCIA}
-          paisesAdicionales={PRESENCIA_INTERNACIONAL}
-          layout="stacked"
-        />
+        <MapaProyectos estadosConPresencia={ESTADOS_CON_PRESENCIA} layout="stacked" />
       </div>
       <div className="nos-huella__body">
         <h2 className="nos-huella__title">{HUELLA.title}</h2>

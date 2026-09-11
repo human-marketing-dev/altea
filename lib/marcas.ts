@@ -1,4 +1,13 @@
 /**
+ * Interruptor de la sección de clientes.
+ *
+ * Apagada a propósito, no comentada: el componente y los 16 logos siguen en su
+ * sitio y volver a mostrarla es cambiar este `false` por `true`. Comentar el
+ * JSX habría dejado la duda de si era un olvido.
+ */
+export const MOSTRAR_MARCAS = false;
+
+/**
  * Marcas que operan en los desarrollos de Altea.
  *
  * Son de terceros: inquilinos y ocupantes, no clientes en el sentido que se lee

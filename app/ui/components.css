@@ -253,6 +253,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   line-height: var(--leading-body);
   color: var(--text-secondary);
 }
+/* El eyebrow no puede quedarse con un solo token: este componente se monta
+   sobre los dos fondos. La variante ya existe, así que el acento la sigue. */
+.altea-section-heading--light .altea-section-heading__eyebrow { color: var(--accent-on-ink); }
 .altea-section-heading--light .altea-section-heading__title { color: var(--altea-cream); }
 .altea-section-heading--light .altea-section-heading__description { color: var(--text-on-dark-secondary); }
 
@@ -271,7 +274,14 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   justify-content: space-between;
   gap: var(--space-5);
   padding: 16px var(--container-pad);
-  background: var(--altea-cream);
+  /*
+    Translúcida con desenfoque. El @supports de abajo devuelve el cream sólido
+    donde no haya backdrop-filter: sin él la barra se queda translúcida a secas
+    y el texto compite con lo que pase por debajo.
+  */
+  background: color-mix(in srgb, var(--altea-cream) 72%, transparent);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   /*
     Arriba del todo va limpia: sin borde ni sombra. El borde existe en
     transparente y no en `border: none` para que al aparecer no empuje 1px el
@@ -285,6 +295,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     border-color var(--duration-base) var(--ease-standard);
   font-family: var(--font-body);
 }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .altea-navbar { background: var(--altea-cream); }
+}
+
 .altea-navbar--pegada {
   border-color: var(--border-subtle);
   box-shadow: var(--shadow-card);

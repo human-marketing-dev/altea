@@ -120,7 +120,19 @@
 }
 
 .cityLayer { z-index: 3; }
-.veil { z-index: 5; }
+.veil {
+  z-index: 5;
+  /*
+    La sombra del logotipo, antes un <feDropShadow> aplicado a dos grupos.
+    Mismos parámetros, pero como filtro de CSS sobre la capa entera: un filtro
+    SVG es un grafo que el navegador reevalúa en cada cuadro sobre su región
+    —y aquí la región cambiaba cada cuadro, porque el stroke-dashoffset está
+    animándose justo mientras el filtro corre—. `drop-shadow` de CSS va por la
+    ruta de composición del navegador y se aplica una vez a la capa, no dos
+    veces a dos subárboles.
+  */
+  filter: drop-shadow(0 2px 7px rgb(13 34 48 / 0.42));
+}
 
 /* ── 4 · contenido del hero ─────────────────────────────────────── */
 .hero {
@@ -134,7 +146,11 @@
   text-align: center;
   /* El tope en vh lo mantiene proporcionado en pantallas altas; el mínimo en px
      evita que se meta debajo del header en las bajas. */
-  padding: clamp(104px, 19vh, 210px) 6vw 0;
+  /* Recalibrado al quedarse solo el título: los 104-210px estaban pensados para
+     tres elementos, y con uno el bloque se descolgaba contra el cielo vacío.
+     Ahora lo centra en la banda que hay sobre el edificio, que a 1440x900
+     arranca en los ~578px. */
+  padding: clamp(140px, 27vh, 280px) 6vw 0;
   pointer-events: none;
 }
 
@@ -175,21 +191,8 @@
   color: var(--color-ink);
 }
 
-.copy {
-  margin: 0 0 clamp(22px, 3.4vh, 34px);
-  max-width: 46ch;
-  font-size: clamp(1.02rem, 1.9vw, 1.32rem);
-  line-height: 1.5;
-  color: color-mix(in srgb, var(--color-ink) 76%, transparent);
-}
 
 /* TOKEN DEL SISTEMA, no un hex: aqui va el coral de la marca */
-/* --color-coral, --color-ink y --color-cream salen del @theme inline de
-   app/globals.css y apuntan a --altea-coral / -ink / -cream. */
-.accent {
-  color: var(--color-coral);
-  font-weight: 500;
-}
 
 /*
  * Hereda de .altea-btn: tipografía, radio, tamaño y —lo que faltaba— la

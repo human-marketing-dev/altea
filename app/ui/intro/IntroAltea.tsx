@@ -147,7 +147,13 @@ export default function IntroAltea() {
       };
       encajar();
       window.addEventListener('resize', encajar);
-      const limpiar = () => window.removeEventListener('resize', encajar);
+      /* Se declara aquí para que `limpiar` la vea; la crea el bloque de la
+         deriva, más abajo, y sólo cuando hay deriva que vigilar. */
+      let vigilante: IntersectionObserver | undefined;
+      const limpiar = () => {
+        window.removeEventListener('resize', encajar);
+        vigilante?.disconnect();
+      };
 
       const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -155,9 +161,29 @@ export default function IntroAltea() {
          congeladas en cuanto el usuario deja de moverse. Una duración distinta
          por eje para que los ciclos nunca coincidan y no se note el bucle. */
       if (!reducido) {
-        gsap.to(nubesInner, { xPercent: 7.5, duration: 19, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-        gsap.to(nubesInner, { yPercent: -3.2, duration: 26, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-        gsap.to(nubesInner, { scale: 1.1, duration: 34, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+        const deriva = [
+          gsap.to(nubesInner, { xPercent: 7.5, duration: 19, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+          gsap.to(nubesInner, { yPercent: -3.2, duration: 26, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+          gsap.to(nubesInner, { scale: 1.1, duration: 34, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        ];
+        /*
+         * Son tres tweens infinitos: sin esto siguen repintando cuatro imágenes
+         * por cuadro cuando la intro ya pasó y la escena no se ve. Se paran al
+         * salir de cuadro y se reanudan al volver — `pause`/`resume` conservan
+         * la fase, así que no dan un salto al reaparecer.
+         *
+         * Va con IntersectionObserver y no con el onLeave del ScrollTrigger
+         * porque la rama estática y la de movimiento reducido no montan
+         * timeline, y ahí también hace falta.
+         */
+        const escena = q('.js-stage')[0];
+        if (escena) {
+          vigilante = new IntersectionObserver(
+            ([entrada]) => deriva.forEach((t) => (entrada.isIntersecting ? t.resume() : t.pause())),
+            { threshold: 0 },
+          );
+          vigilante.observe(escena);
+        }
       }
 
       /*
@@ -332,33 +358,6 @@ export default function IntroAltea() {
     { scope: root },
   );
 
-  /*
-   * El desplazamiento suave va aquí y no como `scroll-behavior: smooth` en el
-   * <html>.
-   *
-   * Esa regla no afecta a la rueda, cierto, pero sí a CUALQUIER escritura
-   * programática de la posición de scroll — y ScrollTrigger hace varias por su
-   * cuenta: en cada `refresh()` guarda y restaura el scroll. Con la regla
-   * global esas restauraciones pasarían a animarse, que es justo el conflicto
-   * que la documentación de GSAP advierte. En esta página el ScrollTrigger
-   * gobierna 470svh de secuencia, así que no vale la pena arriesgarlo.
-   *
-   * Y no hace falta: `#unidades` es el ÚNICO ancla dentro de página de todo el
-   * sitio, así que una regla global se pagaría por un solo enlace.
-   *
-   * `scroll-padding-top: 104px` del <html> sigue valiendo: scrollIntoView lo
-   * respeta igual que un salto de ancla.
-   */
-  const irAUnidades = (evento: React.MouseEvent<HTMLAnchorElement>) => {
-    const destino = document.querySelector<HTMLElement>('#unidades');
-    if (!destino) return; // sin destino, que el navegador haga lo suyo
-    evento.preventDefault();
-    const reducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    destino.scrollIntoView({ behavior: reducido ? 'auto' : 'smooth' });
-    // El salto de ancla también cambia el hash; sin esto se pierde.
-    history.pushState(null, '', '#unidades');
-  };
-
   const saltar = () => {
     const nodo = root.current;
     if (!nodo) return;
@@ -374,7 +373,7 @@ export default function IntroAltea() {
       <noscript>
         <style>{`.${styles.wrap}{height:100svh}`}</style>
       </noscript>
-      <div className={styles.stage}>
+      <div className={`${styles.stage} js-stage`}>
 
         {/* 1 · el cielo */}
         <div className={`${styles.sky} js-sky`} />
@@ -467,17 +466,6 @@ export default function IntroAltea() {
         {/* 4 · contenido del hero */}
         <div className={`${styles.hero} js-hero`}>
           <h1 className={styles.title}>Crear. Desarrollar. Activar.</h1>
-          <p className={styles.copy}>
-            Proyectos <span className={styles.accent}>comerciales, industriales, de vivienda y forestales</span> sobre
-            reserva territorial propia, en 21 estados de México.
-          </p>
-          <a
-            className={`altea-btn altea-btn--md ${styles.cta}`}
-            href="#unidades"
-            onClick={irAUnidades}
-          >
-            Conoce los proyectos
-          </a>
         </div>
 
         {/* 5 · el logotipo */}
@@ -489,13 +477,7 @@ export default function IntroAltea() {
           aria-hidden="true"
           style={{ opacity: 0 }}
         >
-          <defs>
-            <filter id="markShadow" x="-15%" y="-15%" width="130%" height="130%">
-              <feDropShadow dx="0" dy="2" stdDeviation="7" floodColor="#0d2230" floodOpacity="0.42" />
-            </filter>
-          </defs>
-
-          <g className="js-logo-fit" filter="url(#markShadow)" transform={ENCAJE}>
+          <g className="js-logo-fit" transform={ENCAJE}>
             <g
               className="js-logo-trazo"
               data-trazo-base="2.6"
@@ -515,7 +497,6 @@ export default function IntroAltea() {
             className="js-logo-fit js-logo-trazo"
             data-trazo-base="2"
             opacity="0"
-            filter="url(#markShadow)"
             fill="none"
             stroke="#fff"
             strokeWidth="2"

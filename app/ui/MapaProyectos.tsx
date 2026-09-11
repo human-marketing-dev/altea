@@ -15,51 +15,38 @@ import {
   MAPA_ANCHO,
   type EstadoId,
 } from "@/lib/mexico-estados";
-import type { Proyecto } from "@/lib/proyectos";
 import { useMovimientoReducido } from "./useMovimientoReducido";
 
 /* ------------------------------------------------------------------ *
- * Calibración visual. Los tres niveles de jerarquía, juntos y arriba.
+ * Calibración visual. Dos niveles, no tres: el mapa muestra presencia,
+ * no cantidad, así que todos los estados con presencia van del mismo
+ * tono. Una gradación por número de proyectos diría algo que la sección
+ * ya no cuenta.
  * ------------------------------------------------------------------ */
 const RELLENO = {
-  /** Nivel 1 — sin presencia de Altea. Decorativo, no interactivo. */
+  /** Sin presencia de Altea. */
   sinPresencia: "fill-ink/10",
-  /** Nivel 2 — con presencia, sin proyecto documentado. */
-  presencia: "fill-coral/18 hover:fill-coral/32",
-  /** Nivel 3 — con presencia y proyectos. Coral pleno + pin. */
-  conProyectos: "fill-coral hover:fill-coral/90",
+  /** Con presencia. El hover sólo oscurece; no lleva información. */
+  presencia: "fill-coral [@media(hover:hover)]:hover:fill-coral-dark",
 } as const;
 
-/** Contorno del estado seleccionado. No se le sube el brillo: destaca por contraste. */
-const TRAZO_SELECCION = "stroke-cream [stroke-width:1.5]";
-const TRAZO_BASE = "stroke-cream/40 [stroke-width:0.8]";
-/** Los demás bajan a este nivel cuando hay selección. */
-const OPACIDAD_ATENUADA = "opacity-60";
-
-/** Fade entre contenidos. La altura ya no cambia: no hay nada más que animar. */
-const FADE_MS = 150;
+const TRAZO = "stroke-cream/40 [stroke-width:0.8]";
 
 /** Entrada al scroll. */
 const ENTRADA_MS = 300;
-const STAGGER_PIN_MS = 40;
 /** Separación del tooltip respecto al cursor. */
 const OFFSET_TOOLTIP = 12;
 
 type Tooltip = { x: number; y: number; texto: string; voltear: boolean };
 
 export interface MapaProyectosProps {
-  /** Se reciben por prop, no se importan: así cambiar la fuente de datos
-   *  (Sanity, API, lo que sea) no toca este componente. */
-  proyectos: Proyecto[];
   /**
-   * Estados donde Altea tiene presencia. Superconjunto de los estados que
-   * aparecen en `proyectos`: presencia y proyecto documentado son distintos.
+   * Estados donde Altea tiene presencia. Se reciben por prop, no se importan:
+   * así cambiar la fuente de datos no toca este componente.
    */
   estadosConPresencia: readonly EstadoId[];
-  /** Países además de México. El total se calcula como 1 + esta lista. */
-  paisesAdicionales?: readonly string[];
   /**
-   * `split` pone el panel al lado del mapa en pantallas grandes; `stacked` lo
+   * `split` pone la lista al lado del mapa en pantallas grandes; `stacked` la
    * deja siempre debajo, para cuando el mapa ya vive dentro de una columna.
    * @default "split"
    */
@@ -67,21 +54,32 @@ export interface MapaProyectosProps {
   className?: string;
 }
 
+/**
+ * Mapa de presencia.
+ *
+ * El mapa es DECORATIVO: `aria-hidden`, sin foco y sin rol. La información la
+ * lleva la lista de al lado, como texto real — se puede copiar, la indexa un
+ * buscador y un lector de pantalla la recorre como lo que es.
+ *
+ * Antes cada estado era un `role="button"` con `tabIndex`. Al quitarle la
+ * acción al clic eso dejaba 21 paradas de teclado que no llevaban a ningún
+ * lado y 21 "botón" anunciados sin nada que pulsar. Un botón que no hace nada
+ * es peor que no tener botón.
+ *
+ * El hover se queda como adorno de puntero: oscurece el estado y saca su
+ * nombre. No carga con ninguna responsabilidad, porque la lista ya la tiene.
+ */
 export function MapaProyectos({
-  proyectos,
   estadosConPresencia,
-  paisesAdicionales = [],
   layout = "split",
   className,
 }: MapaProyectosProps) {
-  const [seleccion, setSeleccion] = useState<EstadoId | null>(null);
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   const [visible, setVisible] = useState(false);
   const sinAnimacion = useMovimientoReducido();
   // Con movimiento reducido nada se anima: se muestra de una.
   const mostrar = visible || sinAnimacion;
 
-  const panelRef = useRef<HTMLDivElement>(null);
   const contenedorRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const anchoTooltip = useRef(0);
@@ -91,15 +89,18 @@ export function MapaProyectos({
     [estadosConPresencia],
   );
 
-  const porEstado = useMemo(() => {
-    const mapa = new Map<EstadoId, Proyecto[]>();
-    for (const proyecto of proyectos) {
-      const lista = mapa.get(proyecto.estado);
-      if (lista) lista.push(proyecto);
-      else mapa.set(proyecto.estado, [proyecto]);
-    }
-    return mapa;
-  }, [proyectos]);
+  /*
+   * Alfabético, y no por región ni por número de proyectos: sin cifras a la
+   * vista cualquier otro orden parece arbitrario, y quien mira la lista busca
+   * un estado concreto.
+   */
+  const nombres = useMemo(
+    () =>
+      ESTADOS.filter((estado) => conPresencia.has(estado.id))
+        .map((estado) => estado.nombre)
+        .sort((a, b) => a.localeCompare(b, "es")),
+    [conPresencia],
+  );
 
   /* --- Entrada al scroll ------------------------------------------- */
   useEffect(() => {
@@ -124,21 +125,6 @@ export function MapaProyectos({
     if (tooltipRef.current) anchoTooltip.current = tooltipRef.current.offsetWidth;
   }, [tooltip?.texto]);
 
-  const alternar = useCallback((id: EstadoId) => {
-    setSeleccion((actual) => {
-      const siguiente = actual === id ? null : id;
-      if (siguiente && typeof window !== "undefined") {
-        // En móvil el panel queda debajo del mapa: hay que llevar al usuario ahí.
-        if (window.matchMedia("(max-width: 1023px)").matches) {
-          requestAnimationFrame(() =>
-            panelRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }),
-          );
-        }
-      }
-      return siguiente;
-    });
-  }, []);
-
   const seguirCursor = useCallback((evento: ReactMouseEvent, texto: string) => {
     const rect = contenedorRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -151,32 +137,6 @@ export function MapaProyectos({
       voltear: x + OFFSET_TOOLTIP + anchoTooltip.current > rect.width,
     });
   }, []);
-
-  useEffect(() => {
-    const alTeclear = (evento: KeyboardEvent) => {
-      if (evento.key === "Escape") setSeleccion(null);
-    };
-    window.addEventListener("keydown", alTeclear);
-    return () => window.removeEventListener("keydown", alTeclear);
-  }, []);
-
-  /** Sólo los estados con pin, ya indexados, para que el stagger no salte. */
-  const pines = useMemo(
-    () =>
-      ESTADOS.filter((estado) => {
-        if (!conPresencia.has(estado.id)) return false;
-        return (porEstado.get(estado.id)?.length ?? 0) > 0;
-      }).map((estado, indice) => ({
-        estado,
-        lista: porEstado.get(estado.id) ?? [],
-        indice,
-      })),
-    [conPresencia, porEstado],
-  );
-
-  const estadoActivo = seleccion ? ESTADOS.find((e) => e.id === seleccion) : null;
-  const proyectosActivos = seleccion ? (porEstado.get(seleccion) ?? []) : [];
-  const totalPaises = 1 + paisesAdicionales.length;
 
   if (!GEOMETRIA_LISTA) {
     return (
@@ -206,16 +166,14 @@ export function MapaProyectos({
       >
         {/* Sin JS no hay IntersectionObserver: que el mapa se vea igual. */}
         <noscript>
-          <style>{`.mapa-entrada{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.mapa-entrada{opacity:1!important}`}</style>
         </noscript>
 
         <svg
           viewBox={`0 0 ${MAPA_ANCHO} ${MAPA_ALTO}`}
           className="h-auto w-full"
-          role="group"
-          aria-label="Mapa de presencia de Altea por estado"
+          aria-hidden="true"
         >
-          {/* Los 32 contornos entran juntos. */}
           <g
             className="mapa-entrada transition-opacity"
             style={{
@@ -224,118 +182,22 @@ export function MapaProyectos({
             }}
           >
             {ESTADOS.map((estado) => {
-              // Nivel 1 — sin presencia.
-              if (!conPresencia.has(estado.id)) {
-                return (
-                  <path
-                    key={estado.id}
-                    d={estado.d}
-                    aria-hidden="true"
-                    className={`${RELLENO.sinPresencia} ${TRAZO_BASE} ${
-                      seleccion ? OPACIDAD_ATENUADA : ""
-                    } transition-opacity duration-200`}
-                  />
-                );
-              }
-
-              const lista = porEstado.get(estado.id) ?? [];
-              const tieneProyectos = lista.length > 0;
-              const activo = seleccion === estado.id;
-              const etiqueta = tieneProyectos
-                ? `${estado.nombre}: ${lista.length} ${lista.length === 1 ? "proyecto" : "proyectos"}`
-                : `${estado.nombre}: presencia de Altea`;
-              const textoTooltip = tieneProyectos
-                ? `${estado.nombre} · ${lista.length} ${lista.length === 1 ? "proyecto" : "proyectos"}`
-                : estado.nombre;
-
-              // Niveles 2 y 3 — con presencia, siempre seleccionable.
+              const presencia = conPresencia.has(estado.id);
               return (
                 <path
                   key={estado.id}
                   d={estado.d}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={etiqueta}
-                  aria-pressed={activo}
-                  onClick={() => alternar(estado.id)}
-                  onMouseMove={(evento) => seguirCursor(evento, textoTooltip)}
-                  onMouseLeave={() => setTooltip(null)}
-                  onKeyDown={(evento) => {
-                    if (evento.key === "Enter" || evento.key === " ") {
-                      evento.preventDefault();
-                      alternar(estado.id);
-                    }
-                  }}
-                  className={[
-                    "cursor-pointer outline-none transition-[fill,opacity,stroke] duration-200",
-                    tieneProyectos ? RELLENO.conProyectos : RELLENO.presencia,
-                    activo ? TRAZO_SELECCION : TRAZO_BASE,
-                    seleccion && !activo ? OPACIDAD_ATENUADA : "",
-                    "focus-visible:stroke-coral focus-visible:[stroke-width:3]",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
+                  className={`${presencia ? RELLENO.presencia : RELLENO.sinPresencia} ${TRAZO} transition-[fill] duration-200`}
+                  onMouseMove={
+                    presencia ? (evento) => seguirCursor(evento, estado.nombre) : undefined
+                  }
+                  onMouseLeave={presencia ? () => setTooltip(null) : undefined}
                 />
               );
             })}
           </g>
-
-          {/* Los pines entran después, escalonados. */}
-          {pines.map(({ estado, lista, indice }) => {
-            const [cx, cy] = estado.centroide;
-            const activo = seleccion === estado.id;
-            const retraso = sinAnimacion ? 0 : ENTRADA_MS + indice * STAGGER_PIN_MS;
-
-            return (
-              <g
-                key={`pin-${estado.id}`}
-                className="group mapa-entrada pointer-events-none transition-[opacity,transform]"
-                style={{
-                  opacity: mostrar ? 1 : 0,
-                  transform: mostrar ? "translateY(0)" : "translateY(10px)",
-                  transitionDuration: `${sinAnimacion ? 0 : ENTRADA_MS}ms`,
-                  transitionDelay: `${retraso}ms`,
-                }}
-              >
-                <g
-                  className="transition-transform duration-200 group-hover:scale-[1.18]"
-                  style={{ transformOrigin: `${cx}px ${cy}px` }}
-                >
-                  <circle
-                    cx={cx}
-                    cy={cy}
-                    r={lista.length > 1 ? 13 : 8}
-                    className={activo ? "fill-cream" : "fill-ink"}
-                  />
-                  {lista.length > 1 && (
-                    <text
-                      x={cx}
-                      y={cy}
-                      textAnchor="middle"
-                      dominantBaseline="central"
-                      className={`text-[15px] font-bold ${activo ? "fill-ink" : "fill-cream"}`}
-                    >
-                      {lista.length}
-                    </text>
-                  )}
-                </g>
-                {/* Área de toque: CDMX, Tlaxcala, Morelos y Colima son casi
-                    impintables con el dedo. */}
-                <circle
-                  cx={cx}
-                  cy={cy}
-                  r={22}
-                  fill="transparent"
-                  className="pointer-events-auto cursor-pointer"
-                  onClick={() => alternar(estado.id)}
-                  aria-hidden="true"
-                />
-              </g>
-            );
-          })}
         </svg>
 
-        {/* Sólo identifica; el detalle vive en el panel. Oculto en táctil. */}
         {tooltip && (
           <div
             ref={tooltipRef}
@@ -355,85 +217,21 @@ export function MapaProyectos({
       </div>
 
       {/*
-        Un solo espacio que cambia de contenido. Crece y encoge con lo que
-        muestra: la columna de al lado no se mueve porque la sección usa
-        `align-items: start`, así que ya no hace falta reservarle altura.
+        La lista es la que lleva la información del mapa, así que va como texto
+        de verdad. En varias columnas porque 21 nombres en una sola dejarían una
+        tira muy alta al lado de un mapa apaisado.
       */}
-      <div
-        ref={panelRef}
-        aria-live="polite"
-        className="flex scroll-mt-8 flex-col justify-start gap-5"
-      >
-      <div
-        key={seleccion ?? "__resumen"}
-        className="animate-aparecer flex flex-col gap-5"
-        style={{ animationDuration: `${sinAnimacion ? 0 : FADE_MS}ms` }}
-      >
-        {estadoActivo ? (
-          <>
-            <div>
-              <p className="m-0 text-eyebrow font-semibold uppercase tracking-wide text-coral">
-                {proyectosActivos.length
-                  ? `${proyectosActivos.length} ${proyectosActivos.length === 1 ? "proyecto" : "proyectos"}`
-                  : "Presencia"}
-              </p>
-              <h3 className="m-0 font-display text-h2 font-semibold text-cream">
-                {estadoActivo.nombre}
-              </h3>
-            </div>
-
-            {proyectosActivos.length ? (
-              <ul className="m-0 flex list-none flex-col gap-3 p-0">
-                {proyectosActivos.map((proyecto) => (
-                  <li key={proyecto.id} className="border-t border-border-subtle-on-dark pt-3">
-                    <p className="m-0 font-semibold text-cream">{proyecto.nombre}</p>
-                    {proyecto.ciudad && (
-                      <p className="m-0 text-small text-cream/70">{proyecto.ciudad}</p>
-                    )}
-                    {proyecto.descripcion && (
-                      <p className="m-0 mt-1 text-small text-cream/70">{proyecto.descripcion}</p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="m-0 border-t border-border-subtle-on-dark pt-3 text-body leading-relaxed text-cream/70">
-                Altea ha desarrollado proyectos en {estadoActivo.nombre}.
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setSeleccion(null)}
-              className="self-start text-small font-semibold text-cream/70 underline underline-offset-4 transition-colors hover:text-coral"
-            >
-              Ver todo
-            </button>
-          </>
-        ) : (
-          <>
-            <dl className="m-0 grid grid-cols-3 gap-5">
-              {[
-                { valor: estadosConPresencia.length, etiqueta: "Estados" },
-                { valor: proyectos.length, etiqueta: "Proyectos" },
-                { valor: totalPaises, etiqueta: "Países" },
-              ].map((cifra) => (
-                <div key={cifra.etiqueta} className="flex flex-col-reverse gap-1">
-                  <dt className="text-small font-semibold uppercase tracking-wide text-cream/70">
-                    {cifra.etiqueta}
-                  </dt>
-                  <dd className="m-0 font-display text-[clamp(2rem,3.4vw,3rem)] font-bold leading-none tracking-tight text-cream tabular-nums">
-                    {cifra.valor}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p className="m-0 border-t border-border-subtle-on-dark pt-4 text-small leading-relaxed text-cream/70">
-              Selecciona un estado en el mapa para ver su detalle.
-            </p>
-          </>
-        )}
-      </div>
+      <div className="flex flex-col gap-3">
+        <h3 className="m-0 text-eyebrow font-semibold uppercase tracking-wide text-coral">
+          Estados con presencia
+        </h3>
+        <ul className="m-0 columns-2 gap-x-6 p-0 text-small leading-relaxed text-cream/70 sm:columns-3 lg:columns-2">
+          {nombres.map((nombre) => (
+            <li key={nombre} className="list-none break-inside-avoid">
+              {nombre}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

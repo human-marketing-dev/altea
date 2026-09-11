@@ -502,9 +502,17 @@
   --space-10 (128px) cubre el dx incluso con la celda en su alto máximo (101px).
 */
 .home-proyectos__titulo {
-  padding-right: var(--space-10);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  /*
+    Padding simétrico. El reserva de --space-10 que había aquí para el solape
+    del panel vecino ni siquiera llegaba a aplicarse —el shorthand `padding` que
+    venía después lo pisaba— y con el bloque centrado ya no hace falta: el texto
+    crece hacia los dos lados a la vez, así que su borde derecho queda en
+    (ancho + línea) / 2 y nunca alcanza la diagonal del vecino. Verificado de
+    900 a 1920px de ancho; el margen más ajustado son 12px, a 1100.
+  */
   padding: var(--space-6);
 }
 .home-proyectos__titulo h2 {
@@ -514,6 +522,17 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
+  /*
+    El bloque va centrado en la celda (lo hace el flex de arriba) pero el texto
+    alineado a la izquierda, para que las dos líneas arranquen a la par.
+
+    No hace falta `width: fit-content`: el <h2> es un ítem flex con `flex: 0 1
+    auto`, así que ya se dimensiona a su contenido y sólo encoge cuando no cabe.
+    Es la misma resolución que daría `fit-content`. Si algún día se le pusiera un
+    `flex-grow` o un `align-self: stretch`, ahí sí se estiraría a toda la celda y
+    el centrado dejaría de notarse.
+  */
+  text-align: left;
   color: var(--text-primary);
 }
 /* La segunda línea en el acento de la marca. Sobre cream manda --text-accent,

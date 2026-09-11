@@ -49,6 +49,15 @@ export const HUELLA = {
   mapNote: "Mapa interactivo de presencia",
 };
 
+/**
+ * Interruptor de la sección de la frase a sangre.
+ *
+ * Apagada a propósito, no comentada: repetía casi literalmente el titular de
+ * "Quiénes somos", que va justo debajo. El componente y sus datos siguen en su
+ * sitio y volver a mostrarla es cambiar este `false` por `true`.
+ */
+export const MOSTRAR_QUE_HACEMOS_INTRO = false;
+
 export const QUE_HACEMOS_INTRO = {
   /** Por palabras, para poder acentuar una en coral. */
   palabras: [

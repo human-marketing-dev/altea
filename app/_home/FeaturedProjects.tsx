@@ -192,7 +192,6 @@ export function FeaturedProjects() {
     return () => window.removeEventListener("resize", medir);
   }, []);
 
-  const [linea1, linea2] = FEATURED_PROJECTS_INTRO.titulo;
 
   return (
     <section ref={raiz} className="home-proyectos">
@@ -207,16 +206,12 @@ export function FeaturedProjects() {
         contenedor con scroll.
       */}
       <h2 className="home-proyectos__titulo-suelto">
-        {linea1}
-        <span className="home-proyectos__titulo-2">{linea2}</span>
+        {FEATURED_PROJECTS_INTRO.titulo}
       </h2>
 
       <div className="home-proyectos__banda js-banda">
         <div className="home-proyectos__celda home-proyectos__titulo js-titulo">
-          <h2>
-            {linea1}
-            <span className="home-proyectos__titulo-2">{linea2}</span>
-          </h2>
+          <h2>{FEATURED_PROJECTS_INTRO.titulo}</h2>
         </div>
         {BANDA_1.map((p) => (
           <Panel key={p.slug} proyecto={p} onAbrir={abrir} />

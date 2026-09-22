@@ -72,6 +72,14 @@
   /* El borde inferior real del que va abajo del todo, respetando la barra del
      sistema en móvil. Los dos botones parten de aquí. */
   --fab-base: max(var(--fab-margen), env(safe-area-inset-bottom));
+
+  /*
+   * Aire vertical de la barra superior. Vive aquí, y no dentro de la regla de
+   * .altea-navbar, porque el scroll-padding-top del <html> se calcula CON él:
+   * si la barra engorda o adelgaza, el desplazamiento a un ancla se corrige
+   * solo en vez de quedarse en un número escrito a mano que nadie revisa.
+   */
+  --nav-padding-y: 10px;
 }
 
 @keyframes aparecer {
@@ -111,8 +119,23 @@
   texto ink sobre negro.
 */
 
-/* La barra es sticky: sin esto, un enlace a #contacto deja el título tapado. */
-html { scroll-padding-top: 104px; }
+/*
+  La barra es sticky: sin esto, un enlace a #contacto deja el título tapado.
+
+  Calculado, no a ojo, para que siga al alto real de la barra:
+    --space-4          el hueco por el que flota (su `top`)
+  + --nav-padding-y*2  su aire vertical
+  + 46px               el hijo más alto + los dos bordes de 1px. Son los 44px
+                       del botón de menú, que manda por debajo de 900px; en
+                       escritorio manda la píldora de Contacto, 41px, así que
+                       el ancla cae 3px más holgada de lo necesario.
+  + --space-3          respiro para que el título no nazca pegado a la barra.
+*/
+html {
+  scroll-padding-top: calc(
+    var(--space-4) + var(--nav-padding-y) * 2 + 46px + var(--space-3)
+  );
+}
 
 body {
   background: var(--background);

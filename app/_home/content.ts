@@ -70,8 +70,8 @@ export interface BusinessUnitCard {
 
 /** Encabezado de la sección: título a la izquierda, entrada a la derecha. */
 export const BUSINESS_UNITS_INTRO = {
-  /** La segunda palabra va en coral. */
-  titulo: ["Unidades de", "Negocio"] as const,
+  /** Va entero en coral; ver .home-units__titulo. */
+  titulo: "Unidades de Negocio",
   /** PENDIENTE: texto sin confirmar por Altea. */
   descripcion:
     "Cuatro divisiones que operan sobre una misma reserva territorial. Cada una con su propia visión, y con el mismo equipo detrás de cada decisión.",
@@ -124,6 +124,9 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
  * una de ellas lleva el acento coral.
  */
 export const EMBLEM = {
+  /* Van partidas en palabras porque .home-emblem__text es un flex con
+     `gap: 0 0.26em`: ese hueco es el espaciado entre palabras, no un espacio
+     de texto. */
   palabras: ["Creamos", "proyectos", "que", "materializan", "sueños"],
   /** Índice de la palabra en coral. */
   acento: 4,
@@ -136,12 +139,23 @@ export const CONTACT_CTA = {
   /** PENDIENTE */
   description:
     "Escríbenos y un asesor te contacta para revisar superficie, ubicación y tiempos de tu proyecto.",
-  image: "/images/comercial/galeria/galeria-altea-4.webp",
+  /* Recorte con fondo transparente, no una foto de caja completa: el 27% del
+     archivo es alfa. Por eso el hueco lleva la proporción exacta del archivo y
+     el fondo de la ranura se quita — ver ContactCTA.tsx y .home-cta__media. */
+  image: "/images/home/altea-casco.webp",
 };
 
 /** Dos líneas; la segunda va en un tono más apagado. */
 export const FEATURED_PROJECTS_INTRO = {
-  titulo: ["Nuestros proyectos", "más relevantes"] as const,
+  /**
+   * Un solo string, y el salto en el propio texto: se pinta con
+   * `white-space: pre-line`, así que el \n es lo que parte las dos líneas.
+   *
+   * NO volver a partirlo en dos elementos. Estaba en dos <span>, y entre un
+   * bloque y el siguiente no hay ningún carácter: el salto se veía en pantalla
+   * pero al copiar el titular salía "Nuestros proyectosmás relevantes".
+   */
+  titulo: "Nuestros proyectos\nmás relevantes",
 };
 
 /**

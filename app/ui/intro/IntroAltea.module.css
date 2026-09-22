@@ -283,11 +283,11 @@
 /* ── saltar ─────────────────────────────────────────────────────── */
 .skip {
   position: absolute;
-  /* Apilado sobre el botón de WhatsApp, no a un valor a ojo: su borde inferior,
-     más su alto, más la separación. Las tres medidas salen de :root, así que si
-     aquél cambia de tamaño o de margen, éste lo sigue solo. */
+  /* Baja al sitio que ocupaba el botón de WhatsApp: retirado aquél ya no hay
+     nada sobre lo que apilarse, y --fab-base sigue respetando la barra del
+     sistema en móvil. */
   right: max(var(--fab-margen), env(safe-area-inset-right));
-  bottom: calc(var(--fab-base) + var(--fab-tamano) + var(--fab-separacion));
+  bottom: var(--fab-base);
   z-index: 9;
   display: inline-flex;
   align-items: center;

@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import CloudLayers, { NubesBarrido } from './CloudLayers';
-import { BAJADA, BAJADA_CIRCULOS, CONTORNOS, ENCAJE, SILUETA } from './logo-paths';
+import { BAJADA, BAJADA_CIRCULOS, CONTORNOS, ENCAJE, LOGO_CENTRO, SILUETA } from './logo-paths';
 import styles from './IntroAltea.module.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -33,6 +33,9 @@ const T = {
   cityFade: 7.92,
   tagline: 8.1,
   outro: 8.4,
+  /* El logotipo y la capa del edificio se van antes que el resto, y juntos.
+     Ver la nota larga junto a su tween. */
+  veilOut: 8.8,
   under: 9.5,
 };
 
@@ -54,7 +57,7 @@ const ORIGEN_CIUDAD = '600 720';
  * las letras. Por eso hay una función y una clase, no tres transforms.
  */
 const LOGO_ANCHO = 1536.62;          // ancho del logotipo en su espacio local
-const LOGO_CENTRO = { x: 768.31, y: 224.05 };  // centro del conjunto, local
+// LOGO_CENTRO viene de logo-paths.ts: se regenera con el dibujo, no a mano.
 const ESCENA_CENTRO = { x: 600.26, y: 399.73 }; // dónde cae hoy ese centro
 const ESCALA_BASE = 0.586;           // la del diseño; nunca se agranda por encima
 const MARGEN = 0.88;                 // 6% de aire a cada lado de la ventana visible
@@ -217,7 +220,7 @@ export default function IntroAltea() {
          * primero es el hero completo, que es lo que sirve como apertura.
          */
         root.current?.setAttribute('data-static', '');
-        gsap.set(city, { scale: 0.62, y: -25, svgOrigin: ORIGEN_CIUDAD });
+        gsap.set(city, { scale: 0.62, y: -128, svgOrigin: ORIGEN_CIUDAD });
         /* El CSS ya lo deja fuera de cuadro; esto lo repite para que la caché
            interna de GSAP coincida con lo pintado si alguien anima el barrido
            más adelante desde otro lado. */
@@ -269,14 +272,33 @@ export default function IntroAltea() {
          textura y el título se ve sucio mientras se desvanece. */
       tl.to(q('.js-hero'), { opacity: 0, y: -34, duration: 1.5, ease: 'power2.in', force3D: false }, T.heroOut);
 
-      /* 1.8 → 7.5 — el edificio sube y crece.
-         El -272 está cerca del tope: el pie de la foto acaba en 539.8 y el de
-         las letras está en 531, o sea 8.8 unidades de margen. Subirlo más deja
-         el logotipo con hueco por abajo. */
+      /*
+       * 1.8 → 7.5 — el edificio sube y crece.
+       *
+       * Los tres desplazamientos —inicial, subida y parallax— se movieron 40
+       * unidades a la vez para no deformar el recorrido.
+       *
+       * El -362 está acotado por los dos lados, y ya al límite. Por arriba: el edificio
+       * PERCEPTIBLE del archivo empieza en y=603.5 de la caja, así que para que
+       * llene las letras desde su tope (309.4) hace falta y ≤ -291.8. Por abajo:
+       * gCityFade arranca en 850, y para que la foto siga entera al pie de las
+       * letras (490) hace falta y ≥ -362.6. Y para que el edificio SÓLIDO (671.8)
+       * llene la banda entera hace falta y ≤ -361.4. Las dos condiciones dejan
+       * una ventana de 1.2 unidades, [-362.6, -361.4], y -362 cae dentro.
+       *
+       * No queda margen para subirlo más sin tocar la caja o el gradiente: el
+       * tramo opaco de la foto a escala 1.02 mide 181.8 unidades y la banda de
+       * las letras 180.6. Es todo lo que da esta composición.
+       *
+       * Ojo con medir "dónde empieza el contenido" por el primer píxel que pase
+       * el umbral de alfa: en este archivo eso da la fila 228, y el edificio de
+       * verdad no arranca hasta la 975. Con el dato malo la foto quedaba 230
+       * unidades más abajo de lo que parecía.
+       */
       tl.fromTo(
         city,
-        { scale: 0.62, y: -25, svgOrigin: ORIGEN_CIUDAD },
-        { scale: 1.02, y: -272, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
+        { scale: 0.62, y: -128, svgOrigin: ORIGEN_CIUDAD },
+        { scale: 1.02, y: -362, svgOrigin: ORIGEN_CIUDAD, duration: 5.7 },
         T.cityRise,
       );
 
@@ -298,7 +320,7 @@ export default function IntroAltea() {
       tl.to(q('#cityAll'), { fillOpacity: 0, duration: 0.4 }, T.cityOut);
 
       /* 7.6 — parallax dentro de las letras. */
-      tl.to(city, { y: -272, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
+      tl.to(city, { y: -362, scale: 1.04, duration: 1.6, svgOrigin: ORIGEN_CIUDAD }, T.parallax);
 
       /*
        * 7.92 — se aparta el desvanecido de la base.
@@ -336,7 +358,36 @@ export default function IntroAltea() {
        * sección siguiente pasa a verse más de la mitad, del progreso 0.949 al
        * 0.971 — la mitad de lo que quedaba.
        */
-      tl.to([q('.js-sky'), q('#cityLayer'), veil, nubes], { opacity: 0, duration: 0.6 }, T.under);
+      /*
+       * EL LOGOTIPO Y LA CAPA DEL EDIFICIO TIENEN FUNDIDO PROPIO, Y NO ES UN
+       * DESCUIDO: NO UNIFICAR CON EL DE ABAJO.
+       *
+       * Van los dos juntos porque son las dos mitades de lo mismo. El logotipo
+       * que se ve al final son dos cosas: el TRAZO, que vive en #veil, y el
+       * RELLENO, que es la foto de #cityLayer vista a través de mCityReveal.
+       * Apagar sólo #veil deja las letras rellenas de foto flotando en pantalla
+       * — que es exactamente lo que pasaba.
+       *
+       * Y se van antes que el resto porque el barrido sólo tapa la banda que
+       * ocupan —viewBox y[309.4, 490.0]— por encima del 80% entre t=8.89 y
+       * t=9.55. Ésa es la única ventana en la que pueden desvanecerse sin que se
+       * les vea: antes de 8.89 todavía no los cubre y después de 9.55 el borde
+       * de salida ya los destapó. Yendo con el fundido general de 9.5 quedaban
+       * fuera por ese segundo lado — a t=9.8 el barrido ya había destapado la
+       * banda y les quedaba el 50% de opacidad, así que reaparecían al 34%.
+       *
+       * En 8.8 con 0.6 cierran en 9.4, dentro de la ventana. Dos comprobaciones
+       * que hacen que apagar #cityLayer entera sea seguro a esa altura:
+       * #cityAll llega a 0 en 7.90, así que desde entonces la foto sólo existe
+       * dentro del recorte y no hay nada que cortar a cuadro abierto; y el
+       * parallax termina en 9.20, antes de que la capa sea invisible, así que no
+       * queda animación corriendo sobre algo que no se ve.
+       */
+      tl.to([veil, q('#cityLayer')], { opacity: 0, duration: 0.6 }, T.veilOut);
+
+      /* El cielo y las nubes sí se van más tarde: a ellos el barrido los tapa
+         durante todo su recorrido, no sólo en esa franja. */
+      tl.to([q('.js-sky'), nubes], { opacity: 0, duration: 0.6 }, T.under);
 
       /* Avisa al header cuando la intro cerró; reversible con el scrub. */
       const flag = { v: 0 };
@@ -390,19 +441,14 @@ export default function IntroAltea() {
           aria-hidden="true"
         >
           <defs>
-            {/* Disuelve la base de la foto. userSpaceOnUse lo ancla a las
+            {/* Disuelve la base de la foto. Arranca en 850 y no en 810: cada
+                unidad que baja este arranque es una unidad más que puede subir
+                el edificio sin dejar las letras con hueco al pie. Termina en
+                1050, que es el pie de la caja, así que el canto nunca se ve.
+                userSpaceOnUse lo ancla a las
                 coordenadas de la foto, así que VIAJA CON ELLA: por más que suba,
-                su canto inferior nunca aparece.
-
-                Arranca en 810 —el pie que tenía la caja antes de ampliarla— y no
-                en el 750 que saldría de escalar el degradado anterior en
-                proporción. La diferencia importa en el punto más alto de la
-                subida: con 750 el desvanecido empieza en 478.6 y el pie de las
-                letras (531) se queda al 79% de opacidad; con 810 empieza en
-                539.8 y las letras se llenan al 100%. El desvanecido mide casi lo
-                mismo (240 contra 246) pero ocurre entero en el material que la
-                caja acaba de revelar, no sobre el edificio que se ve. */}
-            <linearGradient id="gCityFade" gradientUnits="userSpaceOnUse" x1="0" y1="810" x2="0" y2="1050">
+                su canto inferior nunca aparece. */}
+            <linearGradient id="gCityFade" gradientUnits="userSpaceOnUse" x1="0" y1="850" x2="0" y2="1050">
               <stop offset="0" stopColor="#fff" />
               <stop offset="0.45" stopColor="#dcdcdc" />
               <stop offset="0.78" stopColor="#5e5e5e" />
@@ -445,17 +491,22 @@ export default function IntroAltea() {
                     cada lado del viewBox — cielo desnudo en pantallas anchas.
                     Sigue centrada en x=600.
 
-                    800 de alto y no 560: el slice escala por el ancho, así que
-                    la foto se renderiza a 1299 de alto y una caja de 560 sólo
-                    mostraba el 43% del archivo, cortándolo a media construcción.
-                    Con 800 muestra el 62%. La foto no cambia de tamaño —el
-                    ancho manda—, la caja sólo revela más material hacia abajo. */}
+                    y=40 y no 250: recalibrado para la foto actual. El slice
+                    escala por el ancho, así que el archivo se renderiza a 1299
+                    de alto en los dos casos, pero el contenido sólido empieza en
+                    la fila 534 de 2248 (23.8%) contra la fila 68 (6.1%) del
+                    anterior. Con la caja donde estaba, la masa de edificios caía
+                    230 unidades más abajo y no llegaba ni al cuadro ni a las
+                    letras. Subir la caja 210 la devuelve a su sitio.
+
+                    1010 de alto para que el pie siga en 1050, que es donde lo
+                    espera gCityFade. */}
                 <image
                   href={PHOTO}
                   x="-130"
-                  y="250"
+                  y="40"
                   width="1460"
-                  height="800"
+                  height="1010"
                   preserveAspectRatio="xMidYMin slice"
                 />
               </g>

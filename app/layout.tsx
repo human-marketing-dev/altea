@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
-import { RevealOnScroll, WhatsAppFab } from "@/app/ui";
+import { RevealOnScroll } from "@/app/ui";
 import "./globals.css";
 
 /**
@@ -65,7 +65,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         {children}
-        <WhatsAppFab />
         <RevealOnScroll />
       </body>
     </html>

@@ -273,13 +273,22 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  padding: 16px var(--container-pad);
+  padding: var(--nav-padding-y) var(--container-pad);
   /*
-    Translúcida con desenfoque. El @supports de abajo devuelve el cream sólido
-    donde no haya backdrop-filter: sin él la barra se queda translúcida a secas
-    y el texto compite con lo que pase por debajo.
+    Velo neutral con desenfoque. Neutral y no cream porque la barra cruza
+    secciones ink —unidades, emblema, CTA— y ahí el desenfoque solo no aclara
+    nada: el wordmark oscuro se perdía contra el fondo.
+
+    El 55% es el mínimo que deja el texto de la barra en AA sobre la sección más
+    oscura del sitio: sobre ink da 5.79 de contraste. Por debajo del 50% cae de
+    4.5 y a partir del 40% ya no llega ni al 3:1 de un elemento gráfico. Sobre
+    las secciones claras apenas se nota — el cream pasa de #E7DFD1 a #F4F1EA.
+
+    El @supports de abajo devuelve el cream sólido donde no haya
+    backdrop-filter: sin desenfoque, un velo al 55% deja el fondo leyéndose a
+    través.
   */
-  background: color-mix(in srgb, var(--altea-cream) 72%, transparent);
+  background: color-mix(in srgb, var(--altea-white) 55%, transparent);
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
   /*

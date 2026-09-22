@@ -196,13 +196,17 @@
   inset: 0;
   background: #212222b3;
 }
+/* Sobre el velo oscuro de la sección, así que coral normal — 4.87. Antes esta
+   clase se aplicaba pero no existía en ningún sitio: el acento no pintaba. */
+.nos-intro__acento { color: var(--accent-on-ink); }
+
 .nos-intro__phrase {
   margin: 0;
   max-width: 26ch;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 0.26em;
+  /* Texto corriente y no un flex con `gap`: el hueco entre palabras tiene que
+     ser un espacio de verdad para que la frase se copie bien. Ver el mismo
+     arreglo en .home-emblem__text. */
+  word-spacing: -0.03em;
   text-align: center;
   text-transform: uppercase;
   font-family: var(--font-display);

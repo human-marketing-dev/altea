@@ -10,14 +10,10 @@ import { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } from "./content";
  * móvil no hay hover, así que se apilan con la descripción siempre visible.
  */
 export function BusinessUnits() {
-  const [inicio, acento] = BUSINESS_UNITS_INTRO.titulo;
-
   return (
     <section className="home-units">
       <div className="home-units__encabezado">
-        <h2 className="home-units__titulo">
-          {inicio} <span className="home-units__acento">{acento}</span>
-        </h2>
+        <h2 className="home-units__titulo">{BUSINESS_UNITS_INTRO.titulo}</h2>
         <p className="home-units__intro">{BUSINESS_UNITS_INTRO.descripcion}</p>
       </div>
 

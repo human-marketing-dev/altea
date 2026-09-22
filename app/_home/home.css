@@ -157,15 +157,31 @@
   recorta arriba y abajo en vez de dejar que el video crezca con el ancho. A
   1512px son ~545px, prácticamente lo que medía contenido a 960.
 */
+/*
+  La caja parte de la proporción del clip (1920×1080) y sólo se recorta cuando
+  eso la haría demasiado alta. Es la diferencia con lo que había antes: el alto
+  fijo obligaba a un recorte distinto en cada ancho —un 47% del ancho en móvil,
+  donde la caja quedaba casi cuadrada—, y ahí es donde se perdía el encuadre.
+
+  Con el ratio como base, en móvil y tablet no se recorta nada; el tope sólo
+  entra en pantallas anchas, y lo que quita se lo lleva por igual de arriba y de
+  abajo, así que el clip sigue centrado en su caja.
+
+  El tope es la única perilla: subirlo da más alto y menos recorte.
+*/
 .home-video__player {
   display: block;
   width: 100%;
-  height: clamp(320px, 46vw, 720px);
-  /* Tope por alto de ventana: en móvil el suelo del clamp (320px) manda y no
-     estorba, pero en una ventana corta o apaisada impide que el clip pida más
-     pantalla de la que hay y haya que desplazarse para verlo entero. */
-  max-height: 76svh;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: 86svh;
   object-fit: cover;
+  /*
+    70% y no 50%: el recorte se reparte 70/30 en vez de por mitades, así que se
+    ve más del pie del clip. No 100%, que dejaría el borde inferior a ras y
+    sacrificaría todo el recorte por arriba.
+  */
+  object-position: center 70%;
 }
 .home-video__play {
   position: absolute;
@@ -219,9 +235,11 @@
   font-size: var(--text-h1);
   font-weight: 600;
   line-height: var(--leading-heading);
-  color: var(--altea-cream);
+  /* Titular entero en coral, no sólo una palabra. Va sobre ink, así que le
+     toca el coral normal —4.87 de contraste—: el coral-dark de las superficies
+     claras se apagaría a 3.66 sobre este fondo. */
+  color: var(--accent-on-ink);
 }
-.home-units__acento { color: var(--altea-coral); }
 .home-units__intro {
   margin: 0;
   font-size: var(--text-body-lg);
@@ -404,10 +422,13 @@
 .home-emblem__text {
   margin: 0;
   max-width: 17ch;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0 0.26em;
+  /*
+    Texto corriente, no un flex con `gap`: el hueco entre palabras tiene que ser
+    un carácter de espacio de verdad para que la frase se copie bien. El espacio
+    natural de la Gotham mide 0.29em una vez aplicado el letter-spacing, y aquí
+    iban 0.26em, así que el word-spacing repone esos 0.03em de más.
+  */
+  word-spacing: -0.03em;
   text-align: center;
   text-transform: uppercase;
   font-family: var(--font-display);
@@ -415,8 +436,14 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
+  /* Cream sobre ink: 12.06 de contraste. */
   color: var(--altea-cream);
 }
+/* Una palabra en coral, 4.87 sobre ink. Convive con los titulares corales de
+   Unidades y Proyectos, que la rodean: es una decisión tomada a sabiendas. */
+/* inline-block y no inline: RevealOnScroll y motion.css les aplican un
+   transform, que un inline ignoraría. */
+.home-emblem__palabra { display: inline-block; }
 .home-emblem__palabra--acento { color: var(--altea-coral); }
 
 /* =============================== CTA ============================== */
@@ -428,6 +455,10 @@
   gap: var(--space-8);
   padding: var(--space-8) var(--container-pad);
 }
+/* La imagen es un recorte con alfa, no una foto que llene la caja: el fondo de
+   la ranura (--surface-card-dark) asomaría como un rectángulo más claro sobre el
+   ink de la sección. Transparente, el recorte flota. */
+.home-cta__media .altea-media { background: transparent; }
 .home-cta__body { display: flex; flex-direction: column; gap: var(--space-6); align-items: flex-start; }
 
 /* ============================ Proyectos =========================== */
@@ -504,16 +535,18 @@
 .home-proyectos__titulo {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   /*
-    Padding simétrico. El reserva de --space-10 que había aquí para el solape
-    del panel vecino ni siquiera llegaba a aplicarse —el shorthand `padding` que
-    venía después lo pisaba— y con el bloque centrado ya no hace falta: el texto
-    crece hacia los dos lados a la vez, así que su borde derecho queda en
-    (ancho + línea) / 2 y nunca alcanza la diagonal del vecino. Verificado de
-    900 a 1920px de ancho; el margen más ajustado son 12px, a 1100.
+    A la izquierda y al margen de sección, no centrado: las bandas van a sangre,
+    así que el titular tiene que ponerse su propio --container-pad para alinear
+    con Stats, Unidades y el resto. Centrado en vertical se queda.
+
+    No hace falta reservar el solape del panel vecino por la derecha: la línea
+    más larga acaba en --container-pad + su ancho, y eso no alcanza la diagonal
+    en ningún ancho. Verificado de 900 a 2560px; el margen más ajustado son 3px,
+    a 1100, donde el titular envuelve a tres líneas.
   */
-  padding: var(--space-6);
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--container-pad);
 }
 .home-proyectos__titulo h2 {
   margin: 0;
@@ -522,23 +555,20 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
-  /*
-    El bloque va centrado en la celda (lo hace el flex de arriba) pero el texto
-    alineado a la izquierda, para que las dos líneas arranquen a la par.
-
-    No hace falta `width: fit-content`: el <h2> es un ítem flex con `flex: 0 1
-    auto`, así que ya se dimensiona a su contenido y sólo encoge cuando no cabe.
-    Es la misma resolución que daría `fit-content`. Si algún día se le pusiera un
-    `flex-grow` o un `align-self: stretch`, ahí sí se estiraría a toda la celda y
-    el centrado dejaría de notarse.
-  */
   text-align: left;
-  color: var(--text-primary);
-}
-/* La segunda línea en el acento de la marca. Sobre cream manda --text-accent,
-   que ya es la variante oscura — ver el par en tokens.css. */
-.home-proyectos__titulo-2 {
-  display: block;
+  /* El \n del texto es el que parte las dos líneas; sin esto se colapsaría a un
+     espacio. `pre-line` respeta el salto pero deja que la frase siga envolviendo
+     sola cuando la celda no da para tanto. */
+  white-space: pre-line;
+  /*
+    Frase uniforme: mismo cuerpo, mismo peso y mismo color en las dos líneas.
+    Es una sola oración y se lee como un bloque.
+
+    Sobre cream toca --text-accent (coral-dark): 3.29 de contraste, que pasa el
+    3:1 de texto grande porque es --text-h2 —24px en bold, 32px arriba de
+    1600—, pero NO el 4.5 de texto corriente. No reutilizar este color en
+    párrafos.
+  */
   color: var(--text-accent);
 }
 
@@ -665,9 +695,9 @@
     font-weight: var(--weight-bold);
     line-height: var(--leading-heading);
     letter-spacing: var(--tracking-tight);
-    color: var(--altea-ink);
+    white-space: pre-line;
+    color: var(--text-accent);
   }
-  .home-proyectos__titulo-suelto .home-proyectos__titulo-2 { color: var(--altea-ink-40); }
 
   /* Las bandas desaparecen de la caja y las seis celdas quedan como hijas
      directas de la sección: una sola columna con costuras continuas. */

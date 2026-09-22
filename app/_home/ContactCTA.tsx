@@ -14,8 +14,11 @@ export function ContactCTA() {
           src={CONTACT_CTA.image}
           alt=""
           tone="dark"
-          ratio="4 / 3"
-          sizes="(max-width: 900px) 100vw, 40vw"
+          /* La proporción exacta del archivo (2430×2475). Con el 4/3 anterior,
+             `cover` se comía un 26% del alto — y el recorte llega hasta el borde
+             superior e inferior, así que cortaba al sujeto. Así no recorta nada. */
+          ratio="2430 / 2475"
+          sizes="(max-width: 900px) 100vw, 45vw"
         />
       </div>
       <div className="home-cta__body">

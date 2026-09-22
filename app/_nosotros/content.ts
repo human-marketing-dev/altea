@@ -59,13 +59,14 @@ export const HUELLA = {
 export const MOSTRAR_QUE_HACEMOS_INTRO = false;
 
 export const QUE_HACEMOS_INTRO = {
-  /** Por palabras, para poder acentuar una en coral. */
-  palabras: [
-    "Quiénes", "somos,", "nuestro", "propósito,", "y", "el", "modelo",
-    "integral", "nos", "distingue",
-  ],
-  /** Índice de la palabra en coral. */
-  acento: 7,
+  /*
+   * Texto corrido con la palabra de acento aparte. NO volver a partirlo en un
+   * array de palabras: iban como ítems de un flex y el hueco lo ponía su `gap`,
+   * o sea que en el DOM no había espacios y la frase copiada salía toda pegada.
+   */
+  fraseInicio: "Quiénes somos, nuestro propósito, y el modelo",
+  acento: "integral",
+  fraseFin: "nos distingue",
   /* Horizontal, con mucho cielo: aguanta bien el velo oscuro y el texto
      centrado encima. No se usa en ninguna otra sección. */
   image: "/images/industrial/galeria/galeria-industrial-altea-2.webp",

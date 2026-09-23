@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, Marcas, NavBar } from "@/app/ui";
+import { BloquesRevelados, Footer, LeadCTA, Marcas, NavBar } from "@/app/ui";
 import { MOSTRAR_MARCAS } from "@/lib/marcas";
-import { MOSTRAR_QUE_HACEMOS_INTRO } from "../_nosotros/content";
+import {
+  MOSTRAR_QUE_HACEMOS_INTRO,
+  QUIENES_SOMOS,
+} from "../_nosotros/content";
 import { Banner } from "../_nosotros/Banner";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
 import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
-import { QuienesSomos } from "../_nosotros/QuienesSomos";
 import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
 import "../_nosotros/nosotros.css";
 
@@ -26,7 +28,7 @@ export default function Nosotros() {
         <Huella />
         {MOSTRAR_QUE_HACEMOS_INTRO && <QueHacemosIntro />}
         {/* 5. Quiénes somos */}
-        <QuienesSomos />
+        <BloquesRevelados {...QUIENES_SOMOS} />
         {/* 7. Responsabilidad social */}
         <ResponsabilidadSocial />
         {MOSTRAR_MARCAS && <Marcas />}

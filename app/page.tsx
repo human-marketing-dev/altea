@@ -1,10 +1,20 @@
-import { Footer, IntroAltea, LeadCTA, Marcas, NavBar } from "@/app/ui";
+import {
+  Footer,
+  IntroAltea,
+  LeadCTA,
+  Marcas,
+  NavBar,
+  ProyectosPaneles,
+} from "@/app/ui";
 import { MOSTRAR_MARCAS } from "@/lib/marcas";
 import { BusinessUnits } from "./_home/BusinessUnits";
 import { ContactCTA } from "./_home/ContactCTA";
 import { CorporateVideo } from "./_home/CorporateVideo";
+import {
+  FEATURED_PROJECTS,
+  FEATURED_PROJECTS_INTRO,
+} from "./_home/content";
 import { Emblem } from "./_home/Emblem";
-import { FeaturedProjects } from "./_home/FeaturedProjects";
 import { Stats } from "./_home/Stats";
 import { WhyAltea } from "./_home/WhyAltea";
 import "./_home/home.css";
@@ -24,7 +34,10 @@ export default function Home() {
         <WhyAltea />
         <BusinessUnits />
         <Emblem />
-        <FeaturedProjects />
+        <ProyectosPaneles
+          titulo={FEATURED_PROJECTS_INTRO.titulo}
+          proyectos={FEATURED_PROJECTS}
+        />
         <ContactCTA />
         {MOSTRAR_MARCAS && <Marcas />}
         {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el

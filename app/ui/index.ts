@@ -30,7 +30,22 @@ export type { NavBarProps, NavLink } from "./NavBar";
 export { Footer } from "./Footer";
 export type { FooterColumn, FooterProps } from "./Footer";
 
+export { BloquesRevelados } from "./BloquesRevelados";
+export type { BloqueRevelado, BloquesReveladosProps } from "./BloquesRevelados";
+
+export { HeroUnidad } from "./HeroUnidad";
+export type { HeroUnidadProps } from "./HeroUnidad";
+
+export { SliderProyectos } from "./SliderProyectos";
+export type {
+  DiapositivaProyecto,
+  SliderProyectosProps,
+} from "./SliderProyectos";
+
 export { MediaSlot } from "./MediaSlot";
+
+export { ProyectosPaneles } from "./ProyectosPaneles";
+export type { ProyectoPanel, ProyectosPanelesProps } from "./ProyectosPaneles";
 export type { MediaSlotProps } from "./MediaSlot";
 
 export { CountUp } from "./CountUp";

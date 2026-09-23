@@ -2,11 +2,9 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { FeaturedProject } from "./content";
-import { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } from "./content";
 
 /** Grados por defecto si el CSS no los declara. El valor real sale de
- *  `--angulo` en .home-proyectos, que en móvil lo baja. */
+ *  `--angulo` en .altea-proyectos, que en móvil lo baja. */
 const ANGULO_BASE = 11;
 
 /** Grosor del anillo de foco. Tiene que coincidir con el del CSS. */
@@ -15,18 +13,41 @@ const FOCO = 3;
 /** Por debajo de aquí las bandas se apilan y no hay diagonales. */
 const MOVIL = "(max-width: 820px)";
 
-const [BANDA_1, BANDA_2] = [FEATURED_PROJECTS.slice(0, 3), FEATURED_PROJECTS.slice(3)];
+/** Cuántos paneles caben en una banda junto al titular. */
+const POR_BANDA = 3;
+
+export interface ProyectoPanel {
+  slug: string;
+  name: string;
+  /** El giro, en la chapa y en la ficha. */
+  unit: string;
+  location: string;
+  image?: string;
+}
+
+export interface ProyectosPanelesProps {
+  /** Ocupa la primera celda de la banda 1. El \n parte las líneas. */
+  titulo: string;
+  proyectos: readonly ProyectoPanel[];
+}
 
 /**
- * Seis paneles en paralelogramo, en dos bandas. El título es una celda más de
+ * Paneles en paralelogramo repartidos en bandas. El título es una celda más de
  * la primera.
+ *
+ * El reparto se calcula, no se escribe: la banda 1 lleva el titular más
+ * POR_BANDA paneles y el resto pasa a una segunda banda. Con tres proyectos o
+ * menos no hay segunda banda, y por eso no aparecen huecos — la portada monta
+ * seis y comercial tres.
  *
  * El desplazamiento de la diagonal sale del alto real de la celda, así que no
  * se puede escribir en el CSS: se calcula aquí al montar y en cada resize.
  */
-export function FeaturedProjects() {
+export function ProyectosPaneles({ titulo, proyectos }: ProyectosPanelesProps) {
+  const banda1 = proyectos.slice(0, POR_BANDA);
+  const banda2 = proyectos.slice(POR_BANDA);
   const raiz = useRef<HTMLElement>(null);
-  const [activo, setActivo] = useState<FeaturedProject | null>(null);
+  const [activo, setActivo] = useState<ProyectoPanel | null>(null);
   const dialogo = useRef<HTMLDialogElement>(null);
   /* Quién abrió el diálogo, para devolverle el foco al cerrar. */
   const origen = useRef<HTMLButtonElement | null>(null);
@@ -40,7 +61,7 @@ export function FeaturedProjects() {
     if (!activo && nodo.open) nodo.close();
   }, [activo]);
 
-  const abrir = (proyecto: FeaturedProject, boton: HTMLButtonElement) => {
+  const abrir = (proyecto: ProyectoPanel, boton: HTMLButtonElement) => {
     origen.current = boton;
     setActivo(proyecto);
   };
@@ -52,7 +73,7 @@ export function FeaturedProjects() {
     const medir = () => {
       const movil = window.matchMedia(MOVIL).matches;
       /* La costura y el ángulo viven en el CSS (--costura y --angulo en
-         .home-proyectos): de la primera salen también el aire de la sección y
+         .altea-proyectos): de la primera salen también el aire de la sección y
          el hueco entre bandas, y el segundo baja en móvil, donde el corte se
          come demasiado ancho de tarjeta. Se leen en cada medición para que un
          cambio —o una redefinición dentro de un media query— llegue aquí sin
@@ -194,7 +215,7 @@ export function FeaturedProjects() {
 
 
   return (
-    <section ref={raiz} className="home-proyectos">
+    <section ref={raiz} className="altea-proyectos">
       {/*
         El titular existe dos veces, y sólo una está en el DOM a la vez: cada
         breakpoint oculta la otra con `display: none`, que también la saca del
@@ -205,28 +226,32 @@ export function FeaturedProjects() {
         carril que se desliza. Un mismo nodo no puede estar dentro y fuera de un
         contenedor con scroll.
       */}
-      <h2 className="home-proyectos__titulo-suelto">
-        {FEATURED_PROJECTS_INTRO.titulo}
+      <h2 className="altea-proyectos__titulo-suelto">
+        {titulo}
       </h2>
 
-      <div className="home-proyectos__banda js-banda">
-        <div className="home-proyectos__celda home-proyectos__titulo js-titulo">
-          <h2>{FEATURED_PROJECTS_INTRO.titulo}</h2>
+      <div className="altea-proyectos__banda js-banda">
+        <div className="altea-proyectos__celda altea-proyectos__titulo js-titulo">
+          <h2>{titulo}</h2>
         </div>
-        {BANDA_1.map((p) => (
+        {banda1.map((p) => (
           <Panel key={p.slug} proyecto={p} onAbrir={abrir} />
         ))}
       </div>
 
-      <div className="home-proyectos__banda js-banda">
-        {BANDA_2.map((p) => (
-          <Panel key={p.slug} proyecto={p} onAbrir={abrir} />
-        ))}
-      </div>
+      {/* Sin segunda banda cuando no sobran proyectos: una banda vacía dejaría
+          una franja de 5px de costura contra la nada. */}
+      {banda2.length > 0 && (
+        <div className="altea-proyectos__banda js-banda">
+          {banda2.map((p) => (
+            <Panel key={p.slug} proyecto={p} onAbrir={abrir} />
+          ))}
+        </div>
+      )}
 
       <dialog
         ref={dialogo}
-        className="home-proyectos__dialogo"
+        className="altea-proyectos__dialogo"
         onClose={() => {
           setActivo(null);
           /* Los navegadores modernos ya lo devuelven solos, pero se hace
@@ -239,10 +264,10 @@ export function FeaturedProjects() {
         }}
       >
         {activo && (
-          <article className="home-proyectos__ficha">
+          <article className="altea-proyectos__ficha">
             <button
               type="button"
-              className="home-proyectos__cerrar"
+              className="altea-proyectos__cerrar"
               onClick={() => setActivo(null)}
               aria-label="Cerrar ficha"
             >
@@ -251,7 +276,7 @@ export function FeaturedProjects() {
 
             {activo.image && (
               <Image
-                className="home-proyectos__ficha-foto"
+                className="altea-proyectos__ficha-foto"
                 src={activo.image}
                 alt=""
                 aria-hidden
@@ -261,10 +286,10 @@ export function FeaturedProjects() {
               />
             )}
 
-            <div className="home-proyectos__ficha-cuerpo">
-              <span className="home-proyectos__giro">{activo.unit}</span>
-              <h3 className="home-proyectos__ficha-nombre">{activo.name}</h3>
-              <p className="home-proyectos__ficha-lugar">{activo.location}</p>
+            <div className="altea-proyectos__ficha-cuerpo">
+              <span className="altea-proyectos__giro">{activo.unit}</span>
+              <h3 className="altea-proyectos__ficha-nombre">{activo.name}</h3>
+              <p className="altea-proyectos__ficha-lugar">{activo.location}</p>
             </div>
           </article>
         )}
@@ -274,13 +299,13 @@ export function FeaturedProjects() {
 }
 
 interface PanelProps {
-  proyecto: FeaturedProject;
-  onAbrir: (proyecto: FeaturedProject, boton: HTMLButtonElement) => void;
+  proyecto: ProyectoPanel;
+  onAbrir: (proyecto: ProyectoPanel, boton: HTMLButtonElement) => void;
 }
 
 function Panel({ proyecto, onAbrir }: PanelProps) {
   return (
-    <div className="home-proyectos__celda home-proyectos__celda--enlace">
+    <div className="altea-proyectos__celda altea-proyectos__celda--enlace">
       {/*
         Botón y no enlace: abre un diálogo, no navega. Un <a> que no lleva a
         ninguna parte rompe el clic con rueda y el "abrir en pestaña nueva", y
@@ -289,12 +314,12 @@ function Panel({ proyecto, onAbrir }: PanelProps) {
       */}
       <button
         type="button"
-        className="home-proyectos__panel"
+        className="altea-proyectos__panel"
         aria-haspopup="dialog"
         onClick={(evento) => onAbrir(proyecto, evento.currentTarget)}
       >
-        <span className="home-proyectos__lienzo">
-          <span className="home-proyectos__foto">
+        <span className="altea-proyectos__lienzo">
+          <span className="altea-proyectos__foto">
             {proyecto.image && (
               <Image
                 src={proyecto.image}
@@ -312,11 +337,11 @@ function Panel({ proyecto, onAbrir }: PanelProps) {
               />
             )}
           </span>
-          <span className="home-proyectos__degradado" aria-hidden="true" />
+          <span className="altea-proyectos__degradado" aria-hidden="true" />
 
-          <span className="home-proyectos__chapa js-chapa">
-            <span className="home-proyectos__nombre">{proyecto.name}</span>
-            <span className="home-proyectos__giro">{proyecto.unit}</span>
+          <span className="altea-proyectos__chapa js-chapa">
+            <span className="altea-proyectos__nombre">{proyecto.name}</span>
+            <span className="altea-proyectos__giro">{proyecto.unit}</span>
           </span>
         </span>
       </button>

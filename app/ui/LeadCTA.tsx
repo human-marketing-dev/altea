@@ -8,12 +8,27 @@ export interface DatoContacto {
   icono?: NombreIcono;
 }
 
+export interface CanalContacto {
+  /** Para qué sirve el canal: "Renta de locales", "Venta de inmuebles"… */
+  nombre: string;
+  /** Opcionales a propósito: donde falte el dato se pinta un guion en vez de
+      enlazar a un número inventado. */
+  telefono?: string;
+  correo?: string;
+}
+
 export interface LeadCTAProps {
   eyebrow?: string;
   title?: string;
   description?: string;
   /** Líneas de contacto bajo el copy. */
   datos?: readonly DatoContacto[];
+  /**
+   * Canales con teléfono y correo propios, en rejilla 2×2. Sustituyen a `datos`
+   * donde una sola dirección no alcanza — hoy sólo /comercial, que atiende por
+   * cuatro vías distintas.
+   */
+  canales?: readonly CanalContacto[];
   /** Preselecciona la unidad, p. ej. en la página de Industrial. */
   unidadPorDefecto?: LeadFormProps["unidadPorDefecto"];
   className?: string;
@@ -39,9 +54,11 @@ export function LeadCTA({
   title = CONTACTO.title,
   description = CONTACTO.description,
   datos = CONTACTO.datos,
+  canales,
   unidadPorDefecto,
   className,
 }: LeadCTAProps) {
+  const conCanales = (canales?.length ?? 0) > 0;
   return (
     <section
       id="contacto"
@@ -49,7 +66,52 @@ export function LeadCTA({
     >
       <div className="flex flex-col gap-6">
         <SectionHeading eyebrow={eyebrow} title={title} description={description} tone="light" />
-        {datos.length > 0 && (
+        {conCanales && (
+          /*
+            Rejilla 2×2 y no una tira de cuatro: apilados, los cuatro grupos con
+            sus dos datos suman doce líneas y la columna se alargaba muy por
+            debajo del formulario de al lado. En dos columnas las alturas quedan
+            parejas y se lee como directorio. En móvil vuelve a una columna,
+            donde no hay nada con que descuadrarse.
+          */
+          <ul className="m-0 grid list-none grid-cols-1 gap-x-8 gap-y-6 p-0 sm:grid-cols-2">
+            {canales?.map((canal) => (
+              <li key={canal.nombre} className="flex flex-col gap-1.5">
+                <span className="text-eyebrow font-semibold uppercase tracking-wide text-cream">
+                  {canal.nombre}
+                </span>
+                {(
+                  [
+                    ["telefono", "Tel", canal.telefono, `tel:${canal.telefono?.replace(/[^+\d]/g, "")}`],
+                    ["correo", "Correo", canal.correo, `mailto:${canal.correo}`],
+                  ] as const
+                ).map(([clave, etiqueta, valor, href]) => (
+                  <span key={clave} className="flex items-baseline gap-2 text-body text-cream-60">
+                    <span className="shrink-0 text-cream-60">{etiqueta}:</span>
+                    {valor ? (
+                      <a
+                        href={href}
+                        /* El hover cambia el SUBRAYADO a coral, no el texto:
+                           como texto pequeño el coral se queda en 4.28 sobre
+                           este gris y no llega al 4.5. Como línea es un
+                           elemento gráfico, le basta 3:1 y le sobra. */
+                        className="text-cream underline decoration-1 underline-offset-4 transition-colors hover:decoration-coral hover:decoration-2"
+                      >
+                        {valor}
+                      </a>
+                    ) : (
+                      /* Sin dato todavía. Un guion y no un enlace muerto: un
+                         tel: a un número inventado marca de verdad. */
+                      <span aria-label="Pendiente">—</span>
+                    )}
+                  </span>
+                ))}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {!conCanales && datos.length > 0 && (
           <ul className="m-0 flex list-none flex-col gap-3 p-0 text-body text-cream-60">
             {datos.map((dato) => (
               /* `items-start` y no `center`: el domicilio puede irse a dos

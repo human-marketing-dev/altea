@@ -1,0 +1,479 @@
+/* ========================= Página de Comercial ======================== */
+/*
+  Sólo lo propio de esta página. El hero, los bloques revelados y los paneles de
+  proyectos son componentes compartidos y su CSS vive en app/ui/components.css.
+*/
+
+/* ===================== 2 · Banda a todo lo ancho ==================== */
+/*
+  A sangre y sin recorte diagonal: es un respiro entre dos bloques de contenido,
+  y el corte la volvería un elemento más en vez de una pausa.
+*/
+.com-banda {
+  position: relative;
+  height: clamp(320px, 62svh, 620px);
+  overflow: hidden;
+  background: var(--surface-page-dark);
+}
+/*
+  El sobrante de 8% arriba y abajo no es decorativo: deja recorrido por si algún
+  día se le anima un parallax. Sin él, cualquier desplazamiento descubriría el
+  fondo por un borde.
+*/
+.com-banda__foto {
+  position: absolute;
+  inset: -8% 0;
+}
+.com-banda__foto .altea-media { width: 100%; height: 100%; }
+
+/* ============================ 3 · Cifras =========================== */
+.com-cifras {
+  background: var(--surface-page-dark);
+  padding: var(--space-9) var(--container-pad);
+}
+.com-cifras__rejilla {
+  margin: 0;
+  display: grid;
+  /*
+    Vuelto al 1fr original ahora que son cuatro: con cuatro celdas el reparto
+    llena la fila y no hace falta acotarlas. El minmax(180px, 240px) con
+    justify-content: start existió mientras fueron dos, porque entonces cada una
+    se llevaba media pantalla y el número quedaba perdido en un bloque vacío.
+
+    Si las dos inventadas acaban borrándose, hay que volver a aquello.
+  */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-8) var(--space-6);
+}
+.com-cifras__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.com-cifras__valor {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-size: var(--text-display-2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  /* 12.06 sobre ink. */
+  color: var(--altea-cream);
+}
+/*
+  El signo en coral normal: sobre ink da 4.87. El coral-dark bajaría a 3.66 —
+  ver el par documentado en tokens.css.
+
+  Y a 0.45em, no al cuerpo del número. Medido sobre la Gotham real: "250,000 M²"
+  a tamaño completo mide 307px y la celda da 300 a 1440, así que envolvía. Con
+  la unidad reducida son 263 y entra en una línea en todos los anchos, de 900 a
+  2560. Es además el tratamiento normal de un bloque de cifras: manda el número,
+  la unidad acompaña.
+*/
+.com-cifras__signo {
+  color: var(--accent-on-ink);
+  font-size: 0.45em;
+  /* Sin esto se apoyaría en la línea base del número y quedaría hundida. */
+  align-self: center;
+  margin-left: 0.12em;
+}
+.com-cifras__etiqueta {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  /* 7.58 sobre ink: apagada pero muy por encima del 4.5 de texto pequeño. */
+  color: var(--text-on-dark-secondary);
+}
+
+/* ====================== 4 · Descripción de la unidad =============== */
+.com-desc {
+  background: var(--surface-page);
+  padding: var(--space-9) var(--container-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+  /* Arriba, no centradas: el titular es corto y el cuerpo largo; centrados, el
+     titular quedaba flotando a media altura del bloque. */
+  align-items: start;
+  gap: var(--space-8);
+}
+.com-desc__titulo {
+  margin: 0;
+  max-width: 16ch;
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.com-desc__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.com-desc__cuerpo p {
+  margin: 0;
+  /* El tope en ch es lo que impide que las líneas se hagan largas de leer; el
+     ancho de la columna por sí solo no lo garantiza en un monitor ancho. */
+  max-width: 68ch;
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+
+/* ================== 5 · Showcase de plazas ========================= */
+/*
+  Una plaza a la vez, a pantalla completa. Las siete fotos viven a la vez como
+  capas apiladas y lo único que cambia es cuál está descubierta; el barrido
+  diagonal y el acercamiento los pinta ShowcasePlazas.tsx, que necesita el alto
+  en píxeles y no se puede escribir aquí.
+*/
+.com-show {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--surface-page-dark);
+  display: grid;
+  /* Cabecera y pie se ajustan a su contenido; el cuerpo se queda el resto y por
+     eso la ficha puede centrarse en vertical sin un alto escrito a mano. */
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--container-pad);
+}
+
+/* --- Las capas de foto --- */
+.com-show__fondos {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.com-show__capa {
+  position: absolute;
+  inset: 0;
+  /* El clip-path de arranque lo pone el JS; hasta entonces, ocultas. La activa
+     se descubre en el primer pase del useGSAP. */
+  visibility: hidden;
+}
+.com-show__foto {
+  position: absolute;
+  inset: 0;
+  /* Sin origen explícito el acercamiento tiraría de la esquina. */
+  transform-origin: center;
+}
+.com-show__foto img { object-fit: cover; }
+
+/*
+  Diagonal a propósito: oscurece el costado donde vive el texto y deja respirar
+  el de la foto. Los 105° lo inclinan en el mismo sentido que el resto del sitio,
+  y el repunte del final evita que la esquina derecha se quede tan clara que las
+  miniaturas dejen de leerse encima.
+
+  ⚠ LOS TRAMOS NO SON LOS DEL PROTOTIPO, y el motivo es medible. Con
+  .86/0 · .55/44 · .18/72 · .42/100 el tramo oscuro se apaga demasiado pronto:
+  la ficha llega hasta el 53% del eje del degradado a 900px de ventana, y ahí el
+  velo ya sólo tenía un 43% de ink. Contra el peor fondo posible —cielo blanco
+  justo detrás del texto— el cream se quedaba en 1.97, ni la mitad del 4.5 que
+  pide un texto pequeño; a 1920 llegaba a 3.79, y sólo pasaba a partir de 2560.
+
+  Corrido el segundo tramo al 76%/56%, el velo bajo la ficha no baja del 77% en
+  ningún ancho y el cream no baja de 5.58. El lado de la foto pierde un 8% de
+  claridad: el tramo del 20% empieza a 80% del eje en vez de a 72%.
+*/
+.com-show__velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
+    color-mix(in srgb, var(--altea-ink) 76%, transparent) 56%,
+    color-mix(in srgb, var(--altea-ink) 20%, transparent) 80%,
+    color-mix(in srgb, var(--altea-ink) 44%, transparent) 100%
+  );
+}
+
+/* --- Cabecera --- */
+.com-show__cabecera,
+.com-show__cuerpo,
+.com-show__pie {
+  position: relative;
+  z-index: 1;
+}
+.com-show__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+.com-show__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--altea-cream);
+}
+.com-show__contador {
+  margin: 0;
+  flex: none;
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+  /* Tabulares para que el contador no baile al pasar de 01 a 07. */
+  color: var(--text-on-dark-secondary);
+}
+.com-show__contador-actual {
+  font-size: var(--text-h1);
+  color: var(--altea-cream);
+}
+
+/* --- Cuerpo: la ficha --- */
+.com-show__cuerpo {
+  display: flex;
+  align-items: center;
+}
+.com-show__ficha {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 46ch;
+}
+.com-show__lugar {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* Cream entero: es texto pequeño y necesita 4.5. */
+  color: var(--altea-cream);
+}
+/*
+  Sesgo de --angulo, como el badge del hero: nunca escrito a mano.
+
+  Pero en CREAM, no en coral. Aquí detrás hay una fotografía, no un fondo ink
+  sólido: sobre el velo de esta sección el coral se queda entre 2.26 y 2.83
+  contra una foto clara, por debajo del 3:1 que pide un elemento gráfico. El
+  coral sí funciona en la raya de la miniatura activa, que va sobre el ink de
+  la sección y no sobre foto.
+*/
+.com-show__marca {
+  flex: none;
+  width: 8px;
+  height: 14px;
+  background: var(--altea-cream);
+  transform: skewX(calc(var(--angulo) * -1deg));
+}
+.com-show__nombre {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display-2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--altea-cream);
+}
+.com-show__desc {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  /*
+    Cream entero, NO --text-on-dark-secondary. Ese token es cream al 70% y sobre
+    este velo se queda en 3.66–4.20 contra una foto clara, por debajo del 4.5.
+    Aquí la jerarquía la sostienen el cuerpo y el peso —body-lg normal contra un
+    display-2 en bold—, que ya es diferencia de sobra sin tocar el color.
+  */
+  color: var(--altea-cream);
+}
+.com-show__datos {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-7);
+}
+.com-show__dato {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.com-show__dato dt {
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* Mismo motivo que en .com-show__desc: al 70% no llega al 4.5. */
+  color: var(--altea-cream);
+}
+.com-show__dato dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  color: var(--altea-cream);
+}
+
+/* --- Pie: miniaturas y flechas --- */
+.com-show__pie {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+.com-show__minis {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: flex-end;
+  /* La misma costura de 5px que los paneles de proyectos y el resto del sitio. */
+  gap: 5px;
+  /* Siete miniaturas no caben en un teléfono: que rueden en vez de encogerse
+     hasta dejar de verse. */
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* En la fila de escritorio es un ítem flex, y el `auto` por defecto de
+     min-width le impediría encoger por debajo de su contenido: al añadir plazas
+     empujaría las flechas fuera del canal en vez de rodar. Hoy caben siete con
+     holgura a 900 —633 de 810—, pero la octava ya no. */
+  min-width: 0;
+}
+.com-show__minis::-webkit-scrollbar { display: none; }
+.com-show__mini {
+  position: relative;
+  flex: none;
+  display: block;
+  width: clamp(76px, 9vw, 124px);
+  aspect-ratio: 4 / 3;
+  padding: 0;
+  border: none;
+  /* Hereda la tipografía en vez de la del user agent, aunque hoy no lleve
+     texto: si mañana se le pone un rótulo, ya sale en la del sitio. */
+  font: inherit;
+  background: none;
+  cursor: pointer;
+  opacity: 0.42;
+  transition:
+    width var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+}
+.com-show__mini img { object-fit: cover; }
+.com-show__mini[aria-current] {
+  width: clamp(108px, 13vw, 180px);
+  opacity: 1;
+}
+.com-show__mini:focus-visible {
+  outline: 2px solid var(--altea-cream);
+  outline-offset: 3px;
+}
+/* La raya se despliega con scaleX, no con width: el ancho dispara relayout de
+   toda la fila en cada fotograma; la escala va en compositor. */
+.com-show__mini-raya {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--accent-on-ink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+.com-show__mini[aria-current] .com-show__mini-raya { transform: scaleX(1); }
+
+.com-show__flechas {
+  flex: none;
+  display: flex;
+  gap: var(--space-2);
+}
+.com-show__flecha {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  color: var(--altea-cream);
+  cursor: pointer;
+  /* Aquí abajo el velo diagonal ya está en su tramo más claro —el repunte del
+     42%—, así que la flecha no puede contar con él y lleva chapa propia. */
+  background: color-mix(in srgb, var(--altea-ink) 58%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.com-show__flecha:hover {
+  background: color-mix(in srgb, var(--altea-ink) 78%, transparent);
+}
+.com-show__flecha:focus-visible {
+  outline: 2px solid var(--altea-cream);
+  outline-offset: 2px;
+}
+.com-show__flecha svg { width: 20px; height: 20px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .com-show__mini,
+  .com-show__mini-raya,
+  .com-show__flecha { transition: none; }
+}
+
+/* ============================= Móvil ============================== */
+@media (max-width: 900px) {
+  .com-cifras,
+  .com-desc { padding-block: var(--space-8); }
+
+  .com-desc {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+  .com-desc__titulo { max-width: none; }
+
+  /*
+    El velo pasa a vertical: aquí el texto no va AL LADO de la foto sino encima
+    de ella, así que un degradado diagonal oscurecería el costado equivocado.
+
+    Y casi plano, no en rampa: en un teléfono la ficha queda centrada a media
+    altura, o sea en el punto donde una rampa ya se ha apagado. Con el reparto
+    del prototipo —55% al 44%— el cream se quedaba en 2.78 ahí. Entre 88% y 74%
+    no baja de 5.11 en ningún punto de la pantalla. La foto se ve menos, pero
+    con el texto encima de ella no hay forma de tener las dos cosas.
+  */
+  .com-show__velo {
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
+      color-mix(in srgb, var(--altea-ink) 74%, transparent) 100%
+    );
+  }
+  .com-show__pie {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+  .com-show__flechas { align-self: flex-end; }
+}
+
+/*
+  Por debajo de 560 el contador baja de línea. "Nuestras plazas comerciales" mide
+  339px a --text-h2, y a 390 el canal útil son 350: con el contador al lado al
+  título le quedaban 229 y envolvía a tres renglones contra un número de uno. El
+  corte va aquí y no en los 900 del resto porque hasta 560 sí caben los dos.
+*/
+@media (max-width: 560px) {
+  .com-show__cabecera {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+}

@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { Fragment, useRef } from "react";
-import { QUIENES_SOMOS } from "./content";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -35,15 +34,35 @@ function recorte(el: HTMLElement, a: number, b: number, invertido: boolean, rad:
   return `polygon(${x1}px 0, ${x2}px 0, ${x2 - dx}px 100%, ${x1 - dx}px 100%)`;
 }
 
+export interface BloqueRevelado {
+  id: string;
+  /** Ordinal que se pinta grande junto al título, p. ej. "01". */
+  numero: string;
+  title: string;
+  description: string;
+  image?: string;
+  alt?: string;
+}
+
+export interface BloquesReveladosProps {
+  /** Se parte por palabras para la entrada; el aria-label lleva la frase entera. */
+  titulo: string;
+  bloques: readonly BloqueRevelado[];
+}
+
 /**
- * Sección 5 — columna fija a la izquierda y bloques que pasan a la derecha.
+ * Columna fija a la izquierda y bloques que pasan a la derecha.
  *
  * Cada imagen tiene su propio tramo de scroll con tres fases: se descubre, se
  * sostiene y se borra por donde entró. Todo con `scrub`, así que subir lo
- * revierte. La dirección alterna: el bloque 2 barre al contrario que el 1 y el
- * 3 — misma mecánica con el flag invertido, no un efecto distinto.
+ * revierte. La dirección alterna: los pares barren al contrario que los impares
+ * — misma mecánica con el flag invertido, no un efecto distinto.
+ *
+ * Compartido entre "Quiénes somos" (/nosotros) y "Hoteles, hospital y
+ * educación" (/comercial): el contenido entra por props, el componente sólo
+ * pone la mecánica.
  */
-export function QuienesSomos() {
+export function BloquesRevelados({ titulo, bloques }: BloquesReveladosProps) {
   const raiz = useRef<HTMLElement>(null);
   const indice = useRef<HTMLSpanElement>(null);
 
@@ -167,17 +186,15 @@ export function QuienesSomos() {
     { scope: raiz },
   );
 
-  const { titulo, bloques } = QUIENES_SOMOS;
-
   return (
-    <section ref={raiz} className="nos-quienes">
-      <div className="nos-quienes__fijo">
+    <section ref={raiz} className="altea-bloques">
+      <div className="altea-bloques__fijo">
         {/*
           El aria-label lleva la frase entera y cada palabra va aria-hidden: sin
           eso el lector anunciaría las once sueltas. Mismo tratamiento que el
           logotipo del hero.
         */}
-        <h2 className="nos-quienes__titulo" aria-label={titulo}>
+        <h2 className="altea-bloques__titulo" aria-label={titulo}>
           {/*
             El espacio va como hermano del <span>, no dentro: JSX no renderiza el
             espacio entre elementos de un .map(), y uno al final de un
@@ -190,35 +207,35 @@ export function QuienesSomos() {
           */}
           {titulo.split(" ").map((palabra, i, todas) => (
             <Fragment key={i}>
-              <span className="nos-quienes__palabra js-palabra" aria-hidden="true">
+              <span className="altea-bloques__palabra js-palabra" aria-hidden="true">
                 {palabra}
               </span>
               {i < todas.length - 1 ? " " : ""}
             </Fragment>
           ))}
         </h2>
-        <p className="nos-quienes__indice" aria-hidden="true">
+        <p className="altea-bloques__indice" aria-hidden="true">
           <span ref={indice}>01</span> / {String(bloques.length).padStart(2, "0")}
         </p>
       </div>
 
-      <div className="nos-quienes__bloques">
+      <div className="altea-bloques__bloques">
         {bloques.map((bloque, i) => (
-          <article key={bloque.id} id={bloque.id} className="nos-quienes__bloque js-bloque">
-            <span className="nos-quienes__numero" aria-hidden="true">
+          <article key={bloque.id} id={bloque.id} className="altea-bloques__bloque js-bloque">
+            <span className="altea-bloques__numero" aria-hidden="true">
               {bloque.numero}
             </span>
-            <h3 className="nos-quienes__titulo-bloque">{bloque.title}</h3>
-            <p className="nos-quienes__texto">{bloque.description}</p>
+            <h3 className="altea-bloques__titulo-bloque">{bloque.title}</h3>
+            <p className="altea-bloques__texto">{bloque.description}</p>
 
             {/* El sobrante lateral de __foto evita que al mover el recorte se
                 descubran las esquinas. `fill` + `cover`, nunca background-image:
                 perdería el srcset. */}
             <div
-              className="nos-quienes__media js-media"
-              data-invertido={i === 1 ? "true" : "false"}
+              className="altea-bloques__media js-media"
+              data-invertido={i % 2 === 1 ? "true" : "false"}
             >
-              <div className="nos-quienes__foto">
+              <div className="altea-bloques__foto">
                 {bloque.image && (
                   <Image
                     src={bloque.image}

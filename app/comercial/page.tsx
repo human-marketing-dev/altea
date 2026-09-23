@@ -1,10 +1,32 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, NavBar, Proximamente } from "@/app/ui";
+import {
+  BloquesRevelados,
+  Footer,
+  HeroUnidad,
+  LeadCTA,
+  Marcas,
+  NavBar,
+  ProyectosPaneles,
+} from "@/app/ui";
+import {
+  CANALES_COMERCIAL,
+  HERO_COMERCIAL,
+  MOSTRAR_MARCAS_COMERCIAL,
+  OTROS_GIROS,
+  PROXIMOS_PROYECTOS,
+} from "../_comercial/content";
+import {
+  BandaComercial,
+  CifrasComercial,
+  DescripcionComercial,
+} from "../_comercial/SeccionesComercial";
+import { ShowcasePlazas } from "../_comercial/ShowcasePlazas";
+import "../_comercial/comercial.css";
 
 export const metadata: Metadata = {
   title: "Comercial — Altea",
   description:
-    "Unidad de negocio Comercial de Altea. Sección en construcción.",
+    "Centros comerciales de Altea: siete plazas en operación en cinco estados, con hoteles, hospital y educación dentro de los mismos desarrollos.",
 };
 
 export default function Comercial() {
@@ -12,13 +34,18 @@ export default function Comercial() {
     <>
       <NavBar tone="light" />
       <main>
-        <Proximamente
-          unidad="Comercial"
-      lockup="/brand/business-units/altea-comercial-color.svg"
-      tagline="Activar la energía de la ciudad en un solo lugar."
-        />
+        <HeroUnidad {...HERO_COMERCIAL} />
+        <BandaComercial />
+        <CifrasComercial />
+        <DescripcionComercial />
+        <ShowcasePlazas />
+        <BloquesRevelados {...OTROS_GIROS} />
+        {MOSTRAR_MARCAS_COMERCIAL && (
+          <Marcas title="Marcas que operan en nuestros centros" />
+        )}
+        <ProyectosPaneles {...PROXIMOS_PROYECTOS} />
       </main>
-      <LeadCTA unidadPorDefecto="Comercial" />
+      <LeadCTA unidadPorDefecto="Comercial" canales={CANALES_COMERCIAL} />
       <Footer />
     </>
   );

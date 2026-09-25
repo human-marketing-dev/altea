@@ -253,8 +253,15 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   line-height: var(--leading-body);
   color: var(--text-secondary);
 }
-/* El eyebrow no puede quedarse con un solo token: este componente se monta
-   sobre los dos fondos. La variante ya existe, así que el acento la sigue. */
+/*
+  El eyebrow no puede quedarse con un solo token: este componente se monta sobre
+  los dos fondos. La variante ya existe, así que el acento la sigue.
+
+  ⚠ Sobre ink el coral da 4.87 y cumple, pero sobre --surface-card-dark —el gris
+  del bloque de cierre— baja a 4.28 y no llega al 4.5 de texto pequeño. Ya pasaba
+  con el <LeadCTA> anterior, que usaba el mismo par sobre el mismo gris. Se deja
+  para resolver con el resto del asunto del coral, que está congelado.
+*/
 .altea-section-heading--light .altea-section-heading__eyebrow { color: var(--accent-on-ink); }
 .altea-section-heading--light .altea-section-heading__title { color: var(--altea-cream); }
 .altea-section-heading--light .altea-section-heading__description { color: var(--text-on-dark-secondary); }
@@ -830,18 +837,22 @@ body:not([data-intro-done]) .altea-navbar--intro {
   */
   background: var(--altea-cream);
   /*
-    El mismo par que toda sección del sitio: el aire vertical y --container-pad
-    de canal. NADA de max-width — ninguna sección de Altea capa su ancho, así
-    que hacerlo aquí dejaba el hero más angosto que Stats o Unidades en cuanto
-    la ventana pasaba de 1440.
+    SIN aire vertical en la sección: lo lleva la columna de TEXTO.
+
+    Con el padding aquí, la foto —que es la columna más alta y por tanto la que
+    fija el alto de la fila— arrancaba 96px por debajo del borde, y encima de
+    esos 96 están los ~95 que ya ocupa la barra: 191px de nada antes de que
+    empezara la imagen. Pasándolo al texto, la foto toca arriba y abajo y el
+    texto conserva su respiro.
+
+    El --container-pad lateral se queda: es el canal del texto, y la tarjeta se
+    lo salta por la derecha con su margen negativo.
+
+    NADA de max-width — ninguna sección de Altea capa su ancho, así que hacerlo
+    aquí dejaba el hero más angosto que Stats o Unidades pasados los 1440.
   */
-  padding: var(--space-9) var(--container-pad);
-  /*
-    Recorta el grano y cualquier desborde. Ojo al bajar el padding: la sombra de
-    la tarjeta se derrama 38px por abajo (30 de caída + 30 de medio difuminado
-    − 22 de spread) y 8px por los costados. Con --space-8 en móvil quedan 64, y
-    --container-pad no baja de 20: hay holgura, pero no tanta como parece.
-  */
+  padding: 0 var(--container-pad);
+  /* Recorta el grano y el sobrante de la tarjeta sangrada. */
   overflow: hidden;
 }
 
@@ -886,6 +897,8 @@ body:not([data-intro-done]) .altea-navbar--intro {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-5);
+  /* El aire que antes ponía la sección. */
+  padding-block: var(--space-9);
 }
 
 .altea-hero-unidad__badge {
@@ -948,221 +961,61 @@ body:not([data-intro-done]) .altea-navbar--intro {
 }
 
 /* --- Tarjeta flotante --- */
+/*
+  La tarjeta sale del canal por la derecha: el margen negativo se come el
+  --container-pad de la sección, así que la imagen toca el borde de la ventana.
+  SÓLO ella — el texto de la izquierda conserva su canal.
+*/
 .altea-hero-unidad__tarjeta {
   position: relative;
-  /* Pegada al borde derecho de su carril para que le quede aire a la izquierda
-     y se lea flotando, no encajada. */
-  margin: 0 0 0 auto;
+  margin: 0 calc(var(--container-pad) * -1) 0 auto;
   width: min(100%, 620px);
   /*
-    A escuadra, como el resto del sitio: ningún radius.
+    Desplazamiento del barrido de entrada, EN PORCENTAJE DEL ANCHO.
 
-    `overflow: hidden` SÍ se queda, aunque ya no haya esquinas que recortar. No
-    es por la foto —.altea-media trae el suyo— ni por el degradado, que va a
-    `inset: 0` y no puede salirse: es por el pie, anclado abajo y sin alto fijo.
-    Con un dato largo crecería hacia arriba y se derramaría por el borde
-    superior de la tarjeta. La sombra no le afecta: se pinta fuera de la caja.
+    En un clip-path las x van en % del ancho y las y del alto, así que para que
+    la diagonal salga a los 11° del sitio el porcentaje depende de la proporción
+    de la tarjeta: tan(11°) × (alto/ancho). Con la 2565/2613 de escritorio son
+    19.8%; con el 16/10 de móvil, 12.1%. Verificado: las dos dan 11.0° exactos.
+
+    Así el barrido se resuelve en CSS y el componente sigue siendo de servidor,
+    sin JavaScript.
   */
-  overflow: hidden;
+  --barrido: 19.8%;
+  /* A escuadra, como el resto del sitio: ningún radius. Y sin `overflow`: con
+     un recorte con alfa y sin sombra no hay nada que recortar. */
   /*
-    Sombra propia, NO --shadow-card. Aquélla es la de una tarjeta apoyada —8px
-    de desplazamiento, 24 de difuminado, alfa 0.13— y aquí la tarjeta tiene que
-    leerse despegada del beige: 30px de caída y 60 de difuminado, con el doble
-    de densidad. Es el único sitio del sitio que pide esto, así que vive local
-    en vez de ocupar un token; si aparece un segundo consumidor, se promueve.
+    SIN SOMBRA y sin fondo en el hueco. La imagen del hero es un RECORTE con
+    alfa —verificado: el .webp trae chunk ALPH— así que no hay caja que
+    sombrear: la sombra dibujaba un rectángulo alrededor de algo que no lo es, y
+    el --surface-sunken de .altea-media asomaba como un bloque gris detrás del
+    recorte.
+
+    Si algún día se pone aquí una fotografía de caja completa, hay que devolver
+    las dos cosas: están en el historial de git.
   */
-  box-shadow:
-    0 30px 60px -22px color-mix(in srgb, var(--altea-ink) 42%, transparent),
-    0 8px 18px -10px color-mix(in srgb, var(--altea-ink) 22%, transparent);
 }
+.altea-hero-unidad__tarjeta .altea-media { background: transparent; }
 
-/* --- El carrusel dentro de la tarjeta --- */
-.altea-slider {
-  position: relative;
-  /* La pista desborda por definición; el recorte lo pone aquí y no en la
-     tarjeta, para que la sombra de aquélla siga pintándose fuera. */
-  overflow: hidden;
-}
-
+/* --- La foto de la tarjeta --- */
 /*
-  Pista en flex con `translateX`, NO un contenedor con scroll-snap: el paso lo
-  manda el control, no el dedo. Con snap habría dos fuentes de verdad —la
-  posición del scroll y el índice— y se desincronizan en cuanto una transición
-  se interrumpe.
+  La proporción es la del archivo (2565×2613, casi cuadrado) y NO un 4/3.
+  Forzada a 4/3, `cover` le recortaba el 26% del alto. A cambio la tarjeta sube
+  de 465 a 632px en escritorio, y con ella la sección, de 657 a 824.
 */
-.altea-slider__pista {
-  display: flex;
-  transition: transform 0.7s var(--ease-standard);
-}
-.altea-slider__lamina {
-  position: relative;
-  margin: 0;
-  /* `flex: 0 0 100%` y no `width`: en un flex, un ancho del 100% se encogería
-     con los hermanos y las cuatro láminas cabrían en una pantalla. */
-  flex: 0 0 100%;
-}
-
-/* Doble clase para ganarle a `.altea-media`, que es de una sola. */
-.altea-slider__lamina .altea-slider__media {
-  aspect-ratio: 4 / 3;
-}
-
-/*
-  Degradado para que el pie se lea sobre cualquier foto: transparente hasta el
-  38% de la altura y de ahí a ink sólido al llegar al borde de abajo.
-
-  El 82% no es a ojo. Con el peor caso imaginable —una foto blanca justo debajo
-  del texto— el cream sobre ese velo da 6.74; sobre el hueco gris del
-  placeholder, 7.59. Bajarlo del 72% dejaría el peor caso rozando el 4.5.
-*/
-.altea-slider__velo {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--altea-ink) 82%, transparent) 0%,
-    /* `transparent` sin más: los degradados interpolan con alfa premultiplicado,
-       así que no hay franja gris al desvanecer. */
-    transparent 38%
-  );
-}
-
-.altea-slider__pie {
-  position: absolute;
-  inset: auto 0 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-6);
-}
-
-.altea-slider__dato {
-  margin: 0;
-  max-width: 40ch;
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--altea-cream);
-}
-
-.altea-slider__proyecto {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-small);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--altea-cream);
-}
-.altea-slider__nombre { font-weight: var(--weight-bold); }
-/* Sin --altea-cream-60 aquí: al 60% sobre el velo se queda en 3.3 y esto es
-   texto pequeño. La ubicación se distingue por el peso del nombre, no por
-   apagarla. */
-.altea-slider__ubicacion { font-weight: var(--weight-medium); }
-
-/* --- Flechas, arriba a la derecha --- */
-/*
-  Toda la navegación en una fila arriba a la derecha. Antes las rayas iban abajo
-  a la izquierda y se comían el pie de la tarjeta.
-*/
-.altea-slider__controles {
-  position: absolute;
-  top: var(--space-5);
-  right: var(--space-5);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.altea-slider__flecha {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: none;
-  color: var(--altea-cream);
-  cursor: pointer;
-  /*
-    El 58% no es a ojo: es el mínimo que deja la flecha cream por encima del 3:1
-    de un elemento gráfico CONTRA EL PEOR FONDO POSIBLE, una foto blanca justo
-    debajo. Ahí da 3.18; sobre una foto oscura sube a 9.6. Por debajo del 50% el
-    peor caso cae de 3:1 y la flecha desaparece sobre cielo claro.
-  */
-  background: color-mix(in srgb, var(--altea-ink) 58%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  transition: background var(--duration-fast) var(--ease-standard);
-}
-.altea-slider__flecha:hover {
-  background: color-mix(in srgb, var(--altea-ink) 78%, transparent);
-}
-.altea-slider__flecha:focus-visible {
-  outline: 2px solid var(--altea-cream);
-  outline-offset: 2px;
-}
-.altea-slider__flecha svg { width: 20px; height: 20px; }
-
-/* --- Rayas de posición, abajo a la izquierda --- */
-/*
-  Chapa propia, igual que las flechas: arriba la foto es lo que sea y no hay
-  velo que sostenga las rayas. Mide 40px de alto —8+8 de padding más los 24 del
-  objetivo táctil— que es justo el lado de una flecha, así que la fila cuadra
-  sin alinear nada a mano.
-*/
-.altea-slider__rayas {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: color-mix(in srgb, var(--altea-ink) 58%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-.altea-slider__raya {
-  width: 28px;
-  /* El área de pulsación son 24px de alto; la raya visible, 3. Sin esto el
-     objetivo táctil mediría 3px. */
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.altea-slider__raya::before {
-  content: "";
-  display: block;
-  width: 100%;
-  height: 3px;
-  /* Cream al 40%. Es decorativa: lo que comunica la posición al lector de
-     pantalla es el aria-current, no el color. */
-  background: color-mix(in srgb, var(--altea-cream) 40%, transparent);
-  transition: background var(--duration-fast) var(--ease-standard);
-}
-/*
-  La activa se distingue por COLOR, no por tamaño: cambiar el ancho movería a
-  las vecinas en cada paso.
-
-  Cream y NO coral, aunque el coral fuera lo de marca. Medido contra el peor
-  fondo posible —una foto blanca bajo la chapa— el coral da 2.37 y no llega al
-  3:1 que pide un elemento gráfico; ni subiendo la chapa al 86% pasa de 3.13,
-  y a esa densidad la chapa ya es un rectángulo negro sobre la foto. El cream
-  da 5.86 sobre la misma chapa y el salto contra la inactiva al 40% se lee
-  igual de claro.
-*/
-.altea-slider__raya[aria-current]::before { background: var(--altea-cream); }
-.altea-slider__raya:focus-visible {
-  outline: 2px solid var(--altea-cream);
-  outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .altea-slider__pista { transition: none; }
+.altea-hero-unidad__tarjeta .altea-hero-unidad__media {
+  aspect-ratio: 2565 / 2613;
 }
 
 /* --- Móvil: se apilan, primero el texto --- */
 @media (max-width: 900px) {
-  .altea-hero-unidad { padding-block: var(--space-8); }
+  .altea-hero-unidad__texto { padding-block: var(--space-8); }
+  /* Apilada, la foto va primera y sangra por los dos costados. */
+  .altea-hero-unidad__tarjeta {
+    margin-inline: calc(var(--container-pad) * -1);
+    /* La proporción cambia a 16/10, y con ella el % que da los 11°. */
+    --barrido: 12.1%;
+  }
   .altea-hero-unidad__rejilla {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-7);
@@ -1171,15 +1024,10 @@ body:not([data-intro-done]) .altea-navbar--intro {
     width: 100%;
     margin-inline: 0;
   }
-  .altea-slider__lamina .altea-slider__media { aspect-ratio: 16 / 10; }
-  /*
-    Aire vertical reducido. A 16/10 la tarjeta mide 200px de alto en una pantalla
-    de 360, y el pie con sus 32 de padding ocupaba 165: quedaban 35 para los
-    controles, que necesitan 56 desde el borde. Se montaban encima del dato. Con
-    16 quedan 67 y hay 11 de separación real.
-  */
-  .altea-slider__pie { padding: var(--space-4) var(--space-5); }
-  .altea-slider__controles { top: var(--space-4); right: var(--space-4); }
+  .altea-hero-unidad__tarjeta .altea-hero-unidad__media {
+    /* Apilada, la casi-cuadrada se comería media pantalla de alto. */
+    aspect-ratio: 16 / 10;
+  }
 }
 
 /* ================ Bloques revelados en paralelogramo ================ */
@@ -1599,10 +1447,18 @@ body:not([data-intro-done]) .altea-navbar--intro {
   margin: auto;
   padding: 0;
   border: 0;
-  max-width: min(920px, 92vw);
-  max-height: min(86svh, 900px);
+  /*
+    1040 y 90svh, no 920 y 86. Los dos se subieron para que la foto pueda ser
+    más grande sin que la ficha empiece a pedir scroll: el diálogo más ancho da
+    foto más ancha —y de paso baja el texto de 4 líneas a 3, que devuelve 22px
+    de alto—, y el tope más alto da sitio donde ponerlos.
+  */
+  max-width: min(1040px, 92vw);
+  max-height: min(90svh, 900px);
   width: 100%;
-  /* Con el tope de alto, una ficha larga tiene que poder desplazarse. */
+  /* Red de seguridad: con los textos de hoy no se dispara en ningún tamaño,
+     pero una descripción más larga tiene que poder desplazarse antes que
+     recortarse. */
   overflow: auto;
   background: var(--surface-card);
   color: var(--text-primary);
@@ -1676,12 +1532,32 @@ body:not([data-intro-done]) .altea-navbar--intro {
   }
 }
 
+/* Apilada siempre: foto arriba, información abajo. */
 .altea-proyectos__ficha { position: relative; }
+/*
+  LA FOTO NO PUEDE CRECER LIBRE, o la ficha obliga a desplazarse para leer la
+  descripción. Dos frenos, y los dos salen de medir:
+
+  · `max-height: 46svh`. Sin freno, un 16/9 a 1040px de ancho mide 585, y el
+    tope del diálogo a 1024×640 son 576: no cabría ni la foto sola. Atado al
+    alto de la VENTANA —que es la restricción real, no el ancho— se queda en
+    294px ahí y en 414 a 1440×900.
+
+  · 2/1 por debajo de 720px. Ahí el freno de svh no llega a actuar, porque el
+    diálogo es angosto y de suyo da poco alto; lo que aprieta es el texto, que
+    en una columna de 283px se va a once líneas.
+
+  El recorte lo absorbe el `object-fit: cover` que ya tenía.
+
+  Verificado de 360×640 a 2560×1440: ninguno necesita desplazarse. Los márgenes
+  más ajustados son +15px en el iPhone SE y +27 en un 1024×640.
+*/
 .altea-proyectos__ficha-foto {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2 / 1;
+  max-height: 46svh;
   object-fit: cover;
 }
 .altea-proyectos__ficha-cuerpo {
@@ -1689,7 +1565,15 @@ body:not([data-intro-done]) .altea-navbar--intro {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-3);
-  padding: var(--space-6);
+  /* --space-5 en pantallas chicas: los 8px que se ahorran a cada lado son
+     parte de lo que hace que la ficha quepa en una de 640 de alto. */
+  padding: var(--space-5);
+}
+
+/* Va DESPUÉS de las dos reglas que pisa: misma especificidad, gana el último. */
+@media (min-width: 720px) {
+  .altea-proyectos__ficha-foto { aspect-ratio: 16 / 9; }
+  .altea-proyectos__ficha-cuerpo { padding: var(--space-6); }
 }
 .altea-proyectos__ficha-nombre {
   margin: 0;
@@ -1702,6 +1586,14 @@ body:not([data-intro-done]) .altea-navbar--intro {
 .altea-proyectos__ficha-lugar {
   margin: 0;
   font-size: var(--text-body);
+  color: var(--text-secondary);
+}
+.altea-proyectos__ficha-texto {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  /* 5.15 sobre la superficie clara de la ficha; es texto pequeño y necesita
+     4.5. */
   color: var(--text-secondary);
 }
 .altea-proyectos__cerrar {
@@ -1724,3 +1616,335 @@ body:not([data-intro-done]) .altea-navbar--intro {
 .altea-proyectos__cerrar:hover { background: var(--altea-coral); }
 .altea-proyectos__cerrar:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
 
+
+/* ===================== Sección de relato ========================= */
+/*
+  Sección de TEXTO a todo lo ancho, sin fotografía: etiqueta, frase de apertura
+  en grande, regla y cuerpo en dos columnas, con el isotipo de marca de agua
+  saliéndose por el borde derecho.
+
+  Compartida: la montan "El origen" en /nosotros y "Centros que ordenan la vida
+  de su zona" en /comercial. Nació en la primera, cuando vimos que era la
+  tercera rejilla de dos columnas seguida de esa página; el razonamiento está
+  en SeccionRelato.tsx.
+*/
+.altea-relato {
+  position: relative;
+  /* Obligatorio: sin él la marca de agua se derrama por el borde derecho y
+     ensancha el documento entero. */
+  overflow: hidden;
+  background: var(--surface-page);
+  padding: var(--space-9) var(--container-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/*
+  Marca de agua: el isotipo, grande y muy tenue, RECORTADO por el borde derecho.
+
+  Que se salga es lo que la hace funcionar. Una marca centrada y completa se
+  leería como un elemento más de la composición, y volveríamos a tener dos
+  columnas con un bloque visual al lado — justo de lo que sacamos esta sección.
+  Cortada por el borde se lee como textura del fondo.
+
+  Al 5%: es el valor del prototipo y el que corresponde a un isotipo SÓLIDO. Una
+  marca de línea aguantaría el 7% sin pesar, pero ésta es una masa de tinta y
+  rinde más por punto de opacidad. Medido, el texto sobre ella: el cuerpo pasa
+  de 5.15 a 4.91 y el titular de 12.06 a 11.00. Al 7% el cuerpo bajaría a 4.82,
+  todavía por encima del 4.5, así que si se quiere más presente hay margen.
+*/
+.altea-relato__agua {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  right: calc(var(--container-pad) * -1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(280px, 34vw, 560px);
+  /* next/image escribe width y height como atributos; sin esto el alto se
+     quedaría clavado en los 324 del viewBox. */
+  height: auto;
+  opacity: 0.05;
+}
+/* Todo lo demás por encima. */
+.altea-relato > *:not(.altea-relato__agua) {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- La cabecera, en versalitas --- */
+.altea-relato__etiqueta {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* Ink y no el acento: es texto pequeño y necesita 4.5, que el coral-dark no
+     da sobre cream —3.29—. Con ink son 12.06. El acento de la cabecera lo
+     lleva la marca de al lado, que es gráfica. */
+  color: var(--altea-ink);
+}
+/* Mismo patrón que el badge del hero de comercial, y el sesgo de --angulo:
+   nunca escrito a mano. Coral-dark, que sobre cream da 3.29 y pasa el 3:1 de
+   un elemento gráfico; el coral normal se quedaría en 2.48. */
+.altea-relato__marca {
+  flex: none;
+  width: 8px;
+  height: 14px;
+  background: var(--altea-coral-dark);
+  transform: skewX(calc(var(--angulo) * -1deg));
+}
+
+/* --- La frase de apertura --- */
+.altea-relato__apertura {
+  margin: 0;
+  /*
+    --text-h1, que es el escalón inmediatamente por debajo del --text-display-2
+    del <h1> del banner. Antes era un clamp propio de 4.6vw que a 1440 daba
+    64px contra los 51.8 del titular de la página: la frase de una sección
+    interior pesaba MÁS que el encabezado de la página entera.
+
+    Ahora se queda en el 72-73% de aquél en escritorio. Y se baja el clamp
+    entero, no sólo el tope: el coeficiente vw es el que gobierna en la mayoría
+    de los anchos y el tope casi no interviene.
+
+    Lo que la separa de los demás titulares de sección —que también usan
+    --text-h1— no es el cuerpo sino el tratamiento: tracking cerrado, interlínea
+    de 1.04 y la palabra en acento. Más la etiqueta de arriba y la regla de
+    abajo, que la enmarcan.
+  */
+  font-size: var(--text-h1);
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--text-primary);
+}
+/*
+  Coral-dark sobre cream: 3.29. Pasa el 3:1 de TEXTO GRANDE, y aquí el cuerpo
+  mínimo del clamp son 30.4px en bold, muy por encima del umbral.
+
+  NO reutilizar este color en el cuerpo de abajo ni en ningún texto pequeño:
+  ahí el mínimo es 4.5 y 3.29 no llega.
+*/
+.altea-relato__acento { color: var(--text-accent); }
+
+/*
+  Regla fina y RECTA, sin el corte diagonal del sitio.
+
+  A 2px de alto el desplazamiento del ángulo es tan(11°)×2 = 0.39px: sub-píxel,
+  invisible incluso en una pantalla 2x. Y subirla hasta que se notara no
+  compensa — a 6px el corte sigue siendo de 1.17px y para entonces la regla ya
+  no es una línea sino una barra: metro y medio de --space-1 cruzando la
+  sección de lado a lado.
+
+  La diagonal de la sección la lleva la marca del encabezado, que a 14px de alto
+  sí tiene 2.7px de corte y se ve.
+*/
+.altea-relato__regla {
+  height: 2px;
+  /*
+    Arriba 36px y abajo 44 —los 32 del `gap` de la sección más estos márgenes—.
+    Geométricamente estaban ya iguales a 44 y 44, pero se leía con más aire
+    arriba: la última línea de la apertura suele quedar corta y el ojo mide el
+    hueco desde la línea llena anterior. Abajo, además, la interlínea de 1.6 del
+    cuerpo añade unos 4px de medio interlineado antes de la primera línea.
+  */
+  margin-block: var(--space-1) var(--space-3);
+  background: color-mix(in srgb, var(--altea-ink) 12%, transparent);
+  /*
+    Termina donde termina el cuerpo, no en el borde de la sección. A 1920 el
+    cuerpo llega al 68% del canal: con la regla a sangre quedaba medio metro de
+    línea sobre nada. Atada al mismo tope, las dos acaban en la misma vertical
+    en todos los anchos.
+  */
+  width: 100%;
+  max-width: 104ch;
+}
+
+/* --- El cuerpo, dos columnas a la derecha --- */
+.altea-relato__cuerpo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-7);
+  /*
+    Tope de 88ch y ALINEADO CON EL TITULAR por la izquierda; lo libre queda a la
+    derecha. Antes iba con margin-left:auto y se leía como un bloque apartado en
+    vez de como una respuesta al titular.
+
+    El tope no es estético, es de legibilidad: sin él, a 1920 cada columna mide
+    856px —92 caracteres por línea— y a 2560 llega a 127. El techo cómodo son
+    75. Con 104ch las columnas se quedan en 578px y 62 caracteres desde los
+    1440px en adelante, que sigue dentro del rango cómodo.
+  */
+  max-width: 104ch;
+}
+.altea-relato__cuerpo p {
+  margin: 0;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+
+/*
+  Remate opcional, a todo el ancho del cuerpo y FUERA de la rejilla. Un escalón
+  por encima de los párrafos —--text-h3 contra --text-body-lg— porque no es un
+  párrafo más sino la conclusión con el dato: sacarlo de las columnas y subirlo
+  de cuerpo es lo que le da su lugar.
+
+  Mismo tope que el cuerpo y que la regla, así que los tres acaban en la misma
+  vertical.
+*/
+.altea-relato__cierre {
+  margin: 0;
+  max-width: 104ch;
+  font-size: var(--text-h3);
+  line-height: var(--leading-body);
+  color: var(--text-primary);
+}
+
+
+@media (max-width: 900px) {
+  .altea-relato { padding-block: var(--space-8); }
+  /*
+    Fuera la marca de agua. El clamp tiene su suelo en 280px, así que en un
+    teléfono de 390 NO son los ~130px que daría el 34vw: son 280, el 72% del
+    ancho de pantalla, justo detrás de la columna de texto. Aquí no aporta
+    fondo, sólo se come un poco del 4.91 de contraste del cuerpo.
+  */
+  .altea-relato__agua { display: none; }
+  /* Lo que se apila aquí es el CUERPO, no la sección: ésta no es rejilla. */
+  .altea-relato__cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+}
+
+/* ==================== Cierre de contacto ========================== */
+/*
+  Bloque que cierra TODAS las páginas: el recorte del casco a sangre a la
+  izquierda y, a la derecha, el encabezado con dos salidas —WhatsApp y la página
+  de contacto—.
+
+  Sustituyó al bloque con formulario (<LeadCTA>), que iba en las seis rutas.
+*/
+/*
+  El padding y el gap DEJAN de ser de la sección y pasan al bloque de texto: la
+  foto del casco va a sangre por arriba, por la izquierda y por abajo, y para eso
+  no puede quedar canal entre ella y el borde.
+
+  El `gap` se va con el padding porque también la apartaría del borde izquierdo;
+  la separación entre foto y texto la pone ahora el padding del propio texto.
+
+  NADA de esto se compartía. `.altea-cierre` es la única regla con estos valores y
+  ninguna otra sección hereda de ella: las demás siguen con su
+  `padding: var(--space-9) var(--container-pad)` intacto.
+*/
+.altea-cierre {
+  /*
+    --surface-card-dark y NO ink, y el motivo es el footer.
+
+    El footer que va justo debajo es ink, y con los dos en ink los dos bloques se
+    leían como una sola mancha oscura. Con el gris de tarjeta esta sección se
+    despega sin dejar de ser oscura, y no hay que tocar el footer — que es el
+    mismo en las seis rutas.
+
+    Es exactamente lo que resolvía el <LeadCTA> al que sustituyó; se perdió al
+    traer aquí el bloque del home, que sí iba en ink porque allá no tenía el
+    footer debajo sino otra sección.
+  */
+  background: var(--surface-card-dark);
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  align-items: center;
+}
+/*
+  Colocación explícita: la foto va segunda en el marcado pero primera en la
+  rejilla.
+
+  Y NO lleva `height: 100%` ni `align-self: stretch`, aunque parezca lo que pide
+  una imagen a sangre. El recorte conserva su proporción exacta (2430/2475) y con
+  eso es ÉL quien fija el alto de la fila: medido, da de 509 a 1043px según el
+  ancho, contra los 328–377 del bloque de texto, así que gana siempre y toca los
+  bordes de arriba y de abajo por sí solo. Estirándolo, `cover` recortaría un 35%
+  del alto y el corte se comería el casco — que es justo lo que ese ratio exacto
+  estaba evitando.
+*/
+.altea-cierre__media {
+  grid-column: 1;
+  grid-row: 1;
+}
+/* La imagen es un recorte con alfa, no una foto que llene la caja: el fondo de
+   la ranura (--surface-card-dark) asomaría como un rectángulo más claro sobre el
+   ink de la sección. Transparente, el recorte flota. */
+.altea-cierre__media .altea-media { background: transparent; }
+.altea-cierre__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+/*
+  El botón secundario. Se apoya en .altea-btn sólo por las medidas: los
+  contornos del sistema —.altea-btn--outline— van en ink sobre superficie clara,
+  y aquí el fondo es ink.
+
+  Cream sobre el gris de tarjeta da 10.59 en el texto. El borde va al 42%:
+  medido sobre ESE fondo da 3.14, por encima del 3:1 que pide un elemento
+  gráfico. (Sobre ink daba 3.30; al 38% se quedaba en 2.95 y no llegaba.)
+*/
+.altea-cierre__secundario {
+  background: transparent;
+  color: var(--altea-cream);
+  border: 1px solid color-mix(in srgb, var(--altea-cream) 42%, transparent);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+.altea-cierre__secundario:hover {
+  border-color: var(--altea-cream);
+  background: color-mix(in srgb, var(--altea-cream) 10%, transparent);
+}
+.altea-cierre__secundario:hover .altea-btn__arrow { transform: translateX(3px); }
+/* Tercera vía sin botón: 6.61 sobre ink, texto pequeño. */
+.altea-cierre__correo {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  color: var(--text-on-dark-secondary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.altea-cierre__correo:hover { color: var(--altea-cream); }
+
+.altea-cierre__body {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  align-items: flex-start;
+  /* El aire que antes ponía la sección. */
+  padding: var(--space-9) var(--container-pad) var(--space-9) var(--space-8);
+}
+
+
+@media (max-width: 1100px) {
+  /* Daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
+  .altea-cierre { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  /* Apilada: la foto arriba a sangre, el texto debajo. */
+  .altea-cierre { grid-template-columns: minmax(0, 1fr); }
+  .altea-cierre__media { grid-row: 1; }
+  .altea-cierre__body {
+    grid-column: 1;
+    grid-row: 2;
+    padding: var(--space-8) var(--container-pad);
+  }
+}

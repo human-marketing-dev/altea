@@ -6,9 +6,7 @@ import { HUELLA } from "./content";
 export function Huella() {
   return (
     <section className="nos-huella">
-      <div className="nos-huella__map">
-        <MapaProyectos estadosConPresencia={ESTADOS_CON_PRESENCIA} layout="stacked" />
-      </div>
+      <MapaProyectos estadosConPresencia={ESTADOS_CON_PRESENCIA} />
       <div className="nos-huella__body">
         <h2 className="nos-huella__title">{HUELLA.title}</h2>
         <p className="nos-huella__text">{HUELLA.body}</p>

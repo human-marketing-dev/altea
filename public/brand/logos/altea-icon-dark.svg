@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+  Isotipo de Altea: la A del logotipo, sola.
+
+  NO es un dibujo nuevo. El `d` está copiado carácter a carácter del primer
+  <path> de altea-logo-dark.svg, que es esa misma letra dentro del wordmark
+  —contraforma incluida, en un solo path—. Lo único que cambia es el viewBox,
+  ceñido a su caja (318.06 × 324) en vez de a la del logotipo completo.
+
+  Se creó porque no existía ningún isotipo en el repositorio: public/brand/logos
+  sólo tenía los dos wordmarks. Si Altea entrega el suyo, se sustituye este
+  archivo y no hay que tocar nada más.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 318.06 324" fill="#212222">
+  <path d="M318.06,324h-53.86l-29.26-60.22H83.12l-29.26,60.22H0L159.03,0l159.03,324ZM213.31,219.25l-54.28-111.11-54.28,111.11h108.57Z"/>
+</svg>

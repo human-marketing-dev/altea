@@ -4,9 +4,8 @@
  * ⚠ NO ESTÁ CONECTADO A INSTAGRAM. Hoy es una lista estática con imágenes que
  * ya están en el repo, para poder maquetar la sección.
  *
- * Para traerlas de verdad hacen falta dos cosas que no tengo:
- *   1. La cuenta (@handle) de Altea.
- *   2. Credenciales. La Basic Display API está descontinuada; hoy se usa la
+ * La cuenta ya está confirmada (@altea_desarrollos). Lo que sigue faltando son
+ * las credenciales: La Basic Display API está descontinuada; hoy se usa la
  *      Instagram Graph API, que exige cuenta de empresa vinculada a una página
  *      de Facebook, una app de Meta y un token de larga duración. La
  *      alternativa sin desarrollo es un widget de terceros (Behold,

@@ -10,11 +10,22 @@
 
 export const BANNER = {
   eyebrow: "Nosotros",
-  /** PENDIENTE */
-  title: "Construimos el entorno donde crece el norte de México",
-  /** Copy real, del manual de identidad. */
+  title: "Transformamos territorio en oportunidades",
+  /**
+   * El MISMO título, partido para la composición del hero.
+   *
+   * El corte en tres es de diseño, no de contenido: el <h1> lleva `title` entero
+   * en su aria-label y estas partes van aria-hidden, así que un lector de
+   * pantalla oye la frase de una pieza. Mismo criterio que el logotipo del hero
+   * del home y el título de "Quiénes somos".
+   *
+   * La última línea se pinta calada.
+   */
+  lineas: ["Transformamos", "territorio en", "oportunidades"],
+  /* Sin la coma antes de "y turismo": en una enumeración española la
+     conjunción no la lleva. */
   description:
-    "Altea es una inmobiliaria con sólida experiencia y una vasta reserva territorial: diseña y ejecuta proyectos inmobiliarios comerciales, industriales y de vivienda a la medida de cualquier necesidad.",
+    "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial. Desarrollamos, ejecutamos y operamos proyectos inmobiliarios comerciales, industriales, de vivienda, salud, educación y turismo bajo una misma visión: identificar oportunidades, integrar capacidades y crear espacios que generan valor a largo plazo.",
   image: "/images/stock/nosotros-hero-trabajadores-altea.webp",
   alt: "Dos ingenieros revisan planos frente a un edificio en construcción",
   imageNote: "Trabajadores revisando planos en obra",
@@ -22,14 +33,61 @@ export const BANNER = {
 
 export const ORIGEN = {
   title: "¿Cómo nació Altea?",
-  /** PENDIENTE: confirmar el relato de origen y la relación con Grupo GFG. */
-  body: [
-    "Altea nace de la compra de una cadena de cines, el primer activo inmobiliario que el grupo operó por cuenta propia. Ese origen marcó la forma de trabajar: entender un inmueble no como una transacción, sino como un lugar que tiene que llenarse de gente para funcionar.",
-    "Hoy Altea forma parte de Grupo GFG, y opera cuatro divisiones —comercial, industrial, vivienda y forestal— sobre una misma reserva territorial.",
+
+  parrafos: [
+    "En Altea contamos con más de 40 años de experiencia en el desarrollo inmobiliario en México. Nuestros orígenes se remontan a ser propietarios de cines, donde iniciamos nuestra trayectoria desarrollando espacios de entretenimiento y adquiriendo una experiencia que con el tiempo nos permitió ampliar nuestra visión y capacidades.",
+    "Gracias a nuestra constante evolución y adaptación, en Altea seguimos construyendo el futuro con el mismo compromiso de nuestros inicios: generar valor, calidad y oportunidades en cada metro cuadrado que transformamos.",
   ],
-  image: "/images/comercial/proximos-proyectos/paseo-la-fe-altea-proximo.webp",
-  alt: "Render del desarrollo Paseo La Fe",
+
+  /*
+   * Paseo La Fe, por decisión explícita.
+   *
+   * La comparte con /comercial, donde es el centro comercial de portada. No
+   * habla de los cines del relato —no hay ninguna foto de cines en el repo—,
+   * así que `imageNote` se queda apuntando qué material sería el propio si
+   * algún día llega.
+   */
+  image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
+  alt: "Paseo La Fe, centro comercial de Altea en San Nicolás, Nuevo León",
   imageNote: "Los cines que compró Altea",
+};
+
+/**
+ * Interruptor de la sección de Grupo Firma.
+ *
+ * En `true` porque el marcador de posición ES el entregable de este turno: hay
+ * que poder ver el hueco. Pasarlo a `false` la oculta entera, sin borrar nada,
+ * si hay que enseñar la página antes de que llegue el contenido.
+ */
+export const MOSTRAR_GRUPO_FIRMA = true;
+
+/**
+ * Interruptor del bloque de captación en /nosotros.
+ *
+ * En `false` por decisión de contenido, no por diseño: la página termina en
+ * Responsabilidad social y va directo al pie. Apagado y no borrado — el
+ * componente <LeadCTA> lo siguen montando las otras CINCO rutas (home,
+ * comercial, industrial, vivienda y forestal), así que reactivarlo aquí es
+ * cambiar este `false` por `true`.
+ */
+export const MOSTRAR_LEAD_NOSOTROS = false;
+
+/**
+ * Altea forma parte de Grupo Firma.
+ *
+ * ⚠ PENDIENTE DE CONTENIDO — TODO. Altea no ha entregado título, texto ni
+ * imagen. La estructura ya está montada, así que rellenar esto es lo único que
+ * falta; el componente no cambia.
+ */
+export const GRUPO_FIRMA = {
+  eyebrow: "Grupo Firma",
+  /** PENDIENTE */
+  title: undefined as string | undefined,
+  /** PENDIENTE: dos párrafos. Vacío mientras no lleguen. */
+  parrafos: [] as string[],
+  /** PENDIENTE. Sin `src`, <MediaSlot> pinta el hueco etiquetado. */
+  image: undefined as string | undefined,
+  imageNote: "Imagen de Grupo Firma",
 };
 
 export const HUELLA = {
@@ -43,7 +101,7 @@ export const HUELLA = {
   desglose: [
     { label: "Nuevo León", value: 24_000_000 },
     { label: "Resto del país", value: 13_000_000 },
-    { label: "Externas", value: 7_000_000 },
+    { label: "Fuera del país", value: 7_000_000 },
   ],
   /** PENDIENTE: mapa interactivo, probablemente con un componente de terceros. */
   mapNote: "Mapa interactivo de presencia",
@@ -89,41 +147,70 @@ export interface BloqueQuienesSomos {
   alt?: string;
 }
 
+/** Los tres iconos disponibles. Ver ICONOS_GIRO en QuienesSomos.tsx. */
+export type IconoQuienes = "analisis" | "equipo" | "ecosistema";
+
+export interface BloqueQuienes {
+  id: string;
+  icono: IconoQuienes;
+  title: string;
+  description: string;
+}
+
+/**
+ * Sección 5 — Quiénes somos. Tres bloques compactos con icono.
+ *
+ * Se acortó a pedido del cliente: antes era una columna fija con el título
+ * partido palabra por palabra, un índice y tres fotografías que se revelaban en
+ * paralelogramo con el scroll. Ahora son tres columnas parejas y las fotos las
+ * sustituyen iconos.
+ *
+ * ⚠ PENDIENTE: el modelo integral está a la espera de retroalimentación de Ruva.
+ * Los tres textos de abajo son los que entregó Altea, pero pueden cambiar.
+ */
 export const QUIENES_SOMOS = {
-  /** Va en la columna fija, y entra letra por letra. */
+  /** PENDIENTE: la ceja no venía en el copy de Altea. */
+  eyebrow: "Quiénes somos",
+  /* El titular que ya traía la sección antes de rediseñarse. */
   titulo:
     "Quiénes somos, nuestro propósito y el modelo integral que nos distingue",
+  /**
+   * PENDIENTE — la imagen NO EXISTE. Va en una columna muy alta y estrecha
+   * (28% del cuerpo), así que al recortarse con `cover` hay que pedirla
+   * VERTICAL: una apaisada perdería casi todo. Sin `src`, <MediaSlot> pinta el
+   * hueco etiquetado.
+   */
+  foto: {
+    src: undefined as string | undefined,
+    alt: "",
+    label: "Imagen vertical de la sección",
+  },
   bloques: [
     {
       id: "territorio",
-      numero: "01",
+      icono: "analisis",
       title:
         "Donde otros ven un terreno, nosotros vemos el potencial para transformar un territorio.",
       description:
-        "Antes de diseñar un proyecto, entendemos el mercado, analizamos el entorno y descubrimos cómo ese espacio puede generar valor para las personas, las empresas y las comunidades.",
-      image: "/images/stock/donde-otros-ven-terreno-altea.webp",
-      alt: "Equipo de proyecto analizando planos y mediciones sobre una mesa de trabajo",
+        "Antes de diseñar un proyecto, entendemos el mercado, analizamos el entorno y descubrimos cómo ese espacio puede generar valor para las personas, empresas y comunidades.",
     },
     {
       id: "talento",
-      numero: "02",
+      icono: "equipo",
       title: "Nuestro talento",
       description:
-        "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
-      image: "/images/stock/nuestro-talento-altea.webp",
-      alt: "Equipo multidisciplinario revisando juntos un proyecto en la oficina",
+        "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo arquitectónico, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
     },
     {
       id: "ecosistemas",
-      numero: "03",
+      icono: "ecosistema",
       title: "Creamos mucho más que infraestructura",
       description:
-        "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación y turismo, generando espacios capaces de evolucionar junto con las necesidades de quienes los habitan.",
-      image: "/images/comercial/galeria/galeria-altea-1.webp",
-      alt: "Conjunto de Altea con hotel, comercio y plaza pública",
+        "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación, turismo y entretenimiento, creando espacios que conectan personas, actividades y oportunidades.",
     },
-  ] satisfies BloqueQuienesSomos[],
+  ] satisfies BloqueQuienes[],
 };
+
 
 
 /** Sección 7 del sitemap — Responsabilidad social. */
@@ -181,10 +268,11 @@ const GALERIA_RS: FotoGaleria[] = [
 export const RESPONSABILIDAD = {
   eyebrow: "Compromiso",
   title: "Responsabilidad social",
-  /** PENDIENTE: copy sin confirmar por Altea. */
+  /** Entre el título y el cuerpo. Campo nuevo. */
+  subtitulo: "Nuestro compromiso con las comunidades",
   descripcion: [
-    "Cada desarrollo cambia el entorno donde aterriza. Antes de construir ya hay comunidades, familias y comercios alrededor, y lo que hagamos con ese terreno les afecta a diario.",
-    "Por eso el equipo participa de forma directa: posadas y actividades para los niños de las comunidades vecinas, y visitas a casas de adultos mayores. Los espacios que operamos se vuelven el lugar donde eso ocurre.",
+    "En Altea creemos que nuestro compromiso con las comunidades va más allá de los proyectos que desarrollamos. Por eso, impulsamos iniciativas que nos permiten contribuir de manera cercana y activa con nuestro entorno.",
+    "Porque crear proyectos que materialicen sueños también significa contribuir a construir comunidades más humanas, conectadas y solidarias.",
   ],
   galeria: GALERIA_RS,
 };

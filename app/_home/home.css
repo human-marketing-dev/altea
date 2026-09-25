@@ -169,6 +169,47 @@
 
   El tope es la única perilla: subirlo da más alto y menos recorte.
 */
+/*
+  Controles propios, abajo a la derecha. Misma chapa que las flechas del slider
+  y las del showcase: ink translúcido con desenfoque, cream encima. El 58% es el
+  mínimo medido que deja el icono cream por encima del 3:1 contra el peor
+  fotograma posible, uno casi blanco.
+*/
+.home-video__controles {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 1;
+  display: flex;
+  gap: var(--space-2);
+}
+.home-video__control {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  color: var(--altea-cream);
+  cursor: pointer;
+  background: color-mix(in srgb, var(--altea-ink) 58%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.home-video__control:hover {
+  background: color-mix(in srgb, var(--altea-ink) 78%, transparent);
+}
+.home-video__control:focus-visible {
+  outline: 2px solid var(--altea-cream);
+  outline-offset: 2px;
+}
+.home-video__control svg { width: 20px; height: 20px; }
+
+@media (max-width: 900px) {
+  .home-video__controles { right: var(--space-4); bottom: var(--space-4); }
+}
+
 .home-video__player {
   display: block;
   width: 100%;
@@ -361,20 +402,41 @@
   transition: grid-template-rows 640ms var(--tarjeta-ease);
 }
 .home-units__item:hover .home-units__desc-caja { grid-template-rows: 1fr; }
-.home-units__desc {
+/*
+  Envoltorio obligatorio desde que la descripción son DOS partes.
+
+  La rejilla anima UNA fila: con dos hijos sueltos el segundo caería en una fila
+  implícita `auto` que el 0fr no gobierna, y el bloque no cerraría. Metidos los
+  dos aquí, la caja vuelve a tener un hijo único —y es éste el que lleva el
+  `min-height: 0` y el `overflow: hidden` que dejan medir la fila.
+*/
+.home-units__desc-cuerpo {
   overflow: hidden;
   min-height: 0;
-  font-size: var(--text-small);
-  line-height: var(--leading-body);
-  color: var(--text-on-dark-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   opacity: 0;
   /* Sin retraso al salir: cerrar tiene que sentirse inmediato. El retraso vive
      sólo en el estado de hover, para que el texto entre cuando ya hay hueco. */
   transition: opacity 460ms var(--tarjeta-ease);
 }
-.home-units__item:hover .home-units__desc {
+.home-units__item:hover .home-units__desc-cuerpo {
   opacity: 1;
   transition-delay: 240ms;
+}
+/* La frase de apertura: un peldaño por encima del párrafo y en cream entero,
+   para que se lea como entrada y no como la primera línea del texto. */
+.home-units__apertura {
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  color: var(--altea-cream);
+}
+.home-units__desc {
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  color: var(--text-on-dark-secondary);
 }
 
 /* Botón fantasma: sólo contorno. */
@@ -402,7 +464,7 @@
 @media (prefers-reduced-motion: reduce) {
   .home-units__item,
   .home-units__img,
-  .home-units__desc,
+  .home-units__desc-cuerpo,
   .home-units__desc-caja { transition: none; }
 }
 
@@ -421,7 +483,6 @@
 }
 .home-emblem__text {
   margin: 0;
-  max-width: 17ch;
   /*
     Texto corriente, no un flex con `gap`: el hueco entre palabras tiene que ser
     un carácter de espacio de verdad para que la frase se copie bien. El espacio
@@ -430,9 +491,19 @@
   */
   word-spacing: -0.03em;
   text-align: center;
+  /*
+    Un escalón por debajo de --text-display-1, que es donde estaba.
+
+    La frase pasó de 41 caracteres a 97. Al cuerpo de antes ocupaba 4 líneas a
+    1440 y SIETE en un teléfono: dejaba de ser una declaración y se volvía un
+    muro. A --text-display-2 con la caja en 24ch son 3 líneas a 1440 —152px de
+    alto contra los 141 que ocupaba la frase vieja—, o sea la misma mancha de
+    antes con el doble de texto.
+  */
+  font-size: var(--text-display-2);
+  max-width: 24ch;
   text-transform: uppercase;
   font-family: var(--font-display);
-  font-size: var(--text-display-1);
   font-weight: var(--weight-bold);
   line-height: var(--leading-display);
   letter-spacing: var(--tracking-tight);
@@ -446,33 +517,15 @@
 .home-emblem__palabra { display: inline-block; }
 .home-emblem__palabra--acento { color: var(--altea-coral); }
 
-/* =============================== CTA ============================== */
-.home-cta {
-  background: var(--altea-ink);
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
-  align-items: center;
-  gap: var(--space-8);
-  padding: var(--space-8) var(--container-pad);
-}
-/* La imagen es un recorte con alfa, no una foto que llene la caja: el fondo de
-   la ranura (--surface-card-dark) asomaría como un rectángulo más claro sobre el
-   ink de la sección. Transparente, el recorte flota. */
-.home-cta__media .altea-media { background: transparent; }
-.home-cta__body { display: flex; flex-direction: column; gap: var(--space-6); align-items: flex-start; }
-
 /* ============================= Responsive ========================= */
 
 /* --- Tablet --- */
 @media (max-width: 1100px) {
-  /* El CTA daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
-  .home-cta { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
 /* --- Móvil --- */
 @media (max-width: 900px) {
   .home-why,
-  .home-cta { grid-template-columns: minmax(0, 1fr); }
   .home-video__frame { margin: var(--space-3); }
   .home-hero {
     margin: var(--space-3);
@@ -493,7 +546,6 @@
     padding-top: var(--aire-traspaso);
   }
   .home-emblem { min-height: clamp(300px, 52vh, 420px); gap: var(--space-6); }
-  .home-cta { padding: var(--space-8) var(--container-pad); }
   .home-stats__grid { gap: var(--space-6); }
   .home-units__encabezado { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   /* Sin cursor no hay expansión posible: se apilan y la descripción se queda. */
@@ -503,12 +555,16 @@
   .home-units__item:hover { flex: none; }
   .home-units__card { min-height: clamp(300px, 62vw, 420px); }
   .home-units__desc-caja { grid-template-rows: 1fr; }
-  .home-units__desc { opacity: 1; }
+  .home-units__desc-cuerpo { opacity: 1; }
 }
 
 @media (max-width: 560px) {
-  /* Dos columnas de cifras en vez de una tira larga. */
-  .home-stats__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /*
+    Una columna, no dos. El reparto en dos venía de cuando eran CUATRO cifras y
+    hacían un 2×2 parejo; con tres deja 2+1 y la última se queda sola en su
+    fila. Apiladas, las tres pesan igual.
+  */
+  .home-stats__grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ============ Fondo fijo — excepciones ============ */

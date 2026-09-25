@@ -23,6 +23,12 @@ export interface ProyectoPanel {
   unit: string;
   location: string;
   image?: string;
+  /**
+   * Cuerpo de la ficha. Campo NUEVO: el diálogo sólo mostraba giro, nombre y
+   * ubicación. Opcional para que los proyectos que aún no lo tengan —los tres
+   * de /comercial— sigan abriendo ficha sin él.
+   */
+  descripcion?: string;
 }
 
 export interface ProyectosPanelesProps {
@@ -290,6 +296,9 @@ export function ProyectosPaneles({ titulo, proyectos }: ProyectosPanelesProps) {
               <span className="altea-proyectos__giro">{activo.unit}</span>
               <h3 className="altea-proyectos__ficha-nombre">{activo.name}</h3>
               <p className="altea-proyectos__ficha-lugar">{activo.location}</p>
+              {activo.descripcion && (
+                <p className="altea-proyectos__ficha-texto">{activo.descripcion}</p>
+              )}
             </div>
           </article>
         )}

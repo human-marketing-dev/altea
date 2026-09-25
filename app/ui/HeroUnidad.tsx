@@ -1,12 +1,22 @@
-import { SliderProyectos, type DiapositivaProyecto } from "./SliderProyectos";
+import { MediaSlot } from "./MediaSlot";
+
+export interface HeroUnidadFoto {
+  /** Sin ella, <MediaSlot> pinta el hueco etiquetado en vez de inventar stock. */
+  src?: string;
+  alt: string;
+  label: string;
+}
 
 export interface HeroUnidadProps {
   /** La ceja del badge: el nombre de la unidad — "Comercial", "Vivienda"… */
   ceja: string;
   titulo: string;
   descripcion: string;
-  /** Los proyectos de la unidad. Con una sola, el slider se queda quieto. */
-  diapositivas: readonly DiapositivaProyecto[];
+  /**
+   * UNA sola imagen. Antes era un carrusel de proyectos; se cambió por una foto
+   * fija de la unidad, así que no hay pie por proyecto ni controles.
+   */
+  foto: HeroUnidadFoto;
 }
 
 /**
@@ -25,7 +35,7 @@ export function HeroUnidad({
   ceja,
   titulo,
   descripcion,
-  diapositivas,
+  foto,
 }: HeroUnidadProps) {
   return (
     <section className="altea-hero-unidad">
@@ -40,7 +50,14 @@ export function HeroUnidad({
         </div>
 
         <div className="altea-hero-unidad__tarjeta">
-          <SliderProyectos diapositivas={diapositivas} etiqueta={`Proyectos de ${ceja}`} />
+          <MediaSlot
+            className="altea-hero-unidad__media"
+            label={foto.label}
+            src={foto.src}
+            alt={foto.alt}
+            sizes="(max-width: 900px) 100vw, 620px"
+            priority
+          />
         </div>
       </div>
     </section>

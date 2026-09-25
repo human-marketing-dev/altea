@@ -29,6 +29,18 @@
   to { opacity: 1; transform: none; }
 }
 
+@keyframes altea-hero-barrido {
+  from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+  to {
+    clip-path: polygon(
+      calc(var(--barrido) * -1) 0,
+      100% 0,
+      100% 100%,
+      0 100%
+    );
+  }
+}
+
 @keyframes entrar {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: none; }
@@ -50,12 +62,14 @@
     .altea-proyectos__titulo-suelto,
     /* Comercial */
     .com-cifras__item,
-    .com-desc > *,
     /* Nosotros */
-    .nos-origen__media,
-    .nos-origen__body,
+    /* .altea-relato NO entra, ni aquí ni en comercial: esa sección es la
+       pausa entre sus vecinas y su valor está en quedarse quieta. */
     .nos-huella__body,
     .nos-intro__phrase,
+    /* .nos-quienes NO entra aquí: sus filas las escalona GSAP dentro del
+       componente, con su propio trigger. */
+    .nos-firma__rejilla,
     .nos-rs__galeria > li,
     .nos-rs__copy,
     /* Bloque de contacto, en todas las páginas */
@@ -123,25 +137,35 @@
   /* ===================== Entradas al cargar ===================== */
   /* Los héroes están sobre el pliegue: no hay scroll que los dispare. */
   .home-hero__word,
-  .nos-banner__content > *,
+  /* .nos-hero NO entra: su entrada la orquesta GSAP dentro del componente
+     —titular línea por línea desde su máscara, foto con barrido, isotipo
+     después— y dos animaciones sobre lo mismo se pelean. */
   /* Hero de unidad: las tres piezas del texto y después la tarjeta. Sin
      ScrollTrigger ni animation-timeline — el hero está sobre el pliegue, así
      que se dispara al cargar. */
-  .altea-hero-unidad__texto > *,
-  .altea-hero-unidad__tarjeta {
+  .altea-hero-unidad__texto > * {
     animation: entrar var(--duration-revelar) var(--ease-standard) both;
   }
+  /*
+    La tarjeta no entra con `entrar`: se DESCUBRE con un barrido diagonal desde
+    el borde derecho hacia la izquierda, en el ángulo del sitio. Mismo recurso
+    que el hero de /nosotros, así que las dos portadas se leen igual.
+
+    El estado final deja el vértice superior izquierdo FUERA de la caja
+    (--barrido en negativo), así que en reposo la imagen es un rectángulo
+    completo y la diagonal no se ve: sólo existe mientras el barrido corre.
+  */
+  .altea-hero-unidad__tarjeta {
+    animation: altea-hero-barrido 1.2s cubic-bezier(0.65, 0, 0.35, 1) 120ms both;
+  }
   .home-hero__word:nth-child(1),
-  .nos-banner__content > *:nth-child(1),
   .altea-hero-unidad__texto > *:nth-child(1) { animation-delay: 80ms; }
   .home-hero__word:nth-child(2),
-  .nos-banner__content > *:nth-child(2),
   .altea-hero-unidad__texto > *:nth-child(2) { animation-delay: 200ms; }
   .home-hero__word:nth-child(3),
-  .nos-banner__content > *:nth-child(3),
   .altea-hero-unidad__texto > *:nth-child(3) { animation-delay: 320ms; }
   .home-hero__actions { animation: entrar var(--duration-revelar) var(--ease-standard) 420ms both; }
-  .altea-hero-unidad__tarjeta { animation-delay: 440ms; }
+
 }
 
 /* ===================== Micro-interacciones ===================== */

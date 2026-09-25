@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, NavBar, Proximamente } from "@/app/ui";
+import { CONTACT_CTA } from "@/app/_home/content";
+import { Footer, CierreContacto, NavBar, Proximamente } from "@/app/ui";
 
 export const metadata: Metadata = {
   title: "Forestal — Altea",
@@ -16,7 +17,7 @@ export default function Forestal() {
           unidad="Forestal"
         />
       </main>
-      <LeadCTA unidadPorDefecto="Forestal" />
+      <CierreContacto {...CONTACT_CTA} unidad="Forestal" />
       <Footer />
     </>
   );

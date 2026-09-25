@@ -4,28 +4,6 @@
   proyectos son componentes compartidos y su CSS vive en app/ui/components.css.
 */
 
-/* ===================== 2 · Banda a todo lo ancho ==================== */
-/*
-  A sangre y sin recorte diagonal: es un respiro entre dos bloques de contenido,
-  y el corte la volvería un elemento más en vez de una pausa.
-*/
-.com-banda {
-  position: relative;
-  height: clamp(320px, 62svh, 620px);
-  overflow: hidden;
-  background: var(--surface-page-dark);
-}
-/*
-  El sobrante de 8% arriba y abajo no es decorativo: deja recorrido por si algún
-  día se le anima un parallax. Sin él, cualquier desplazamiento descubriría el
-  fondo por un borde.
-*/
-.com-banda__foto {
-  position: absolute;
-  inset: -8% 0;
-}
-.com-banda__foto .altea-media { width: 100%; height: 100%; }
-
 /* ============================ 3 · Cifras =========================== */
 .com-cifras {
   background: var(--surface-page-dark);
@@ -87,43 +65,6 @@
   color: var(--text-on-dark-secondary);
 }
 
-/* ====================== 4 · Descripción de la unidad =============== */
-.com-desc {
-  background: var(--surface-page);
-  padding: var(--space-9) var(--container-pad);
-  display: grid;
-  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
-  /* Arriba, no centradas: el titular es corto y el cuerpo largo; centrados, el
-     titular quedaba flotando a media altura del bloque. */
-  align-items: start;
-  gap: var(--space-8);
-}
-.com-desc__titulo {
-  margin: 0;
-  max-width: 16ch;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--text-primary);
-}
-.com-desc__cuerpo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-.com-desc__cuerpo p {
-  margin: 0;
-  /* El tope en ch es lo que impide que las líneas se hagan largas de leer; el
-     ancho de la columna por sí solo no lo garantiza en un monitor ancho. */
-  max-width: 68ch;
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  color: var(--text-secondary);
-}
-
 /* ================== 5 · Showcase de plazas ========================= */
 /*
   Una plaza a la vez, a pantalla completa. Las siete fotos viven a la vez como
@@ -134,14 +75,23 @@
 .com-show {
   position: relative;
   isolation: isolate;
-  min-height: 100svh;
   overflow: hidden;
   background: var(--surface-page-dark);
   display: grid;
-  /* Cabecera y pie se ajustan a su contenido; el cuerpo se queda el resto y por
-     eso la ficha puede centrarse en vertical sin un alto escrito a mano. */
-  grid-template-rows: auto 1fr auto;
-  gap: var(--space-6);
+  /*
+    Las tres filas al contenido, no `auto 1fr auto` con `min-height: 100svh`.
+
+    Aquello estiraba la fila del medio hasta llenar la pantalla y, como la ficha
+    va centrada en vertical dentro de ella, dejaba un socavón entre el titular de
+    la sección y la ceja de la plaza: a 1440×900 eran más de 200px de nada. Al
+    contenido, la sección mide lo que mide y el hueco desaparece.
+
+    El `min-height` se conserva sólo como piso para que la banda de miniaturas no
+    suba demasiado si la ficha es corta.
+  */
+  grid-template-rows: auto auto auto;
+  min-height: clamp(520px, 72svh, 760px);
+  gap: var(--space-7);
   padding: var(--space-8) var(--container-pad);
 }
 
@@ -233,9 +183,12 @@
 }
 
 /* --- Cuerpo: la ficha --- */
+/* Aire propio arriba y abajo en vez de estirarse: es lo que separa la ficha del
+   titular sin depender de una fila elástica. */
 .com-show__cuerpo {
   display: flex;
   align-items: center;
+  padding-block: var(--space-7);
 }
 .com-show__ficha {
   display: flex;
@@ -430,14 +383,7 @@
 
 /* ============================= Móvil ============================== */
 @media (max-width: 900px) {
-  .com-cifras,
-  .com-desc { padding-block: var(--space-8); }
-
-  .com-desc {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-6);
-  }
-  .com-desc__titulo { max-width: none; }
+  .com-cifras { padding-block: var(--space-8); }
 
   /*
     El velo pasa a vertical: aquí el texto no va AL LADO de la foto sino encima
@@ -475,5 +421,345 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2);
+  }
+}
+
+/* ============ 6 · Hoteles, hospital y educación ==================== */
+/*
+  Una sola banda de tres paneles en paralelogramo sobre ink. Sustituye a las
+  tres filas alternadas, que al cliente se le hicieron largas.
+
+  Sobre ink y no cream a propósito: las fotos respiran contra oscuro y sobre
+  claro compiten con el fondo.
+
+  El recorte diagonal y la costura los pinta BandaGiros.tsx, que necesita el
+  alto en píxeles; aquí vive todo lo que no.
+*/
+.com-banda-giros {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--surface-page-dark);
+  padding: var(--space-9) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  /* La lee el JS con getComputedStyle: un solo 5 y no dos que se desincronicen. */
+  --costura: 5px;
+}
+
+/*
+  Franja diagonal coral muy tenue cruzando la sección. No se lee como elemento:
+  da sensación de capas bajo los paneles. El sesgo sale de --angulo, como todo
+  en el sitio, con un factor de 0.35 para que sea un roce y no un corte.
+*/
+.com-banda-giros::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  pointer-events: none;
+  transform: skewY(calc(var(--angulo) * -0.35deg));
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--altea-coral) 12%, transparent) 0%,
+    transparent 100%
+  );
+}
+.com-banda-giros > * { position: relative; z-index: 1; }
+
+/* --- Cabecera --- */
+.com-banda-giros__cabecera {
+  display: flex;
+  /* Abajo: la nota de la derecha se alinea con la base del titular, no con su
+     primera línea. */
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+  padding-inline: var(--container-pad);
+}
+.com-banda-giros__encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.com-banda-giros__eyebrow {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* Cream y no coral: el acento de la cabecera lo lleva la marca de al lado. */
+  color: var(--altea-cream);
+}
+/* Coral normal: sobre ink da 4.87. El sesgo, de --angulo. */
+.com-banda-giros__marca {
+  flex: none;
+  width: 8px;
+  height: 14px;
+  background: var(--accent-on-ink);
+  transform: skewX(calc(var(--angulo) * -1deg));
+}
+.com-banda-giros__titulo {
+  margin: 0;
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--altea-cream);
+}
+.com-banda-giros__nota {
+  margin: 0;
+  flex: 0 1 34ch;
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  /* 6.61 sobre ink: apagada y muy por encima del 4.5. */
+  color: var(--text-on-dark-secondary);
+  text-align: right;
+}
+
+/* --- La pista de paneles --- */
+.com-banda-giros__pista {
+  display: flex;
+  height: clamp(360px, 56vh, 540px);
+}
+.com-banda-giros__panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  /* Lentos a propósito, como los paneles de proyectos. */
+  transition: flex-grow 700ms var(--ease-standard);
+}
+/*
+  El apuntado crece y los hermanos ceden, sin JavaScript. `:has()` es lo que
+  permite reaccionar en el hermano al hover del otro.
+*/
+@media (hover: hover) {
+  .com-banda-giros__pista:hover .com-banda-giros__panel { flex-grow: 0.84; }
+  .com-banda-giros__panel:hover { flex-grow: 1.34; }
+}
+
+/* La foto con sobrante a los cuatro lados: es el recorrido del parallax. */
+.com-banda-giros__foto {
+  position: absolute;
+  inset: -8% -6%;
+  transition: transform var(--duration-base) var(--ease-standard);
+}
+.com-banda-giros__foto img { object-fit: cover; }
+@media (hover: hover) {
+  .com-banda-giros__panel:hover .com-banda-giros__foto { transform: scale(1.07); }
+}
+
+/*
+  El velo. Del 88% abajo a transparente arriba: es lo que sostiene el título y
+  el párrafo. Con el 88% el cream queda en 5.11 contra el peor fondo posible.
+*/
+.com-banda-giros__velo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
+    color-mix(in srgb, var(--altea-ink) 28%, transparent) 100%
+  );
+}
+
+/*
+  EL NÚMERO. Calado, enorme, y rompiendo el borde inferior del panel: los
+  valores negativos NO son un error, son el recurso. Decorativo —aria-hidden—
+  porque el orden ya lo lleva el DOM.
+*/
+/* El cuerpo vive en una variable porque el padding inferior del texto se
+   calcula CON él: así no pueden desincronizarse. */
+.com-banda-giros__panel { --num-cuerpo: clamp(5.5rem, 11vw, 10rem); }
+.com-banda-giros__num {
+  position: absolute;
+  left: -4px;
+  bottom: -10px;
+  font-family: var(--font-display);
+  font-size: var(--num-cuerpo);
+  font-weight: var(--weight-bold);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--altea-cream) 42%, transparent);
+  transition: -webkit-text-stroke-color var(--duration-base) var(--ease-standard);
+}
+@media (hover: hover) {
+  .com-banda-giros__panel:hover .com-banda-giros__num {
+    -webkit-text-stroke-color: var(--accent-on-ink);
+  }
+}
+
+/* --- El texto --- */
+/*
+  El texto, al pie del panel. Sus tres paddings salen de una colisión medida:
+
+  · DERECHA — suma --dx-der. Al pie del panel la diagonal mete ese borde casi
+    100px adentro y las últimas líneas caían dentro de la cuña cortada.
+
+  · IZQUIERDA — suma --dx-izq. Al desplegarse el párrafo, el título sube; arriba
+    del panel la diagonal corta por la izquierda y el título se metía en esa
+    cuña, que es lo que se veía como si entrase en el panel vecino.
+
+  · ABAJO — el alto del número más un respiro. El número va a `bottom: -10px`
+    con un cuerpo de hasta 160px: a interlínea 0.8 son 128px de mancha, y el pie
+    del párrafo caía justo encima. Reservar su alto es lo que los separa.
+
+  Medido con esto, los tres textos —de 324 a 425 caracteres— entran de 1200px de
+  ventana en adelante. Por debajo los paneles se apilan.
+*/
+.com-banda-giros__txt {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  flex-direction: column;
+  padding:
+    0
+    calc(var(--space-5) + var(--dx-der, 0px))
+    calc(var(--num-cuerpo) * 0.8 + var(--space-4))
+    calc(var(--space-5) + var(--dx-izq, 0px));
+}
+.com-banda-giros__giro {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-tight);
+  color: var(--altea-cream);
+}
+/* Línea coral que crece en hover. Coral normal: sobre el velo oscuro es un
+   elemento gráfico y le sobra el 3:1. */
+.com-banda-giros__linea {
+  width: 34px;
+  height: 2px;
+  margin-block: var(--space-4);
+  background: var(--accent-on-ink);
+  transition: width var(--duration-base) var(--ease-standard);
+}
+@media (hover: hover) {
+  .com-banda-giros__panel:hover .com-banda-giros__linea { width: 74px; }
+}
+
+/*
+  El párrafo se despliega con 0fr → 1fr sobre la única fila de la rejilla, no
+  con max-height: ahí habría que adivinar un valor y los tres textos tienen
+  largos distintos.
+*/
+.com-banda-giros__desc {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+}
+.com-banda-giros__desc p {
+  /* Los dos que dejan medir la fila. */
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  line-height: var(--leading-body);
+  /* Cream entero: es texto pequeño sobre foto y necesita 4.5. */
+  color: var(--altea-cream);
+}
+@media (hover: hover) {
+  .com-banda-giros__panel:hover .com-banda-giros__desc {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+/*
+  EN TÁCTIL NO HAY HOVER: el párrafo va siempre visible. Si la información sólo
+  existe en el hover, en un teléfono no existe.
+*/
+/*
+  EN TÁCTIL NO HAY HOVER: el párrafo va siempre visible. Si la información sólo
+  existe en el hover, en un teléfono no existe.
+
+  Y por eso los paneles SE APILAN, sin importar el ancho. Lado a lado el panel
+  mide un tercio, y el párrafo sólo cabe cuando el hover lo ensancha al 44%:
+  con el texto permanentemente visible y sin hover que lo ensanche, se saldría.
+  Una tableta de 1024 en horizontal es exactamente ese caso.
+*/
+@media (hover: none) {
+  .com-banda-giros__desc {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .com-banda-giros__pista {
+    flex-direction: column;
+    height: auto;
+    gap: var(--costura);
+  }
+  .com-banda-giros__panel {
+    flex: 0 0 auto;
+    height: 300px;
+    /* Apilado no hay diagonal, así que tampoco hay cuña que esquivar. */
+    --dx: 0px;
+  }
+  .com-banda-giros__txt {
+    padding: 0 var(--space-5) var(--space-6) var(--space-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .com-banda-giros__panel,
+  .com-banda-giros__foto,
+  .com-banda-giros__linea,
+  .com-banda-giros__num,
+  .com-banda-giros__desc { transition: none; }
+  .com-banda-giros__panel:hover .com-banda-giros__foto { transform: none; }
+  /* Sin despliegue: el párrafo visible. */
+  .com-banda-giros__desc {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+}
+
+/*
+  --- Se apilan por debajo de 1200, no de 900 ---
+
+  Medido: con los textos nuevos —de 324 a 425 caracteres— el párrafo necesita
+  unos 310px de ancho útil, y eso no llega hasta que el panel apuntado pasa de
+  530px. A 1200 de ventana el apuntado mide 532; a 1100, 488 y ya no cabe.
+*/
+@media (max-width: 1200px) {
+  .com-banda-giros { padding-block: var(--space-8); }
+  .com-banda-giros__cabecera {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+  .com-banda-giros__nota { text-align: left; flex: 0 1 auto; }
+  .com-banda-giros__pista {
+    flex-direction: column;
+    height: auto;
+    /* La costura, ahora como hueco de verdad: apilados no hay diagonal que la
+       produzca por solape. */
+    gap: var(--costura);
+  }
+  .com-banda-giros__panel {
+    flex: 0 0 auto;
+    height: 300px;
+    /* Apilado no hay diagonal, así que no hay cuñas que esquivar. */
+    --dx-izq: 0px;
+    --dx-der: 0px;
+    /* Y el número baja de cuerpo: a 160px llenaría media tarjeta. */
+    --num-cuerpo: clamp(4rem, 14vw, 7rem);
   }
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, NavBar, Proximamente } from "@/app/ui";
+import { CONTACT_CTA } from "@/app/_home/content";
+import { Footer, CierreContacto, NavBar, Proximamente } from "@/app/ui";
 
 export const metadata: Metadata = {
   title: "Industrial — Altea",
@@ -18,7 +19,7 @@ export default function Industrial() {
       tagline="Desarrollar infraestructura con visión de futuro."
         />
       </main>
-      <LeadCTA unidadPorDefecto="Industrial" />
+      <CierreContacto {...CONTACT_CTA} unidad="Industrial" />
       <Footer />
     </>
   );

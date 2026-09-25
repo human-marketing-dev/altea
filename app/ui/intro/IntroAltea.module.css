@@ -182,12 +182,24 @@
 .title {
   margin: 0 0 clamp(16px, 2.6vh, 26px);
   font-weight: 600;
-  /* 6.3vw es el techo: por encima, el nowrap desborda el padding de 6vw
-     en móvil y la frase se sale de pantalla. */
   font-size: clamp(1.2rem, 6.3vw, 5.2rem);
   line-height: 1.06;
   letter-spacing: -0.032em;
-  white-space: nowrap;
+  /*
+    SIN `white-space: nowrap`, y no se puede devolver.
+
+    Lo llevaba cuando el titular eran 28 caracteres. Con los 41 de ahora no cabe
+    en UNA SOLA LÍNEA EN NINGÚN ANCHO por debajo de 2560px: el hueco es 88vw y
+    el texto crece con el mismo vw, así que la proporción no mejora al ensanchar
+    la ventana — a 1440 se sale 482px.
+
+    Y bajar el coeficiente tampoco sirve. Para que entrase a 1440 haría falta
+    4.2vw, pero por debajo de ~460px manda el suelo de 1.2rem y ahí ni siquiera
+    ese suelo cabe: harían falta 15px, menos que el cuerpo de texto del sitio.
+
+    Así que envuelve. Son dos líneas de 390 a 2560.
+  */
+  text-wrap: balance;
   color: var(--color-ink);
 }
 

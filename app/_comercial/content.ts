@@ -23,7 +23,13 @@ export interface DiapositivaHero {
 }
 
 /**
- * Las cifras de Paseo La Fe salen de lib/proyectos.ts, que es la fuente.
+ * ⚠ SIN CONSUMIDOR desde que el hero pasó de carrusel a una sola imagen.
+ *
+ * No se borra porque las cuatro entradas son datos reales de proyecto —foto,
+ * nombre y ubicación— y el `dato` de Paseo La Fe sale de lib/proyectos.ts.
+ *
+ * El componente del carrusel SÍ se borró: si vuelve, hay que rehacerlo (está en
+ * el historial de git, como SliderProyectos).
  *
  * PENDIENTE: de los siete centros sólo Paseo La Fe tiene datos documentados.
  * Para los otros seis la frase del pie está redactada aquí y hay que
@@ -82,13 +88,24 @@ export const HERO_COMERCIAL = {
   /** PENDIENTE: párrafo sin confirmar por Altea. */
   descripcion:
     "Desarrollamos y operamos centros comerciales que se vuelven el punto de reunión de su zona. Cada plaza se define por el tejido que la rodea: la mezcla de marcas, el ancla y el ritmo de crecimiento del entorno.",
-  diapositivas: HERO_DIAPOSITIVAS,
+  foto: {
+    /* Casi cuadrada (2565×2613): la tarjeta se ajusta a SU proporción en vez de
+       forzarla a 4/3, que le recortaba el 26% del alto. */
+    src: "/images/comercial/altea-hero-comercial.webp",
+    alt: "Centro comercial de Altea",
+    label: "Imagen del hero de Comercial",
+  },
 };
 
 /* ====================== 2 · Banda a todo lo ancho ================== */
 
+/*
+ * ⚠ SIN CONSUMIDOR. La banda de imagen a todo lo ancho se quitó de la página.
+ * Se conserva la referencia a la foto porque el archivo sigue en el repo y lo usa
+ * también el bloque "ecosistemas" de /nosotros; si la banda no vuelve, esta
+ * constante se puede borrar sin tocar nada más.
+ */
 export const BANDA_COMERCIAL = {
-  /** PENDIENTE: confirmar cuál de las cuatro de /galeria es la buena. */
   foto: "/images/comercial/galeria/galeria-altea-1.webp",
   alt: "",
   label: "Imagen de banda",
@@ -107,8 +124,11 @@ const CENTROS_COMERCIALES = PROYECTOS.filter((p) =>
 const ESTADOS_COMERCIAL = new Set(CENTROS_COMERCIALES.map((p) => p.estado));
 
 export interface Cifra {
-  /** El número, sin la unidad. */
-  valor: string;
+  /**
+   * El número, sin la unidad y SIN formatear: lo pinta <CountUp>, que lo cuenta
+   * desde cero y le aplica toLocaleString("es-MX") — 250000 sale "250,000".
+   */
+  valor: number;
   /** El "%" o el "M²", que va en coral y a 0.45em. Vacío si no lleva. */
   signo?: string;
   etiqueta: string;
@@ -120,12 +140,12 @@ export interface Cifra {
 
 export const CIFRAS_COMERCIAL: Cifra[] = [
   {
-    valor: String(CENTROS_COMERCIALES.length),
+    valor: CENTROS_COMERCIALES.length,
     etiqueta: "Centros comerciales en operación",
     lectura: `${CENTROS_COMERCIALES.length} centros comerciales en operación`,
   },
   {
-    valor: String(ESTADOS_COMERCIAL.size),
+    valor: ESTADOS_COMERCIAL.size,
     etiqueta: "Estados con presencia comercial",
     lectura: `${ESTADOS_COMERCIAL.size} estados con presencia comercial`,
   },
@@ -144,14 +164,14 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
    * estuvo, y el reparto aguanta.
    */
   {
-    valor: "250,000",
+    valor: 250_000,
     signo: "M²",
     etiqueta: "De área rentable",
     lectura: "250,000 metros cuadrados de área rentable",
     pendiente: true,
   },
   {
-    valor: "92",
+    valor: 92,
     signo: "%",
     etiqueta: "De ocupación promedio del portafolio",
     lectura: "92 por ciento de ocupación promedio del portafolio",
@@ -161,15 +181,50 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
 
 /* ====================== 4 · Descripción de la unidad =============== */
 
+/**
+ * Números pequeños en palabras.
+ *
+ * Existe para que el remate del relato NO lleve las cifras escritas a mano: se
+ * derivan de lib/proyectos.ts igual que las de la sección de datos duros, así
+ * que si entra un centro nuevo las dos suben juntas y el párrafo no se queda
+ * mintiendo. Escribir "siete" a pelo era exactamente la forma de que se
+ * desincronizaran.
+ *
+ * Cubre del cero al veinte, que es de sobra para lo que cuenta este sitio —hoy
+ * son 7 y 5—. Por encima devuelve el dígito, que se lee peor pero nunca miente.
+ */
+const EN_LETRAS = [
+  "cero", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho",
+  "nueve", "diez", "once", "doce", "trece", "catorce", "quince", "dieciséis",
+  "diecisiete", "dieciocho", "diecinueve", "veinte",
+];
+const enLetras = (n: number) => EN_LETRAS[n] ?? String(n);
+
 export const DESCRIPCION_COMERCIAL = {
-  /** PENDIENTE */
-  titulo: "Centros que ordenan la vida de su zona",
+  /**
+   * PENDIENTE: el texto sigue sin confirmar por Altea, y la partición en
+   * etiqueta, frase de apertura y cuerpo es una composición nuestra.
+   */
+  eyebrow: "Nuestro modelo",
+
+  /* El acento va aparte para pintarlo en coral-dark. Los espacios viven DENTRO
+     de las cadenas para que la frase copiada salga entera. */
+  apertura: {
+    antes: "Centros que ",
+    acento: "ordenan la vida",
+    despues: " de su zona.",
+  },
+
   /** PENDIENTE */
   parrafos: [
     "Un centro comercial de Altea no se planta sobre un terreno disponible: se coloca donde la ciudad ya está creciendo y le falta un punto de encuentro. Primero se lee el tejido —cuánta vivienda hay alrededor, qué servicios faltan, por dónde pasa la gente— y de ahí sale la mezcla de locales.",
     "Operamos lo que desarrollamos. Eso cambia las decisiones: la ocupación no es un número de cierre de obra sino algo que se sostiene año con año, y el trato con los inquilinos es una relación larga, no una venta.",
-    "Hoy son siete centros en cinco estados, con anclas nacionales y comercio local conviviendo en la misma plaza.",
   ],
+
+  /* Las dos cifras salen de las MISMAS constantes que alimentan CIFRAS_COMERCIAL. */
+  cierre: `Hoy son ${enLetras(CENTROS_COMERCIALES.length)} centros en ${enLetras(
+    ESTADOS_COMERCIAL.size,
+  )} estados, con anclas nacionales y comercio local conviviendo en la misma plaza.`,
 };
 
 /* ====================== 5 · Galería de plazas ====================== */
@@ -332,17 +387,40 @@ export const GALERIA_PLAZAS = {
 
 const OTROS = "/images/comercial";
 
-export const OTROS_GIROS = {
-  /** PENDIENTE */
-  titulo: "Hoteles, hospital y educación dentro de nuestros desarrollos",
-  bloques: [
+export interface Giro {
+  id: string;
+  /** Ordinal grande al lado del texto, p. ej. "01". */
+  numero: string;
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+  /**
+   * PENDIENTE — NO EXISTE TODAVÍA en ninguno de los tres. Versalitas cortas
+   * bajo el título; algo como "Cuatro operaciones" o "Tránsito diario". Sin
+   * valor, la fila no lo pinta y se compone igual.
+   */
+  subtitulo?: string;
+  /**
+   * PENDIENTE — NO EXISTE TODAVÍA en ninguno de los tres. Caja de remate al pie
+   * del texto: una etiqueta corta y una frase con el dato. Sin valor, no se
+   * pinta.
+   */
+  remate?: { etiqueta: string; frase: string };
+}
+
+/*
+ * Los tres tienen número, título, descripción y foto. Les faltan `subtitulo` y
+ * `remate`, que van marcados opcionales a propósito: montarlos con texto
+ * inventado sería peor que no tenerlos.
+ */
+const GIROS: Giro[] = [
     {
       id: "hoteles",
       numero: "01",
       title: "Hoteles",
-      /** PENDIENTE */
       description:
-        "Cuatro operaciones hoteleras conviven con el comercio en los mismos desarrollos: Fiesta Inn, NH Collection y One. El huésped llega por el hotel y se queda por la plaza, y la plaza gana ocupación entre semana.",
+        "Nuestra experiencia también se extiende al desarrollo de hoteles de marcas reconocidas, integrados en nuestros centros comerciales para crear destinos más completos y funcionales. A través de proyectos como Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, hemos desarrollado espacios de hospitalidad en distintos puntos de la República Mexicana.",
       image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
       alt: "Fiesta Inn dentro de un desarrollo de Altea",
     },
@@ -350,9 +428,8 @@ export const OTROS_GIROS = {
       id: "hospital",
       numero: "02",
       title: "Hospital",
-      /** PENDIENTE */
       description:
-        "Un hospital dentro del desarrollo cambia el perfil de quien lo visita y el horario en que lo hace. Deja de ser un destino de fin de semana para volverse infraestructura de la zona.",
+        "Este desarrollo del Sierra Madre implicó la integración de nueva infraestructura con instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno, con el objetivo de entregar un espacio equipado y listo para operar desde el primer día. Con este proyecto, fortalecemos nuestra capacidad para desarrollar espacios especializados que requieren altos estándares de planeación y tecnología.",
       image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
       alt: "Hospital dentro de un desarrollo de Altea",
     },
@@ -360,13 +437,25 @@ export const OTROS_GIROS = {
       id: "educacion",
       numero: "03",
       title: "Educación",
-      /** PENDIENTE */
       description:
-        "Campus y centros educativos que traen tránsito diario y sostenido. Es el uso que más estabiliza a los comercios de alimentos y servicios alrededor.",
+        "Tálisis es un proyecto de infraestructura educativa desarrollado en el centro de Monterrey, diseñado para atender la creciente demanda de espacios académicos dentro del entorno urbano. Incorpora coworking académico, laboratorios especializados y espacios modulares que permiten adaptarse a distintas necesidades pedagógicas.",
       image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
       alt: "Centro educativo dentro de un desarrollo de Altea",
     },
-  ],
+];
+
+export const OTROS_GIROS = {
+  /** PENDIENTE */
+  eyebrow: "Otros giros",
+  /** PENDIENTE */
+  titulo: "Hoteles, hospital y educación dentro de nuestros desarrollos",
+  /**
+   * PENDIENTE — NO EXISTE. Nota corta a la derecha de la cabecera, alineada
+   * abajo. No la inventé: sin valor, la cabecera se compone sin ella y el
+   * encabezado ocupa el ancho que le haga falta.
+   */
+  nota: undefined as string | undefined,
+  bloques: GIROS,
 };
 
 /* ====================== 7 · Marcas de comercial ==================== */
@@ -441,6 +530,15 @@ export const PROXIMOS_PROYECTOS = {
  * PENDIENTE: ni un solo teléfono ni correo está confirmado. Mientras falten,
  * el campo va sin valor y <LeadCTA> pinta un guion — un `tel:` a un número
  * inventado marca de verdad.
+ */
+/**
+ * ⚠ SIN CONSUMIDOR. Los cuatro canales alimentaban la prop `canales` de
+ * <LeadCTA>, que se sustituyó por <CierreContacto> en las seis páginas — y ése
+ * no lleva formulario ni listado de canales.
+ *
+ * No se borra: los cuatro giros de atención son información real de Altea, y en
+ * cuanto lleguen los teléfonos y correos hay dónde ponerlos. El sitio natural
+ * ahora sería /contacto.
  */
 export const CANALES_COMERCIAL = [
   { nombre: "Renta de islas" },

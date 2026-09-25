@@ -2,43 +2,54 @@
  * Datos y copy de contacto. Fuente única: los consumen el CTA de la portada,
  * el bloque de captación de todas las páginas y la página /contacto.
  *
- * PENDIENTE: nada de esto está confirmado por Altea — correo, teléfono,
- * WhatsApp y domicilio son provisionales.
+ * Correo, teléfono, WhatsApp y domicilio CONFIRMADOS por Altea.
+ *
+ * Ojo: el teléfono y el WhatsApp son números DISTINTOS. Antes compartían uno
+ * solo y el enlace de WhatsApp se armaba con el mismo dígito del teléfono.
  */
 
 import { INSTAGRAM_URL } from "./publicaciones";
 
 export const CONTACTO = {
   eyebrow: "Contacto",
-  title: "Cuéntanos qué quieres construir",
-  description:
-    "Déjanos tus datos y un asesor te contacta para revisar superficie, ubicación y tiempos de tu proyecto.",
-  /** Cada línea con el icono que le toca; el texto sale de CANALES. */
+  title: "Hablemos de nuevas oportunidades",
+  description: "Déjanos tus datos y nuestro equipo se pondrá en contacto contigo.",
+  /** Cada línea con el icono que le toca. */
   datos: [
-    { texto: "ventas@altea.mx", icono: "correo" },
-    { texto: "Saltillo, Coahuila, México", icono: "ubicacion" },
+    { texto: "info@alteadesarrollos.com", icono: "correo" },
+    {
+      texto: "Paricutín 390, Colonia Roma, Monterrey, Nuevo León",
+      icono: "ubicacion",
+    },
   ],
 } as const;
 
 export const CANALES = {
-  correo: "ventas@altea.mx",
-  /** En formato E.164 sin signos, como lo pide wa.me. */
-  whatsapp: "528110000000",
+  correo: "info@alteadesarrollos.com",
+  /**
+   * NO es el mismo número que `telefono`. En E.164 sin signos, como pide wa.me.
+   * El de marcar es +52 81 3551 2000.
+   */
+  whatsapp: "528135512000",
   whatsappMensaje: "Hola Altea, me interesa conocer más sobre sus proyectos.",
-  telefono: "+52 81 1000 0000",
-  domicilio: "Saltillo, Coahuila, México",
+  telefono: "+52 81 1772 7272",
+  domicilio: "Monterrey, Nuevo León, México",
 } as const;
 
-/**
- * Redes sociales.
- *
- * PENDIENTE: sólo hay una, y la cuenta NO está confirmada — sale de
- * INSTAGRAM_USUARIO en lib/publicaciones.ts, que está marcado ahí mismo como
- * dato que Altea todavía no entregó. Agregar el resto es una línea por red y su
- * icono en ICONOS_RED.
- */
+/** Redes sociales. Los tres enlaces los confirmó Altea. */
 export const REDES = [
+  { nombre: "Facebook", url: "https://www.facebook.com/alteamxof", icono: "facebook" },
+  /* Sale de INSTAGRAM_USUARIO para no repetir el handle en dos sitios. */
   { nombre: "Instagram", url: INSTAGRAM_URL, icono: "instagram" },
+  {
+    /*
+     * Sin el `/posts/?viewAsMember=true` que traía el enlace original: es un
+     * parámetro de la vista de quien lo copió, no parte de la dirección.
+     */
+    nombre: "LinkedIn",
+    url: "https://www.linkedin.com/company/alteamx/",
+    icono: "linkedin",
+  },
 ] as const;
 
 /** Enlace de WhatsApp ya armado, para no repetir el encodeURIComponent. */

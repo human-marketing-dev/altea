@@ -6,10 +6,7 @@
  * de publicar.
  */
 
-/**
- * PENDIENTE — el wireframe muestra las cifras sin etiqueta. Los números son los
- * del dibujo; las etiquetas son suposiciones y hay que confirmarlas.
- */
+/** Las tres cifras y sus etiquetas, confirmadas por Altea. */
 export interface HomeStat {
   prefix?: string;
   to: number;
@@ -19,16 +16,26 @@ export interface HomeStat {
   label: string;
 }
 
+/*
+ * Las tres las dio Altea. NINGUNA se puede derivar de lib/proyectos.ts: allí
+ * hay 8 proyectos con ficha documentada —y la propia lista avisa de que faltan
+ * los de otros 15 estados—, así que contarlos daría 8, no 88. Son dato de
+ * Altea, no cifra calculada.
+ */
 export const STATS: HomeStat[] = [
-  { prefix: "+", to: 44, suffix: "M", note: "de m²", label: "Reserva territorial" },
-  { prefix: "+", to: 1000, label: "Hectáreas desarrolladas" },
-  { prefix: "+", to: 20, label: "Años de experiencia" },
-  { prefix: "+", to: 50, label: "Proyectos entregados" },
+  { prefix: "+", to: 44, suffix: "M", note: "de m²", label: "de territorio" },
+  { to: 960, suffix: " mil", note: "m²", label: "construidos" },
+  { to: 88, label: "proyectos desarrollados" },
 ];
 
-/** PENDIENTE: texto introductorio que acompaña a las cifras. */
+/*
+ * Copy confirmado por Altea.
+ *
+ * Sin la coma antes de "y turismo" que traía el original: en una enumeración
+ * española la conjunción no la lleva.
+ */
 export const STATS_INTRO =
-  "Una reserva territorial construida durante dos décadas, que hoy sostiene proyectos comerciales, industriales, de vivienda y forestales en todo el norte del país.";
+  "Desarrollamos industria, comercio, vivienda, salud, educación y turismo bajo una misma visión estratégica para generar entornos que respondan a las necesidades del presente y evolucionen con las del futuro.";
 
 export const VIDEO = {
   /** Clip mudo de 20s en 1080p, en bucle. */
@@ -49,19 +56,26 @@ export const VIDEO = {
 /** Sección que responde: ¿por qué confiar y hacer alianzas con nosotros? */
 export const WHY_ALTEA = {
   eyebrow: "Por qué Altea",
-  /** PENDIENTE */
-  title: "Aliados que construyen a largo plazo",
-  /** PENDIENTE */
+  title: "Transformamos oportunidades en proyectos de alto impacto.",
+  /*
+   * En el original los dos primeros periodos iban unidos por coma —"integral,
+   * nuestro modelo"—; se separaron en dos oraciones.
+   */
   body: [
-    "Cada proyecto nace de tierra propia. Esa reserva es la que nos permite comprometernos con plazos, superficies y usos de suelo desde la primera conversación, sin depender de terceros.",
-    "Operamos las cuatro divisiones bajo una sola estructura, así que un desarrollo comercial, una nave industrial o un fraccionamiento se planean con el mismo equipo, el mismo estándar y la misma visión de ciudad.",
+    "Altea es una empresa de desarrollo inmobiliario integral. Nuestro modelo reúne en un mismo equipo las capacidades estratégicas, financieras, legales, comerciales y operativas necesarias para desarrollar un proyecto desde su concepción hasta su consolidación.",
+    "Más que desarrollar espacios, diseñamos ecosistemas donde personas, empresas y comunidades encuentran oportunidades para crecer.",
   ],
 };
 
 export interface BusinessUnitCard {
   name: string;
   slug: string;
-  /** Se revela al pasar el cursor sobre la tarjeta. */
+  /**
+   * Frase de apertura, una línea. Campo NUEVO: el copy de Altea trae la
+   * descripción en dos partes y antes sólo había una.
+   */
+  apertura: string;
+  /** Se revela al pasar el cursor sobre la tarjeta, bajo la apertura. */
   descripcion: string;
   /** Sin imagen, la tarjeta muestra el hueco etiquetado. */
   image?: string;
@@ -72,9 +86,7 @@ export interface BusinessUnitCard {
 export const BUSINESS_UNITS_INTRO = {
   /** Va entero en coral; ver .home-units__titulo. */
   titulo: "Unidades de Negocio",
-  /** PENDIENTE: texto sin confirmar por Altea. */
-  descripcion:
-    "Cuatro divisiones que operan sobre una misma reserva territorial. Cada una con su propia visión, y con el mismo equipo detrás de cada decisión.",
+  descripcion: "Una visión integral, múltiples formas de transformar el territorio.",
 };
 
 /** Fotografía de /images/home/unidades-de-negocio/, la carpeta que Altea armó
@@ -83,16 +95,18 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
+    apertura: "Activamos la energía de la ciudad.",
     descripcion:
-      "Activar la energía de la ciudad en un solo lugar. Paseos, puntos y locales en operación, con hoteles, hospital y educación integrados al mismo entorno urbano.",
+      "Creamos espacios comerciales que conectan personas, marcas y experiencias, integrando entretenimiento, servicios, hoteles, salud y educación para dar vida a entornos urbanos.",
     image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
     alt: "Paseo La Fe, desarrollo comercial de Altea",
   },
   {
     name: "Industrial",
     slug: "industrial",
+    apertura: "Infraestructura que impulsa el futuro.",
     descripcion:
-      "Desarrollar infraestructura con visión de futuro. Parques y naves industriales pensados para décadas, con el Aeropuerto Internacional de Saltillo como pieza de conectividad.",
+      "Desarrollamos proyectos industriales, logísticos y de conectividad que facilitan nuevas operaciones y fortalecen los vínculos entre empresas, ciudades y regiones.",
     image:
       "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
     alt: "Huinala Industrial Park, desarrollo industrial de Altea",
@@ -100,8 +114,9 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Vivienda",
     slug: "vivienda",
+    apertura: "Creamos espacios donde comienza una nueva forma de vivir.",
     descripcion:
-      "Crear hogares donde comienza tu historia. Desarrollos residenciales sobre una amplia reserva territorial, con un compromiso firme de reforestación.",
+      "Desarrollamos proyectos habitacionales, integramos planeación y alianzas estratégicas para transformar oportunidades en comunidades.",
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
     alt: "Desarrollo de vivienda de Altea",
   },
@@ -110,8 +125,9 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Forestal",
     slug: "forestal",
+    apertura: "Plantación y manejo forestal a largo plazo.",
     descripcion:
-      "Plantación y manejo forestal de largo plazo. Viveros, teca y servicios que sostienen el compromiso ambiental del grupo.",
+      "Servicios que sostienen el compromiso ambiental.",
     image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
     alt: "Plantación de teca, división forestal de Altea",
   },
@@ -123,22 +139,38 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
  * Va por palabras porque cada una entra por separado al hacer scroll, y porque
  * una de ellas lleva el acento coral.
  */
+/** Titular del hero de la intro. Copy confirmado por Altea. */
+export const TITULO_HERO = "Creando proyectos que materializan sueños";
+
 export const EMBLEM = {
   /* Van partidas en palabras porque .home-emblem__text es un flex con
      `gap: 0 0.26em`: ese hueco es el espaciado entre palabras, no un espacio
      de texto. */
-  palabras: ["Creamos", "proyectos", "que", "materializan", "sueños"],
-  /** Índice de la palabra en coral. */
-  acento: 4,
+  palabras: [
+    "Nuestra", "verdadera", "escala", "no", "se", "mide", "en", "el",
+    "concreto", "que", "levantamos,", "sino", "en", "la", "vida", "que",
+    "detonamos.",
+  ],
+  /**
+   * Índice de la palabra en coral: "detonamos.", la última.
+   *
+   * Es el remate de la antítesis —"no se mide en X, SINO EN Y"— y el verbo que
+   * carga la afirmación, igual que "sueños" lo era en la frase anterior. El
+   * mecanismo acentúa UNA palabra, así que "la vida que detonamos" entero no
+   * cabe sin cambiarlo.
+   */
+  acento: 16,
 };
 
 export const CONTACT_CTA = {
   eyebrow: "Trabajemos juntos",
-  /** PENDIENTE */
-  title: "Cuéntanos qué necesitas construir",
-  /** PENDIENTE */
-  description:
-    "Escríbenos y un asesor te contacta para revisar superficie, ubicación y tiempos de tu proyecto.",
+  title: "Cuéntanos sobre tu proyecto, terreno o necesidad.",
+  /*
+   * Sin descripción a propósito: Altea la retiró. <SectionHeading> ya la trae
+   * opcional, así que no hace falta tocar el componente ni su CSS —
+   * .altea-section-heading__description sigue sirviendo a /nosotros, /comercial
+   * y al bloque de captación, que sí la usan.
+   */
   /* Recorte con fondo transparente, no una foto de caja completa: el 27% del
      archivo es alfa. Por eso el hueco lleva la proporción exacta del archivo y
      el fondo de la ranura se quita — ver ContactCTA.tsx y .home-cta__media. */
@@ -163,6 +195,8 @@ export const FEATURED_PROJECTS_INTRO = {
  * los tres primeros acompañan al título en la banda de arriba.
  */
 export interface FeaturedProject {
+  /** Cuerpo de la ficha del diálogo. Campo NUEVO; ver ProyectoPanel. */
+  descripcion?: string;
   slug: string;
   name: string;
   unit: string;
@@ -185,6 +219,8 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     unit: "Comercial",
     location: "San Nicolás, Nuevo León",
     image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
+    descripcion:
+      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales, de entretenimiento y experiencias de la zona metropolitana de Monterrey."
   },
   {
     slug: "paseo-durango",
@@ -193,6 +229,8 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     unit: "Comercial",
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea.webp",
+    descripcion:
+      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad."
   },
   {
     slug: "aeropuerto-saltillo",
@@ -202,36 +240,50 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     // PENDIENTE: ubicación sin confirmar.
     location: "Saltillo, Coahuila",
     image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp",
+    descripcion:
+      "Proyecto de remodelación desarrollado en colaboración con el Aeropuerto Internacional Plan de Guadalupe, en Saltillo, Coahuila; enfocado en la reactivación del aeropuerto y en la generación de nuevas oportunidades de negocio para la región."
   },
   {
     slug: "bajio-industrial-park",
     href: "/industrial",
     name: "Bajío Industrial Park",
     unit: "Industrial",
-    // PENDIENTE: ubicación sin confirmar.
+    // ⚠ CONTRADICE la descripción de abajo, que es copy confirmado por Altea
+    // y sitúa el proyecto en Salamanca–Irapuato y León, o sea Guanajuato. Sin tocar hasta que Altea diga cuál vale:
+    // hoy la ficha muestra las dos cosas, una encima de la otra.
     location: "Bajío, México",
     // El nombre del archivo trae una errata de origen ("undustrial").
     image: "/images/industrial/naves-industriales/bajio-undustrial-park-altea.webp",
+    descripcion:
+      "Parque industrial estratégicamente ubicado en la entrada de la planta Mazda, con acceso directo a la carretera libre (45) Salamanca-Irapuato y lateral a la carretera de cuota a León. Su conectividad facilita las operaciones industriales, logísticas y el acceso a los principales corredores productivos de la región."
   },
   {
     slug: "aeropuerto-industrial-center",
     href: "/industrial",
     name: "Aeropuerto Industrial Center",
     unit: "Industrial",
-    // PENDIENTE: ubicación sin confirmar.
+    // ⚠ CONTRADICE la descripción de abajo, que es copy confirmado por Altea
+    // y sitúa el proyecto en Apodaca, Nuevo León. Sin tocar hasta que Altea diga cuál vale:
+    // hoy la ficha muestra las dos cosas, una encima de la otra.
     location: "Saltillo, Coahuila",
     // PENDIENTE: el archivo se llama "Aeropuerto Industrial Park" y vive en
     // proximos-proyectos/. Confirmar si es el mismo desarrollo y qué nombre va.
     image: "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
+    descripcion:
+      "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque industrial que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey."
   },
   {
     slug: "amarantha",
     href: "/vivienda",
     name: "Amarantha",
     unit: "Vivienda",
-    // PENDIENTE: ubicación sin confirmar.
+    // ⚠ CONTRADICE la descripción de abajo, que es copy confirmado por Altea
+    // y sitúa el proyecto en Zona Sur de Monterrey, sobre Carretera Nacional. Sin tocar hasta que Altea diga cuál vale:
+    // hoy la ficha muestra las dos cosas, una encima de la otra.
     location: "Saltillo, Coahuila",
     image: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
+    descripcion:
+      "Próximo desarrollo de lotes residenciales ubicado en la Zona Sur de Monterrey, sobre Carretera Nacional. Un proyecto que integra ubicación estratégica y amenidades de alto nivel, creando un entorno pensado para vivir, crecer y construir patrimonio."
   },
 ];
 

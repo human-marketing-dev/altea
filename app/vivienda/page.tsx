@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Footer, LeadCTA, NavBar, Proximamente } from "@/app/ui";
+import { CONTACT_CTA } from "@/app/_home/content";
+import { Footer, CierreContacto, NavBar, Proximamente } from "@/app/ui";
 
 export const metadata: Metadata = {
   title: "Vivienda — Altea",
@@ -18,7 +19,7 @@ export default function Vivienda() {
       tagline="Crear hogares donde comienza tu historia."
         />
       </main>
-      <LeadCTA unidadPorDefecto="Vivienda" />
+      <CierreContacto {...CONTACT_CTA} unidad="Vivienda" />
       <Footer />
     </>
   );

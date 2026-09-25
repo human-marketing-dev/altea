@@ -73,6 +73,32 @@ export const ICONOS_RED = {
       <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" />
     </svg>
   ),
+  /* Mismo trazo de 1.7 y misma caja de 24 que el de Instagram: sin eso, uno se
+     ve más grueso que el otro en la misma fila. */
+  facebook: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <path
+        d="M14.5 21.5v-8h2.7l.4-3.1h-3.1V8.4c0-.9.25-1.5 1.55-1.5h1.65V4.1a22 22 0 0 0-2.4-.12c-2.38 0-4 1.45-4 4.12v2.3H8.6v3.1h2.7v8"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  linkedin: (
+    <svg viewBox="0 0 24 24" fill="none">
+      <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M7.6 10.4v6.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <circle cx="7.6" cy="7.5" r="1.1" fill="currentColor" />
+      <path
+        d="M11.4 16.6v-6.2m0 2.1c0-1.2.9-2.1 2.2-2.1s2.4.9 2.4 2.6v3.6"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
 } as const;
 
 export type NombreRed = keyof typeof ICONOS_RED;

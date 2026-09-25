@@ -116,6 +116,19 @@ export const PROYECTOS: Proyecto[] = [
   },
 ];
 
+/**
+ * Metros cuadrados construidos por estado, para el tooltip del mapa.
+ *
+ * ⚠ PENDIENTE — ALTEA NO HA ENTREGADO NINGUNA CIFRA. El objeto va vacío a
+ * propósito y no con ceros: un cero diría "cero metros construidos", que es
+ * falso. Sin dato, el tooltip se compone sólo con el nombre del estado.
+ *
+ * Para rellenarlo, una línea por estado con su clave ISO:
+ *     "MX-NLE": 24_000_000,
+ * Sólo tiene sentido para los de ESTADOS_CON_PRESENCIA; el resto no se apunta.
+ */
+export const M2_CONSTRUIDOS: Partial<Record<EstadoConPresencia, number>> = {};
+
 /** Presencia fuera de México. El mapa solo cubre el territorio nacional. */
 /*
  * NOTA — sin consumir en código desde que el mapa dejó de mostrar la cifra de

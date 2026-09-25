@@ -27,6 +27,9 @@ export type { SectionHeadingProps, SectionHeadingTone } from "./SectionHeading";
 export { NavBar, DEFAULT_NAV_LINKS } from "./NavBar";
 export type { NavBarProps, NavLink } from "./NavBar";
 
+export { CierreContacto } from "./CierreContacto";
+export type { CierreContactoProps } from "./CierreContacto";
+
 export { Footer } from "./Footer";
 export type { FooterColumn, FooterProps } from "./Footer";
 
@@ -34,13 +37,13 @@ export { BloquesRevelados } from "./BloquesRevelados";
 export type { BloqueRevelado, BloquesReveladosProps } from "./BloquesRevelados";
 
 export { HeroUnidad } from "./HeroUnidad";
-export type { HeroUnidadProps } from "./HeroUnidad";
+export type { HeroUnidadFoto, HeroUnidadProps } from "./HeroUnidad";
 
-export { SliderProyectos } from "./SliderProyectos";
+export { SeccionRelato } from "./SeccionRelato";
 export type {
-  DiapositivaProyecto,
-  SliderProyectosProps,
-} from "./SliderProyectos";
+  RelatoApertura,
+  SeccionRelatoProps,
+} from "./SeccionRelato";
 
 export { MediaSlot } from "./MediaSlot";
 

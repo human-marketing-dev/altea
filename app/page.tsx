@@ -1,16 +1,16 @@
 import {
+  CierreContacto,
   Footer,
   IntroAltea,
-  LeadCTA,
   Marcas,
   NavBar,
   ProyectosPaneles,
 } from "@/app/ui";
 import { MOSTRAR_MARCAS } from "@/lib/marcas";
 import { BusinessUnits } from "./_home/BusinessUnits";
-import { ContactCTA } from "./_home/ContactCTA";
 import { CorporateVideo } from "./_home/CorporateVideo";
 import {
+  CONTACT_CTA,
   FEATURED_PROJECTS,
   FEATURED_PROJECTS_INTRO,
 } from "./_home/content";
@@ -38,13 +38,12 @@ export default function Home() {
           titulo={FEATURED_PROJECTS_INTRO.titulo}
           proyectos={FEATURED_PROJECTS}
         />
-        <ContactCTA />
         {MOSTRAR_MARCAS && <Marcas />}
         {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el
             widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
             y lib/publicaciones.ts — para volver a mostrarla basta con importarla
             y poner <Publicaciones /> aquí. */}
-        <LeadCTA />
+        <CierreContacto {...CONTACT_CTA} />
       </main>
       <Footer />
     </>

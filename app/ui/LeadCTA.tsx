@@ -35,7 +35,14 @@ export interface LeadCTAProps {
 }
 
 /**
- * Bloque de captación que va antes del footer en todas las páginas.
+ * ⚠ HOY SIN CONSUMIDORES. Lo montaban las seis rutas; se sustituyó por
+ * <CierreContacto>, que no lleva formulario embebido y manda a /contacto.
+ *
+ * No se borra porque su prop `canales` resuelve un caso que va a volver —cuatro
+ * giros de atención con teléfono y correo, en rejilla 2×2— y porque <LeadForm>,
+ * que es lo que monta dentro, sigue vivo en /contacto.
+ *
+ * Bloque de captación que iba antes del footer en todas las páginas.
  *
  * Se estiliza con utilidades, no con una hoja de página: así se puede montar
  * en cualquier ruta sin arrastrar un CSS que no le corresponde.

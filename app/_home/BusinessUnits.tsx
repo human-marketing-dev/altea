@@ -38,7 +38,12 @@ export function BusinessUnits() {
                 <span className="home-units__nombre">{unit.name}</span>
 
                 <span className="home-units__desc-caja">
-                  <span className="home-units__desc">{unit.descripcion}</span>
+                  {/* El envoltorio no es decorativo: la caja anima UNA fila de
+                      rejilla y necesita un hijo único. Ver home.css. */}
+                  <span className="home-units__desc-cuerpo">
+                    <span className="home-units__apertura">{unit.apertura}</span>
+                    <span className="home-units__desc">{unit.descripcion}</span>
+                  </span>
                 </span>
 
                 <span className="home-units__cta">

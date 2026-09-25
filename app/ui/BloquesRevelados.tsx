@@ -58,9 +58,15 @@ export interface BloquesReveladosProps {
  * revierte. La dirección alterna: los pares barren al contrario que los impares
  * — misma mecánica con el flag invertido, no un efecto distinto.
  *
- * Compartido entre "Quiénes somos" (/nosotros) y "Hoteles, hospital y
- * educación" (/comercial): el contenido entra por props, el componente sólo
- * pone la mecánica.
+ * ⚠ HOY SIN CONSUMIDORES. Lo montaban "Quiénes somos" en /nosotros y "Hoteles,
+ * hospital y educación" en /comercial; las dos secciones se rediseñaron —la
+ * primera a tres bloques con icono, la segunda a una banda de paneles— y
+ * ninguna lo usa ya. No se borra porque la mecánica del revelado en
+ * paralelogramo está calibrada y cuesta reconstruirla: la función `recorte()`,
+ * las cuatro anclas de las dos fases y el paso por palabra del título.
+ *
+ * Su CSS sigue en components.css bajo `.altea-bloques*`, también sin uso. Si se
+ * decide que no vuelve, se van los dos a la vez.
  */
 export function BloquesRevelados({ titulo, bloques }: BloquesReveladosProps) {
   const raiz = useRef<HTMLElement>(null);

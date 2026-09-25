@@ -5,6 +5,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import CloudLayers, { NubesBarrido } from './CloudLayers';
+import { TITULO_HERO } from '@/app/_home/content';
 import { BAJADA, BAJADA_CIRCULOS, CONTORNOS, ENCAJE, LOGO_CENTRO, SILUETA } from './logo-paths';
 import styles from './IntroAltea.module.css';
 
@@ -516,7 +517,7 @@ export default function IntroAltea() {
 
         {/* 4 · contenido del hero */}
         <div className={`${styles.hero} js-hero`}>
-          <h1 className={styles.title}>Crear. Desarrollar. Activar.</h1>
+          <h1 className={styles.title}>{TITULO_HERO}</h1>
         </div>
 
         {/* 5 · el logotipo */}

@@ -18,15 +18,17 @@ export interface FooterColumn {
 
 export interface FooterProps {
   /** Párrafo corto bajo el wordmark. */
+  /**
+   * Altea retiró la descripción del pie: hoy nadie la pasa y la columna se
+   * queda sólo con el logotipo. La prop y su <p> siguen porque no estorban y
+   * devolver el texto es una línea; si se decide que no vuelve, se van las dos
+   * y con ellas .altea-footer__descripcion.
+   */
   description?: string;
   columns?: FooterColumn[];
   legalLinks?: { label: string; href: string }[];
   className?: string;
 }
-
-/** PENDIENTE: descripción sin confirmar por Altea. */
-const DESCRIPCION =
-  "Inmobiliaria con sólida experiencia y una vasta reserva territorial. Diseñamos y ejecutamos proyectos comerciales, industriales, de vivienda y forestales a la medida de cada necesidad.";
 
 /**
  * Tres columnas con contenido distinto cada una. La versión anterior repetía
@@ -69,7 +71,7 @@ const DEFAULT_LEGAL_LINKS = [
 
 /** Pie de sitio: marca y descripción a la izquierda, navegación a la derecha. */
 export function Footer({
-  description = DESCRIPCION,
+  description,
   columns = DEFAULT_COLUMNS,
   legalLinks = DEFAULT_LEGAL_LINKS,
   className,

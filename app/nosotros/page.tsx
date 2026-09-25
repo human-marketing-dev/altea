@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { BloquesRevelados, Footer, LeadCTA, Marcas, NavBar } from "@/app/ui";
+import {
+  Footer,
+  CierreContacto,
+  Marcas,
+  NavBar,
+} from "@/app/ui";
 import { MOSTRAR_MARCAS } from "@/lib/marcas";
 import {
+  MOSTRAR_GRUPO_FIRMA,
   MOSTRAR_QUE_HACEMOS_INTRO,
-  QUIENES_SOMOS,
 } from "../_nosotros/content";
 import { Banner } from "../_nosotros/Banner";
+import { CONTACT_CTA } from "@/app/_home/content";
+import { GrupoFirma } from "../_nosotros/GrupoFirma";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
+import { QuienesSomos } from "../_nosotros/QuienesSomos";
 import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
 import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
 import "../_nosotros/nosotros.css";
@@ -25,10 +33,11 @@ export default function Nosotros() {
       <main>
         <Banner />
         <Origen />
+        {MOSTRAR_GRUPO_FIRMA && <GrupoFirma />}
         <Huella />
         {MOSTRAR_QUE_HACEMOS_INTRO && <QueHacemosIntro />}
         {/* 5. Quiénes somos */}
-        <BloquesRevelados {...QUIENES_SOMOS} />
+        <QuienesSomos />
         {/* 7. Responsabilidad social */}
         <ResponsabilidadSocial />
         {MOSTRAR_MARCAS && <Marcas />}
@@ -38,7 +47,7 @@ export default function Nosotros() {
             y poner <Publicaciones /> aquí. */}
         {/* 6. CTA — va al final para que cierre la página, como en el resto
             del sitio. */}
-        <LeadCTA />
+        <CierreContacto {...CONTACT_CTA} />
       </main>
       <Footer />
     </>

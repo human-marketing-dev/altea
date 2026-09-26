@@ -1937,6 +1937,15 @@ body:not([data-intro-done]) .altea-navbar--intro {
 @media (max-width: 1100px) {
   /* Daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
   .altea-cierre { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  /*
+    Y los botones pasan a columna. En fila piden 506px y la columna de texto se
+    queda entre 293 y 383 en esta banda: envolvían, y el de WhatsApp llegaba a
+    tener 10px de holgura a 901. Uno por renglón, cada uno a su ancho.
+  */
+  .altea-cierre__acciones {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 @media (max-width: 900px) {
   /* Apilada: la foto arriba a sangre, el texto debajo. */

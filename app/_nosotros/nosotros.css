@@ -224,6 +224,22 @@
   .nos-hero__scroll-linea { animation: none; }
 }
 
+/*
+  --- Tablet y portátil: el texto no puede llegar hasta la foto ---
+
+  La columna de foto es `absolute; right: 0`, así que NO respeta el canal de la
+  sección: crece con 44vw mientras el texto crece con 58vw, y entre los dos se
+  comen más del ancho disponible. Medido, el texto entraba en la columna de foto
+  de 901 a ~1400px: 63px de solape a 901, 77 a 1100, 71 a 1280.
+
+  Con 46vw queda un hueco real entre los dos en toda la banda. El corte de
+  arriba son 1500 y no 1400: con el 58vw de base el tope de 62ch no empieza a
+  mandar hasta los 1420, así que entre 1401 y 1419 volvía a solaparse 10px.
+*/
+@media (min-width: 901px) and (max-width: 1500px) {
+  .nos-hero__contenido { max-width: min(62ch, 46vw); }
+}
+
 /* --- Móvil --- */
 @media (max-width: 900px) {
   .nos-hero { padding-block: var(--space-8) var(--space-6); }

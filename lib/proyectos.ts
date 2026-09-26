@@ -73,6 +73,15 @@ export const PROYECTOS: Proyecto[] = [
     descripcion: "Centro comercial de barrio.",
   },
   {
+    /* Confirmado por el copy de /comercial, que lo describe como Street Mall en
+       Distrito Tec. Estuvo fuera esperando esa confirmación. */
+    id: "paseo-tec",
+    nombre: "Paseo Tec",
+    estado: "MX-NLE",
+    ciudad: "Monterrey",
+    descripcion: "Centro comercial · Street Mall en Distrito Tec.",
+  },
+  {
     id: "paseo-durango",
     nombre: "Paseo Durango",
     estado: "MX-DUR",
@@ -104,7 +113,8 @@ export const PROYECTOS: Proyecto[] = [
     id: "punto-rio-nilo",
     nombre: "Punto Río Nilo",
     estado: "MX-JAL",
-    ciudad: "Guadalajara",
+    /* El copy de /comercial lo sitúa en Tonalá, no en Guadalajara. */
+    ciudad: "Tonalá",
     descripcion: "Centro comercial de barrio.",
   },
   {
@@ -131,10 +141,9 @@ export const M2_CONSTRUIDOS: Partial<Record<EstadoConPresencia, number>> = {};
 
 /** Presencia fuera de México. El mapa solo cubre el territorio nacional. */
 /*
- * NOTA — sin consumir en código desde que el mapa dejó de mostrar la cifra de
- * países. Hoy los tres sólo aparecen escritos dentro del cuerpo de la sección
- * Nuestra Huella (app/_nosotros/content.ts). Se conserva porque es información
- * real, y porque ese texto debería poder derivarse de aquí en vez de repetirlo.
+ * Lo consume el cuerpo de Nuestra Huella (app/_nosotros/content.ts), que arma la
+ * lista de países desde aquí en vez de repetirla escrita. Añadir o quitar un país
+ * actualiza el párrafo solo.
  */
 export const PRESENCIA_INTERNACIONAL = [
   "Estados Unidos",

@@ -55,8 +55,10 @@
   font-size: 0.45em;
   /* Sin esto se apoyaría en la línea base del número y quedaría hundida. */
   align-self: center;
-  margin-left: 0.12em;
 }
+/* El que va después separa por la izquierda; el que va antes, por la derecha. */
+.com-cifras__signo:last-child { margin-left: 0.12em; }
+.com-cifras__signo:first-child { margin-right: 0.08em; }
 .com-cifras__etiqueta {
   font-family: var(--font-body);
   font-size: var(--text-small);
@@ -755,11 +757,31 @@
   }
   .com-banda-giros__panel {
     flex: 0 0 auto;
-    height: 300px;
+    /*
+      `min-height`, NO `height`. Con 300px fijos el párrafo desbordaba en TODOS
+      los anchos apilados: a 360 se salía 198px, a 900 todavía 34. El panel tiene
+      que crecer con su texto.
+    */
+    min-height: 300px;
     /* Apilado no hay diagonal, así que no hay cuñas que esquivar. */
     --dx-izq: 0px;
     --dx-der: 0px;
     /* Y el número baja de cuerpo: a 160px llenaría media tarjeta. */
     --num-cuerpo: clamp(4rem, 14vw, 7rem);
+  }
+  /*
+    El texto sale del posicionamiento absoluto y entra EN FLUJO: es lo que hace
+    que el panel crezca con él. Y necesita `relative` con z-index, porque la foto
+    va posicionada y sin eso pintaría encima de un hijo estático.
+  */
+  .com-banda-giros__txt {
+    position: relative;
+    z-index: 1;
+    inset: auto;
+    padding:
+      var(--space-8)
+      var(--space-5)
+      calc(var(--num-cuerpo) * 0.8 + var(--space-4))
+      var(--space-8);
   }
 }

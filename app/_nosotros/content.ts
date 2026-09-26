@@ -1,3 +1,5 @@
+import { ESTADOS_CON_PRESENCIA, PRESENCIA_INTERNACIONAL } from "@/lib/proyectos";
+
 /**
  * Página NOSOTROS — secciones 1 a 4 del sitemap (Renovación Web Altea 2026, p.11):
  *   1. Banner · 2. ¿Cómo nació Altea? · 3. Nuestra Huella/mapa
@@ -90,9 +92,29 @@ export const GRUPO_FIRMA = {
   imageNote: "Imagen de Grupo Firma",
 };
 
+/**
+ * "a, b y c" — la coordinación española, sin la coma antes de la conjunción.
+ *
+ * Existe para que la lista de países del cuerpo de Nuestra Huella NO esté
+ * escrita a mano: sale de PRESENCIA_INTERNACIONAL, que es la fuente.
+ */
+const enumerar = (xs: readonly string[]) =>
+  xs.length < 2 ? (xs[0] ?? "") : `${xs.slice(0, -1).join(", ")} y ${xs.at(-1)}`;
+
 export const HUELLA = {
   title: "Nuestra Huella",
-  body: "Con presencia en 21 Estados de México, Estados Unidos, España y Costa Rica, impulsamos desarrollos que entran en operación y se vuelven parte de entornos vivos, dinámicos y duraderos.",
+  /*
+   * Copy confirmado por Altea, con las dos cifras DERIVADAS: el 21 sale de
+   * ESTADOS_CON_PRESENCIA y la lista de países de PRESENCIA_INTERNACIONAL. Si
+   * mañana entra otro estado o otro país, el párrafo no se queda mintiendo.
+   *
+   * Eso resuelve la nota que llevaba PRESENCIA_INTERNACIONAL en lib/proyectos.ts,
+   * que avisaba de que estos tres países sólo existían escritos dentro de este
+   * texto en vez de leerse de allí.
+   */
+  body: `Nuestra presencia abarca ${ESTADOS_CON_PRESENCIA.length} estados de México, ${enumerar(
+    PRESENCIA_INTERNACIONAL,
+  )}, reflejando la capacidad de Altea para llevar nuestra visión de desarrollo a distintos territorios.`,
   stats: [
     { prefix: "+", to: 400, label: "Propiedades" },
     { prefix: "+", to: 44_000_000, suffix: " m²", label: "Superficie" },

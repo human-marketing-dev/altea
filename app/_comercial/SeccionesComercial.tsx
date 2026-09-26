@@ -21,6 +21,11 @@ export function CifrasComercial() {
                 completo en el servidor — sin JS, o con movimiento reducido, la
                 cifra correcta está ahí desde el primer pintado.
               */}
+              {cifra.prefijo && (
+                <span className="com-cifras__signo" aria-hidden="true">
+                  {cifra.prefijo}
+                </span>
+              )}
               <CountUp to={cifra.valor} />
               {cifra.signo && (
                 <span className="com-cifras__signo" aria-hidden="true">

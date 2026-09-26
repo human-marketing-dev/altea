@@ -79,15 +79,11 @@ export const HERO_DIAPOSITIVAS: DiapositivaHero[] = [
 
 export const HERO_COMERCIAL = {
   ceja: "Comercial",
-  /**
-   * PENDIENTE: es la frase de la unidad que ya venía en el deck corporativo
-   * —la misma que usaba <Proximamente>—, pero nadie ha confirmado que sirva
-   * como titular de página.
-   */
-  titulo: "Activar la energía de la ciudad en un solo lugar.",
-  /** PENDIENTE: párrafo sin confirmar por Altea. */
+  /* Confirmado por Altea. */
+  titulo: "Espacios que conectan personas, marcas y experiencias",
+  /* Confirmado por Altea. */
   descripcion:
-    "Desarrollamos y operamos centros comerciales que se vuelven el punto de reunión de su zona. Cada plaza se define por el tejido que la rodea: la mezcla de marcas, el ancla y el ritmo de crecimiento del entorno.",
+    "Nuestros desarrollos comerciales reúnen marcas, experiencias, servicios y entretenimiento en entornos diseñados para conectar con las comunidades y responder a la evolución de cada ciudad.",
   foto: {
     /* Casi cuadrada (2565×2613): la tarjeta se ajusta a SU proporción en vez de
        forzarla a 4/3, que le recortaba el 26% del alto. */
@@ -124,60 +120,50 @@ const CENTROS_COMERCIALES = PROYECTOS.filter((p) =>
 const ESTADOS_COMERCIAL = new Set(CENTROS_COMERCIALES.map((p) => p.estado));
 
 export interface Cifra {
-  /**
-   * El número, sin la unidad y SIN formatear: lo pinta <CountUp>, que lo cuenta
-   * desde cero y le aplica toLocaleString("es-MX") — 250000 sale "250,000".
-   */
+  /** Signo que va ANTES del número, en coral. */
+  prefijo?: string;
+  /** El número, sin unidad ni signo, y sin formatear: lo cuenta <CountUp>. */
   valor: number;
-  /** El "%" o el "M²", que va en coral y a 0.45em. Vacío si no lleva. */
+  /** La unidad o el signo que va DESPUÉS, en coral: "M", "%"… */
   signo?: string;
   etiqueta: string;
   /** Lo que lee el lector de pantalla: la cifra entera, sin partir. */
   lectura: string;
-  /** true = inventada, no publicar. Ver la nota de abajo. */
-  pendiente?: boolean;
 }
 
+/*
+ * Las tres, confirmadas por Altea.
+ *
+ * ⚠ Ojo con dos coincidencias que NO son la misma cosa:
+ *   · El 34 de aquí son INMUEBLES comerciales del portafolio. En
+ *     lib/proyectos.ts, el 34 de Paseo La Fe son sus LOCALES. Números iguales,
+ *     unidades distintas.
+ *   · El 94% de ocupación coincide con el que lib/proyectos.ts atribuye sólo a
+ *     Paseo La Fe. Aquí es la tasa del portafolio.
+ * No se derivan de lib/proyectos.ts: allí hay 8 proyectos con ficha, no 34
+ * inmuebles, así que contarlos daría otro número.
+ */
 export const CIFRAS_COMERCIAL: Cifra[] = [
   {
-    valor: CENTROS_COMERCIALES.length,
-    etiqueta: "Centros comerciales en operación",
-    lectura: `${CENTROS_COMERCIALES.length} centros comerciales en operación`,
+    prefijo: "+",
+    valor: 3,
+    signo: "M",
+    etiqueta: "de visitantes al mes",
+    lectura: "Más de 3 millones de visitantes al mes",
   },
   {
-    valor: ESTADOS_COMERCIAL.size,
-    etiqueta: "Estados con presencia comercial",
-    lectura: `${ESTADOS_COMERCIAL.size} estados con presencia comercial`,
-  },
-  /*
-   * ⚠⚠ LAS DOS DE ABAJO SON INVENTADAS. NO PUBLICAR. ⚠⚠
-   *
-   * Ni los 250,000 m² ni el 92% salen de ningún dato del repositorio: están
-   * puestos para ver la composición de la rejilla y HAY QUE CONFIRMARLOS CON
-   * ALTEA antes de que esta página salga a producción.
-   *
-   * El 94% que sí existe en lib/proyectos.ts es de Paseo La Fe SOLO —una plaza
-   * de siete—, así que tampoco sirve como cifra de portafolio.
-   *
-   * Cuando lleguen los datos buenos: quitar el `pendiente: true` de las dos.
-   * Si no llegan, se borran las dos entradas y la rejilla vuelve a dos —ya lo
-   * estuvo, y el reparto aguanta.
-   */
-  {
-    valor: 250_000,
-    signo: "M²",
-    etiqueta: "De área rentable",
-    lectura: "250,000 metros cuadrados de área rentable",
-    pendiente: true,
+    valor: 34,
+    etiqueta: "inmuebles comerciales",
+    lectura: "34 inmuebles comerciales",
   },
   {
-    valor: 92,
+    valor: 94,
     signo: "%",
-    etiqueta: "De ocupación promedio del portafolio",
-    lectura: "92 por ciento de ocupación promedio del portafolio",
-    pendiente: true,
+    etiqueta: "Tasa de ocupación",
+    lectura: "94 por ciento de tasa de ocupación",
   },
 ];
+
 
 /* ====================== 4 · Descripción de la unidad =============== */
 
@@ -236,33 +222,31 @@ export interface Plaza {
   foto?: string;
   alt: string;
   label: string;
-  /** Sale de `descripcion` en lib/proyectos.ts. */
   descripcion: string;
-  /**
-   * Exactamente dos pares para el <dl> de la ficha.
-   *
-   * De las siete plazas SÓLO Paseo La Fe tiene locales y ocupación
-   * documentados en lib/proyectos.ts. En las demás el hueco va marcado con un
-   * guion, no relleno: inventar una cifra por plaza sería peor que no darla.
-   */
+  /** Exactamente dos pares para el <dl> de la ficha. */
   datos: [ParDato, ParDato];
 }
 
 export interface ParDato {
   etiqueta: string;
-  /** `undefined` = dato que Altea todavía no entregó; la ficha pinta un guion. */
+  /** `undefined` = dato que el copy no da; la ficha pinta un guion. */
   valor?: string;
 }
 
 /**
- * PENDIENTE: sólo Paseo La Fe tiene datos en lib/proyectos.ts. Los de las otras
- * seis plazas están sin confirmar y hay que pedírselos a Altea.
- */
-/**
- * Las siete plazas. `descripcion` y las cifras salen de lib/proyectos.ts; donde
- * allí no hay dato, aquí va `undefined` y la ficha pinta un guion.
+ * Las ocho plazas, con el copy confirmado por Altea.
  *
- * PENDIENTE: los locales y la ocupación de las seis que no son Paseo La Fe.
+ * Los dos pares del <dl> salen del propio texto: el FORMATO —Fashion Mall,
+ * Street Mall o Power Center, que el copy declara en la primera frase de cada
+ * una— y los VISITANTES, que sólo da para Paseo La Fe y Paseo Juárez. Donde no
+ * hay cifra va un guion, no un número inventado.
+ *
+ * ⚠ Paseo Tec entra por fin: estaba fuera esperando confirmación y este copy la
+ * da. Su archivo de imagen se llama `paso-tec-altea.webp` —sin la "e"—, que es
+ * una errata de origen que no toco.
+ *
+ * ⚠ Dos ubicaciones que el copy corrige respecto al repo: Punto Río Nilo está en
+ * TONALÁ, no en Guadalajara, y Punto Huinalá lleva acento.
  */
 export const PLAZAS: Plaza[] = [
   {
@@ -272,23 +256,39 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-la-fe-altea.webp`,
     alt: "",
     label: "Paseo La Fe",
-    descripcion: "Centro comercial de Altea en San Nicolás.",
+    descripcion:
+      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
     datos: [
-      { etiqueta: "Locales", valor: "34" },
-      { etiqueta: "Ocupación", valor: "94%" },
+      { etiqueta: "Formato", valor: "Fashion Mall" },
+      { etiqueta: "Visitantes", valor: "1 millón al mes" },
     ],
   },
   {
-    id: "punto-huinala",
-    nombre: "Punto Huinala",
-    ubicacion: "Apodaca, Nuevo León",
-    foto: `${CENTROS}/punto-huinala-altea.webp`,
+    id: "paseo-tec",
+    nombre: "Paseo Tec",
+    ubicacion: "Monterrey, Nuevo León",
+    foto: `${CENTROS}/paso-tec-altea.webp`,
     alt: "",
-    label: "Punto Huinala",
-    descripcion: "Centro comercial de barrio de Altea en Apodaca.",
+    label: "Paseo Tec",
+    descripcion:
+      "Street Mall ubicado sobre Av. Eugenio Garza Sada, en Distrito Tec, al sur de Monterrey, Nuevo León y a pocos minutos del centro de la ciudad. Su propuesta integra comercio, gastronomía, entretenimiento y servicios para diferentes necesidades. El desarrollo también cuenta con el hotel Fiesta Inn y el salón de eventos GRAND 2411, consolidándose como un punto de encuentro que complementa la vida urbana de la zona Tec.",
     datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
+      { etiqueta: "Formato", valor: "Street Mall" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "paseo-juarez",
+    nombre: "Paseo Juárez",
+    ubicacion: "Juárez, Nuevo León",
+    foto: `${CENTROS}/paseo-juarez-altea.webp`,
+    alt: "",
+    label: "Paseo Juárez",
+    descripcion:
+      "Fashion Mall ubicado en el centro de Juárez, Nuevo León, que recibe más de 650 mil visitantes al mes. Su oferta comercial reúne marcas reconocidas como Walmart, Cinemex, Suburbia, Coppel y Del Sol, además de una amplia variedad de tiendas, servicios y opciones de entretenimiento, consolidándose como un punto de encuentro para la comunidad de Juárez.",
+    datos: [
+      { etiqueta: "Formato", valor: "Fashion Mall" },
+      { etiqueta: "Visitantes", valor: "+650 mil al mes" },
     ],
   },
   {
@@ -298,36 +298,11 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-durango-altea.webp`,
     alt: "",
     label: "Paseo Durango",
-    descripcion: "Centro comercial de Altea en Durango.",
+    descripcion:
+      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
     datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
-    ],
-  },
-  {
-    id: "paseo-gomez-palacio",
-    nombre: "Paseo Gómez Palacio",
-    ubicacion: "Gómez Palacio, Durango",
-    foto: `${CENTROS}/paseo-gomez-palacio-altea.webp`,
-    alt: "",
-    label: "Paseo Gómez Palacio",
-    descripcion: "Centro comercial de Altea en Gómez Palacio.",
-    datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
-    ],
-  },
-  {
-    id: "paseo-juarez",
-    nombre: "Paseo Juárez",
-    ubicacion: "Ciudad Juárez, Chihuahua",
-    foto: `${CENTROS}/paseo-juarez-altea.webp`,
-    alt: "",
-    label: "Paseo Juárez",
-    descripcion: "Centro comercial de Altea en Ciudad Juárez.",
-    datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
+      { etiqueta: "Formato", valor: "Fashion Mall" },
+      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -337,23 +312,53 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-los-mochis-altea.webp`,
     alt: "",
     label: "Paseo Los Mochis",
-    descripcion: "Centro comercial de Altea en Los Mochis.",
+    descripcion:
+      "Fashion Mall ubicado entre Av. Rosales y Blvd. Centenario, en Los Mochis, Sinaloa. Es el único Fashion Mall de la ciudad y cuenta con una oferta comercial y de entretenimiento encabezada por marcas como Liverpool, Sears y Cinemex, consolidándose como uno de los principales destinos para compras, servicios y experiencias en Los Mochis.",
     datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
+      { etiqueta: "Formato", valor: "Fashion Mall" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "paseo-gomez-palacio",
+    nombre: "Paseo Gómez Palacio",
+    ubicacion: "Gómez Palacio, Durango",
+    foto: `${CENTROS}/paseo-gomez-palacio-altea.webp`,
+    alt: "",
+    label: "Paseo Gómez Palacio",
+    descripcion:
+      "Fashion Mall ubicado en la región de La Laguna, en Gómez Palacio, Durango. Es el centro comercial más nuevo de nuestro portafolio y el único Fashion Mall de la ciudad. Cuenta con marcas como Cinemex, Suburbia y Del Sol, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierten en un nuevo punto de encuentro para la comunidad.",
+    datos: [
+      { etiqueta: "Formato", valor: "Fashion Mall" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-huinala",
+    nombre: "Punto Huinalá",
+    ubicacion: "Apodaca, Nuevo León",
+    foto: `${CENTROS}/punto-huinala-altea.webp`,
+    alt: "",
+    label: "Punto Huinalá",
+    descripcion:
+      "Power Center ubicado en el cruce de Carretera Miguel Alemán y Carretera Huinalá, en Apodaca, Nuevo León. Su ubicación ofrece una conexión privilegiada con el Aeropuerto Internacional de Monterrey y uno de los principales corredores industriales de la zona, mientras que su oferta comercial está encabezada por Bodega Aurrera y Cinépolis, complementada por diversos comercios y servicios.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
     id: "punto-rio-nilo",
     nombre: "Punto Río Nilo",
-    ubicacion: "Guadalajara, Jalisco",
+    ubicacion: "Tonalá, Jalisco",
     foto: `${CENTROS}/punto-rio-nilo.webp`,
     alt: "",
     label: "Punto Río Nilo",
-    descripcion: "Centro comercial de barrio de Altea en Guadalajara.",
+    descripcion:
+      "Power Center ubicado sobre Av. Río Nilo, en Tonalá, Jalisco. Su oferta está encabezada por Walmart y Cinépolis, complementada por una variedad de comercios y servicios.",
     datos: [
-      { etiqueta: "Locales", valor: undefined },
-      { etiqueta: "Ocupación", valor: undefined },
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
 ];
@@ -497,22 +502,25 @@ const PROXIMOS = "/images/comercial/proximos-proyectos";
  * <ProyectosPaneles> no hace falta forzar una segunda: sin sobrantes no se
  * dibuja.
  */
+/**
+ * Tres, que es exactamente lo que cabe en una banda junto al titular.
+ *
+ * ⚠ El copy sólo trae DOS descripciones —la ampliación de Paseo La Fe y Punto
+ * López Mateos—. Punto La Pastora se queda sin la suya, con el campo vacío: la
+ * ficha se compone sin ella. Si ese proyecto ya no va en la lista, se borra su
+ * entrada y <ProyectosPaneles> monta dos paneles sin dejar huecos.
+ */
 export const PROXIMOS_PROYECTOS = {
   titulo: "Próximos\nproyectos",
   proyectos: [
     {
       slug: "paseo-la-fe-ampliacion",
-      name: "Paseo La Fe",
+      name: "Paseo La Fe · Ampliación",
       unit: "Ampliación",
       location: "San Nicolás, Nuevo León",
       image: `${PROXIMOS}/paseo-la-fe-altea-proximo.webp`,
-    },
-    {
-      slug: "punto-la-pastora",
-      name: "Punto La Pastora",
-      unit: "Comercial",
-      location: "Guadalupe, Nuevo León",
-      image: `${PROXIMOS}/punto-la-pastora-altea-proximo.webp`,
+      descripcion:
+        "El proyecto contempla un Master Plan integral dividido en tres etapas que ampliará la oferta comercial de servicios, entretenimiento y vivienda dentro de un mismo ecosistema urbano. Como parte de esta evolución, destaca la llegada del Acuario Michin así como la incorporación futura de componentes hoteleros, hospitalarios y residenciales. El desarrollo contempla más de 36 mil m² adicionales de expansión comercial y de entretenimiento, así como cerca de 19 mil m² de área rentable para el Acuario.",
     },
     {
       slug: "punto-lopez-mateos",
@@ -520,6 +528,16 @@ export const PROXIMOS_PROYECTOS = {
       unit: "Comercial",
       location: "Zapopan, Jalisco",
       image: `${PROXIMOS}/punto-lopez-mateos-altea-proximo.webp`,
+      descripcion:
+        "La ampliación comercial de Punto López Mateos surge como una intervención destinada a fortalecer y ampliar la oferta comercial del conjunto, donde actualmente se encuentra BBVA, así como la incorporación de nuevos establecimientos como Firehouse y Dreambox. El proyecto busca revitalizar el conjunto y amplificar la diversidad de usos disponibles para los visitantes, dentro de una propuesta arquitectónica renovada y funcional.",
+    },
+    {
+      slug: "punto-la-pastora",
+      name: "Punto La Pastora",
+      unit: "Comercial",
+      /** PENDIENTE: el copy de Altea no trajo descripción para este. */
+      location: "Guadalupe, Nuevo León",
+      image: `${PROXIMOS}/punto-la-pastora-altea-proximo.webp`,
     },
   ],
 };

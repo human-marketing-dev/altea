@@ -1,22 +1,12 @@
 import type { Metadata } from "next";
-import {
-  Footer,
-  CierreContacto,
-  Marcas,
-  NavBar,
-} from "@/app/ui";
-import { MOSTRAR_MARCAS } from "@/lib/marcas";
-import {
-  MOSTRAR_GRUPO_FIRMA,
-  MOSTRAR_QUE_HACEMOS_INTRO,
-} from "../_nosotros/content";
-import { Banner } from "../_nosotros/Banner";
+import { CierreContacto, Footer, NavBar } from "@/app/ui";
 import { CONTACT_CTA } from "@/app/_home/content";
 import { GrupoFirma } from "../_nosotros/GrupoFirma";
+import { HeroNube } from "../_nosotros/HeroNube";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
+import { Pilares } from "../_nosotros/Pilares";
 import { QuienesSomos } from "../_nosotros/QuienesSomos";
-import { QueHacemosIntro } from "../_nosotros/QueHacemosIntro";
 import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
 import "../_nosotros/nosotros.css";
 
@@ -29,26 +19,25 @@ export const metadata: Metadata = {
 export default function Nosotros() {
   return (
     <>
+      {/*
+        La misma barra del home, pero SIN transicionIntro: aquí es `sticky` y
+        ocupa su hueco, que es lo que mantiene el aire sobre el hero. El prop sólo
+        lo pasa el home, donde el hero tiene que empezar en la coordenada 0.
+
+        El aspecto —cápsula, velo a los 24px, esconderse al bajar— es el mismo en
+        las siete rutas y no depende de nada que la página tenga que pasar.
+      */}
       <NavBar tone="light" />
       <main>
-        <Banner />
+        <HeroNube />
         <Origen />
-        {MOSTRAR_GRUPO_FIRMA && <GrupoFirma />}
+        <GrupoFirma />
         <Huella />
-        {MOSTRAR_QUE_HACEMOS_INTRO && <QueHacemosIntro />}
-        {/* 5. Quiénes somos */}
+        <Pilares />
         <QuienesSomos />
-        {/* 7. Responsabilidad social */}
         <ResponsabilidadSocial />
-        {MOSTRAR_MARCAS && <Marcas />}
-        {/* Últimas publicaciones: oculta hasta tener la API de Instagram o el
-            widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
-            y lib/publicaciones.ts — para volver a mostrarla basta con importarla
-            y poner <Publicaciones /> aquí. */}
-        {/* 6. CTA — va al final para que cierre la página, como en el resto
-            del sitio. */}
-        <CierreContacto {...CONTACT_CTA} />
       </main>
+      <CierreContacto {...CONTACT_CTA} />
       <Footer />
     </>
   );

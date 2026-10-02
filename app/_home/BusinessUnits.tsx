@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ruta } from "@/lib/rutas";
 import { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } from "./content";
 
 /**
@@ -20,7 +21,7 @@ export function BusinessUnits() {
       <ul className="home-units__grid">
         {BUSINESS_UNITS.map((unit) => (
           <li key={unit.slug} className="home-units__item">
-            <Link href={`/${unit.slug}`} className="home-units__card">
+            <Link href={ruta(`/${unit.slug}`)} className="home-units__card">
               <span className="home-units__media">
                 {unit.image && (
                   <Image

@@ -1,40 +1,62 @@
 import { ESTADOS_CON_PRESENCIA, PRESENCIA_INTERNACIONAL } from "@/lib/proyectos";
 
 /**
- * Página NOSOTROS — secciones 1 a 4 del sitemap (Renovación Web Altea 2026, p.11):
- *   1. Banner · 2. ¿Cómo nació Altea? · 3. Nuestra Huella/mapa
- *   4. Introducción a "qué hacemos"
+ * Página NOSOTROS, rediseñada.
  *
- * Faltan por definir: 5. Qué hacemos (3 secciones) · 6. CTA · 7. Responsabilidad social.
+ *   1. hero — la nube de puntos      5. pilares de identidad
+ *   2. origen                        6. quiénes somos (acordeón)
+ *   3. Grupo Firma                   7. responsabilidad social
+ *   4. nuestra huella
  *
  * Lo marcado PENDIENTE es texto provisional, no confirmado por Altea.
+ *
+ * Se fueron con el rediseño: BANNER (el copy del hero por capas),
+ * QUE_HACEMOS_INTRO y su interruptor, MOSTRAR_GRUPO_FIRMA —la sección ya tiene
+ * contenido real, así que no hay nada que esconder—, MOSTRAR_LEAD_NOSOTROS, la
+ * interfaz BloqueQuienesSomos y la fotografía de ORIGEN.
  */
 
-export const BANNER = {
-  eyebrow: "Nosotros",
-  title: "Transformamos territorio en oportunidades",
+
+/* ─── 1 · Hero: la nube de puntos ──────────────────────────────────────── */
+
+export const HERO = {
   /**
-   * El MISMO título, partido para la composición del hero.
-   *
-   * El corte en tres es de diseño, no de contenido: el <h1> lleva `title` entero
-   * en su aria-label y estas partes van aria-hidden, así que un lector de
-   * pantalla oye la frase de una pieza. Mismo criterio que el logotipo del hero
-   * del home y el título de "Quiénes somos".
-   *
-   * La última línea se pinta calada.
+   * El titular, partido en las líneas que se revelan por separado. El aria-label
+   * del <h1> se calcula uniéndolas, así que lo que se lee en voz alta y lo que se
+   * ve no pueden separarse.
    */
-  lineas: ["Transformamos", "territorio en", "oportunidades"],
-  /* Sin la coma antes de "y turismo": en una enumeración española la
-     conjunción no la lleva. */
-  description:
-    "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial. Desarrollamos, ejecutamos y operamos proyectos inmobiliarios comerciales, industriales, de vivienda, salud, educación y turismo bajo una misma visión: identificar oportunidades, integrar capacidades y crear espacios que generan valor a largo plazo.",
-  image: "/images/stock/nosotros-hero-trabajadores-altea.webp",
-  alt: "Dos ingenieros revisan planos frente a un edificio en construcción",
-  imageNote: "Trabajadores revisando planos en obra",
+  lineas: [
+    [{ texto: "Transformamos" }],
+    [{ texto: "territorio en" }],
+    [{ texto: "oportunidades", acento: true }],
+  ] as { texto: string; acento?: boolean }[][],
+  bajada:
+    "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial. Desarrollamos, ejecutamos y operamos proyectos comerciales, industriales, de vivienda, salud, educación y turismo bajo una misma visión.",
+  /**
+   * El rótulo del pie cambia con la forma que está mostrando la nube. Son dos
+   * lecturas del mismo dato: la A habla de territorio, la pirámide de tiempo.
+   */
+  pie: {
+    isotipo: `${ESTADOS_CON_PRESENCIA.length} estados · ${PRESENCIA_INTERNACIONAL.length + 1} países`,
+    piramide: "Cuatro décadas construyendo",
+  },
 };
 
 export const ORIGEN = {
   title: "¿Cómo nació Altea?",
+
+  /**
+   * La frase de apertura, partida para poder acentuar "40 años".
+   *
+   * Es el ÚNICO sitio de la página donde el texto se enciende palabra por
+   * palabra. Repetirlo en otra sección lo convierte en un tic — en el home pasa
+   * lo mismo con la frase de entrada y el emblema, y no más.
+   */
+  frase: [
+    { texto: "Más de" },
+    { texto: "40 años", acento: true },
+    { texto: "transformando metros cuadrados en oportunidades." },
+  ] as { texto: string; acento?: boolean }[],
 
   parrafos: [
     "En Altea contamos con más de 40 años de experiencia en el desarrollo inmobiliario en México. Nuestros orígenes se remontan a ser propietarios de cines, donde iniciamos nuestra trayectoria desarrollando espacios de entretenimiento y adquiriendo una experiencia que con el tiempo nos permitió ampliar nuestra visión y capacidades.",
@@ -42,26 +64,13 @@ export const ORIGEN = {
   ],
 
   /*
-   * Paseo La Fe, por decisión explícita.
-   *
-   * La comparte con /comercial, donde es el centro comercial de portada. No
-   * habla de los cines del relato —no hay ninguna foto de cines en el repo—,
-   * así que `imageNote` se queda apuntando qué material sería el propio si
-   * algún día llega.
+   * Sin fotografía: el rediseño de Origen es puramente tipográfico —rótulo,
+   * frase grande, regla y dos columnas—, así que el hueco desapareció. Antes
+   * llevaba Paseo La Fe prestado de /comercial, que ni era de los cines del
+   * relato ni había otra cosa en el repositorio.
    */
-  image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
-  alt: "Paseo La Fe, centro comercial de Altea en San Nicolás, Nuevo León",
-  imageNote: "Los cines que compró Altea",
 };
 
-/**
- * Interruptor de la sección de Grupo Firma.
- *
- * En `true` porque el marcador de posición ES el entregable de este turno: hay
- * que poder ver el hueco. Pasarlo a `false` la oculta entera, sin borrar nada,
- * si hay que enseñar la página antes de que llegue el contenido.
- */
-export const MOSTRAR_GRUPO_FIRMA = true;
 
 /**
  * Interruptor del bloque de captación en /nosotros.
@@ -72,7 +81,6 @@ export const MOSTRAR_GRUPO_FIRMA = true;
  * comercial, industrial, vivienda y forestal), así que reactivarlo aquí es
  * cambiar este `false` por `true`.
  */
-export const MOSTRAR_LEAD_NOSOTROS = false;
 
 /**
  * Altea forma parte de Grupo Firma.
@@ -81,15 +89,208 @@ export const MOSTRAR_LEAD_NOSOTROS = false;
  * imagen. La estructura ya está montada, así que rellenar esto es lo único que
  * falta; el componente no cambia.
  */
+/** Una sub-marca. Con `categoria`, la lleva encima; sin ella, va suelta. */
+export interface SubMarca {
+  nombre: string;
+  /** Sólo Deportes la necesita: Béisbol sobre Sultanes, Básquetbol sobre Fuerza
+   *  Regia. En las demás ramas la columna ya dice de qué sector son. */
+  categoria?: string;
+  /**
+   * El logotipo, SÓLO donde la sub-marca es una marca de verdad.
+   *
+   * No todas las columnas tienen el mismo tipo de sub-elemento, y eso es lo que
+   * decide qué lleva logotipo y qué sigue en texto:
+   *
+   *   Alimentos y Deportes  →  marcas reales (KFC, Sultanes…). Logotipo.
+   *   Medios                →  categorías (Prensa, Radio…). No son marcas: texto.
+   *   Inmobiliaria          →  las divisiones de Altea. Tampoco: texto.
+   *
+   * Conciertos, dentro de Deportes, es el único de su columna sin marca propia y
+   * se queda en texto junto a dos que sí la tienen.
+   */
+  logo?: string;
+  /** Proporción ancho/alto del archivo. La consume la corrección óptica. */
+  logoRatio?: number;
+}
+
+export interface SectorFirma {
+  id: string;
+  /** La categoría de la columna, arriba en versalitas. */
+  categoria: string;
+  /** El nombre que va en la caja del logotipo. */
+  marca: string;
+  subs: SubMarca[];
+  /** Altea. Cambia de material, no de sitio: ver [data-nuestra] en nosotros.css. */
+  nuestra?: boolean;
+  /**
+   * El logotipo. Sin él, la caja pinta el nombre — que es el caso de Deportes,
+   * el único de los seis que no tiene archivo.
+   *
+   * La caja conserva su proporción fija (5/2) para que al llegar los archivos la
+   * maqueta no se mueva, y el logotipo se ajusta dentro con un ALTO OBJETIVO en
+   * vez de a la caja: ver .nos-firma__logo y la nota sobre las proporciones.
+   */
+  logo?: string;
+  /** Proporción ancho/alto del archivo. La consume el ancho máximo del logotipo. */
+  logoRatio?: number;
+}
+
+/**
+ * La carpeta de los logotipos del grupo.
+ *
+ * Trae 13 archivos .webp, todos con alfa. DOCE SON NEGRO PURO sobre transparente
+ * —comprobado píxel a píxel: rgb(0,0,0)—, así que el gris de la sección sale de la
+ * opacidad y no del grayscale, que sobre negro no hace nada.
+ *
+ * El decimotercero, logo-grupo-firmas-globales.webp, es el único en color
+ * (turquesa #60E0D0 sobre verde oscuro #103030) y NO se usa: ver la nota de
+ * .nos-firma__gfg en nosotros.css.
+ */
+const GF = "/images/logo/logos-grupo-firmas-globales";
+
+/**
+ * Los seis sectores, en el orden en que se leen.
+ *
+ * SIN LÍNEAS CONECTORAS. Con sub-marcas en casi todas las ramas, cualquier
+ * trazado acaba cruzándose con el texto: aquí la jerarquía la hace la
+ * alineación —lo que está debajo de un logotipo le pertenece— y la separación
+ * entre columnas es una línea fina, no un hueco, para que se lea como tabla y
+ * no como seis tarjetas.
+ */
+/*
+ * Va como const TIPADA y no con `satisfies`: `satisfies` conserva el tipo
+ * literal de cada entrada, así que en las sub-marcas que no traen `categoria`
+ * el campo no existiría y el componente no podría consultarlo.
+ */
+const SECTORES: SectorFirma[] = [
+  {
+    id: "medios",
+    logo: `${GF}/logo-multimedios-grupo-firma-globales.webp`,
+    logoRatio: 7.065,
+    categoria: "Medios",
+    marca: "Multimedios",
+    subs: [
+      { nombre: "Prensa" },
+      { nombre: "Digital" },
+      { nombre: "Televisión" },
+      { nombre: "Exteriores" },
+      { nombre: "Radio" },
+      { nombre: "Educación" },
+    ],
+  },
+  {
+    id: "inmobiliaria",
+    logo: "/brand/logos/altea-logo-light.svg",
+    logoRatio: 5.037,
+    categoria: "Inmobiliaria",
+    marca: "ALTEA",
+    nuestra: true,
+    subs: [
+      { nombre: "Comercial" },
+      { nombre: "Industrial" },
+      { nombre: "Vivienda" },
+      { nombre: "Hoteles" },
+      { nombre: "Sector salud" },
+      { nombre: "Forestal" },
+    ],
+  },
+  {
+    id: "vinos",
+    categoria: "Vinos y licores",
+    marca: "Bornos",
+    logo: `${GF}/logo-bornos-grupo-firma-globales.webp`,
+    logoRatio: 2.755,
+    subs: [],
+  },
+  {
+    id: "alimentos",
+    logo: `${GF}/logo-foodplay-grupo-firma-globales.webp`,
+    logoRatio: 2.692,
+    categoria: "Alimentos y diversiones",
+    marca: "Foodplay",
+    subs: [
+      { nombre: "KFC", logo: `${GF}/logo-kfc-grupo-firma-globales.webp`, logoRatio: 1.058 },
+      {
+        nombre: "Tim Hortons",
+        logo: `${GF}/logo-tim-hortons-grupo-firma-globales.webp`,
+        logoRatio: 3.744,
+      },
+      {
+        nombre: "Firehouse Subs",
+        logo: `${GF}/logo-firehouse-subs-grupo-firma-globales.webp`,
+        logoRatio: 3.356,
+      },
+      {
+        nombre: "Bolerama",
+        logo: `${GF}/logo-bolerama-grupo-firma-globales.webp`,
+        logoRatio: 3.523,
+      },
+      {
+        nombre: "Helados Dreambox",
+        logo: `${GF}/logo-helados-dreambox-grupo-firma-globales.webp`,
+        logoRatio: 3.425,
+      },
+    ],
+  },
+  {
+    id: "deportes",
+    /* ⚠ SIN LOGOTIPO, el único de los seis. En logos-grupo-firmas-globales/ están
+       Sultanes y Fuerza Regia, pero no hay archivo de "Deportes" como marca
+       paraguas. La caja se queda con el nombre en texto antes que improvisar. */
+    categoria: "Deportes",
+    marca: "Deportes",
+    /* La única rama que se abre dos veces: cada equipo necesita decir de qué
+       deporte es, y Conciertos no es un deporte, así que va suelto. */
+    subs: [
+      {
+        nombre: "Sultanes",
+        categoria: "Béisbol",
+        logo: `${GF}/logo-sultanes-grupo-firma-globales.webp`,
+        logoRatio: 1.183,
+      },
+      {
+        nombre: "Fuerza Regia",
+        categoria: "Básquetbol",
+        logo: `${GF}/logo-fuerza-regia-grupo-firma-globales.webp`,
+        logoRatio: 1.084,
+      },
+      /* Conciertos no es una marca y no tiene archivo: se queda en texto, junto a
+         dos que sí lo tienen. */
+      { nombre: "Conciertos" },
+    ],
+  },
+  {
+    id: "energia",
+    categoria: "Energía",
+    marca: "Delta Electric",
+    logo: `${GF}/logo-delta-electric-grupo-firma-globales.webp`,
+    /*
+     * 2.44 y no 1.538: EL ARCHIVO SE RECORTÓ. Venía en 360x234 con el 46.6 % del
+     * alto y el 15.3 % del ancho en margen transparente, así que declaraba 1.538:1
+     * mientras la marca era 2.440:1. Ahora el lienzo es 305x125 y coincide con la
+     * mancha. El original está fuera del repositorio; si se repone, este número
+     * vuelve a 1.538.
+     */
+    logoRatio: 2.44,
+    subs: [],
+  },
+];
+
 export const GRUPO_FIRMA = {
-  eyebrow: "Grupo Firma",
-  /** PENDIENTE */
-  title: undefined as string | undefined,
-  /** PENDIENTE: dos párrafos. Vacío mientras no lleguen. */
-  parrafos: [] as string[],
-  /** PENDIENTE. Sin `src`, <MediaSlot> pinta el hueco etiquetado. */
-  image: undefined as string | undefined,
-  imageNote: "Imagen de Grupo Firma",
+  title: "Formamos parte de Grupo Firma",
+  intro:
+    "Altea es la división inmobiliaria de un grupo con presencia en medios, alimentos, energía, deportes y vinos. Esa estructura nos da músculo financiero y una visión de largo plazo que pocos desarrolladores tienen.",
+  /** La raíz del grupo, encima de la fila de sectores. */
+  raiz: { sigla: "GFG", nombre: "Grupo Firma" },
+  /** Goal Capital va aparte: es el family office, no un sector operativo. */
+  aparte: {
+    nombre: "Goal Capital",
+    rol: "Family office",
+    logo: `${GF}/logo-goal-capital-grupo-firma-globales.webp`,
+    logoRatio: 4.48,
+  },
+  sectores: SECTORES,
+  pie: ["Seis sectores", "Una sola visión de largo plazo"],
 };
 
 /**
@@ -125,8 +326,54 @@ export const HUELLA = {
     { label: "Resto del país", value: 13_000_000 },
     { label: "Fuera del país", value: 7_000_000 },
   ],
-  /** PENDIENTE: mapa interactivo, probablemente con un componente de terceros. */
-  mapNote: "Mapa interactivo de presencia",
+  /** Lo que dice el panel del mapa mientras no se ha señalado nada. */
+  mapa: {
+    etiqueta: "Presencia",
+    titulo: `${ESTADOS_CON_PRESENCIA.length} estados de México`,
+    pista: "Señala un estado para ver su superficie construida.",
+    /* Y lo que dice cuando sí. */
+    etiquetaEstado: "Superficie construida",
+    sinDato: "Sin superficie construida registrada",
+  },
+};
+
+/* ─── 5 · Pilares de identidad ─────────────────────────────────────────── */
+
+/** Los tres iconos de los pilares. Ver ICONOS_PILAR en Pilares.tsx. */
+export type IconoPilar = "retícula" | "red" | "triángulo";
+
+export const PILARES = {
+  title: "Los pilares de nuestra identidad",
+  /**
+   * Los tres, con su texto AL LADO del título y no en una banda aparte.
+   *
+   * La referencia del cliente separaba los textos abajo, y eso obliga a mirar
+   * arriba y abajo para emparejar cada uno con su pilar. Juntos se leen de una
+   * pasada.
+   */
+  bloques: [
+    {
+      id: "innovacion",
+      icono: "retícula",
+      title: "Innovación disruptiva",
+      description:
+        "Reinventamos el hábitat. Desafiamos el status quo de la construcción e integramos tecnologías y diseño de vanguardia para crear espacios que anticipan las necesidades futuras.",
+    },
+    {
+      id: "comunidades",
+      icono: "red",
+      title: "Comunidades vibrantes",
+      description:
+        "Diseñamos para las personas. Creamos ecosistemas de conexión con infraestructura social y comunitaria que activa la interacción, el bienestar y el sentido de pertenencia en cada desarrollo.",
+    },
+    {
+      id: "trascendencia",
+      icono: "triángulo",
+      title: "Trascendencia",
+      description:
+        "Construimos un patrimonio. La calidad es nuestro estándar. Entregamos desarrollos con una estética atemporal y una solidez perdurable que añaden valor a la ciudad y a la vida de sus propietarios por generaciones.",
+    },
+  ] satisfies { id: string; icono: IconoPilar; title: string; description: string }[],
 };
 
 /**
@@ -136,59 +383,28 @@ export const HUELLA = {
  * "Quiénes somos", que va justo debajo. El componente y sus datos siguen en su
  * sitio y volver a mostrarla es cambiar este `false` por `true`.
  */
-export const MOSTRAR_QUE_HACEMOS_INTRO = false;
 
-export const QUE_HACEMOS_INTRO = {
-  /*
-   * Texto corrido con la palabra de acento aparte. NO volver a partirlo en un
-   * array de palabras: iban como ítems de un flex y el hueco lo ponía su `gap`,
-   * o sea que en el DOM no había espacios y la frase copiada salía toda pegada.
-   */
-  fraseInicio: "Quiénes somos, nuestro propósito, y el modelo",
-  acento: "integral",
-  fraseFin: "nos distingue",
-  /* Horizontal, con mucho cielo: aguanta bien el velo oscuro y el texto
-     centrado encima. No se usa en ninguna otra sección. */
-  image: "/images/industrial/galeria/galeria-industrial-altea-2.webp",
-  imageNote: "Imagen de fondo — sección a sangre",
-};
 
 /** Sección 5 del sitemap — "Quiénes somos". */
-export interface BloqueQuienesSomos {
-  id: string;
-  /** Se pinta en coral junto al título. */
-  numero: string;
-  title: string;
-  description: string;
-  /**
-   * PENDIENTE: las tres fotos no existen todavía. Mientras el campo esté vacío
-   * el bloque pinta un relleno; poner la ruta aquí es todo lo que hace falta
-   * para que salga la imagen.
-   */
-  image?: string;
-  alt?: string;
-}
-
-/** Los tres iconos disponibles. Ver ICONOS_GIRO en QuienesSomos.tsx. */
-export type IconoQuienes = "analisis" | "equipo" | "ecosistema";
 
 export interface BloqueQuienes {
   id: string;
-  icono: IconoQuienes;
   title: string;
   description: string;
 }
 
 /**
- * Sección 5 — Quiénes somos. Tres bloques compactos con icono.
+ * Sección 6 — Quiénes somos, en acordeón.
  *
- * Se acortó a pedido del cliente: antes era una columna fija con el título
- * partido palabra por palabra, un índice y tres fotografías que se revelaban en
- * paralelogramo con el scroll. Ahora son tres columnas parejas y las fotos las
- * sustituyen iconos.
+ * UNO ABIERTO A LA VEZ: con tres textos de este largo, dos abiertos ya obligan a
+ * desplazarse para comparar, que es justo lo que el acordeón venía a evitar.
+ *
+ * Los tres textos son los mismos de siempre. Lo que se fue con el rediseño son el
+ * icono de cada bloque y la fotografía vertical de la sección: el acordeón no
+ * tiene dónde ponerlos.
  *
  * ⚠ PENDIENTE: el modelo integral está a la espera de retroalimentación de Ruva.
- * Los tres textos de abajo son los que entregó Altea, pero pueden cambiar.
+ * Los tres textos son los que entregó Altea, pero pueden cambiar.
  */
 export const QUIENES_SOMOS = {
   /** PENDIENTE: la ceja no venía en el copy de Altea. */
@@ -196,21 +412,9 @@ export const QUIENES_SOMOS = {
   /* El titular que ya traía la sección antes de rediseñarse. */
   titulo:
     "Quiénes somos, nuestro propósito y el modelo integral que nos distingue",
-  /**
-   * PENDIENTE — la imagen NO EXISTE. Va en una columna muy alta y estrecha
-   * (28% del cuerpo), así que al recortarse con `cover` hay que pedirla
-   * VERTICAL: una apaisada perdería casi todo. Sin `src`, <MediaSlot> pinta el
-   * hueco etiquetado.
-   */
-  foto: {
-    src: undefined as string | undefined,
-    alt: "",
-    label: "Imagen vertical de la sección",
-  },
   bloques: [
     {
       id: "territorio",
-      icono: "analisis",
       title:
         "Donde otros ven un terreno, nosotros vemos el potencial para transformar un territorio.",
       description:
@@ -218,14 +422,12 @@ export const QUIENES_SOMOS = {
     },
     {
       id: "talento",
-      icono: "equipo",
       title: "Nuestro talento",
       description:
         "Contamos con el talento necesario para convertir esa visión en realidad. Investigación de mercado, estrategia, finanzas, desarrollo arquitectónico, área legal, marketing, comercialización y operación trabajan como un solo equipo para dar continuidad a cada decisión y asegurar que cada proyecto nazca con una visión integral.",
     },
     {
       id: "ecosistemas",
-      icono: "ecosistema",
       title: "Creamos mucho más que infraestructura",
       description:
         "Desarrollamos ecosistemas donde convergen industria, comercio, vivienda, salud, educación, turismo y entretenimiento, creando espacios que conectan personas, actividades y oportunidades.",

@@ -1,0 +1,760 @@
+/*
+ * Las secciones del home que van debajo del hero.
+ *
+ * El hero vive en hero-a.css y no se toca desde aquí.
+ *
+ * Una nota sobre el ritmo: cada sección respira distinto a propósito. El mismo
+ * padding en todas es otro de los tics que delatan una maqueta hecha en serie, y
+ * aquí el emblema pide mucho más aire que el resto porque es lo único que hay en
+ * pantalla cuando llega.
+ *
+ * Los radios salen de --radius-lg y no de un clamp propio: el sistema ya tiene
+ * su escala y añadirle una segunda es como se acaban desincronizando.
+ */
+
+/* ═══ 1 · la frase y las cifras ═══════════════════════════════════════════ */
+
+.home-frase {
+  padding: clamp(80px, 16vh, 210px) var(--container-pad) clamp(50px, 9vh, 110px);
+}
+
+.home-frase__texto {
+  margin: 0 0 clamp(52px, 9vh, 120px);
+  /*
+   * De margen a margen. El tope de 43em NO es una caja de lectura, es un techo
+   * que casi nunca entra: son exactamente 90 caracteres a este cuerpo.
+   *
+   * Medido con la métrica de Gotham Medium y el letter-spacing ya contado, el
+   * avance medio de esta frase es 0.4784 em por carácter, así que:
+   *
+   *   1280 →  53.7 car/línea      1600 →  64.9
+   *   1440 →  58.4 car/línea      1920 →  79.3
+   *
+   * Los cuatro por debajo de 90, o sea que a todo el ancho la frase se lee bien y
+   * no hace falta bajar el cuerpo ni subir el interlineado. A partir de ~1990px de
+   * ancho útil sí se pasaría —2560 daría 108— y ahí es donde el tope corta.
+   */
+  max-width: 43em;
+  font-size: clamp(1.5rem, 3.5vw, 2.9rem);
+  font-weight: var(--weight-medium);
+  line-height: 1.16;
+  letter-spacing: -0.032em;
+}
+
+/* inline-block y no inline: una palabra partida entre dos líneas no puede
+   animar su opacidad como una sola unidad. */
+.home-frase__palabra {
+  display: inline-block;
+}
+
+.home-frase__datos {
+  display: grid;
+  /* El hueco entre cifras. Se nombra porque la línea de cierre lo necesita: ver
+     .home-frase__dato:last-child. */
+  --hueco-cifras: clamp(30px, 5vh, 66px);
+  /* El escalón del sangrado. También se nombra porque la línea de cierre tiene que
+     bajar otro peldaño exactamente igual. */
+  --escalon: clamp(0px, 12vw, 180px);
+  gap: var(--hueco-cifras);
+  margin: 0;
+}
+
+/*
+ * LAS CIFRAS SE ESCALONAN, no van en tres columnas iguales.
+ *
+ * El sangrado sale del índice que publica el componente, así que añadir una
+ * cuarta cifra no obliga a escribir otra regla. El clamp deja el escalonado en 0
+ * por debajo de ~800px: en móvil no hay ancho que sangrar y la línea fina
+ * superior ya separa una de otra.
+ */
+.home-frase__dato {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 44px);
+  align-items: baseline;
+  padding-top: clamp(14px, 2vh, 24px);
+  border-top: 1px solid var(--border-subtle);
+  margin-left: calc(var(--i) * var(--escalon));
+}
+/*
+ * Línea de cierre bajo la última cifra. Sin ella el bloque quedaba abierto por
+ * abajo: tres líneas que separan y ninguna que remate.
+ *
+ * ──────────────────────────────────────────────────────────────────────────
+ * EL HUECO ES --hueco-cifras, NO --padding-top
+ *
+ * Entre una cifra y la siguiente la distancia real es
+ * padding-top + contenido + gap; entre la línea de arriba de la tercera y su
+ * línea de cierre era padding-top + contenido + padding-bottom. Al igualar el
+ * padding inferior al superior, ese hueco quedaba mucho más estrecho: a 900px de
+ * alto, 18px contra los 45 del gap. Ahora el padding inferior vale lo que vale el
+ * gap, y la tercera respira igual que las otras dos.
+ *
+ * ──────────────────────────────────────────────────────────────────────────
+ * Y LA LÍNEA ES MÁS CORTA, un peldaño más
+ *
+ * Las tres cifras se escalonan hacia la derecha, así que cada línea es más corta
+ * que la anterior: esa escalera es el recurso. La de cierre baja otro escalón —el
+ * MISMO --escalon que separa a las demás, no una proporción inventada—, así que a
+ * 1440 las cuatro miden 1296, 1123.2, 950.4 y 777.6 px.
+ *
+ * Va en un ::after y no en `border-bottom` porque el borde ocuparía todo el ancho
+ * del elemento, y acortarlo con margen movería también el contenido.
+ */
+.home-frase__dato:last-child {
+  position: relative;
+  padding-bottom: var(--hueco-cifras);
+}
+.home-frase__dato:last-child::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--escalon);
+  right: 0;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* El número va en la primera columna aunque en el DOM vaya después: un <dl>
+   pide el <dt> antes que su <dd>, y el orden visual lo resuelve la rejilla. */
+.home-frase__cifra {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-size: clamp(2.6rem, 7.4vw, 6.4rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  font-variant-numeric: tabular-nums;
+}
+/* El prefijo y el sufijo en acento; la cifra en tinta. Los dos van dentro del
+   mismo texto, así que el nombre accesible sigue siendo "+44M" de una pieza. */
+.home-frase__cifra .altea-count__prefijo,
+.home-frase__cifra .altea-count__sufijo {
+  color: var(--text-accent);
+}
+
+.home-frase__etiqueta {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  line-height: 1.4;
+  /*
+   * 18ch. Con 14ch (10.14 em) "proyectos desarrollados" se partía en dos, porque
+   * mide 16.87ch. Las otras dos —12.91ch y 10.44ch— ya cabían en una línea con el
+   * tope anterior, así que subirlo no las cambia: no quedan desiguales.
+   *
+   * 18ch y no 17 por poco margen: 17ch son 12.31 em contra los 12.215 que mide la
+   * etiqueta larga, y 0.09 em de holgura se los come cualquier redondeo o una
+   * fuente de respaldo.
+   */
+  max-width: 18ch;
+  /* --text-secondary (5.67) y no el ink 58% del prototipo, que da 3.89 y esto
+     llega a 17px: por debajo de los 4.5 que pide el texto de cuerpo. */
+  color: var(--text-secondary);
+}
+
+/* ═══ 4 · unidades de negocio, en carpetas apiladas ═══════════════════════ */
+
+/*
+ * EL PADDING SUPERIOR SUBIÓ DE clamp(60px, 10vh, 120px) A clamp(76px, 13vh, 160px),
+ * y es una deuda heredada, no un capricho.
+ *
+ * Entre el video y esta sección había otra —"Por qué Altea"— y el aire de la
+ * costura lo ponía SU padding superior: clamp(76px, 14vh, 180px). .home-video va
+ * a sangre, con padding 0, y lo decía en su comentario. Al quitarla, las dos
+ * quedaron pegadas con sólo los 10vh de aquí, y el video es el bloque más pesado
+ * de la página: 88svh de clip a sangre terminando de golpe contra un titular. A
+ * 900 px de alto el hueco pasaba de 126 px a 90.
+ *
+ * Con 13vh queda en 117 px, prácticamente el que había. Y el hueco es sobre la
+ * página clara, que es lo que corta de verdad: el video acaba en imagen a sangre
+ * y lo que sigue necesita una franja de respiro antes del texto.
+ */
+.home-carpetas {
+  padding: clamp(76px, 13vh, 160px) var(--container-pad) 0;
+}
+
+/*
+ * El título se queda pegado durante toda la sección, y va DEBAJO de las carpetas
+ * en el apilado —z-index 1 contra el 10+i de ellas—.
+ *
+ * Durante la sección no se tocan, porque las carpetas se detienen justo por
+ * debajo de él; al final la pila entera sube y lo tapa al salir. Con el título
+ * encima se quedaba flotando sobre la última carpeta mientras se iba.
+ *
+ * El fondo propio no es decorativo: sin él se verían las carpetas cruzar por
+ * detrás del texto.
+ */
+.home-carpetas__cab {
+  position: sticky;
+  z-index: 1;
+  top: clamp(74px, 10vh, 104px);
+  padding-bottom: clamp(20px, 3.4vh, 40px);
+  background: var(--surface-page);
+}
+.home-carpetas__titulo {
+  margin: 0;
+  max-width: 17ch;
+  font-size: clamp(1.65rem, 3.4vw, 2.6rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-tight);
+}
+
+.home-carpetas__pila {
+  position: relative;
+}
+
+/*
+ * --tope y --hueco los mide el componente y los escribe aquí. Los valores de
+ * respaldo son para el primer pintado y para cuando no hay JS: con ellos la pila
+ * funciona igual, sólo que sin ajustarse al alto real del título.
+ */
+.home-carpetas__item {
+  position: sticky;
+  top: calc(var(--tope, 104px) + var(--i) * 14px);
+  z-index: calc(10 + var(--i));
+  height: var(--hueco, 58svh);
+  margin-bottom: clamp(16px, 2.4vh, 30px);
+  will-change: transform;
+}
+
+.home-carpetas__caja {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 46%) minmax(0, 54%);
+  background: var(--u-color, var(--altea-ink));
+  color: var(--altea-cream);
+  /* La línea clara de arriba y la sombra hacia arriba son lo que hace que una
+     carpeta se lea POR ENCIMA de la anterior y no simplemente al lado. */
+  box-shadow:
+    0 -1px 0 color-mix(in srgb, var(--altea-cream) 8%, transparent),
+    0 -30px 60px -40px rgb(0 0 0 / 0.5);
+  /* transform y filter los escribe el componente; declararlos aquí evita el
+     salto del primer frame. */
+  transform-origin: 50% 0;
+}
+
+.home-carpetas__txt {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(26px, 3.6vw, 54px);
+  min-width: 0;
+}
+.home-carpetas__num {
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  font-variant-numeric: tabular-nums;
+  /* 55% y no el 45% del prototipo: aquello daba 3.57 y esto es texto de 13px. */
+  color: color-mix(in srgb, var(--altea-cream) 55%, transparent);
+}
+.home-carpetas__nombre {
+  margin: 0 0 14px;
+  font-size: clamp(1.7rem, 3.6vw, 3rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+/* Coral normal, no coral-dark: esto va sobre ink, y ahí el par documentado en
+   tokens.css pide el coral vivo —4.87 contra el fondo—. */
+.home-carpetas__frase {
+  margin: 0 0 12px;
+  font-size: clamp(1rem, 1.3vw, 1.24rem);
+  font-weight: var(--weight-medium);
+  color: var(--accent-on-ink);
+  letter-spacing: -0.02em;
+}
+.home-carpetas__desc {
+  margin: 0;
+  line-height: 1.66;
+  font-size: 0.96rem;
+  max-width: 44ch;
+  color: color-mix(in srgb, var(--altea-cream) 72%, transparent);
+}
+
+.home-carpetas__ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--altea-cream);
+  text-decoration: none;
+}
+.home-carpetas__raya {
+  width: 26px;
+  height: 1px;
+  background: var(--accent-on-ink);
+  transition: width var(--duration-base) var(--ease-standard);
+}
+.home-carpetas__ir:hover .home-carpetas__raya,
+.home-carpetas__ir:focus-visible .home-carpetas__raya {
+  width: 52px;
+}
+.home-carpetas__ir:focus-visible {
+  outline: 2px solid var(--accent-on-ink);
+  outline-offset: 4px;
+}
+
+/*
+ * ═══ LAS TARJETAS CON COLOR DE UNIDAD ═══════════════════════════════════
+ *
+ * Comercial #FDCE5B, Industrial #5697D0 y Vivienda #9CD5AA. Forestal no tiene
+ * color y se queda con el ink de arriba, texto cream y acento coral.
+ *
+ * TODO el texto pasa a ink, y no es una preferencia: es la única tinta que
+ * funciona en las tres. Medido contra cada color —ink / cream / coral /
+ * coral-dark / blanco—:
+ *
+ *   Comercial   10.75   1.12   2.21   2.94   1.48
+ *   Industrial   5.11   2.36   1.05   1.40   3.12
+ *   Vivienda     9.50   1.27   1.95   2.59   1.68
+ *
+ * El coral no llega ni al 3.0 de texto grande en ninguna, así que desaparece de
+ * estas tarjetas: la frase de apertura y la raya del enlace pasan a ink. La
+ * jerarquía entre la frase y la descripción ya no la marca el color sino la
+ * opacidad —ink puro contra ink al 80%—, que al mezclarse con el fondo se queda
+ * dentro de la paleta de la unidad.
+ *
+ * Industrial es el que manda en la rampa: ink al 100% da 5.11, al 80% 3.79 y al
+ * 70% 3.18. De ahí el 80% y no el 70.
+ *
+ * ⚠ Ese 3.79 de Industrial pasa el 3.0 de gráfico pero NO el 4.5 de texto de
+ * cuerpo; en Comercial y Vivienda el mismo 80% da 6.49 y 5.89. Es el único punto
+ * de las cuatro tarjetas que se queda corto, y sólo en una. Ver el reporte.
+ */
+.home-carpetas__caja[data-tono="color"] {
+  color: var(--altea-ink);
+  /* Sobre un fondo claro, una línea cream al 8% no se ve: el relieve que separa
+     una carpeta de la anterior lo tiene que dar la tinta. */
+  box-shadow:
+    0 -1px 0 color-mix(in srgb, var(--altea-ink) 14%, transparent),
+    0 -30px 60px -40px rgb(0 0 0 / 0.35);
+}
+/* La numeración y la descripción, al 80%. La numeración iba al 55% de cream, que
+   traducido a ink daba 3.28 / 2.43 / 3.10: por debajo incluso de gráfico en
+   Industrial. Al 80% sube a 6.49 / 3.79 / 5.89. */
+.home-carpetas__caja[data-tono="color"] .home-carpetas__num,
+.home-carpetas__caja[data-tono="color"] .home-carpetas__desc {
+  color: color-mix(in srgb, var(--altea-ink) 80%, transparent);
+}
+/* La frase de apertura: ink puro. En coral daba 2.21 / 1.05 / 1.95. */
+.home-carpetas__caja[data-tono="color"] .home-carpetas__frase,
+.home-carpetas__caja[data-tono="color"] .home-carpetas__ir {
+  color: var(--altea-ink);
+}
+.home-carpetas__caja[data-tono="color"] .home-carpetas__raya {
+  background: var(--altea-ink);
+}
+/* El anillo de foco también: coral sobre estos fondos no se vería. */
+.home-carpetas__caja[data-tono="color"] .home-carpetas__ir:focus-visible {
+  outline-color: var(--altea-ink);
+}
+
+.home-carpetas__foto {
+  position: relative;
+  overflow: hidden;
+}
+.home-carpetas__img {
+  object-fit: cover;
+}
+
+/* ═══ 6 · proyectos, recorrido horizontal ════════════════════════════════ */
+
+/* El alto lo escribe el componente a partir de lo que mide el carril. Sin JS se
+   queda en auto y la sección es una fila con desplazamiento normal. */
+.home-carril {
+  position: relative;
+}
+
+/*
+ * SEPARACIÓN GARANTIZADA entre la cabecera y el carril.
+ *
+ * Sin ella, la rejilla repartía el alto entre `auto` y `1fr` sin nada en medio: en
+ * una ventana alta sobraba sitio y no se notaba, pero en un portátil el título
+ * quedaba tocando las tarjetas. Y no era sólo apretado — a 1440x768 la tarjeta ya
+ * SE SALÍA 10px por abajo, y a 1440x700 se salía 71px.
+ *
+ * El row-gap es la separación; lo que la hace posible sin que las tarjetas
+ * desborden es --alto-py, que las acota al hueco que de verdad queda. Medido a
+ * 1440 de ancho, con la cabecera en dos líneas (87px):
+ *
+ *   alto vent.   padding   cabecera   separación   hueco   alto de tarjeta
+ *        700        70         87          24       520         520  (recortada)
+ *        768        77         87          26       579         579  (recortada)
+ *        800        80         87          27       606         606  (recortada)
+ *        900        90         87          31       693         614  (completa)
+ *       1080       108        87          37       849         614  (completa)
+ *
+ * De 900 para arriba la tarjeta conserva su alto natural —el que sale de su ancho
+ * y la proporción 3/4, 614px— y el hueco de sobra se reparte. Por debajo, la que
+ * cede es la tarjeta y no la separación, que es lo correcto: el aire entre el
+ * título y el carril es lo que se estaba perdiendo.
+ */
+.home-carril__fijo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  row-gap: clamp(20px, 3.4vh, 44px);
+  padding: clamp(30px, 5vh, 64px) 0;
+}
+
+.home-carril__cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  padding: 0 var(--container-pad);
+}
+.home-carril__titulo {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(1.65rem, 3.4vw, 2.6rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-tight);
+}
+.home-carril__n {
+  margin: 0;
+  flex: none;
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  /* --text-secondary y no el ink 45% del prototipo, que da 2.71. */
+  color: var(--text-secondary);
+}
+
+.home-carril__pista {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 26px);
+  padding: 0 var(--container-pad);
+  margin: 0;
+  list-style: none;
+  will-change: transform;
+}
+
+/* Las celdas no se encogen: el ancho de la tarjeta lo decide su alto y la
+   proporción, no el reparto del flex. */
+.home-carril__pista > li {
+  flex: none;
+}
+
+/*
+ * El alto manda y el ancho se deriva.
+ *
+ * Es al revés que antes, y es el cambio que evita el desborde: con el ancho fijo
+ * (`clamp(260px, 32vw, 480px)`) el alto salía de la proporción y podía pasarse del
+ * hueco. Ahora `--alto-py` —que publica el componente tras medir la cabecera— lo
+ * acota, y `aspect-ratio` con `width: auto` calcula el ancho a partir de ahí.
+ *
+ * El respaldo cubre el primer pintado y el caso sin JS: es el alto que saldría del
+ * ancho de antes, acotado a 66svh para que no desborde en ventanas bajas.
+ */
+.home-carril__py {
+  position: relative;
+  display: block;
+  height: var(--alto-py, min(66svh, calc(clamp(260px, 32vw, 480px) * 4 / 3)));
+  width: auto;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: #fff;
+  background: var(--surface-card-dark);
+  will-change: transform;
+}
+/* La foto es más ancha que su caja para poder correr dentro de ella: así cada
+   tarjeta tiene su propio recorrido sin que la tarjeta se mueva. */
+.home-carril__py-foto {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12%;
+  width: 124%;
+  display: block;
+  will-change: transform;
+}
+.home-carril__img {
+  object-fit: cover;
+}
+/*
+ * El degradado no es decorativo: es lo que garantiza el contraste del nombre.
+ * Sobre una foto cualquiera el blanco no tiene contraste asegurado; al 82% de
+ * #101316 en la zona del texto, el fondo efectivo es casi negro y el blanco pasa
+ * de 15:1 sea cual sea la fotografía.
+ */
+.home-carril__py::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(16 19 22 / 0) 40%, rgb(16 19 22 / 0.82) 100%);
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.home-carril__py:hover::after,
+.home-carril__py:focus-visible::after {
+  background: linear-gradient(180deg, rgb(16 19 22 / 0.14) 24%, rgb(16 19 22 / 0.88) 100%);
+}
+.home-carril__py:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 3px;
+}
+
+.home-carril__py-txt {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(16px, 2vw, 28px);
+}
+.home-carril__py-txt b {
+  display: block;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+}
+.home-carril__py-txt span {
+  display: block;
+  margin-top: 5px;
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ═══ la ficha del proyecto ══════════════════════════════════════════════ */
+
+/*
+ * <dialog> nativo con showModal(): el foco atrapado, el cierre con Escape y el
+ * ::backdrop salen gratis, sin una línea de JavaScript para ello.
+ */
+.home-ficha {
+  width: min(880px, 94vw);
+  max-height: 90svh;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  margin: auto;
+}
+.home-ficha::backdrop {
+  background: rgb(12 15 18 / 0.66);
+  backdrop-filter: blur(4px);
+}
+
+.home-ficha__foto {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+.home-ficha__img {
+  object-fit: cover;
+}
+.home-ficha__foto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(14 17 20 / 0) 46%, rgb(14 17 20 / 0.8) 100%);
+}
+/* El nombre va sobre la foto, no en una cabecera aparte: la ficha se abre
+   mostrando el proyecto y no una etiqueta. */
+.home-ficha__nombre {
+  position: absolute;
+  z-index: 2;
+  left: clamp(20px, 3vw, 38px);
+  right: clamp(20px, 3vw, 38px);
+  bottom: clamp(16px, 2.4vw, 28px);
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.6rem, 3.6vw, 2.7rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+.home-ficha__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 34%) minmax(0, 66%);
+  gap: clamp(20px, 3.4vw, 54px);
+  padding: clamp(24px, 3.4vw, 46px);
+}
+.home-ficha__datos {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  margin: 0;
+}
+.home-ficha__d {
+  display: grid;
+  gap: 4px;
+  padding-top: 11px;
+  border-top: 1px solid var(--border-subtle);
+}
+.home-ficha__d dt {
+  font-size: var(--text-eyebrow);
+  /* --text-secondary y no el ink 45% del prototipo (2.71). */
+  color: var(--text-secondary);
+}
+.home-ficha__d dd {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
+}
+.home-ficha__cuerpo p {
+  margin: 0;
+  line-height: 1.74;
+  font-size: var(--text-body);
+  color: color-mix(in srgb, var(--altea-ink) 76%, transparent);
+}
+
+.home-ficha__x {
+  position: absolute;
+  z-index: 4;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  border: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: rgb(255 255 255 / 0.24);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+.home-ficha__x:hover {
+  background: rgb(255 255 255 / 0.4);
+}
+.home-ficha__x:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/*
+ * La entrada y la salida del diálogo.
+ *
+ * @starting-style define desde dónde entra; sin él no hay estado inicial que
+ * animar. `display` y `overlay` con allow-discrete son lo que lo mantiene
+ * visible durante la SALIDA: sin ellos desaparece de golpe al cerrarse, porque
+ * los dos son propiedades discretas.
+ */
+.home-ficha {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 0.35s var(--ease-standard),
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1),
+    overlay 0.4s allow-discrete,
+    display 0.4s allow-discrete;
+}
+.home-ficha[open] {
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .home-ficha[open] {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+}
+.home-ficha::backdrop {
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--ease-standard),
+    overlay 0.4s allow-discrete,
+    display 0.4s allow-discrete;
+}
+.home-ficha[open]::backdrop {
+  opacity: 1;
+}
+@starting-style {
+  .home-ficha[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* ═══ móvil ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  /* Las carpetas se apilan por dentro: texto arriba, foto abajo. Y el alto pasa
+     a automático con un mínimo: con dos filas, el hueco calculado para el
+     formato de dos columnas se queda corto. */
+  .home-carpetas__caja {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 38%;
+  }
+  .home-carpetas__item {
+    height: auto;
+    min-height: 66svh;
+  }
+  .home-carril__py {
+    /* En móvil manda el ancho: una tarjeta de 74vw es lo que cabe, y su alto sale
+       de la proporción como antes. El alto calculado sólo acota si es menor. */
+    height: min(var(--alto-py, 100svh), calc(clamp(220px, 74vw, 320px) * 4 / 3));
+  }
+  .home-ficha__cuerpo {
+    grid-template-columns: 1fr;
+  }
+  .home-ficha__foto {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ═══ movimiento reducido ════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Las carpetas NO se apilan: cada una en su sitio, una debajo de otra. Un
+   * apilado sin la transición que lo explica es un montón de tarjetas tapándose.
+   */
+  .home-carpetas__item {
+    position: static;
+    height: auto;
+    min-height: 56svh;
+  }
+  .home-carpetas__cab {
+    position: static;
+  }
+  /*
+   * Y el recorrido horizontal pasa a ser una fila que se desplaza a mano. El
+   * componente no le escribe alto a la sección, así que vuelve a medir lo que
+   * ocupa su contenido.
+   */
+  .home-carril__fijo {
+    position: static;
+    height: auto;
+  }
+  .home-carril__pista {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--space-4);
+  }
+  .home-carril__pista > li {
+    scroll-snap-align: center;
+  }
+  .home-ficha,
+  .home-ficha::backdrop {
+    transition: none;
+  }
+}

@@ -1,787 +1,998 @@
-/* ========================= Página de Comercial ======================== */
 /*
-  Sólo lo propio de esta página. El hero, los bloques revelados y los paneles de
-  proyectos son componentes compartidos y su CSS vive en app/ui/components.css.
-*/
+ * Página COMERCIAL.
+ *
+ * Rediseño completo: de la hoja anterior no sobrevive ni un selector. Lo que había
+ * —el hero de tarjeta, el showcase de plazas a pantalla completa, la banda de
+ * giros con los cortes diagonales— se fue entero con sus componentes.
+ *
+ * Todo cuelga de los tokens del sistema; los radios salen de --radius-md y
+ * --radius-lg y no de un clamp propio.
+ */
 
-/* ============================ 3 · Cifras =========================== */
-.com-cifras {
-  background: var(--surface-page-dark);
-  padding: var(--space-9) var(--container-pad);
-}
-.com-cifras__rejilla {
-  margin: 0;
-  display: grid;
-  /*
-    Vuelto al 1fr original ahora que son cuatro: con cuatro celdas el reparto
-    llena la fila y no hace falta acotarlas. El minmax(180px, 240px) con
-    justify-content: start existió mientras fueron dos, porque entonces cada una
-    se llevaba media pantalla y el número quedaba perdido en un bloque vacío.
+/* ═══ 1 · hero calado ═════════════════════════════════════════════════════ */
 
-    Si las dos inventadas acaban borrándose, hay que volver a aquello.
-  */
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-8) var(--space-6);
-}
-.com-cifras__item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.com-cifras__valor {
-  margin: 0;
-  display: flex;
-  align-items: baseline;
-  font-family: var(--font-display);
-  font-size: var(--text-display-2);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
-  /* 12.06 sobre ink. */
-  color: var(--altea-cream);
-}
-/*
-  El signo en coral normal: sobre ink da 4.87. El coral-dark bajaría a 3.66 —
-  ver el par documentado en tokens.css.
-
-  Y a 0.45em, no al cuerpo del número. Medido sobre la Gotham real: "250,000 M²"
-  a tamaño completo mide 307px y la celda da 300 a 1440, así que envolvía. Con
-  la unidad reducida son 263 y entra en una línea en todos los anchos, de 900 a
-  2560. Es además el tratamiento normal de un bloque de cifras: manda el número,
-  la unidad acompaña.
-*/
-.com-cifras__signo {
-  color: var(--accent-on-ink);
-  font-size: 0.45em;
-  /* Sin esto se apoyaría en la línea base del número y quedaría hundida. */
-  align-self: center;
-}
-/* El que va después separa por la izquierda; el que va antes, por la derecha. */
-.com-cifras__signo:last-child { margin-left: 0.12em; }
-.com-cifras__signo:first-child { margin-right: 0.08em; }
-.com-cifras__etiqueta {
-  font-family: var(--font-body);
-  font-size: var(--text-small);
-  line-height: var(--leading-body);
-  /* 7.58 sobre ink: apagada pero muy por encima del 4.5 de texto pequeño. */
-  color: var(--text-on-dark-secondary);
-}
-
-/* ================== 5 · Showcase de plazas ========================= */
-/*
-  Una plaza a la vez, a pantalla completa. Las siete fotos viven a la vez como
-  capas apiladas y lo único que cambia es cuál está descubierta; el barrido
-  diagonal y el acercamiento los pinta ShowcasePlazas.tsx, que necesita el alto
-  en píxeles y no se puede escribir aquí.
-*/
-.com-show {
+.com-hero {
   position: relative;
-  isolation: isolate;
+  min-height: 100svh;
   overflow: hidden;
-  background: var(--surface-page-dark);
   display: grid;
-  /*
-    Las tres filas al contenido, no `auto 1fr auto` con `min-height: 100svh`.
-
-    Aquello estiraba la fila del medio hasta llenar la pantalla y, como la ficha
-    va centrada en vertical dentro de ella, dejaba un socavón entre el titular de
-    la sección y la ceja de la plaza: a 1440×900 eran más de 200px de nada. Al
-    contenido, la sección mide lo que mide y el hueco desaparece.
-
-    El `min-height` se conserva sólo como piso para que la banda de miniaturas no
-    suba demasiado si la ficha es corta.
-  */
-  grid-template-rows: auto auto auto;
-  min-height: clamp(520px, 72svh, 760px);
-  gap: var(--space-7);
-  padding: var(--space-8) var(--container-pad);
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(92px, 13vh, 140px) var(--container-pad) clamp(26px, 4.4vh, 50px);
+  background: var(--surface-page);
 }
 
-/* --- Las capas de foto --- */
-.com-show__fondos {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-.com-show__capa {
-  position: absolute;
-  inset: 0;
-  /* El clip-path de arranque lo pone el JS; hasta entonces, ocultas. La activa
-     se descubre en el primer pase del useGSAP. */
-  visibility: hidden;
-}
-.com-show__foto {
-  position: absolute;
-  inset: 0;
-  /* Sin origen explícito el acercamiento tiraría de la esquina. */
-  transform-origin: center;
-}
-.com-show__foto img { object-fit: cover; }
-
-/*
-  Diagonal a propósito: oscurece el costado donde vive el texto y deja respirar
-  el de la foto. Los 105° lo inclinan en el mismo sentido que el resto del sitio,
-  y el repunte del final evita que la esquina derecha se quede tan clara que las
-  miniaturas dejen de leerse encima.
-
-  ⚠ LOS TRAMOS NO SON LOS DEL PROTOTIPO, y el motivo es medible. Con
-  .86/0 · .55/44 · .18/72 · .42/100 el tramo oscuro se apaga demasiado pronto:
-  la ficha llega hasta el 53% del eje del degradado a 900px de ventana, y ahí el
-  velo ya sólo tenía un 43% de ink. Contra el peor fondo posible —cielo blanco
-  justo detrás del texto— el cream se quedaba en 1.97, ni la mitad del 4.5 que
-  pide un texto pequeño; a 1920 llegaba a 3.79, y sólo pasaba a partir de 2560.
-
-  Corrido el segundo tramo al 76%/56%, el velo bajo la ficha no baja del 77% en
-  ningún ancho y el cream no baja de 5.58. El lado de la foto pierde un 8% de
-  claridad: el tramo del 20% empieza a 80% del eje en vez de a 72%.
-*/
-.com-show__velo {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
-    color-mix(in srgb, var(--altea-ink) 76%, transparent) 56%,
-    color-mix(in srgb, var(--altea-ink) 20%, transparent) 80%,
-    color-mix(in srgb, var(--altea-ink) 44%, transparent) 100%
-  );
+/* Con el eyebrow fuera queda sólo el dato de la plaza: se alinea a la derecha en
+   vez de dejar el hueco de una columna vacía. */
+.com-hero__cual {
+  margin: 0;
+  justify-self: end;
+  font-size: var(--text-eyebrow);
+  /* 4.98 sobre el gris de página: el prototipo lo dejaba al 48 %, que da 2.94. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
 
-/* --- Cabecera --- */
-.com-show__cabecera,
-.com-show__cuerpo,
-.com-show__pie {
+.com-hero__calado {
+  align-self: center;
+  display: grid;
+  gap: clamp(10px, 1.8vh, 20px);
+  justify-items: center;
+}
+
+/* El contorno y el relleno, apilados en la misma celda. */
+.com-hero__capas {
   position: relative;
-  z-index: 1;
+  display: grid;
 }
-.com-show__cabecera {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-6);
-}
-.com-show__titulo {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h2);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
-}
-.com-show__contador {
-  margin: 0;
-  flex: none;
-  font-family: var(--font-display);
-  font-size: var(--text-h3);
-  font-weight: var(--weight-bold);
-  font-variant-numeric: tabular-nums;
-  /* Tabulares para que el contador no baile al pasar de 01 a 07. */
-  color: var(--text-on-dark-secondary);
-}
-.com-show__contador-actual {
-  font-size: var(--text-h1);
-  color: var(--altea-cream);
+.com-hero__capas > * {
+  grid-area: 1/1;
 }
 
-/* --- Cuerpo: la ficha --- */
-/* Aire propio arriba y abajo en vez de estirarse: es lo que separa la ficha del
-   titular sin depender de una fila elástica. */
-.com-show__cuerpo {
-  display: flex;
-  align-items: center;
-  padding-block: var(--space-7);
-}
-.com-show__ficha {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
-  max-width: 46ch;
-}
-.com-show__lugar {
+/*
+ * EL CALADO.
+ *
+ * `background-clip: text` con `color: transparent` deja el texto EN EL DOM: un
+ * lector de pantalla lee el <h1> como cualquier otro. No es una imagen con texto
+ * dentro, es texto con imagen dentro.
+ *
+ * El cuerpo es el de una palabra a pantalla completa. Con la frase larga del hero
+ * anterior las letras serían tan chicas que la foto dejaría de distinguirse y el
+ * recorte no significaría nada.
+ *
+ * El `background-image` lo escribe el componente, porque la ruta cambia con la
+ * plaza, y lleva un velo negro al 25 % como primera capa: dos de las ocho fotos no
+ * llegan a 3:1 contra este fondo sin él. Ver la nota de HeroCalado.
+ */
+.com-hero__t {
   margin: 0;
+  font-weight: var(--weight-bold);
+  text-align: center;
+  font-size: clamp(3rem, 15.4vw, 15rem);
+  line-height: 0.84;
+  letter-spacing: -0.062em;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  will-change: background-position;
+}
+
+/*
+ * El contorno detrás. HACE FALTA: sobre las zonas claras de una foto la palabra se
+ * pierde justo donde la imagen es más brillante, y éste mantiene la silueta.
+ * Decorativo — la palabra ya la dice el <h1> de encima.
+ */
+.com-hero__eco {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--altea-ink) 16%, transparent);
+  pointer-events: none;
+}
+
+.com-hero__desc {
+  margin: 0;
+  max-width: 46ch;
+  text-align: center;
+  line-height: 1.68;
+  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
+  /* 6.05 sobre el gris de página. */
+  color: color-mix(in srgb, var(--altea-ink) 72%, transparent);
+}
+
+.com-hero__bajo {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: clamp(20px, 3vw, 44px);
+}
+.com-hero__desliza {
+  margin: 0;
+  display: grid;
+  gap: 7px;
+  justify-items: start;
   font-size: var(--text-eyebrow);
-  font-weight: 600;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  /* Cream entero: es texto pequeño y necesita 4.5. */
-  color: var(--altea-cream);
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.com-hero__raya {
+  display: block;
+  width: 46px;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+  animation: com-corre 2.4s var(--ease-standard) infinite;
+}
+@keyframes com-corre {
+  0%,
+  100% {
+    transform: scaleX(0.3);
+  }
+  50% {
+    transform: scaleX(1);
+  }
+}
+
+.com-hero__datos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2.6vw, 44px);
+  min-width: min(100%, 50vw);
+  margin: 0;
 }
 /*
-  Sesgo de --angulo, como el badge del hero: nunca escrito a mano.
-
-  Pero en CREAM, no en coral. Aquí detrás hay una fotografía, no un fondo ink
-  sólido: sobre el velo de esta sección el coral se queda entre 2.26 y 2.83
-  contra una foto clara, por debajo del 3:1 que pide un elemento gráfico. El
-  coral sí funciona en la raya de la miniatura activa, que va sobre el ink de
-  la sección y no sobre foto.
-*/
-.com-show__marca {
-  flex: none;
-  width: 8px;
-  height: 14px;
-  background: var(--altea-cream);
-  transform: skewX(calc(var(--angulo) * -1deg));
+ * El <dl> pide dt y luego dd; la cifra se ve arriba porque la columna va invertida.
+ * Es lo mismo que en el home y en /nosotros: el orden visual lo resuelve el
+ * contenedor, no reordenando el marcado — poner el dd antes para que "se vea
+ * primero" es lo que deja un árbol de accesibilidad con la definición antes del
+ * término.
+ */
+.com-hd {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  padding-top: clamp(12px, 1.8vh, 18px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 24%, transparent);
 }
-.com-show__nombre {
+.com-hd__cifra {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-display-2);
+  display: block;
+  font-size: clamp(1.3rem, 2.8vw, 2.3rem);
   font-weight: var(--weight-bold);
-  line-height: var(--leading-display);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
 }
-.com-show__desc {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  /*
-    Cream entero, NO --text-on-dark-secondary. Ese token es cream al 70% y sobre
-    este velo se queda en 3.66–4.20 contra una foto clara, por debajo del 4.5.
-    Aquí la jerarquía la sostienen el cuerpo y el peso —body-lg normal contra un
-    display-2 en bold—, que ya es diferencia de sobra sin tocar el color.
-  */
-  color: var(--altea-cream);
+/* coral-dark (3.99) y no el coral vivo, que sobre el gris de página da 2.9998. */
+.com-hd__cifra .altea-count__prefijo,
+.com-hd__cifra .altea-count__sufijo {
+  color: var(--text-accent);
 }
-.com-show__datos {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-7);
-}
-.com-show__dato {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-.com-show__dato dt {
-  font-family: var(--font-body);
+.com-hd__etiqueta {
+  display: block;
+  margin-top: 8px;
   font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* Mismo motivo que en .com-show__desc: al 70% no llega al 4.5. */
-  color: var(--altea-cream);
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
-.com-show__dato dd {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h2);
+/* ═══ 2 · nuestro modelo ══════════════════════════════════════════════════ */
+
+.com-modelo {
+  padding: clamp(76px, 14vh, 180px) var(--container-pad);
+}
+.com-modelo__rotulo {
+  margin: 0 0 clamp(16px, 2.6vh, 28px);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.com-modelo__frase {
+  margin: 0 0 clamp(30px, 5vh, 62px);
+  max-width: 19ch;
+  font-size: clamp(1.8rem, 4.8vw, 3.9rem);
   font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
-  color: var(--altea-cream);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+/* inline-block y no inline: la opacidad se anima por palabra, y un inline partido
+   entre dos líneas no puede animarse como una sola unidad. */
+.com-modelo__palabra {
+  display: inline-block;
+}
+.com-modelo__palabra--acento {
+  color: var(--text-accent);
+}
+.com-modelo__regla {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0 0 clamp(26px, 4.4vh, 50px);
+}
+.com-modelo__cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(22px, 4vw, 72px);
+  max-width: 104ch;
+}
+.com-modelo__cols p {
+  margin: 0;
+  line-height: 1.74;
+  font-size: clamp(1rem, 1.15vw, 1.14rem);
+  /* 6.45. */
+  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
+}
+/* El remate con el dato: aparte y en cuerpo mayor, porque no es un párrafo más. */
+.com-modelo__cierre {
+  margin: clamp(24px, 4vh, 44px) 0 0;
+  max-width: 60ch;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: var(--weight-medium);
+  line-height: 1.5;
+  letter-spacing: var(--tracking-tight);
 }
 
-/* --- Pie: miniaturas y flechas --- */
-.com-show__pie {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-6);
+/* ═══ 3 · las plazas, como índice ═════════════════════════════════════════ */
+
+.com-plazas {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
-.com-show__minis {
+.com-plazas__titulo,
+.com-giros__titulo,
+.com-marcas__titulo,
+.com-prox__titulo {
+  margin: 0 0 clamp(30px, 5vh, 62px);
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  max-width: 16ch;
+}
+
+.com-ix {
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  align-items: flex-end;
-  /* La misma costura de 5px que los paneles de proyectos y el resto del sitio. */
-  gap: 5px;
-  /* Siete miniaturas no caben en un teléfono: que rueden en vez de encogerse
-     hasta dejar de verse. */
-  overflow-x: auto;
-  scrollbar-width: none;
-  /* En la fila de escritorio es un ítem flex, y el `auto` por defecto de
-     min-width le impediría encoger por debajo de su contenido: al añadir plazas
-     empujaría las flechas fuera del canal en vez de rodar. Hoy caben siete con
-     holgura a 900 —633 de 810—, pero la octava ya no. */
-  min-width: 0;
+  border-top: 1px solid var(--border-subtle);
 }
-.com-show__minis::-webkit-scrollbar { display: none; }
-.com-show__mini {
-  position: relative;
-  flex: none;
-  display: block;
-  width: clamp(76px, 9vw, 124px);
-  aspect-ratio: 4 / 3;
-  padding: 0;
-  border: none;
-  /* Hereda la tipografía en vez de la del user agent, aunque hoy no lleve
-     texto: si mañana se le pone un rótulo, ya sale en la del sitio. */
-  font: inherit;
+/*
+ * La fila. Al señalar se desplaza a la derecha, y ese desplazamiento es lo que
+ * dice "esto se abre" sin tener que escribirlo. Sólo con puntero: en táctil no
+ * hay estado intermedio entre no tocar y tocar.
+ */
+.com-ix__f {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 20%) auto auto auto;
+  gap: clamp(12px, 2.2vw, 36px);
+  align-items: baseline;
+  width: 100%;
+  padding: clamp(16px, 2.8vh, 30px) 0;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
   background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
   cursor: pointer;
-  opacity: 0.42;
-  transition:
-    width var(--duration-base) var(--ease-standard),
-    opacity var(--duration-base) var(--ease-standard);
+  transition: padding-left 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.com-show__mini img { object-fit: cover; }
-.com-show__mini[aria-current] {
-  width: clamp(108px, 13vw, 180px);
+@media (hover: hover) {
+  .com-ix__f:hover {
+    padding-left: clamp(10px, 1.6vw, 26px);
+  }
+}
+.com-ix__f:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 4px;
+}
+.com-ix__n {
+  font-size: var(--text-eyebrow);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.com-ix__t {
+  font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.035em;
+  line-height: 1.06;
+}
+.com-ix__l,
+.com-ix__d {
+  font-size: var(--text-small);
+  /* 5.67: el prototipo los dejaba al 58 %, que da 3.89 y esto es texto de 14px. */
+  color: var(--text-secondary);
+}
+.com-ix__d--num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.com-ix__ver {
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+  transition:
+    color var(--duration-base) var(--ease-standard),
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.com-ix__f:hover .com-ix__ver,
+.com-ix__f:focus-visible .com-ix__ver {
+  color: var(--text-accent);
+  transform: translate(3px, -3px);
+}
+
+/*
+ * EL VISOR QUE SIGUE AL CURSOR.
+ *
+ * `position: fixed` en 0,0 y todo el movimiento por `transform`: así el navegador
+ * no recalcula layout en cada fotograma, sólo compone. El `translate(-50%,-50%)`
+ * va DESPUÉS del translate3d para que el centro del visor caiga en el cursor.
+ *
+ * `pointer-events: none` o se robaría el hover de las filas que está mostrando.
+ *
+ * En táctil no existe: no hay puntero que seguir.
+ */
+.com-visor {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  width: clamp(180px, 18vw, 280px);
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  transition: opacity 0.35s var(--ease-standard);
+  box-shadow: 0 30px 60px -28px rgb(0 0 0 / 0.5);
+  will-change: transform;
+}
+.com-visor[data-on="si"] {
   opacity: 1;
 }
-.com-show__mini:focus-visible {
-  outline: 2px solid var(--altea-cream);
-  outline-offset: 3px;
+.com-visor__img {
+  object-fit: cover;
 }
-/* La raya se despliega con scaleX, no con width: el ancho dispara relayout de
-   toda la fila en cada fotograma; la escala va en compositor. */
-.com-show__mini-raya {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 3px;
-  background: var(--accent-on-ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--duration-base) var(--ease-standard);
-}
-.com-show__mini[aria-current] .com-show__mini-raya { transform: scaleX(1); }
-
-.com-show__flechas {
-  flex: none;
-  display: flex;
-  gap: var(--space-2);
-}
-.com-show__flecha {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  color: var(--altea-cream);
-  cursor: pointer;
-  /* Aquí abajo el velo diagonal ya está en su tramo más claro —el repunte del
-     42%—, así que la flecha no puede contar con él y lleva chapa propia. */
-  background: color-mix(in srgb, var(--altea-ink) 58%, transparent);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  transition: background var(--duration-fast) var(--ease-standard);
-}
-.com-show__flecha:hover {
-  background: color-mix(in srgb, var(--altea-ink) 78%, transparent);
-}
-.com-show__flecha:focus-visible {
-  outline: 2px solid var(--altea-cream);
-  outline-offset: 2px;
-}
-.com-show__flecha svg { width: 20px; height: 20px; }
-
-@media (prefers-reduced-motion: reduce) {
-  .com-show__mini,
-  .com-show__mini-raya,
-  .com-show__flecha { transition: none; }
+@media (hover: none) {
+  .com-visor {
+    display: none;
+  }
 }
 
-/* ============================= Móvil ============================== */
-@media (max-width: 900px) {
-  .com-cifras { padding-block: var(--space-8); }
+/* ── la ficha ── */
 
+/*
+ * LA FICHA, A DOS COLUMNAS: foto a la izquierda, contenido a la derecha.
+ *
+ * Apilada —foto 16/10 arriba y texto debajo— medía 1 032 px con la descripción
+ * más larga, contra los 602 que deja un 86svh en una ventana de 700 px: se pasaba
+ * 430 px y había que desplazarse. A dos columnas el contenido mide 564 px y
+ * sobran 38.
+ *
+ * Lo que libera el alto es que EL NOMBRE PASA DE IR SOBRE LA FOTO a ir en la
+ * columna de texto: sobre la foto obligaba a que la foto fuera lo bastante alta
+ * para alojarlo.
+ */
+.com-fx {
   /*
-    El velo pasa a vertical: aquí el texto no va AL LADO de la foto sino encima
-    de ella, así que un degradado diagonal oscurecería el costado equivocado.
-
-    Y casi plano, no en rampa: en un teléfono la ficha queda centrada a media
-    altura, o sea en el punto donde una rampa ya se ha apagado. Con el reparto
-    del prototipo —55% al 44%— el cream se quedaba en 2.78 ahí. Entre 88% y 74%
-    no baja de 5.11 en ningún punto de la pantalla. La foto se ve menos, pero
-    con el texto encima de ella no hay forma de tener las dos cosas.
-  */
-  .com-show__velo {
-    background: linear-gradient(
-      to top,
-      color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
-      color-mix(in srgb, var(--altea-ink) 74%, transparent) 100%
-    );
-  }
-  .com-show__pie {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-4);
-  }
-  .com-show__flechas { align-self: flex-end; }
+   * 1040 y no 880. Con más ancho la descripción más larga (418 caracteres) baja de
+   * ocho líneas a seis, y el bloque de datos y el texto caben uno al lado del otro
+   * debajo de la foto en vez de apilarse.
+   */
+  width: min(1040px, 94vw);
+  max-height: 86svh;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  overflow: auto;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  margin: auto;
+}
+.com-fx::backdrop {
+  background: rgb(12 15 18 / 0.66);
+  backdrop-filter: blur(4px);
 }
 
 /*
-  Por debajo de 560 el contador baja de línea. "Nuestras plazas comerciales" mide
-  339px a --text-h2, y a 390 el canal útil son 350: con el contador al lado al
-  título le quedaban 229 y envolvía a tres renglones contra un número de uno. El
-  corte va aquí y no en los 900 del resto porque hasta 560 sí caben los dos.
-*/
-@media (max-width: 560px) {
-  .com-show__cabecera {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-}
-
-/* ============ 6 · Hoteles, hospital y educación ==================== */
-/*
-  Una sola banda de tres paneles en paralelogramo sobre ink. Sustituye a las
-  tres filas alternadas, que al cliente se le hicieron largas.
-
-  Sobre ink y no cream a propósito: las fotos respiran contra oscuro y sobre
-  claro compiten con el fondo.
-
-  El recorte diagonal y la costura los pinta BandaGiros.tsx, que necesita el
-  alto en píxeles; aquí vive todo lo que no.
-*/
-.com-banda-giros {
+ * LA FOTO, ARRIBA, A TODO EL ANCHO Y SIN RECORTAR NADA.
+ *
+ * La caja adopta la proporción del archivo —`--proporcion`, que publica el
+ * componente desde `fotoRatio`— así que `cover` no tiene nada que recortar. No
+ * hay un valor único posible: de las ocho, cinco son 3/2 exactas y tres se van a
+ * 1.745, 1.792 y 1.919. Con una caja fija en 21/9, las 3/2 perdían el 35.6 % de
+ * su alto, y eso en una foto de arquitectura se come la parte alta del edificio.
+ *
+ * ⚠ A TODO EL ANCHO, LA FICHA SE DESPLAZA EN VENTANAS BAJAS, y es una decisión
+ * tomada, no un descuido. Sobre 1040 px de diálogo, una foto de 3/2 mide 693 de
+ * alto; con los 267 del cuerpo, la ficha pide 960 px y en una ventana de 700 hay
+ * 602. Entra sin barra desde unos 1120 px de alto de ventana.
+ *
+ * Las dos únicas salidas para que entrara en 700 eran recortar —lo que esto
+ * resuelve— o sacar la foto del ancho del diálogo y centrarla más angosta. Entre
+ * desplazar y recortar, se desplaza: el diálogo ya tiene `overflow: auto` y la
+ * barra es reversible, el recorte no.
+ */
+.com-fx__foto {
   position: relative;
-  isolation: isolate;
+  --proporcion: 1.5;
+  width: 100%;
+  aspect-ratio: var(--proporcion);
   overflow: hidden;
-  background: var(--surface-page-dark);
-  padding: var(--space-9) 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-  /* La lee el JS con getComputedStyle: un solo 5 y no dos que se desincronicen. */
-  --costura: 5px;
 }
-
-/*
-  Franja diagonal coral muy tenue cruzando la sección. No se lee como elemento:
-  da sensación de capas bajo los paneles. El sesgo sale de --angulo, como todo
-  en el sitio, con un factor de 0.35 para que sea un roce y no un corte.
-*/
-.com-banda-giros::before {
+.com-fx__img {
+  object-fit: cover;
+}
+/* El velo que sostiene el nombre. Sólo en el tercio de abajo: un velo entero
+   apagaría la foto, y lo único que hay que garantizar es el contraste del nombre. */
+.com-fx__foto::after {
   content: "";
   position: absolute;
-  inset: -20% -10%;
-  z-index: 0;
-  pointer-events: none;
-  transform: skewY(calc(var(--angulo) * -0.35deg));
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--altea-coral) 12%, transparent) 0%,
-    transparent 100%
-  );
+  inset: 34% 0 0;
+  background: linear-gradient(to bottom, rgb(12 15 18 / 0), rgb(12 15 18 / 0.78));
 }
-.com-banda-giros > * { position: relative; z-index: 1; }
-
-/* --- Cabecera --- */
-.com-banda-giros__cabecera {
-  display: flex;
-  /* Abajo: la nota de la derecha se alinea con la base del titular, no con su
-     primera línea. */
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-8);
-  padding-inline: var(--container-pad);
-}
-.com-banda-giros__encabezado {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.com-banda-giros__eyebrow {
+.com-fx__nombre {
+  position: absolute;
+  z-index: 2;
+  /* Alineado con el relleno del cuerpo: el nombre y los datos de abajo cuelgan
+     de la misma vertical. */
+  right: clamp(24px, 3.4vw, 46px);
+  bottom: clamp(18px, 2.4vw, 32px);
+  left: clamp(24px, 3.4vw, 46px);
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  color: #fff;
+  text-wrap: balance;
+}
+
+/*
+ * EL CUERPO, DEBAJO: los datos a la izquierda y la descripción a la derecha.
+ *
+ * El 34/66 es lo que aprovecha el ancho nuevo. Los dos bloques miden casi lo
+ * mismo —175 px los tres datos, 167 px las seis líneas—, así que uno al lado del
+ * otro el cuerpo mide lo que el más alto en vez de la suma: 267 px en vez de 434.
+ */
+/* El cuerpo, debajo de la foto, los dos al ancho del diálogo. */
+.com-fx__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 34%) minmax(0, 66%);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+  padding: clamp(24px, 3.4vw, 46px);
+}
+.com-fx__datos {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  margin: 0;
+}
+.com-fx__d {
+  display: grid;
+  gap: 4px;
+  padding-top: 11px;
+  border-top: 1px solid var(--border-subtle);
+}
+.com-fx__d dt {
   font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* Cream y no coral: el acento de la cabecera lo lleva la marca de al lado. */
-  color: var(--altea-cream);
+  /* 5.67: el prototipo los dejaba al 50 %, que da 3.16. */
+  color: var(--text-secondary);
 }
-/* Coral normal: sobre ink da 4.87. El sesgo, de --angulo. */
-.com-banda-giros__marca {
-  flex: none;
-  width: 8px;
-  height: 14px;
-  background: var(--accent-on-ink);
-  transform: skewX(calc(var(--angulo) * -1deg));
-}
-.com-banda-giros__titulo {
+.com-fx__d dd {
   margin: 0;
-  max-width: 26ch;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  font-size: 0.92rem;
+  font-weight: var(--weight-medium);
+  line-height: 1.35;
 }
-.com-banda-giros__nota {
+.com-fx__cuerpo > p {
   margin: 0;
-  flex: 0 1 34ch;
-  font-family: var(--font-body);
-  font-size: var(--text-small);
-  line-height: var(--leading-body);
-  /* 6.61 sobre ink: apagada y muy por encima del 4.5. */
-  color: var(--text-on-dark-secondary);
-  text-align: right;
+  line-height: 1.74;
+  font-size: var(--text-body);
+  color: color-mix(in srgb, var(--altea-ink) 76%, transparent);
+}
+.com-fx__x {
+  position: absolute;
+  z-index: 4;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  border: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  background: rgb(255 255 255 / 0.24);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+.com-fx__x:hover {
+  background: rgb(255 255 255 / 0.4);
+}
+.com-fx__x:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
-/* --- La pista de paneles --- */
-.com-banda-giros__pista {
-  display: flex;
-  height: clamp(360px, 56vh, 540px);
+/*
+ * La entrada y la SALIDA del diálogo. `display` y `overlay` con allow-discrete son
+ * lo que lo mantiene visible mientras se cierra: sin ellos desaparece de golpe,
+ * porque las dos son propiedades discretas. @starting-style define desde dónde
+ * entra; sin él no hay estado inicial que animar.
+ */
+.com-fx {
+  opacity: 0;
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 0.35s var(--ease-standard),
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1),
+    overlay 0.4s allow-discrete,
+    display 0.4s allow-discrete;
 }
-.com-banda-giros__panel {
+.com-fx[open] {
+  opacity: 1;
+  transform: none;
+}
+@starting-style {
+  .com-fx[open] {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+}
+.com-fx::backdrop {
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--ease-standard),
+    overlay 0.4s allow-discrete,
+    display 0.4s allow-discrete;
+}
+.com-fx[open]::backdrop {
+  opacity: 1;
+}
+@starting-style {
+  .com-fx[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* ═══ 4 · otros giros ═════════════════════════════════════════════════════ */
+
+.com-giros {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.com-giros__rotulo {
+  margin: 0 0 clamp(14px, 2.4vh, 24px);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.com-giros__titulo {
+  max-width: 18ch;
+  margin-bottom: clamp(34px, 6vh, 70px);
+}
+.com-giros__fila {
+  display: flex;
+  gap: 5px;
+  height: clamp(340px, 56svh, 500px);
+}
+
+/*
+ * LA LÁMINA SEÑALADA SE ABRE Y LAS OTRAS CEDEN, y es todo CSS.
+ *
+ * `:has(.com-gr:hover)` en el contenedor permite encoger a las hermanas que NO
+ * están bajo el cursor, que es justo lo que antes obligaba a llevar estado en
+ * JavaScript. Se anima `flex-grow`, no el ancho: el reparto lo sigue haciendo el
+ * flex y no hay que calcular nada.
+ */
+/*
+ * EL SALTO, REDUCIDO.
+ *
+ * Iba de 2.4 a 0.62, que son casi cuatro veces de diferencia entre la señalada y
+ * las otras: con la banda a 1296 px eso mueve los bordes unos 300 px, o sea que el
+ * movimiento recorre media pantalla y marea. Ahora 1.5 contra 0.85 — una diferencia
+ * de 1.76x, menos de la mitad.
+ *
+ * Y más lento: de 0.85s a 1.1s, con una curva más suave. La de antes
+ * —cubic-bezier(.2,.7,.3,1)— arranca de golpe, que es justo lo que no quieres en
+ * un movimiento grande; ésta sale despacio y frena largo.
+ *
+ * LA ZONA MUERTA son los 80 ms de retardo en el crecimiento. Si el cursor sólo
+ * pasa por encima de camino a otro sitio, la sección no se reacomoda: hace falta
+ * quedarse. El retardo va sólo al crecer —el regreso es inmediato, para que soltar
+ * se sienta instantáneo—, y eso se consigue poniendo el `transition-delay` en la
+ * regla del hover y no en la base.
+ */
+.com-gr {
   position: relative;
   flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
-  /* Lentos a propósito, como los paneles de proyectos. */
-  transition: flex-grow 700ms var(--ease-standard);
-}
-/*
-  El apuntado crece y los hermanos ceden, sin JavaScript. `:has()` es lo que
-  permite reaccionar en el hermano al hover del otro.
-*/
-@media (hover: hover) {
-  .com-banda-giros__pista:hover .com-banda-giros__panel { flex-grow: 0.84; }
-  .com-banda-giros__panel:hover { flex-grow: 1.34; }
-}
-
-/* La foto con sobrante a los cuatro lados: es el recorrido del parallax. */
-.com-banda-giros__foto {
-  position: absolute;
-  inset: -8% -6%;
-  transition: transform var(--duration-base) var(--ease-standard);
-}
-.com-banda-giros__foto img { object-fit: cover; }
-@media (hover: hover) {
-  .com-banda-giros__panel:hover .com-banda-giros__foto { transform: scale(1.07); }
-}
-
-/*
-  El velo. Del 88% abajo a transparente arriba: es lo que sostiene el título y
-  el párrafo. Con el 88% el cream queda en 5.11 contra el peor fondo posible.
-*/
-.com-banda-giros__velo {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--altea-ink) 88%, transparent) 0%,
-    color-mix(in srgb, var(--altea-ink) 28%, transparent) 100%
-  );
-}
-
-/*
-  EL NÚMERO. Calado, enorme, y rompiendo el borde inferior del panel: los
-  valores negativos NO son un error, son el recurso. Decorativo —aria-hidden—
-  porque el orden ya lo lleva el DOM.
-*/
-/* El cuerpo vive en una variable porque el padding inferior del texto se
-   calcula CON él: así no pueden desincronizarse. */
-.com-banda-giros__panel { --num-cuerpo: clamp(5.5rem, 11vw, 10rem); }
-.com-banda-giros__num {
-  position: absolute;
-  left: -4px;
-  bottom: -10px;
-  font-family: var(--font-display);
-  font-size: var(--num-cuerpo);
-  font-weight: var(--weight-bold);
-  line-height: 0.8;
-  letter-spacing: -0.06em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--altea-cream) 42%, transparent);
-  transition: -webkit-text-stroke-color var(--duration-base) var(--ease-standard);
+  border-radius: var(--radius-lg);
+  color: #fff;
+  transition: flex-grow 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 @media (hover: hover) {
-  .com-banda-giros__panel:hover .com-banda-giros__num {
-    -webkit-text-stroke-color: var(--accent-on-ink);
+  .com-giros__fila:has(.com-gr:hover) .com-gr:not(:hover) {
+    flex-grow: 0.85;
+    transition-delay: 80ms;
+  }
+  .com-gr:hover {
+    flex-grow: 1.5;
+    transition-delay: 80ms;
   }
 }
-
-/* --- El texto --- */
 /*
-  El texto, al pie del panel. Sus tres paddings salen de una colisión medida:
-
-  · DERECHA — suma --dx-der. Al pie del panel la diagonal mete ese borde casi
-    100px adentro y las últimas líneas caían dentro de la cuña cortada.
-
-  · IZQUIERDA — suma --dx-izq. Al desplegarse el párrafo, el título sube; arriba
-    del panel la diagonal corta por la izquierda y el título se metía en esa
-    cuña, que es lo que se veía como si entrase en el panel vecino.
-
-  · ABAJO — el alto del número más un respiro. El número va a `bottom: -10px`
-    con un cuerpo de hasta 160px: a interlínea 0.8 son 128px de mancha, y el pie
-    del párrafo caía justo encima. Reservar su alto es lo que los separa.
-
-  Medido con esto, los tres textos —de 324 a 425 caracteres— entran de 1200px de
-  ventana en adelante. Por debajo los paneles se apilan.
-*/
-.com-banda-giros__txt {
+ * El acercamiento de la foto baja de 1.05 a 1.02: con el panel ya creciendo, el
+ * zoom sumaba un segundo movimiento en la misma dirección y era parte de lo que
+ * marea. A 1.02 queda como un apunte, no como un gesto.
+ */
+.com-gr__img {
+  object-fit: cover;
+  transition: transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.com-gr:hover .com-gr__img {
+  transform: scale(1.02);
+}
+/* El velo garantiza el contraste del título y la descripción: sobre una foto
+   cualquiera el blanco no lo tiene asegurado. Al 88 % en la zona del texto, el
+   fondo efectivo es casi negro y el blanco pasa de 16:1. */
+.com-gr__velo {
   position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  flex-direction: column;
-  padding:
-    0
-    calc(var(--space-5) + var(--dx-der, 0px))
-    calc(var(--num-cuerpo) * 0.8 + var(--space-4))
-    calc(var(--space-5) + var(--dx-izq, 0px));
+  inset: 0;
+  display: block;
+  background: linear-gradient(180deg, rgb(16 19 22 / 0.1) 32%, rgb(16 19 22 / 0.88) 100%);
 }
-.com-banda-giros__giro {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h2);
+.com-gr__n {
+  position: absolute;
+  z-index: 2;
+  top: clamp(14px, 1.8vw, 24px);
+  left: clamp(16px, 2vw, 26px);
+  font-size: var(--text-small);
   font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  letter-spacing: var(--tracking-wide);
+  font-variant-numeric: tabular-nums;
+  /* Coral sobre el velo oscuro: el par documentado para superficie oscura. */
+  color: var(--accent-on-ink);
 }
-/* Línea coral que crece en hover. Coral normal: sobre el velo oscuro es un
-   elemento gráfico y le sobra el 3:1. */
-.com-banda-giros__linea {
-  width: 34px;
-  height: 2px;
-  margin-block: var(--space-4);
-  background: var(--accent-on-ink);
-  transition: width var(--duration-base) var(--ease-standard);
+.com-gr__t {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(18px, 2.4vw, 32px);
 }
-@media (hover: hover) {
-  .com-banda-giros__panel:hover .com-banda-giros__linea { width: 74px; }
+.com-gr__t h3 {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
 }
-
 /*
-  El párrafo se despliega con 0fr → 1fr sobre la única fila de la rejilla, no
-  con max-height: ahí habría que adivinar un valor y los tres textos tienen
-  largos distintos.
-*/
-.com-banda-giros__desc {
+ * La descripción se abre con grid-template-rows de 0fr a 1fr, no con max-height:
+ * con max-height habría que adivinar un alto más grande que el texto más largo y
+ * se rompería al cambiar el copy. El hijo único con overflow oculto es obligatorio.
+ */
+.com-gr__caja {
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows var(--duration-base) var(--ease-standard),
-    opacity var(--duration-base) var(--ease-standard);
+    grid-template-rows 0.55s cubic-bezier(0.2, 0.7, 0.3, 1),
+    opacity 0.4s var(--ease-standard);
 }
-.com-banda-giros__desc p {
-  /* Los dos que dejan medir la fila. */
-  min-height: 0;
+.com-gr__caja > p {
   overflow: hidden;
-  margin: 0;
-  max-width: 42ch;
-  font-family: var(--font-body);
+  min-height: 0;
+  margin: 12px 0 0;
   font-size: var(--text-small);
-  line-height: var(--leading-body);
-  /* Cream entero: es texto pequeño sobre foto y necesita 4.5. */
-  color: var(--altea-cream);
+  line-height: 1.6;
+  max-width: 44ch;
+  color: rgb(255 255 255 / 0.84);
 }
 @media (hover: hover) {
-  .com-banda-giros__panel:hover .com-banda-giros__desc {
+  .com-gr:hover .com-gr__caja,
+  .com-gr:focus-within .com-gr__caja {
     grid-template-rows: 1fr;
     opacity: 1;
   }
 }
-
-/*
-  EN TÁCTIL NO HAY HOVER: el párrafo va siempre visible. Si la información sólo
-  existe en el hover, en un teléfono no existe.
-*/
-/*
-  EN TÁCTIL NO HAY HOVER: el párrafo va siempre visible. Si la información sólo
-  existe en el hover, en un teléfono no existe.
-
-  Y por eso los paneles SE APILAN, sin importar el ancho. Lado a lado el panel
-  mide un tercio, y el párrafo sólo cabe cuando el hover lo ensancha al 44%:
-  con el texto permanentemente visible y sin hover que lo ensanche, se saldría.
-  Una tableta de 1024 en horizontal es exactamente ese caso.
-*/
+/* EN TÁCTIL SIEMPRE VISIBLE: si sólo existiera en el hover, en un teléfono no
+   existiría, y tres láminas con un título y nada más no dicen de qué va esto. */
 @media (hover: none) {
-  .com-banda-giros__desc {
+  .com-gr__caja {
     grid-template-rows: 1fr;
     opacity: 1;
-  }
-  .com-banda-giros__pista {
-    flex-direction: column;
-    height: auto;
-    gap: var(--costura);
-  }
-  .com-banda-giros__panel {
-    flex: 0 0 auto;
-    height: 300px;
-    /* Apilado no hay diagonal, así que tampoco hay cuña que esquivar. */
-    --dx: 0px;
-  }
-  .com-banda-giros__txt {
-    padding: 0 var(--space-5) var(--space-6) var(--space-8);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .com-banda-giros__panel,
-  .com-banda-giros__foto,
-  .com-banda-giros__linea,
-  .com-banda-giros__num,
-  .com-banda-giros__desc { transition: none; }
-  .com-banda-giros__panel:hover .com-banda-giros__foto { transform: none; }
-  /* Sin despliegue: el párrafo visible. */
-  .com-banda-giros__desc {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
+/* ═══ 5 · el muro de marcas ═══════════════════════════════════════════════ */
+
+.com-marcas {
+  background: var(--surface-sunken);
+  padding: clamp(66px, 12vh, 150px) var(--container-pad);
 }
+.com-marcas__titulo {
+  max-width: 18ch;
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  margin-bottom: clamp(30px, 5vh, 58px);
+}
+/*
+ * LA LÍNEA NO ES UN BORDE POR CELDA: es el fondo de la rejilla asomando por un
+ * `gap: 1px`. Así no hay bordes dobles entre vecinas ni medio píxel de desajuste,
+ * y el conjunto se lee como un muro en vez de treinta y dos tarjetas sueltas.
+ *
+ * EL ALTO DE FILA SE FIJA AQUÍ, y es la pieza que quita las bandas grises.
+ *
+ * Antes la celda llevaba `aspect-ratio: 5/3` y nada más: la proporción es una
+ * PREFERENCIA, y una caja la rebasa cuando su contenido no cabe. El logotipo no
+ * tenía tope de alto, así que en seis celdas —Bolerama, C&A, Fiesta Inn, KFC,
+ * IMSS e Innovasport— empujaba la celda, y con ella toda su fila. Las vecinas
+ * seguían en 5/3, no llegaban al borde de abajo, y el fondo de la rejilla asomaba
+ * por el hueco como una banda. Con las filas fijadas aquí ya no hay nada que
+ * empujar.
+ */
+.com-marcas__rejilla {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  /*
+   * EL VALOR REPRODUCE EL 5/3 QUE TENÍA LA CELDA, y por eso va en vw y cambia en
+   * cada breakpoint: el ancho de celda depende de cuántas columnas haya, así que
+   * un solo número deja las celdas apaisadas en cuanto cambia el reparto. Con un
+   * tope plano de 130 px, a 2560 la celda quedaba en 299x130 —2.3:1— en vez del
+   * 161x97 que tenía a 1440.
+   *
+   * A 8 columnas con --container-pad en 5vw, la celda mide 0.1125 del ancho de
+   * ventana; sus tres quintos son 6.75vw. Comprobado: 97 px a 1440 —el 5/3 exacto
+   * que llevaba—, 130 a 1920 y 173 a 2560.
+   */
+  --alto-fila: clamp(84px, 6.75vw, 180px);
+  grid-auto-rows: var(--alto-fila);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: color-mix(in srgb, var(--altea-ink) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--altea-ink) 10%, transparent);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+/*
+ * LA CELDA, CON SU PROPIO RELLENO: 14 % horizontal y 20 % del alto de fila.
+ *
+ * El relleno hace falta porque CADA ARCHIVO TRAE SU PROPIO MARGEN y muy desigual:
+ * medido píxel a píxel, el aire interno va del 4 % de Old Navy al 60 % de Sephora.
+ * Sin relleno de celda, los que vienen justos parecen pegados a la línea.
+ *
+ * EL VERTICAL VA CONTRA --alto-fila Y NO EN PORCENTAJE. Un porcentaje de relleno
+ * se resuelve SIEMPRE contra el ancho, también el de arriba y abajo. Eso es lo que
+ * tenía estrangulada la celda: 26 % de una celda de 161 px son 41.9 px por lado,
+ * y de los 97 px de alto quedaban 13 px útiles. De ahí venía el empuje. Y al revés,
+ * a 2560 un 20 % serían 59.8 px por lado contra una fila de 130: negativo.
+ *
+ * El horizontal se queda en porcentaje —ahí el porcentaje es el correcto— pero
+ * baja de 16 % a 14 %. Con 18 % el wordmark más ancho (Bodega Aurrera, 5.62:1)
+ * topa de ancho y se queda en 12.0 px de tinta a 1440; con 14 %, en 13.5 px.
+ */
+.com-mc {
+  display: grid;
+  place-items: center;
+  /* Ya no hay proporción: la fila manda y la celda la llena entera. Sin esto la
+     celda vuelve a medirse por su contenido y las bandas regresan. */
+  height: 100%;
+  aspect-ratio: auto;
+  /* El mismo fondo que la sección: la celda tapa la rejilla salvo en el gap. */
+  background: var(--surface-sunken);
+  padding: calc(var(--alto-fila, 100px) * 0.2) 14%;
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.com-mc:hover {
+  background: var(--surface-page);
+}
+/*
+ * Los logotipos en gris. El gris sale de la OPACIDAD y no del grayscale: los 32
+ * archivos son negro sobre transparente, y grayscale sobre negro no hace nada. Se
+ * deja puesto como seguro para un archivo futuro en color.
+ *
+ * Negro al 55 % sobre el hundido da 4.46 de contraste —por encima del 3:1 de un
+ * gráfico— y al señalar sube a 0.78, que da 9.63.
+ */
+/*
+ * El alto manda y el ancho se deriva, con --factor corrigiendo por proporción.
+ *
+ * Es al revés que el `max-height: 70%` que llevaba: ese tope dejaba que la
+ * proporción del archivo decidiera el tamaño aparente, y con un abanico de
+ * 0.94 a 5.60 eso da un logotipo tres veces y media más grande que otro.
+ *
+ * `max-width: 100%` es lo que impide que un wordmark de 5.6:1 se salga del hueco;
+ * de los 32, afecta a los más alargados, y su alto lo decide entonces el ancho
+ * disponible. Eso es geometría de la celda y no se puede corregir desde aquí.
+ *
+ * `max-height: 100%` ES EL TOPE QUE FALTABA. Sin él, un `height` en porcentaje
+ * sobre una caja de alto automático no acota nada y el logotipo crecía a su
+ * tamaño natural, empujando la celda. Es la otra mitad de la corrección.
+ *
+ * El 0.78 deja aire dentro del hueco útil. Con el hueco entero (1.00) los
+ * logotipos compactos se estiran hasta 47.4 px a 1440 frente a los 13.5 px del
+ * más ancho —3.94x— y el muro se desordena; con 0.78 el abanico baja a 2.96x.
+ */
+.com-mc__logo {
+  height: calc(100% * 0.78 * var(--factor, 1));
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: grayscale(1);
+  opacity: 0.55;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+.com-mc:hover .com-mc__logo {
+  opacity: 0.78;
+}
+
+/* ═══ 6 · próximos proyectos ══════════════════════════════════════════════ */
+
+.com-prox {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.com-prox__titulo {
+  max-width: 12ch;
+  font-size: clamp(1.8rem, 4vw, 3.1rem);
+  margin-bottom: clamp(30px, 5vh, 60px);
+}
+.com-prox__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.com-px {
+  position: relative;
+  /* 4/3 y no 3/4: tres tarjetas verticales en fila dejaban la sección en 572 px
+     de alto por tarjeta a 1440. En 4/3 bajan a 322. */
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  color: #fff;
+}
+.com-px__img {
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.com-px:hover .com-px__img {
+  transform: scale(1.05);
+}
+.com-px__velo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: linear-gradient(180deg, rgb(16 19 22 / 0) 42%, rgb(16 19 22 / 0.84) 100%);
+}
+.com-px__t {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(16px, 2vw, 28px);
+}
+.com-px__t b {
+  display: block;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.14;
+}
+.com-px__t span {
+  display: block;
+  margin-top: 6px;
+  font-size: var(--text-eyebrow);
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ═══ responsive ══════════════════════════════════════════════════════════ */
 
 /*
-  --- Se apilan por debajo de 1200, no de 900 ---
-
-  Medido: con los textos nuevos —de 324 a 425 caracteres— el párrafo necesita
-  unos 310px de ancho útil, y eso no llega hasta que el panel apuntado pasa de
-  530px. A 1200 de ventana el apuntado mide 532; a 1100, 488 y ya no cabe.
-*/
-@media (max-width: 1200px) {
-  .com-banda-giros { padding-block: var(--space-8); }
-  .com-banda-giros__cabecera {
+ * Con cada cambio de reparto el alto de fila lo acompaña: menos columnas son
+ * celdas más anchas, y los tres quintos de ese ancho son otro coeficiente. Sin
+ * esto las filas se quedarían cortas y la celda pasaría de 5/3 a 2:1.
+ */
+@media (max-width: 1100px) {
+  .com-marcas__rejilla {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    /* celda 0.15 del ancho → 9vw */
+    --alto-fila: clamp(84px, 9vw, 180px);
+  }
+}
+@media (max-width: 900px) {
+  .com-hero__bajo {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
-  .com-banda-giros__nota { text-align: left; flex: 0 1 auto; }
-  .com-banda-giros__pista {
+  .com-hero__datos {
+    min-width: 100%;
+  }
+  /* La fila pierde la ubicación y los dos datos: con el nombre a este cuerpo no
+     caben seis columnas, y los tres están en la ficha. */
+  .com-ix__f {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .com-ix__l,
+  .com-ix__d {
+    display: none;
+  }
+  .com-modelo__cols,
+  .com-fx__cuerpo,
+  .com-prox__grid {
+    grid-template-columns: 1fr;
+  }
+  .com-marcas__rejilla {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    /* celda 0.225 del ancho → 13.5vw */
+    --alto-fila: clamp(84px, 13.5vw, 180px);
+  }
+  /* La banda se apila: tres láminas a lo alto, sin el reparto del flex. */
+  .com-giros__fila {
     flex-direction: column;
     height: auto;
-    /* La costura, ahora como hueco de verdad: apilados no hay diagonal que la
-       produzca por solape. */
-    gap: var(--costura);
   }
-  .com-banda-giros__panel {
-    flex: 0 0 auto;
-    /*
-      `min-height`, NO `height`. Con 300px fijos el párrafo desbordaba en TODOS
-      los anchos apilados: a 360 se salía 198px, a 900 todavía 34. El panel tiene
-      que crecer con su texto.
-    */
-    min-height: 300px;
-    /* Apilado no hay diagonal, así que no hay cuñas que esquivar. */
-    --dx-izq: 0px;
-    --dx-der: 0px;
-    /* Y el número baja de cuerpo: a 160px llenaría media tarjeta. */
-    --num-cuerpo: clamp(4rem, 14vw, 7rem);
+  .com-gr {
+    flex: none;
+    height: 230px;
+  }
+  /* La foto no lleva override: ya va a todo el ancho con la proporción de su
+     archivo, y en vertical eso es justo lo que toca. */
+}
+@media (max-width: 560px) {
+  .com-marcas__rejilla {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* celda 0.3 del ancho → 18vw. Abajo de 400 el relleno deja de ser 5vw y se
+       queda en 20 px, así que la celda se ensancha un poco: 70 px a 390. */
+    --alto-fila: clamp(60px, 18vw, 180px);
+  }
+}
+
+/* ═══ movimiento reducido ═════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* La alternancia y el parallax del hero no se enganchan: lo decide el
+     componente. Aquí sólo lo que vive en CSS. */
+  .com-hero__raya {
+    animation: none;
+    transform: scaleX(1);
   }
   /*
-    El texto sale del posicionamiento absoluto y entra EN FLUJO: es lo que hace
-    que el panel crezca con él. Y necesita `relative` con z-index, porque la foto
-    va posicionada y sin eso pintaría encima de un hijo estático.
-  */
-  .com-banda-giros__txt {
-    position: relative;
-    z-index: 1;
-    inset: auto;
-    padding:
-      var(--space-8)
-      var(--space-5)
-      calc(var(--num-cuerpo) * 0.8 + var(--space-4))
-      var(--space-8);
+   * SIN CRECIMIENTO: las tres del mismo tamaño y la descripción visible. Un
+   * reacomodo instantáneo —el mismo salto sin la transición que lo explica— es
+   * peor que no tenerlo, y es justo lo que queda si sólo se quitan las
+   * transiciones.
+   */
+  .com-giros__fila:has(.com-gr:hover) .com-gr:not(:hover),
+  .com-gr:hover {
+    flex-grow: 1;
+  }
+  .com-gr:hover .com-gr__img {
+    transform: none;
+  }
+  .com-gr__caja {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .com-gr,
+  .com-gr__img,
+  .com-gr__caja,
+  .com-px__img,
+  .com-ix__f,
+  .com-ix__ver,
+  .com-mc,
+  .com-mc__logo,
+  .com-fx,
+  .com-fx::backdrop {
+    transition: none;
   }
 }

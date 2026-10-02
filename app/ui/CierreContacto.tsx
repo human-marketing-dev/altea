@@ -1,5 +1,6 @@
 import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
 import type { Unidad } from "@/lib/contacto";
+import { ruta } from "@/lib/rutas";
 import { MediaSlot } from "./MediaSlot";
 import { SectionHeading } from "./SectionHeading";
 
@@ -31,9 +32,9 @@ export function CierreContacto({
   image,
   unidad,
 }: CierreContactoProps) {
-  const contacto = unidad
-    ? `/contacto?unidad=${unidad.toLowerCase()}`
-    : "/contacto";
+  const contacto = ruta(
+    unidad ? `/contacto?unidad=${unidad.toLowerCase()}` : "/contacto",
+  );
 
   return (
     <section id="contacto" className="altea-cierre">
@@ -42,7 +43,7 @@ export function CierreContacto({
           label="Imagen de sección"
           src={image}
           alt=""
-          tone="dark"
+          tone="light"
           /* La proporción exacta del archivo (2430×2475). Con un 4/3, `cover` se
              comía un 26% del alto — y el recorte llega hasta el borde superior e
              inferior, así que cortaba al sujeto. Así no recorta nada. */
@@ -52,7 +53,9 @@ export function CierreContacto({
       </div>
 
       <div className="altea-cierre__body">
-        <SectionHeading tone="light" eyebrow={eyebrow} title={title} />
+        {/* Sin tone="light": desde que la sección va sobre el hundido, el tono
+            por defecto —tinta sobre claro— es el que corresponde. */}
+        <SectionHeading eyebrow={eyebrow} title={title} />
 
         <div className="altea-cierre__acciones">
           <a
@@ -67,11 +70,11 @@ export function CierreContacto({
             </span>
           </a>
 
-          {/* La segunda salida. `altea-btn` sólo por las medidas; el color lo
-              pone la clase de la sección, porque los contornos del sistema están
-              pensados para superficies claras y ésta es ink. */}
+          {/* La segunda salida, con el contorno del sistema. Antes llevaba color
+              propio porque los contornos están pensados para superficies claras
+              y esta sección era ink; ahora es clara y ya no hace falta. */}
           <a
-            className="altea-btn altea-btn--lg altea-cierre__secundario"
+            className="altea-btn altea-btn--outline altea-btn--lg altea-cierre__secundario"
             href={contacto}
           >
             Ir a contacto

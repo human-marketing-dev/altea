@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Unidad } from "@/lib/contacto";
+import { ruta } from "@/lib/rutas";
 
 export interface ProximamenteProps {
   unidad: Unidad;
@@ -50,7 +51,7 @@ export function Proximamente({ unidad, lockup, tagline }: ProximamenteProps) {
       </p>
 
       <Link
-        href={`/contacto?unidad=${unidad.toLowerCase()}`}
+        href={ruta(`/contacto?unidad=${unidad.toLowerCase()}`)}
         className="altea-btn altea-btn--primary altea-btn--lg"
       >
         Hablar con un asesor

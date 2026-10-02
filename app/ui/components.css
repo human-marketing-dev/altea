@@ -36,12 +36,25 @@
 .altea-btn--dark { background: var(--altea-ink); color: var(--altea-cream); }
 .altea-btn--dark:hover:not(:disabled) { background: #000; }
 
+/*
+  El borde va al 56% de ink y no a --border-subtle (15%).
+
+  --border-subtle es el token de las líneas capilares que SEPARAN, y ahí 1.35 de
+  contraste es una decisión deliberada. Pero aquí el borde es lo único que hace
+  perceptible el control, y eso cae bajo el 3:1 de 1.4.11: al 15% daba 1.42 sobre
+  el fondo hundido y al 56% da 3.55.
+
+  Este botón no tenía consumidores hasta que lo tomó el cierre de contacto, así
+  que el cambio no altera nada existente.
+*/
 .altea-btn--outline {
   background: transparent;
   color: var(--altea-ink);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid color-mix(in srgb, var(--altea-ink) 56%, transparent);
 }
-.altea-btn--outline:hover:not(:disabled) { background: var(--altea-cream); }
+/* --surface-sunken y no el beige de marca: es un relleno de hover sobre
+   superficie clara, así que tiene que seguir al fondo de página. */
+.altea-btn--outline:hover:not(:disabled) { background: var(--surface-sunken); }
 
 /* ghost ignores size — it is an inline text link with an animated arrow */
 .altea-btn--ghost {
@@ -282,44 +295,82 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   gap: var(--space-5);
   padding: var(--nav-padding-y) var(--container-pad);
   /*
-    Velo neutral con desenfoque. Neutral y no cream porque la barra cruza
-    secciones ink —unidades, emblema, CTA— y ahí el desenfoque solo no aclara
-    nada: el wordmark oscuro se perdía contra el fondo.
+    Arriba del todo va LIMPIA: sin velo, sin borde y sin sombra. Sobre el hero,
+    una cápsula recortada sobre el propio hero se ve peor que nada; los tres
+    entran juntos en --pegada, a partir de 24px de scroll.
 
-    El 55% es el mínimo que deja el texto de la barra en AA sobre la sección más
-    oscura del sitio: sobre ink da 5.79 de contraste. Por debajo del 50% cae de
-    4.5 y a partir del 40% ya no llega ni al 3:1 de un elemento gráfico. Sobre
-    las secciones claras apenas se nota — el cream pasa de #E7DFD1 a #F4F1EA.
-
-    El @supports de abajo devuelve el cream sólido donde no haya
-    backdrop-filter: sin desenfoque, un velo al 55% deja el fondo leyéndose a
-    través.
+    El borde existe en transparente y no en `border: none` para que al aparecer
+    no empuje 1px el contenido: sólo cambia de color.
   */
-  background: color-mix(in srgb, var(--altea-white) 55%, transparent);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
-  /*
-    Arriba del todo va limpia: sin borde ni sombra. El borde existe en
-    transparente y no en `border: none` para que al aparecer no empuje 1px el
-    contenido — solo cambia de color.
-  */
+  background: transparent;
   border: 1px solid transparent;
   box-shadow: none;
+  border-radius: var(--radius-pill);
   transition:
     background-color var(--duration-base) var(--ease-standard),
     box-shadow var(--duration-base) var(--ease-standard),
-    border-color var(--duration-base) var(--ease-standard);
+    border-color var(--duration-base) var(--ease-standard),
+    /* Más lento y con otra curva que el resto: el fondo funde y la cápsula se
+       desliza, y son dos gestos distintos. */
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+  will-change: transform;
   font-family: var(--font-body);
 }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .altea-navbar { background: var(--altea-cream); }
+
+/*
+  Se esconde al bajar. El desplazamiento se lleva también el hueco superior, o
+  asomaría un borde de la cápsula por arriba.
+*/
+.altea-navbar--oculta {
+  transform: translateY(calc(-100% - var(--space-4)));
 }
 
+/*
+ * Con el menú desplegado la cápsula deja de ser una cápsula.
+ *
+ * Dos cosas que el estado --pegada no cubre y que hacen falta las dos:
+ *
+ * 1 · el velo, aunque estemos arriba del todo. Sin él, el panel de enlaces flota
+ *     sobre el contenido de la página y no se lee ninguno de los dos.
+ * 2 · el radio, que pasa de píldora a --radius-lg. Un panel de seis filas con
+ *     999px de radio se lee como una gota, no como un menú.
+ */
+.altea-navbar--abierto {
+  background: color-mix(in srgb, var(--altea-white) 92%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
+}
+/* Sin desenfoque, un velo al 55% deja el fondo leyéndose a través, así que se
+   devuelve el gris sólido. Cuelga de --pegada y no de la barra: arriba del todo
+   tiene que seguir sin fondo también aquí. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .altea-navbar--pegada { background: var(--surface-page); }
+}
+
+/*
+  El velo con desenfoque, ahora atado a --pegada.
+
+  Neutral y no cream porque la barra cruza secciones ink —las carpetas de
+  unidades y el pie— y ahí el desenfoque solo no aclara nada: el wordmark oscuro
+  se perdía contra el fondo.
+
+  El 55% es el mínimo que deja el texto de la barra en AA sobre la sección más
+  oscura del sitio: sobre ink da 5.79. Por debajo del 50% cae de 4.5 y a partir
+  del 40% no llega ni al 3:1 de un elemento gráfico.
+*/
 .altea-navbar--pegada {
+  background: color-mix(in srgb, var(--altea-white) 55%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
   border-color: var(--border-subtle);
   box-shadow: var(--shadow-card);
 }
-.altea-navbar--dark { background: var(--altea-ink); }
+/* También atado a --pegada, por lo mismo: arriba del todo ninguna variante
+   pinta fondo. (Sin consumidores hoy; ver el prop `tone` de NavBar.) */
+.altea-navbar--dark.altea-navbar--pegada { background: var(--altea-ink); }
 .altea-navbar--dark.altea-navbar--pegada { border-color: var(--border-subtle-on-dark); }
 .altea-navbar__marca { display: inline-flex; }
 .altea-navbar__logo { height: 22px; width: auto; }
@@ -327,60 +378,35 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 /*
  * Modo intro (hoy sólo el home).
  *
- * ESTADO A, mientras la intro corre: de la barra sólo se ven las letras
- * flotando sobre el cielo. Sin fondo, sin borde, sin sombra.
+ * Ya NO toca el aspecto de la barra, sólo su posicionamiento. Antes este bloque
+ * le quitaba el fondo, el borde y la sombra mientras el <body> no llevara la
+ * bandera que levantaba el hero desde su propio timeline. De eso se encarga
+ * ahora --pegada, que es más simple y no depende de que una sección avise:
+ * arriba del todo la cápsula va limpia y el velo entra a los 24px de scroll. Con
+ * la bandera fuera, el hero dejó de necesitar un ScrollTrigger dedicado sólo a
+ * levantarla.
  *
- * ESTADO B, al cerrar: la barra por defecto, la misma de /nosotros y
- * /contacto. No se declara en ninguna parte — y ésa es la idea. Las reglas de
- * abajo cuelgan de :not([data-intro-done]) y sólo QUITAN cosas; cuando aparece
- * la bandera dejan de aplicar y no queda nada que haya que mantener en sincronía
- * con el original. Escrito al revés habría que repetir aquí sus valores, que es
- * exactamente como se acaban desincronizando.
+ * Lo que sí sigue haciendo falta es sacar la barra del flujo. Un sticky mide su
+ * alto en el documento, y ese hueco se veía encima de la escena; además empujaba
+ * el hero hacia abajo, así que no arrancaba en la coordenada 0 y el
+ * `start: top top` de su ScrollTrigger quedaba desfasado.
  *
- * El interruptor lo pone y lo quita IntroAltea desde su propio timeline: al ir
- * atado al scrub, subir el scroll revierte el estado sin lógica extra.
- *
- * La tinta, el wordmark y el coral del hover no aparecen aquí porque ya son los
- * de la barra `light` por defecto: no hay nada que cambiar.
- */
-
-/*
- * Fuera del flujo. Un sticky sigue midiendo su alto en el documento, y ese hueco
- * era el que se veía encima de la escena; además empujaba el .wrap hacia abajo,
- * así que la intro no arrancaba en la coordenada 0 y el `start: top top` del
- * ScrollTrigger quedaba desfasado.
- *
- * Fijo TODA la página, no sólo mientras la intro está abierta: ver la nota en
- * el reporte. Visualmente da igual —en el home no hay contenido en la
- * coordenada 0 fuera de la intro, así que fija y pegada se ven idénticas una
- * vez cerrada—, pero alternar a media pasada devolvería la barra al flujo,
- * empujaría ~86px todo lo que va debajo y movería las medidas del ScrollTrigger
- * justo en el punto donde se dispara la bandera.
+ * Fija TODA la página y no sólo mientras el hero está a la vista: alternar a
+ * media pasada devolvería la barra al flujo, empujaría ~86px todo lo que va
+ * debajo y movería las medidas de los ScrollTrigger justo a mitad del recorrido.
  *
  * `top` no se toca: lo hereda de .altea-navbar, que lo baja a --space-3 en
- * móvil. Sí hay que anular el margen superior, que en el flujo hacía el trabajo
- * del `top` y aquí se sumaría a él. Doble clase porque el bloque de móvil
- * reescribe `margin` sobre .altea-navbar más abajo en el archivo.
+ * móvil. Sí hay que anular el margen SUPERIOR, que en el flujo hacía el trabajo
+ * del `top` y aquí se sumaría a él. Los laterales se conservan: con `left: 0;
+ * right: 0` y ancho automático, son ellos los que mantienen el sangrado de la
+ * cápsula. Doble clase porque el bloque de móvil reescribe `margin` sobre
+ * .altea-navbar más abajo en el archivo.
  */
 .altea-navbar.altea-navbar--intro {
   position: fixed;
   left: 0;
   right: 0;
   margin-top: 0;
-}
-
-/*
- * Un solo bloque, y gana por especificidad (0,2,1) tanto a .altea-navbar como a
- * .altea-navbar--pegada, así que no hace falta repetirlo para el estado pegado.
- *
- * `border: none` y no `border-color: transparent`: un borde transparente sigue
- * midiendo, y la lista pide ancho 0. El precio es que el contenido se asienta
- * 1px cuando el borde vuelve, invisible en medio del fundido del fondo.
- */
-body:not([data-intro-done]) .altea-navbar--intro {
-  background: none;
-  border: none;
-  box-shadow: none;
 }
 
 .altea-navbar__links { display: flex; align-items: center; gap: var(--space-6); }
@@ -830,12 +856,11 @@ body:not([data-intro-done]) .altea-navbar--intro {
   */
   isolation: isolate;
   /*
-    --altea-cream y no --surface-page: es una decisión de superficie de marca,
-    no "el fondo de página". Hoy los dos resuelven al MISMO #E7DFD1, así que en
-    pantalla da igual; se escribe el token de marca para que si algún día
-    --surface-page cambia, esta sección no se mueva con él.
+    --surface-page, no --altea-cream. Lo llevaba apuntando al token de marca de
+    cuando los dos resolvían al mismo beige; al desacoplarlos, esta sección se
+    habría quedado beige mientras el resto del sitio pasaba a gris.
   */
-  background: var(--altea-cream);
+  background: var(--surface-page);
   /*
     SIN aire vertical en la sección: lo lleva la columna de TEXTO.
 
@@ -1848,18 +1873,21 @@ body:not([data-intro-done]) .altea-navbar--intro {
 */
 .altea-cierre {
   /*
-    --surface-card-dark y NO ink, y el motivo es el footer.
+    --surface-sunken, la superficie hundida.
 
-    El footer que va justo debajo es ink, y con los dos en ink los dos bloques se
-    leían como una sola mancha oscura. Con el gris de tarjeta esta sección se
-    despega sin dejar de ser oscura, y no hay que tocar el footer — que es el
-    mismo en las seis rutas.
+    Antes iba en --surface-card-dark, y el motivo era el footer: los dos en ink se
+    leían como una sola mancha oscura, así que esta sección se despegaba con un
+    gris de tarjeta sin dejar de ser oscura.
 
-    Es exactamente lo que resolvía el <LeadCTA> al que sustituyó; se perdió al
-    traer aquí el bloque del home, que sí iba en ink porque allá no tenía el
-    footer debajo sino otra sección.
+    El fondo claro resuelve lo mismo mejor. Contra el ink del pie da 13.11 de
+    separación en vez de 1.14, o sea que el corte entre las dos secciones ya no
+    hay que buscarlo. Y encaja con el resto de la página, que es clara de arriba
+    abajo salvo las carpetas de unidades.
+
+    Se aplica a las SEIS rutas, que es donde vive este bloque.
   */
-  background: var(--surface-card-dark);
+  background: var(--surface-sunken);
+  color: var(--text-primary);
   display: grid;
   grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
   align-items: center;
@@ -1890,32 +1918,18 @@ body:not([data-intro-done]) .altea-navbar--intro {
   gap: var(--space-4);
 }
 /*
-  El botón secundario. Se apoya en .altea-btn sólo por las medidas: los
-  contornos del sistema —.altea-btn--outline— van en ink sobre superficie clara,
-  y aquí el fondo es ink.
-
-  Cream sobre el gris de tarjeta da 10.59 en el texto. El borde va al 42%:
-  medido sobre ESE fondo da 3.14, por encima del 3:1 que pide un elemento
-  gráfico. (Sobre ink daba 3.30; al 38% se quedaba en 2.95 y no llegaba.)
+  El botón secundario ya no necesita clase propia: con la sección en claro, el
+  contorno del sistema —.altea-btn--outline— es exactamente lo que corresponde, y
+  esta era la razón por la que no se podía usar. Se conserva el hover de la
+  flecha, que el botón del sistema no trae.
 */
-.altea-cierre__secundario {
-  background: transparent;
-  color: var(--altea-cream);
-  border: 1px solid color-mix(in srgb, var(--altea-cream) 42%, transparent);
-  transition:
-    border-color var(--duration-fast) var(--ease-standard),
-    background var(--duration-fast) var(--ease-standard);
-}
-.altea-cierre__secundario:hover {
-  border-color: var(--altea-cream);
-  background: color-mix(in srgb, var(--altea-cream) 10%, transparent);
-}
 .altea-cierre__secundario:hover .altea-btn__arrow { transform: translateX(3px); }
-/* Tercera vía sin botón: 6.61 sobre ink, texto pequeño. */
+/* Tercera vía sin botón. --text-secondary sobre el hundido da 5.35, y esto es
+   texto de 14px. */
 .altea-cierre__correo {
   font-family: var(--font-body);
   font-size: var(--text-small);
-  color: var(--text-on-dark-secondary);
+  color: var(--text-secondary);
   text-decoration: underline;
   text-underline-offset: 4px;
   transition: color var(--duration-fast) var(--ease-standard);

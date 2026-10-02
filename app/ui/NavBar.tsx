@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ruta } from "@/lib/rutas";
 import { useEffect, useState } from "react";
 
 export interface NavLink {
@@ -17,12 +18,14 @@ export interface NavBarProps {
   /** `light` sits on cream (dark logo/text), `dark` on ink. @default "light" */
   tone?: "light" | "dark";
   /**
-   * Marca la barra para que salga del flujo y flote sin fondo sobre la intro
-   * del home, y recupere su aspecto normal cuando ésta cierra. Quién manda es
-   * IntroAltea, que pone y quita `data-intro-done` en el <body>; aquí sólo se
-   * marca a quién le toca reaccionar. Sin esto, la regla se aplicaría también a
-   * /nosotros o /contacto, donde no hay intro que ponga la bandera y la barra se
-   * quedaría transparente y fija para siempre.
+   * Saca la barra del flujo para que flote sobre el hero del home.
+   *
+   * Sólo eso: el aspecto —velo, borde y sombra— lo decide `pegada`, igual en
+   * todas las páginas. Antes este prop también le quitaba el fondo mientras el
+   * hero estuviera abierto, atado a una bandera en el <body>; ya no hace falta.
+   *
+   * Lo pasa el home y nadie más: en las otras rutas la barra es `sticky` y ocupa
+   * su hueco, que es lo que mantiene el aire sobre su primera sección.
    */
   transicionIntro?: boolean;
   homeHref?: string;
@@ -31,13 +34,13 @@ export interface NavBarProps {
 
 /** Orden y contenido tomados del wireframe de portada. */
 export const DEFAULT_NAV_LINKS: NavLink[] = [
-  { label: "Inicio", href: "/" },
-  { label: "Nosotros", href: "/nosotros" },
-  { label: "Comercial", href: "/comercial" },
-  { label: "Industrial", href: "/industrial" },
-  { label: "Vivienda", href: "/vivienda" },
-  { label: "Forestal", href: "/forestal" },
-  { label: "Contacto", href: "/contacto", destacado: true },
+  { label: "Inicio", href: ruta("/") },
+  { label: "Nosotros", href: ruta("/nosotros") },
+  { label: "Comercial", href: ruta("/comercial") },
+  { label: "Industrial", href: ruta("/industrial") },
+  { label: "Vivienda", href: ruta("/vivienda") },
+  { label: "Forestal", href: ruta("/forestal") },
+  { label: "Contacto", href: ruta("/contacto"), destacado: true },
 ];
 
 /**
@@ -50,18 +53,52 @@ export function NavBar({
   links = DEFAULT_NAV_LINKS,
   tone = "light",
   transicionIntro = false,
-  homeHref = "/",
+  homeHref = ruta("/"),
   className,
 }: NavBarProps) {
   const isLight = tone === "light";
   const [abierto, setAbierto] = useState(false);
   const [pegada, setPegada] = useState(false);
-  const ruta = usePathname();
+  const [oculta, setOculta] = useState(false);
+  const rutaActual = usePathname();
 
-  // La sombra aparece al despegarse del inicio. Se usa un listener pasivo y no
-  // un timeline de CSS para que también funcione en Firefox.
+  /*
+   * Los dos comportamientos de la cápsula, en un solo listener pasivo.
+   *
+   * 1 · EL FONDO ENTRA AL DESPEGARSE. Arriba del todo la barra va limpia: sobre
+   *     el hero, una cápsula recortada sobre el propio hero se ve peor que sin
+   *     nada. A partir de DESPEGUE entran el velo, el borde y la sombra.
+   *
+   * 2 · SE ESCONDE AL BAJAR Y VUELVE AL SUBIR, a partir de ARRANQUE. Con dos
+   *     guardas contra el parpadeo, y las dos hacen falta: UMBRAL ignora los
+   *     movimientos de menos de 6px —el temblor de un dedo en un trackpad— y
+   *     SEGUIDAS exige tres lecturas en la misma dirección, que es lo que evita
+   *     que un rebote la haga aparecer y desaparecer.
+   *
+   * Se lee `scrollY` en el propio evento en vez de en un rAF: son dos
+   * comparaciones y un setState que React descarta cuando el valor no cambia.
+   */
   useEffect(() => {
-    const alScroll = () => setPegada(window.scrollY > 8);
+    const DESPEGUE = 24;
+    const ARRANQUE = 240;
+    const UMBRAL = 6;
+    const SEGUIDAS = 3;
+
+    let ultimo = window.scrollY;
+    let bajando = 0;
+
+    const alScroll = () => {
+      const y = window.scrollY;
+      setPegada(y > DESPEGUE);
+
+      const delta = y - ultimo;
+      if (Math.abs(delta) > UMBRAL) {
+        bajando = delta > 0 ? bajando + 1 : 0;
+        setOculta(y > ARRANQUE && bajando >= SEGUIDAS);
+        ultimo = y;
+      }
+    };
+
     window.addEventListener("scroll", alScroll, { passive: true });
     // Por si la página carga ya desplazada, p. ej. al recargar a media altura.
     const cuadro = requestAnimationFrame(alScroll);
@@ -85,6 +122,7 @@ export function NavBar({
     isLight ? null : "altea-navbar--dark",
     transicionIntro ? "altea-navbar--intro" : null,
     pegada ? "altea-navbar--pegada" : null,
+    oculta ? "altea-navbar--oculta" : null,
     abierto ? "altea-navbar--abierto" : null,
     className,
   ]
@@ -115,7 +153,14 @@ export function NavBar({
         aria-expanded={abierto}
         aria-controls="altea-nav-menu"
         aria-label={abierto ? "Cerrar menú" : "Abrir menú"}
-        onClick={() => setAbierto((valor) => !valor)}
+        onClick={() => {
+          setAbierto((valor) => !valor);
+          /* Con el menú abierto la barra no puede esconderse: se llevaría el
+             panel con ella. Se resuelve aquí y no en un efecto sobre `abierto`
+             porque sería un setState en cascada por un evento que ya estamos
+             atendiendo. */
+          setOculta(false);
+        }}
       >
         <span className="altea-navbar__toggle-barra" aria-hidden="true" />
         <span className="altea-navbar__toggle-barra" aria-hidden="true" />
@@ -132,7 +177,7 @@ export function NavBar({
                 ? "altea-navbar__link altea-navbar__link--destacado"
                 : "altea-navbar__link"
             }
-            aria-current={ruta === link.href ? "page" : undefined}
+            aria-current={rutaActual === link.href ? "page" : undefined}
             /* Cerrar al navegar: más directo que reaccionar al cambio de ruta
                dentro de un efecto, que dispara un render en cascada. */
             onClick={() => setAbierto(false)}

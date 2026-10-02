@@ -53,7 +53,6 @@
     .home-stats__intro,
     .home-stats__item,
     .home-video__frame,
-    .home-why > *,
     .home-units__titulo,
     .home-units__grid > li,
     .home-emblem__isotipo,
@@ -107,17 +106,10 @@
     .nos-rs__galeria > li:nth-child(5) { animation-range: cover 28% cover 46%; }
     .nos-rs__galeria > li:nth-child(6) { animation-range: cover 31% cover 49%; }
 
-    /* Emblema: una palabra tras otra. */
-    .home-emblem__palabra {
-      animation: revelar-palabra var(--duration-revelar) var(--ease-standard) both;
-      animation-timeline: view();
-      animation-range: cover 20% cover 34%;
-    }
-    .home-emblem__palabra:nth-child(2) { animation-range: cover 24% cover 38%; }
-    .home-emblem__palabra:nth-child(3) { animation-range: cover 28% cover 42%; }
-    .home-emblem__palabra:nth-child(4) { animation-range: cover 32% cover 46%; }
-    .home-emblem__palabra:nth-child(5) { animation-range: cover 36% cover 50%; }
-    .home-emblem__palabra:nth-child(6) { animation-range: cover 40% cover 54%; }
+    /* El emblema ya no está aquí: su encendido palabra por palabra pasó a GSAP
+       con scrub, para que sea el mismo recurso que usa <FraseCifras> en la
+       primera sección. Ver el comentario de Emblem.tsx. La animación
+       `revelar-palabra` se conserva porque la sigue usando el resto. */
 
     /* Secciones anguladas: en vez del contenedor se anima cada pieza del
        encabezado, para que el título entre antes que la descripción. */

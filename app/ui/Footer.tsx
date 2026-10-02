@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CANALES, REDES, enlaceWhatsApp } from "@/lib/contacto";
+import { ruta } from "@/lib/rutas";
 import { ICONOS, ICONOS_RED, type NombreIcono } from "./Iconos";
 
 export interface FooterLink {
@@ -39,18 +40,18 @@ const DEFAULT_COLUMNS: FooterColumn[] = [
   {
     title: "Unidades de negocio",
     links: [
-      { label: "Comercial", href: "/comercial" },
-      { label: "Industrial", href: "/industrial" },
-      { label: "Vivienda", href: "/vivienda" },
-      { label: "Forestal", href: "/forestal" },
+      { label: "Comercial", href: ruta("/comercial") },
+      { label: "Industrial", href: ruta("/industrial") },
+      { label: "Vivienda", href: ruta("/vivienda") },
+      { label: "Forestal", href: ruta("/forestal") },
     ],
   },
   {
     title: "Altea",
     links: [
-      { label: "Inicio", href: "/" },
-      { label: "Nosotros", href: "/nosotros" },
-      { label: "Contacto", href: "/contacto" },
+      { label: "Inicio", href: ruta("/") },
+      { label: "Nosotros", href: ruta("/nosotros") },
+      { label: "Contacto", href: ruta("/contacto") },
     ],
   },
   {
@@ -65,8 +66,8 @@ const DEFAULT_COLUMNS: FooterColumn[] = [
 ];
 
 const DEFAULT_LEGAL_LINKS = [
-  { label: "Aviso de privacidad", href: "/aviso-de-privacidad" },
-  { label: "Términos", href: "/terminos" },
+  { label: "Aviso de privacidad", href: ruta("/aviso-de-privacidad") },
+  { label: "Términos", href: ruta("/terminos") },
 ];
 
 /** Pie de sitio: marca y descripción a la izquierda, navegación a la derecha. */
@@ -83,7 +84,7 @@ export function Footer({
     <footer className={classes}>
       <div className="altea-footer__top">
         <div className="altea-footer__marca">
-          <Link href="/" aria-label="Altea — inicio">
+          <Link href={ruta("/")} aria-label="Altea — inicio">
             <Image
               className="altea-footer__logo"
               src="/brand/logos/altea-logo-light.svg"

@@ -137,7 +137,40 @@ export const PROYECTOS: Proyecto[] = [
  *     "MX-NLE": 24_000_000,
  * Sólo tiene sentido para los de ESTADOS_CON_PRESENCIA; el resto no se apunta.
  */
-export const M2_CONSTRUIDOS: Partial<Record<EstadoConPresencia, number>> = {};
+/**
+ * Superficie construida por estado, en m².
+ *
+ * Son los 21 estados de ESTADOS_CON_PRESENCIA y ninguno más: la lista coincide
+ * exactamente, así que no hay estado con dato que no tenga presencia ni al revés.
+ * El tipo lo garantiza — una clave fuera de la lista no compila.
+ *
+ * Hay CINCO órDENES DE MAGNITUD entre Nayarit (200) y Nuevo León (24 millones).
+ * Por eso el mapa pinta la intensidad en escala logarítmica: en lineal, todos
+ * salvo Nuevo León y Yucatán quedarían del mismo tono.
+ */
+export const M2_CONSTRUIDOS: Partial<Record<EstadoConPresencia, number>> = {
+  "MX-NLE": 24_189_425,
+  "MX-YUC": 12_069_196,
+  "MX-TAM": 718_603,
+  "MX-TAB": 182_754,
+  "MX-DUR": 126_721,
+  "MX-JAL": 82_810,
+  "MX-SON": 60_317,
+  "MX-SIN": 55_649,
+  "MX-GUA": 50_006,
+  "MX-COA": 35_459,
+  "MX-PUE": 25_622,
+  "MX-ROO": 16_706,
+  "MX-QUE": 16_038,
+  "MX-CHH": 15_716,
+  "MX-VER": 15_292,
+  "MX-CMX": 12_668,
+  "MX-SLP": 10_333,
+  "MX-MEX": 9_863,
+  "MX-BCS": 508,
+  "MX-BCN": 312,
+  "MX-NAY": 200,
+};
 
 /** Presencia fuera de México. El mapa solo cubre el territorio nacional. */
 /*

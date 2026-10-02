@@ -1,3 +1,11 @@
+/*
+ * ⚠ SIN CONSUMIDORES, desde el rediseño de /comercial.
+ *
+ * Lo usaban el home —hasta que <CarrilProyectos> lo sustituyó— y los próximos
+ * proyectos de /comercial, hasta que <ProximosComercial> hizo lo mismo. Se
+ * conserva por el diálogo con @starting-style y por la aritmética de la costura
+ * diagonal, que están calibrados y documentados dentro.
+ */
 "use client";
 
 import Image from "next/image";

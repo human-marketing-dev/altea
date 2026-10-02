@@ -35,6 +35,11 @@ export interface DiapositivaHero {
  * Para los otros seis la frase del pie está redactada aquí y hay que
  * confirmarla —o, mejor, llevar el dato a lib/proyectos.ts y leerlo de allí.
  */
+/*
+ * ⚠ SIN CONSUMIDOR, y lo estaba ya antes del rediseño: el slider del hero se
+ * quitó hace varias iteraciones. Hoy las ocho fotos que lista las usa el hero
+ * calado, pero las toma de PLAZAS, que es su fuente.
+ */
 export const HERO_DIAPOSITIVAS: DiapositivaHero[] = [
   {
     id: "paseo-la-fe",
@@ -77,6 +82,35 @@ export const HERO_DIAPOSITIVAS: DiapositivaHero[] = [
   },
 ];
 
+/**
+ * HERO CALADO.
+ *
+ * La palabra a tamaño de pantalla con la fotografía recortada dentro de las
+ * letras, alternando entre las ocho plazas cada 4.2 s.
+ *
+ * `palabra` y no la frase larga: a ese cuerpo —de 48 a 240 px— la foto se lee
+ * dentro de las letras, y con la frase completa las letras son tan chicas que la
+ * imagen deja de distinguirse y el recorte no significa nada.
+ *
+ * Las fotos son LAS MISMAS ocho de PLAZAS, así que no hace falta material aparte.
+ */
+export const HERO_CALADO = {
+  palabra: "Comercial",
+  /* Confirmado por Altea, el mismo texto que llevaba el hero anterior. */
+  descripcion:
+    "Espacios que conectan personas, marcas y experiencias. Nuestros desarrollos reúnen marcas, servicios y entretenimiento en entornos diseñados para conectar con las comunidades.",
+  /** Segundos en cada foto. */
+  segundos: 4.2,
+  pieDesliza: "Desliza",
+};
+
+/*
+ * ⚠ SIN CONSUMIDOR desde el rediseño. <HeroUnidad> —la tarjeta de foto con la
+ * ceja y el titular— lo sustituyó el hero calado de arriba, que usa las ocho
+ * fotos de las plazas en vez de una propia. Se conserva porque el archivo
+ * `altea-hero-comercial.webp` sigue en el repo y porque <HeroUnidad> lo siguen
+ * usando /industrial, /vivienda y /forestal con su propio contenido.
+ */
 export const HERO_COMERCIAL = {
   ceja: "Comercial",
   /* Confirmado por Altea. */
@@ -220,6 +254,19 @@ export interface Plaza {
   nombre: string;
   ubicacion: string;
   foto?: string;
+  /**
+   * La proporción REAL del archivo, ancho/alto, medida del contenedor WebP.
+   *
+   * La caja de la ficha la adopta tal cual, así que `cover` no recorta nada. Va
+   * en el contenido y no calculada porque el recorte se decide al pintar, antes
+   * de que el navegador sepa cuánto mide la imagen: sin el dato de antemano la
+   * caja tendría que esperar a la carga y la ficha daría un salto de alto.
+   *
+   * ⚠ SI SE CAMBIA UNA FOTO, HAY QUE MEDIRLA Y ACTUALIZAR ESTE NÚMERO. Un valor
+   * que no corresponda al archivo devuelve el recorte, que es justo lo que esto
+   * resuelve.
+   */
+  fotoRatio?: number;
   alt: string;
   label: string;
   descripcion: string;
@@ -254,6 +301,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo La Fe",
     ubicacion: "San Nicolás, Nuevo León",
     foto: `${CENTROS}/paseo-la-fe-altea.webp`,
+    /* 2000x1332 */
+    fotoRatio: 1.5015,
     alt: "",
     label: "Paseo La Fe",
     descripcion:
@@ -268,6 +317,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo Tec",
     ubicacion: "Monterrey, Nuevo León",
     foto: `${CENTROS}/paso-tec-altea.webp`,
+    /* 2000x1332 */
+    fotoRatio: 1.5015,
     alt: "",
     label: "Paseo Tec",
     descripcion:
@@ -282,6 +333,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo Juárez",
     ubicacion: "Juárez, Nuevo León",
     foto: `${CENTROS}/paseo-juarez-altea.webp`,
+    /* 2000x1332 */
+    fotoRatio: 1.5015,
     alt: "",
     label: "Paseo Juárez",
     descripcion:
@@ -296,6 +349,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo Durango",
     ubicacion: "Durango, Durango",
     foto: `${CENTROS}/paseo-durango-altea.webp`,
+    /* 2000x1333 */
+    fotoRatio: 1.5004,
     alt: "",
     label: "Paseo Durango",
     descripcion:
@@ -310,6 +365,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo Los Mochis",
     ubicacion: "Los Mochis, Sinaloa",
     foto: `${CENTROS}/paseo-los-mochis-altea.webp`,
+    /* 2000x1042 */
+    fotoRatio: 1.9194,
     alt: "",
     label: "Paseo Los Mochis",
     descripcion:
@@ -324,6 +381,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Paseo Gómez Palacio",
     ubicacion: "Gómez Palacio, Durango",
     foto: `${CENTROS}/paseo-gomez-palacio-altea.webp`,
+    /* 2000x1116 */
+    fotoRatio: 1.7921,
     alt: "",
     label: "Paseo Gómez Palacio",
     descripcion:
@@ -338,6 +397,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Punto Huinalá",
     ubicacion: "Apodaca, Nuevo León",
     foto: `${CENTROS}/punto-huinala-altea.webp`,
+    /* 2000x1146 */
+    fotoRatio: 1.7452,
     alt: "",
     label: "Punto Huinalá",
     descripcion:
@@ -352,6 +413,8 @@ export const PLAZAS: Plaza[] = [
     nombre: "Punto Río Nilo",
     ubicacion: "Tonalá, Jalisco",
     foto: `${CENTROS}/punto-rio-nilo.webp`,
+    /* 2000x1333 */
+    fotoRatio: 1.5004,
     alt: "",
     label: "Punto Río Nilo",
     descripcion:
@@ -481,6 +544,78 @@ export const OTROS_GIROS = {
  */
 export const MOSTRAR_MARCAS_COMERCIAL = true;
 
+/**
+ * Encabezado del muro. Vivía escrito en la llamada de la página; aquí es
+ * contenido, que es donde le toca.
+ */
+export const TITULO_MARCAS = "Marcas que operan en nuestros centros";
+
+const MARCAS_DIR = "/images/comercial/logos-marcas";
+
+export interface MarcaComercial {
+  nombre: string;
+  src: string;
+  /**
+   * Proporción ancho/alto del archivo. La consume la corrección óptica del muro.
+   *
+   * Medida de los 32 archivos, no estimada: van de 0.94 (IMSS, más alto que
+   * ancho) a 5.60 (Bodega Aurrera), con la celda en 1.67. Es un abanico de seis
+   * veces, y por eso el alto común no basta.
+   */
+  ratio: number;
+}
+
+/**
+ * EL MURO DE MARCAS: 32, en ocho columnas de cuatro filas.
+ *
+ * Son 32 y no las 34 que hay en disco. La carpeta trae 36 archivos, de los que
+ * dos son duplicados —`old-navy-logo-black-2` y `suburbia-logo-black-2`— y de los
+ * 34 restantes quedan fuera Hospital Sierra Madre y Tálisis: no son marcas
+ * inquilinas sino desarrollos de Altea, y ya salen en "Otros giros". 32 llena
+ * además las cuatro filas exactas de la rejilla.
+ *
+ * ⚠ PENDIENTE LEGAL, el mismo de lib/marcas.ts: usar marcas ajenas implica
+ * endoso. Normalmente lo cubre el contrato de arrendamiento, pero hay que
+ * confirmarlo antes de publicar.
+ *
+ * Los archivos son negro sobre transparente, así que el gris de la rejilla sale
+ * de la opacidad y no del grayscale — lo mismo que en Grupo Firma.
+ */
+export const MARCAS_COMERCIAL: MarcaComercial[] = [
+  { nombre: "Banorte", src: `${MARCAS_DIR}/banorte-logo-black.webp`, ratio: 5.14 },
+  { nombre: "Bershka", src: `${MARCAS_DIR}/bershka-logo-black.webp`, ratio: 3.40 },
+  { nombre: "Bodega Aurrera", src: `${MARCAS_DIR}/bodega-aurrera-logo-black.webp`, ratio: 5.62 },
+  { nombre: "Bolerama", src: `${MARCAS_DIR}/bolerama-logo-black.webp`, ratio: 1.29 },
+  { nombre: "Boston Pizza", src: `${MARCAS_DIR}/boston-pizza-logo-black.webp`, ratio: 2.90 },
+  { nombre: "C&A", src: `${MARCAS_DIR}/c-and-a-logo-black.webp`, ratio: 1.21 },
+  { nombre: "Calvin Klein", src: `${MARCAS_DIR}/calvin-klein-logo-black.webp`, ratio: 4.00 },
+  { nombre: "Carl's Jr.", src: `${MARCAS_DIR}/carlos-jr-logo-black.webp`, ratio: 3.21 },
+  { nombre: "Chuck E. Cheese", src: `${MARCAS_DIR}/chuck-e-cheese-logo-black.webp`, ratio: 4.50 },
+  { nombre: "Cinemex", src: `${MARCAS_DIR}/cinemex-logo-black.webp`, ratio: 3.75 },
+  { nombre: "Cinépolis", src: `${MARCAS_DIR}/cinepolis-logo-black.webp`, ratio: 4.09 },
+  { nombre: "Fiesta Inn", src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`, ratio: 3.33 },
+  { nombre: "Firehouse Subs", src: `${MARCAS_DIR}/firehouse-subs-logo-black.webp`, ratio: 2.77 },
+  { nombre: "H&M", src: `${MARCAS_DIR}/h-and-m-logo-black.webp`, ratio: 1.36 },
+  { nombre: "Happyland", src: `${MARCAS_DIR}/happyland-logo-black.webp`, ratio: 4.62 },
+  { nombre: "Helados Dreambox", src: `${MARCAS_DIR}/helados-dreambox-logo-black.webp`, ratio: 3.53 },
+  { nombre: "IHOP", src: `${MARCAS_DIR}/ihop-logo-black.webp`, ratio: 2.14 },
+  { nombre: "IMSS", src: `${MARCAS_DIR}/imss-logo-black.webp`, ratio: 0.94 },
+  { nombre: "INE", src: `${MARCAS_DIR}/ine-logo-black.webp`, ratio: 3.05 },
+  { nombre: "Innova Sport", src: `${MARCAS_DIR}/innova-sport-logo-black.webp`, ratio: 1.54 },
+  { nombre: "KFC", src: `${MARCAS_DIR}/kfc-logo-black.webp`, ratio: 1.29 },
+  { nombre: "Liverpool", src: `${MARCAS_DIR}/liverpool-logo-black.webp`, ratio: 2.77 },
+  { nombre: "Miniso", src: `${MARCAS_DIR}/miniso-logo-black.webp`, ratio: 3.75 },
+  { nombre: "Office Depot", src: `${MARCAS_DIR}/office-depot-logo-black.webp`, ratio: 2.34 },
+  { nombre: "Old Navy", src: `${MARCAS_DIR}/old-navy-logo-black.webp`, ratio: 3.40 },
+  { nombre: "Pandora", src: `${MARCAS_DIR}/pandora-logo-black.webp`, ratio: 4.39 },
+  { nombre: "Pull&Bear", src: `${MARCAS_DIR}/pull-and-bear-logo-black.webp`, ratio: 3.75 },
+  { nombre: "Sephora", src: `${MARCAS_DIR}/sephora-logo-black.webp`, ratio: 3.40 },
+  { nombre: "Suburbia", src: `${MARCAS_DIR}/suburbia-logo-black.webp`, ratio: 3.33 },
+  { nombre: "Tim Hortons", src: `${MARCAS_DIR}/tim-hortons-logo-black.webp`, ratio: 3.67 },
+  { nombre: "Ulta Beauty", src: `${MARCAS_DIR}/ulta-beauty-logo-black.webp`, ratio: 2.19 },
+  { nombre: "Walmart", src: `${MARCAS_DIR}/walmart-logo-black.webp`, ratio: 2.95 },
+];
+
 /*
  * Los logos los pone <Marcas> por defecto, desde lib/marcas.ts — los mismos
  * "clientes actuales" del resto del sitio.
@@ -557,6 +692,11 @@ export const PROXIMOS_PROYECTOS = {
  * No se borra: los cuatro giros de atención son información real de Altea, y en
  * cuanto lleguen los teléfonos y correos hay dónde ponerlos. El sitio natural
  * ahora sería /contacto.
+ */
+/*
+ * ⚠ SIN CONSUMIDOR. Eran los cuatro canales de atención de la sección de
+ * captación, que se sustituyó por <CierreContacto> en las seis rutas. Los
+ * teléfonos y correos siguen PENDIENTES de Altea.
  */
 export const CANALES_COMERCIAL = [
   { nombre: "Renta de islas" },

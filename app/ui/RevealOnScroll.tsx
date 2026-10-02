@@ -12,15 +12,19 @@ import { useEffect } from "react";
  * No toca el marcado de las páginas — consulta el DOM y añade una clase. Como
  * la clase la pone el JS, sin JavaScript todo queda visible por defecto.
  */
+/*
+ * DEL HOME YA NO QUEDA NINGÚN SELECTOR, y es el final de un camino: las secciones
+ * se fueron rehaciendo una por una y cada una anima lo suyo con GSAP atado al
+ * scroll, que es un mecanismo distinto y no necesita este respaldo. Se quitaron
+ * .home-stats__*, .home-units__* —cuyas secciones ya no se montan—,
+ * .home-emblem__palabra, que pasó a GSAP, y al final .home-why > *, cuando se
+ * quitó la sección entera.
+ *
+ * .home-video__frame es la excepción que sobrevive: ese bloque no tiene GSAP
+ * propio, entra con este respaldo.
+ */
 const SELECTORES = [
-  ".home-stats__intro",
-  ".home-stats__item",
   ".home-video__frame",
-  ".home-why > *",
-  ".home-units__titulo",
-  ".home-units__grid > li",
-  ".home-emblem__isotipo",
-  ".home-emblem__palabra",
   ".home-cta__media",
   ".home-cta__body",
   ".altea-proyectos__titulo-suelto",

@@ -1,0 +1,342 @@
+/*
+ * Hero del home: el isotipo que se construye.
+ *
+ * VA EN TONO CLARO, sobre --surface-page y con el texto en ink, como el resto del
+ * sitio. El prototipo estaba en oscuro y la primera versión de este archivo lo
+ * copió; no era la decisión.
+ *
+ * Todo lo que estaba calibrado contra el ink está invertido, no traducido, porque
+ * varias cosas no se traducen sin más:
+ *
+ *   · el velo del muro ACLARA. Sobre oscuro se hunden las fotos para separarlas
+ *     del fondo; sobre claro hay que subirlas.
+ *   · el tratamiento de las fotos sube el rango en vez de bajarlo. Ver .hero-a__foto.
+ *   · la ceja NO puede ser ink al 62 %, que es el equivalente directo del cream al
+ *     62 % que tenía: da 4.41 y son 13 px, o sea por debajo de 4.5. Va a
+ *     --text-secondary (ink 70 %, 5.67).
+ *   · el coral pasa a --text-accent. Coral normal sobre --surface-page da
+ *     2.9998, que no llega al 3.0 de un objeto gráfico; coral-dark da 3.99.
+ *
+ * Todo cuelga de los tokens: los velos se calculan con color-mix contra
+ * --surface-page en vez de llevar un rgba escrito a mano, que es como se quedan
+ * atrás los fondos cuando el sistema cambia.
+ */
+
+.hero-a {
+  /*
+   * El alto del recorrido. NO lleva sticky: si el sticky va en el mismo elemento
+   * que mide 300svh no pasa nada, porque no tiene dónde pegarse. Quien se pega es
+   * el hijo.
+   *
+   * svh y nunca vh: en móvil `vh` es el viewport grande —barra de direcciones
+   * retraída— y `svh` el chico. Mezclarlos deja la escena descuadrada justo
+   * mientras la barra aparece y desaparece.
+   */
+  height: 300svh;
+  position: relative;
+}
+
+.hero-a__escena {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--surface-page);
+  color: var(--text-primary);
+}
+
+/* ── el objeto ──────────────────────────────────────────────────────────── */
+
+.hero-a__lienzo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  /* Alto y ancho los fija el renderer en píxeles; esto es para el hueco que
+     ocupa antes de que llegue el chunk de three. */
+  width: 100%;
+  height: 100%;
+}
+
+/* ── el muro de proyectos ───────────────────────────────────────────────── */
+
+.hero-a__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Entra con el timeline, al irse el titular. Sin JS se queda en 0 y el hero es
+     el titular sobre ink, que es un hero perfectamente válido. */
+  opacity: 0;
+}
+
+.hero-a__muro {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Sin perspectiva, el rotateY de cada hoja sería un aplastamiento ortográfico
+     y el muro no se doblaría: se estrecharía. */
+  perspective: 1250px;
+  pointer-events: none;
+}
+
+.hero-a__arco {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Para que el translate3d en z de cada hoja cuente como profundidad y no lo
+     aplane el propio contenedor. */
+  transform-style: preserve-3d;
+  transform: rotateX(2.5deg);
+}
+
+/*
+ * Cada hoja se desvanece por sus cuatro cantos y las vecinas se solapan: el
+ * borde de una cae donde la siguiente ya es opaca, y la unión desaparece. El
+ * muro se lee como una superficie continua doblada, no como tarjetas puestas
+ * juntas.
+ *
+ * Son DOS máscaras cruzadas: una difumina los costados —su punto de opacidad es
+ * --fundido, que publica MuroProyectos porque depende del solape— y la otra el
+ * canto de arriba y el de abajo. Al intersecarlas no queda un solo borde recto.
+ * Con una sola quedaban los cantos horizontales a la vista, que es justo lo que
+ * delata que son tarjetas.
+ *
+ * El ancho, el alto y la posición los escribe el JS: dependen del alto del
+ * viewport multiplicado por el paso, y eso el CSS no lo puede calcular solo.
+ *
+ * --fundido lleva respaldo porque un var() sin valor invalida la declaración
+ * entera en tiempo de cómputo: la máscara se caería a `none` en el hueco entre el
+ * primer pintado y el efecto que la publica. 34.21% es 0.52/1.52, el valor que
+ * corresponde al SOLAPE de hoy.
+ */
+.hero-a__hoja {
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  /* Un tono de la familia por si una foto tarda. --surface-sunken y no la tarjeta
+     oscura: sobre el fondo claro, aquélla daba 12.83 de contraste —un agujero
+     negro mientras la imagen llega— y ésta 1.11, que apenas se hunde. */
+  background: var(--surface-sunken);
+  -webkit-mask-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 var(--fundido, 34.21%),
+      #000 calc(100% - var(--fundido, 34.21%)),
+      transparent 100%
+    ),
+    linear-gradient(180deg, transparent 0%, #000 17%, #000 83%, transparent 100%);
+  mask-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      #000 var(--fundido, 34.21%),
+      #000 calc(100% - var(--fundido, 34.21%)),
+      transparent 100%
+    ),
+    linear-gradient(180deg, transparent 0%, #000 17%, #000 83%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/*
+ * El tratamiento: gris, y el rango SUBIDO Y ESTRECHADO.
+ *
+ * El muro es FONDO. En color y a brillo pleno competía con la pieza de hormigón y
+ * con el titular, y ocho fachadas distintas detrás de una letra que se monta son
+ * ocho focos de atención. En gris son textura.
+ *
+ * Pero hacia dónde hay que empujarlas depende del fondo, y aquí se invierte. El
+ * `brightness(.62) contrast(1.06)` que llevaba estaba pensado para separarlas de
+ * un fondo oscuro; sobre --surface-page hacía lo contrario de lo que se busca.
+ * Medido sobre una rampa de entrada de 30 a 225 en sRGB:
+ *
+ *   b.62 c1.06   →  12 … 140   el medio da 9.35 de contraste contra el fondo,
+ *                              MÁS que un texto de cuerpo. Casi negro sobre casi
+ *                              blanco: lo contrario de un fondo.
+ *   c.62 b1.32   →  89 … 248   el medio da 2.58. El rango entero sube y se
+ *                              estrecha, que es lo que hace que se hunda.
+ *
+ * El orden importa: el contraste pivota sobre 0.5, así que comprimir primero y
+ * levantar después deja el rango arriba; al revés lo devuelve al centro.
+ *
+ * ⚠ Es la calibración de todo el hero que más necesita ojos. Los números dicen
+ * que se hunde; si con las fotos reales se hunde DEMASIADO y el muro desaparece,
+ * lo que hay que bajar es el brightness, no el contraste.
+ */
+.hero-a__foto {
+  object-fit: cover;
+  filter: grayscale(1) contrast(0.62) brightness(1.32);
+}
+
+/*
+ * El velo, encima de todo el muro: deja el centro más limpio que los bordes y
+ * apaga los cantos de arriba y abajo para que el muro no toque ni la barra ni el
+ * rótulo de fase.
+ *
+ * Se pinta con --surface-page, no con --altea-ink. Es el mismo mecanismo con el
+ * signo cambiado: sobre fondo oscuro el velo HUNDE lo que cubre, y sobre fondo
+ * claro lo SUBE. Los porcentajes se conservan porque lo que describen es cuánto
+ * se disuelve el muro hacia el fondo, y eso no depende de cuál sea el fondo.
+ */
+.hero-a__velo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(
+      ellipse 70% 74% at 50% 48%,
+      color-mix(in srgb, var(--surface-page) 10%, transparent) 0%,
+      color-mix(in srgb, var(--surface-page) 50%, transparent) 100%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface-page) 70%, transparent) 0%,
+      transparent 24%,
+      transparent 76%,
+      color-mix(in srgb, var(--surface-page) 70%, transparent) 100%
+    );
+}
+
+/* ── el titular ─────────────────────────────────────────────────────────── */
+
+.hero-a__titular {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 var(--container-pad);
+  /* No intercepta el puntero: debajo hay muro y lienzo, y nada de esto se pulsa. */
+  pointer-events: none;
+}
+
+.hero-a__ceja {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 clamp(12px, 2.2vh, 24px);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /*
+   * --text-secondary (ink 70 %) y no un ink al 62 %, que sería el equivalente
+   * directo del cream al 62 % que llevaba sobre oscuro: ése da 4.41 y esto son
+   * 13 px, o sea que necesita 4.5. El token da 5.67.
+   */
+  color: var(--text-secondary);
+}
+
+/*
+ * La marca sesgada, el mismo recurso que la píldora y las bandas.
+ *
+ * --text-accent (coral-dark) y no el coral normal: sobre --surface-page el coral
+ * da 2.9998 y no llega al 3.0 que pide un objeto gráfico —por dos diezmilésimas,
+ * pero no llega—, y coral-dark da 3.99. Es el par documentado en tokens.css: el
+ * coral normal es para rellenos con texto encima, no para el gráfico en sí.
+ */
+.hero-a__marca {
+  flex: none;
+  width: 8px;
+  height: 13px;
+  background: var(--text-accent);
+  transform: skewX(calc(var(--angulo) * -1deg));
+}
+
+.hero-a__titulo {
+  margin: 0;
+  /*
+   * 16ch y no 15ch. Medido con la métrica real de Gotham: "que materializan
+   * sueños" ocupa 11.228 em con el letter-spacing de -0.046 em ya contado, y 1ch
+   * es el avance del "0" de Gotham Bold, 0.730 em. O sea que la línea son 15.38ch
+   * y en 15ch SE PARTÍA: el titular se veía en tres líneas dentro de dos cajas de
+   * recorte, no en las dos que pide el diseño. 16ch = 11.68 em deja 0.45 em de
+   * holgura. (La primera línea son 12.28ch, así que nunca fue la que manda.)
+   */
+  max-width: 16ch;
+  /*
+   * El token del sistema, no un clamp propio. El prototipo llevaba uno a medida
+   * y el tamaño no correspondía con el de los demás heros del sitio.
+   */
+  font-size: var(--text-display-1);
+  font-weight: var(--weight-bold);
+  line-height: 0.95;
+  letter-spacing: -0.046em;
+}
+
+/*
+ * Cada línea es su propia caja recortada: el hijo sube desde fuera y el recorte
+ * es lo que hace que aparezca "desde debajo" en vez de aparecer y ya. Por eso el
+ * overflow va aquí y el transform en el hijo, no al revés.
+ */
+.hero-a__linea {
+  display: block;
+  overflow: hidden;
+}
+.hero-a__linea > span {
+  display: block;
+  will-change: transform;
+}
+
+/*
+ * El "que" atenuado. Es jerarquía, no color: la palabra sigue siendo tinta y lo
+ * que baja son el peso y la opacidad. Al 55 % sobre --surface-page da 3.58, que
+ * pasa el 3.0 de texto grande con margen —esto son 44-88 px— aunque se quedaría
+ * corto para texto de cuerpo, que aquí no aplica.
+ */
+.hero-a__atenuado {
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--altea-ink) 55%, transparent);
+}
+
+/*
+ * El rótulo de fase se fue, y con él la fila entera del pie del hero.
+ *
+ * Contenía sólo dos cosas —el nombre de la fase y la barra de avance— y ninguna
+ * de las dos sobrevivió, así que .hero-a__pie no se quedó con un elemento suelto:
+ * se quedó vacía. Por eso desaparece el contenedor y no sólo su contenido.
+ *
+ * Huérfanos que se fueron con él: .hero-a__pie, .hero-a__fase, .hero-a__barra y
+ * el bloque de 480px que apilaba la fila cuando el nombre y la barra se pisaban.
+ * En el archivo de contenido, HERO_A.fases y el tipo FaseHero.
+ */
+
+/*
+ * Móvil. El titular baja de tamaño porque con 15ch y el display-1 se come la
+ * pantalla, y el rótulo de fase se apila: en una línea, el nombre de la fase y la
+ * barra se pisaban por debajo de 480px.
+ */
+@media (max-width: 700px) {
+  .hero-a__titulo {
+    /* Sin max-width propio: por debajo de 700px manda el ancho del contenedor
+       —el titular tiene el padding lateral de --container-pad—, así que el 16ch de
+       arriba nunca llega a aplicar y repetirlo aquí sólo daría algo que mantener
+       en sincronía. */
+    font-size: var(--text-display-2);
+  }
+}
+/*
+ * Movimiento reducido: todo en su estado final y sin animación.
+ *
+ * El componente ya no pide el chunk de three ni engancha el timeline; esto es
+ * para lo que vive solo en CSS. El muro se queda visible y quieto —MuroProyectos
+ * lo coloca una vez y no se suscribe al ticker—, y el titular no se va.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .hero-a__fondo {
+    opacity: 1;
+  }
+  .hero-a__linea > span {
+    will-change: auto;
+  }
+}

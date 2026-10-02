@@ -27,11 +27,25 @@
   --altea-white: #FFFFFF;
 
   /* ---- Color: semantic ---- */
-  --surface-page: var(--altea-cream);
+  /*
+   * EL FONDO DE PÁGINA YA NO ES EL BEIGE DE MARCA, y por eso deja de apuntar a
+   * --altea-cream: son dos cosas distintas y estaban acopladas.
+   *
+   *   --altea-cream    color de MARCA. Sigue siendo el beige, y su sitio es el
+   *                    texto y los elementos sobre superficie oscura.
+   *   --surface-page   el gris del FONDO. Claro sin llegar a blanco.
+   *
+   * El gris trata mejor a los tres colores del sistema: ink pasa de 12.06 a
+   * 14.61, coral de 2.48 a 3.00 y coral-dark de 3.29 a 3.99.
+   */
+  --surface-page: #F5F5F3;
   --surface-page-dark: var(--altea-ink);
   --surface-card: var(--altea-white);
   --surface-card-dark: #2B2C2C;
-  --surface-sunken: #DED4C2;
+  /* Baja con el fondo: era un beige más oscuro y ahora es un gris más oscuro.
+     Conserva la misma relación de luminancia que tenía con el beige —0.892
+     contra 0.894— así que los huecos de <MediaSlot> se hunden igual que antes. */
+  --surface-sunken: #E9E9E6;
   --text-primary: var(--altea-ink);
   --text-secondary: var(--altea-ink-70);
   --text-on-dark: var(--altea-cream);

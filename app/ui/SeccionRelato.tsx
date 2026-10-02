@@ -1,3 +1,8 @@
+/*
+ * ⚠ SIN CONSUMIDORES. Era el relato de /comercial y lo sustituyó <Modelo>, que
+ * compone igual que Origen en /nosotros para que las dos secciones que cuentan
+ * de dónde viene algo se lean como familia.
+ */
 import Image from "next/image";
 
 export interface RelatoApertura {

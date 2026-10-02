@@ -1,38 +1,39 @@
-import { CountUp, MapaProyectos } from "@/app/ui";
-import { ESTADOS_CON_PRESENCIA } from "@/lib/proyectos";
+import { CountUp } from "@/app/ui";
 import { HUELLA } from "./content";
+import { MapaPuntos } from "./MapaPuntos";
+import { Reparto } from "./Reparto";
 
-/** Sección 3 — Nuestra Huella. Mapa a la izquierda, texto y cifras a la derecha. */
+/**
+ * Nuestra huella: las dos cifras, el reparto por territorio y el mapa.
+ *
+ * Las cifras se escalonan como en el home —el sangrado sale del índice— en vez de
+ * ir en dos columnas iguales.
+ */
 export function Huella() {
   return (
-    <section className="nos-huella">
-      <MapaProyectos estadosConPresencia={ESTADOS_CON_PRESENCIA} />
-      <div className="nos-huella__body">
-        <h2 className="nos-huella__title">{HUELLA.title}</h2>
-        <p className="nos-huella__text">{HUELLA.body}</p>
-
-        <dl className="nos-huella__stats">
-          {HUELLA.stats.map((stat) => (
-            <div key={stat.label}>
-              <dd className="nos-huella__value">
-                <CountUp to={stat.to} prefix={stat.prefix} suffix={stat.suffix} />
-              </dd>
-              <dt className="nos-huella__label">{stat.label}</dt>
-            </div>
-          ))}
-        </dl>
-
-        <ul className="nos-huella__desglose">
-          {HUELLA.desglose.map((row) => (
-            <li key={row.label}>
-              <span>{row.label}</span>
-              <span className="nos-huella__desglose-value">
-                {row.value.toLocaleString("es-MX")} m²
-              </span>
-            </li>
-          ))}
-        </ul>
+    <section className="nos-huella" aria-labelledby="huella-titulo">
+      <div className="nos-huella__intro">
+        <h2 className="nos-huella__titulo" id="huella-titulo">
+          {HUELLA.title}
+        </h2>
+        <p className="nos-huella__body">{HUELLA.body}</p>
       </div>
+
+      <dl className="nos-huella__datos">
+        {HUELLA.stats.map((stat, i) => (
+          <div className="nos-hd" key={stat.label} style={{ ["--i" as string]: i }}>
+            {/* dt antes que dd, que es el orden que pide un <dl>; la cifra se ve
+                primero porque la rejilla la coloca en la primera columna. */}
+            <dt className="nos-hd__etiqueta">{stat.label}</dt>
+            <dd className="nos-hd__cifra">
+              <CountUp to={stat.to} prefix={stat.prefix} suffix={stat.suffix} />
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <Reparto />
+      <MapaPuntos />
     </section>
   );
 }

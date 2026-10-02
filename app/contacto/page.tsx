@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Footer, LeadForm, NavBar, SectionHeading } from "@/app/ui";
 import { CANALES, enlaceWhatsApp, unidadDesdeSlug } from "@/lib/contacto";
+import { ruta } from "@/lib/rutas";
 
 export const metadata: Metadata = {
   title: "Contacto — Altea",
@@ -37,7 +38,7 @@ const UNIDADES_ENLACE = [
 ];
 
 export default async function Contacto({ searchParams }: PageProps<"/contacto">) {
-  // El footer enlaza a /contacto?unidad=comercial: se respeta y se preselecciona.
+  // El footer enlaza a …/contacto?unidad=comercial: se respeta y se preselecciona.
   const { unidad } = await searchParams;
   const unidadPorDefecto = unidadDesdeSlug(unidad);
 
@@ -101,7 +102,7 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
                     className="border-t border-border-subtle pt-3"
                   >
                     <Link
-                      href={`/${unidadEnlace.slug}`}
+                      href={ruta(`/${unidadEnlace.slug}`)}
                       className="text-body font-semibold text-ink underline underline-offset-4 transition-colors hover:text-coral"
                     >
                       {unidadEnlace.nombre}

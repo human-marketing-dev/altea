@@ -73,7 +73,12 @@ export function CountUp({
     <span ref={ref} className={className}>
       {prefix && <span className="altea-count__prefijo">{prefix}</span>}
       {value.toLocaleString("es-MX")}
-      {suffix}
+      {/* El sufijo, como el prefijo, en su propio <span> para poder pintarlo
+          aparte: en el home la "M" y el "mil" van en acento y la cifra en tinta.
+          Siguen siendo spans EN LÍNEA dentro del mismo texto, así que el nombre
+          accesible del conjunto es la cifra entera —"+44M"— y no se lee
+          entrecortada. */}
+      {suffix && <span className="altea-count__sufijo">{suffix}</span>}
     </span>
   );
 }

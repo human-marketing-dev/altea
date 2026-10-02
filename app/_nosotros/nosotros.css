@@ -1,950 +1,1170 @@
-/* Página Nosotros. La diagonal es el motivo recurrente de la marca: aparece
-   aquí partiendo el banner y en la franja de proyectos de la portada. */
-
-/* ========================= 1. Hero por capas ====================== */
 /*
-  Seis capas superpuestas. El orden de apilado es parte del diseño:
-      1  retícula editorial
-      2  franja diagonal  ·  columna de la foto
-      3  isotipo calado
-      4  texto y pie
-  Las tres primeras son decorativas y van aria-hidden en el marcado.
+ * Página NOSOTROS.
+ *
+ * Rediseño completo: de la hoja anterior no sobrevive ni un selector. Lo que
+ * había —el hero por capas con el isotipo en marca de agua, la sección de Origen
+ * con su filigrana, las tres columnas de iconos, la galería en paralelogramo— se
+ * fue entero con sus componentes.
+ *
+ * Todo cuelga de los tokens del sistema. Los radios salen de --radius-lg y no de
+ * un clamp propio: el prototipo traía --radio y --radio-lg a medida, y el sistema
+ * ya tiene su escala.
+ *
+ * ──────────────────────────────────────────────────────────────────────────────
+ * SEIS OPACIDADES DEL PROTOTIPO NO CUMPLÍAN, Y ESTÁN CORREGIDAS
+ *
+ * Medido contra cada fondo:
+ *
+ *   sobre el gris de página   ink 39% → 2.32    ink 42% → 2.52    ink 48% → 2.94
+ *   sobre ink                 cream 42% → 3.28  cream 50% → 4.06
+ *
+ * El suelo para texto pequeño sobre el gris de página es ink al 63% (4.56); aquí
+ * va al 66% (4.98). Sobre ink el suelo es cream al 56% (4.76).
+ *
+ * Y la razón de que el prototipo se equivocara en una dirección y no en la otra
+ * está en el enunciado del propio problema: EL OJO NO PESA IGUAL UN TEXTO CLARO
+ * SOBRE OSCURO QUE UNO OSCURO SOBRE CLARO. Sobre ink, cream al 37% se lee; el
+ * mismo 37% de ink sobre el gris da 2.21 y no.
+ */
 
-  El sesgo de la columna de foto lo pinta Banner.tsx: sale de su alto real, que
-  depende del alto de la sección, así que no se puede escribir aquí.
-*/
+/* ═══ 1 · hero: la nube de puntos ═════════════════════════════════════════ */
+
 .nos-hero {
   position: relative;
-  isolation: isolate;
+  min-height: 100svh;
   overflow: hidden;
-  min-height: 78svh;
-  background: var(--surface-page-dark);
   display: grid;
   grid-template-rows: 1fr auto;
-  padding: var(--space-9) var(--container-pad) var(--space-7);
+  background: var(--surface-page);
 }
 
-/* --- 1 · Retícula editorial --- */
-.nos-hero__grid {
+.nos-hero__lienzo {
   position: absolute;
   inset: 0;
   z-index: 1;
-  pointer-events: none;
-  padding: 0 var(--container-pad);
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-}
-.nos-hero__grid i {
-  border-left: 1px solid color-mix(in srgb, var(--altea-cream) 7%, transparent);
-}
-.nos-hero__grid i:last-child {
-  border-right: 1px solid color-mix(in srgb, var(--altea-cream) 7%, transparent);
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* --- 4 · Franja diagonal --- */
-.nos-hero__franja {
-  position: absolute;
-  z-index: 2;
-  left: -12%;
-  right: -12%;
-  top: clamp(140px, 28vh, 320px);
-  height: clamp(130px, 21vh, 240px);
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--altea-coral) 16%, transparent),
-    color-mix(in srgb, var(--altea-coral) 0%, transparent)
-  );
-  transform: skewY(calc(var(--angulo) * -0.34deg));
-}
-
-/* --- 2 · La foto, en columna diagonal --- */
-.nos-hero__col-foto {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: clamp(280px, 44vw, 720px);
-  overflow: hidden;
-  clip-path: polygon(var(--d, 0px) 0, 100% 0, 100% 100%, 0 100%);
-}
-/* El sobrante a los cuatro lados es el recorrido del parallax. */
-.nos-hero__foto {
-  position: absolute;
-  inset: -8% -4%;
-}
-.nos-hero__foto img { object-fit: cover; }
 /*
-  Degradado horizontal: oscurece el lado del texto y deja respirar el de la foto.
-  Los cuatro tramos salen de ink; el repunte del final evita que el borde derecho
-  se quede tan claro que el isotipo y la retícula dejen de leerse encima.
-*/
-.nos-hero__velo {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--altea-ink) 92%, transparent) 0%,
-    color-mix(in srgb, var(--altea-ink) 34%, transparent) 34%,
-    color-mix(in srgb, var(--altea-ink) 5%, transparent) 62%,
-    color-mix(in srgb, var(--altea-ink) 40%, transparent) 100%
-  );
-}
-
-/* --- 3 · El isotipo, calado y fuera del cuadro --- */
-/*
-  Los valores negativos son deliberados: se sale por el borde para leerse como
-  capa de fondo y no como un logotipo colocado ahí.
-*/
-.nos-hero__iso {
-  position: absolute;
-  z-index: 3;
-  pointer-events: none;
-  left: clamp(-90px, -6vw, -40px);
-  bottom: clamp(-70px, -7vh, -30px);
-  width: clamp(260px, 34vw, 520px);
-  aspect-ratio: 1;
-  color: color-mix(in srgb, var(--altea-coral) 34%, transparent);
-  opacity: 0.5;
-}
-
-/* --- 5 · El texto --- */
-.nos-hero__contenido {
+ * El ancho del bloque de texto va en vw, NO en ch.
+ *
+ * Con la forma ocupando la derecha del lienzo, lo que manda es dónde empieza
+ * ella: un límite en ch depende del cuerpo y se desacopla de la figura en cuanto
+ * el clamp cambia de tramo. El 54vw coincide con el hueco que la nube deja libre.
+ */
+.nos-hero__txt {
   position: relative;
-  z-index: 4;
+  z-index: 3;
   align-self: center;
-  max-width: min(62ch, 58vw);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
-.nos-hero__eyebrow {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* Cream: el acento lo lleva la marca. */
-  color: var(--altea-cream);
-}
-/* Coral normal: sobre ink da 4.87. El sesgo, de --angulo. */
-.nos-hero__marca {
-  flex: none;
-  width: 8px;
-  height: 14px;
-  background: var(--accent-on-ink);
-  transform: skewX(calc(var(--angulo) * -1deg));
-}
-/* La línea es lo que convierte la ceja en un elemento editorial en vez de una
-   etiqueta suelta. */
-.nos-hero__regla {
-  flex: 1 1 auto;
-  max-width: 120px;
-  height: 1px;
-  background: color-mix(in srgb, var(--altea-cream) 26%, transparent);
+  padding: clamp(100px, 16vh, 190px) clamp(16px, 3vw, 40px) clamp(20px, 3vh, 44px)
+    var(--container-pad);
+  width: min(100%, 54vw);
 }
 
+/*
+ * El cuerpo del titular sale del ancho de SU COLUMNA (4.6vw), no del de la
+ * ventana. Con un 6.4vw —que es lo que pediría un titular a sangre— sobre una
+ * columna del 54 % el texto desbordaba: la columna crece la mitad de rápido que
+ * la ventana y el cuerpo iba al doble de velocidad que su caja.
+ */
 .nos-hero__titulo {
-  margin: 0;
-  font-family: var(--font-display);
-  /*
-    --text-display-2, el token del <h1> de página. Es el que usa el hero de
-    /comercial y el que esta misma sección tenía antes de rediseñarse.
-
-    El clamp propio que traía el encargo —2.2rem / 6.2vw / 5.4rem— lo dejaba en
-    86.4px a 1440 contra los 51.8 de comercial: 1.67 veces más grande, y casi a la
-    altura del titular de la intro del home, que es una escena a pantalla
-    completa y juega en otra categoría.
-  */
-  font-size: var(--text-display-2);
+  margin: 0 0 clamp(18px, 3vh, 32px);
   font-weight: var(--weight-bold);
-  line-height: 0.98;
-  letter-spacing: -0.042em;
-  color: var(--altea-cream);
+  font-size: clamp(2rem, 4.6vw, 4.4rem);
+  line-height: 0.96;
+  letter-spacing: -0.048em;
 }
-/* Cada línea es su propia máscara: el <span> de dentro sube desde abajo y el de
-   fuera lo recorta. */
+/* Cada línea en su caja recortada: el hijo sube desde fuera y el recorte es lo
+   que hace que aparezca desde debajo en vez de aparecer y ya. */
 .nos-hero__linea {
   display: block;
   overflow: hidden;
 }
-.nos-hero__linea > span { display: block; }
-/* La última, calada. */
-.nos-hero__linea--hueca > span {
-  color: transparent;
-  -webkit-text-stroke: 1.6px var(--altea-cream);
+.nos-hero__linea > span {
+  display: block;
+  will-change: transform;
+}
+/* coral-dark: 3.99 sobre el gris de página. El coral vivo da 2.9998. */
+.nos-hero__acento {
+  color: var(--text-accent);
 }
 
 .nos-hero__bajada {
   margin: 0;
-  max-width: 48ch;
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  /* 6.61 sobre ink. */
-  color: var(--text-on-dark-secondary);
+  max-width: 46ch;
+  line-height: 1.7;
+  font-size: clamp(0.96rem, 1.12vw, 1.1rem);
+  /* 6.05 sobre el gris de página. */
+  color: color-mix(in srgb, var(--altea-ink) 72%, transparent);
 }
 
-/* --- 6 · El pie --- */
 .nos-hero__pie {
   position: relative;
   z-index: 4;
   display: flex;
-  justify-content: flex-end;
-}
-.nos-hero__scroll {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  padding: 0 var(--container-pad) clamp(20px, 3.4vh, 42px);
   font-size: var(--text-eyebrow);
-  font-weight: 600;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--altea-cream);
+  /* 4.98. El prototipo lo dejaba en una opacidad del 42 % sobre el elemento, que
+     daba 2.52: el color se escribe y no se hereda de un `opacity`, justamente
+     para poder medirlo. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
-.nos-hero__scroll-linea {
-  width: 54px;
+.nos-hero__raya {
+  display: block;
+  width: 48px;
   height: 1px;
-  background: var(--altea-cream);
+  background: currentColor;
   transform-origin: left;
-  animation: nos-hero-corre 2.2s var(--ease-standard) infinite;
+  animation: nos-corre 2.4s var(--ease-standard) infinite;
 }
-@keyframes nos-hero-corre {
+@keyframes nos-corre {
   0%,
-  100% { transform: scaleX(0.3); }
-  50% { transform: scaleX(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nos-hero__scroll-linea { animation: none; }
-}
-
-/*
-  --- Tablet y portátil: el texto no puede llegar hasta la foto ---
-
-  La columna de foto es `absolute; right: 0`, así que NO respeta el canal de la
-  sección: crece con 44vw mientras el texto crece con 58vw, y entre los dos se
-  comen más del ancho disponible. Medido, el texto entraba en la columna de foto
-  de 901 a ~1400px: 63px de solape a 901, 77 a 1100, 71 a 1280.
-
-  Con 46vw queda un hueco real entre los dos en toda la banda. El corte de
-  arriba son 1500 y no 1400: con el 58vw de base el tope de 62ch no empieza a
-  mandar hasta los 1420, así que entre 1401 y 1419 volvía a solaparse 10px.
-*/
-@media (min-width: 901px) and (max-width: 1500px) {
-  .nos-hero__contenido { max-width: min(62ch, 46vw); }
-}
-
-/* --- Móvil --- */
-@media (max-width: 900px) {
-  .nos-hero { padding-block: var(--space-8) var(--space-6); }
-  /* La retícula se va: a este ancho seis carriles son rayas pegadas. */
-  .nos-hero__grid { display: none; }
-  /*
-    La foto pasa a ancho completo y sin recorte, de fondo del texto. Al 45% para
-    que el titular siga siendo lo primero que se lee.
-  */
-  .nos-hero__col-foto {
-    width: 100%;
-    clip-path: none;
-    opacity: 0.45;
+  100% {
+    transform: scaleX(0.3);
   }
-  .nos-hero__iso {
-    width: 80%;
-    opacity: 0.32;
+  50% {
+    transform: scaleX(1);
   }
-  /* Sin tope: el carril completo es lo que hay. */
-  .nos-hero__contenido { max-width: none; }
 }
 
-/* ========================= 2. El origen ========================== */
-/*
-  Imagen a la izquierda, texto a la derecha. Vuelta a la composición simple: la
-  versión tipográfica se descartó y su CSS se fue con ella, pero el componente
-  compartido <SeccionRelato> sigue vivo porque lo usa /comercial.
-*/
+/* ═══ 2 · origen ══════════════════════════════════════════════════════════ */
+
 .nos-origen {
-  background: var(--surface-page);
-  padding: var(--space-9) var(--container-pad);
+  padding: clamp(80px, 15vh, 200px) var(--container-pad) clamp(60px, 11vh, 140px);
+}
+.nos-origen__rotulo {
+  margin: 0 0 clamp(18px, 3vh, 32px);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  /* 4.98, contra el 48 % del prototipo que daba 2.94. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.nos-origen__frase {
+  margin: 0 0 clamp(34px, 6vh, 72px);
+  max-width: 20ch;
+  font-size: clamp(1.9rem, 5.4vw, 4.4rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+}
+/* inline-block y no inline: la opacidad se anima por palabra y un inline partido
+   entre dos líneas no puede animarse como una sola unidad. */
+.nos-origen__palabra {
+  display: inline-block;
+}
+.nos-origen__palabra--acento {
+  color: var(--text-accent);
+}
+.nos-origen__regla {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0 0 clamp(28px, 5vh, 56px);
+}
+.nos-origen__cols {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: var(--space-8);
-  align-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(22px, 4vw, 72px);
+  max-width: 104ch;
 }
-.nos-origen__body { display: flex; flex-direction: column; gap: var(--space-4); }
-.nos-origen__title {
-  margin: 0 0 var(--space-2);
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  color: var(--altea-ink);
-}
-.nos-origen__body p {
+.nos-origen__cols p {
   margin: 0;
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
+  line-height: 1.74;
+  font-size: clamp(1rem, 1.15vw, 1.14rem);
+  /* 6.45. */
+  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
+}
+
+/* ═══ 3 · Grupo Firma ═════════════════════════════════════════════════════ */
+
+.nos-firma {
+  padding: clamp(66px, 12vh, 150px) var(--container-pad) clamp(56px, 10vh, 120px);
+}
+.nos-firma__cab {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 44%);
+  gap: clamp(24px, 5vw, 86px);
+  align-items: end;
+  margin-bottom: clamp(40px, 7vh, 86px);
+}
+.nos-firma__titulo {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+}
+.nos-firma__intro {
+  margin: 0;
+  line-height: 1.72;
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
   color: var(--text-secondary);
 }
 
-/* ===================== 5. Quiénes somos ========================== */
-/*
-  Lista de tres filas con imagen alta a la derecha, sobre ink.
-
-  La versión de tres columnas con el icono arriba se veía plana: un icono suelto
-  sobre un fondo liso no pesa nada. Aquí va dentro de una caja en paralelogramo,
-  que es lo que le da presencia, y el título dispone de ancho.
-
-  El sesgo de esas cajas lo pinta QuienesSomos.tsx: sale de su alto real, que es
-  un clamp en vw, así que no se puede escribir aquí.
-*/
-.nos-quienes {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: var(--surface-page-dark);
-  padding: var(--space-9) var(--container-pad);
+.nos-firma__raiz {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding-bottom: clamp(16px, 2.4vh, 26px);
 }
-
-/*
-  Franja diagonal coral muy tenue. Mismo recurso que la banda de giros de
-  /comercial —también con el sesgo de --angulo, aquí a 0.32— para que las dos
-  secciones se lean como familia.
-*/
-.nos-quienes::before {
-  content: "";
-  position: absolute;
-  inset: -20% -10%;
-  z-index: 0;
-  pointer-events: none;
-  transform: skewY(calc(var(--angulo) * -0.32deg));
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--altea-coral) 11%, transparent) 0%,
-    transparent 100%
-  );
-}
-.nos-quienes > * { position: relative; z-index: 1; }
-
-/* --- Cabecera --- */
-.nos-quienes__cabecera {
+.nos-firma__gfg {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
   gap: var(--space-3);
-}
-.nos-quienes__eyebrow {
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
+}
+/*
+ * La raíz del grupo va EN TEXTO a propósito, aunque su logotipo exista.
+ *
+ * logo-grupo-firmas-globales.webp es el único archivo en color de la carpeta:
+ * turquesa #60E0D0 sobre verde oscuro #103030. Al grisarlo, el turquesa cae en un
+ * gris 196 que sobre el fondo de página da 1.60 — por debajo del 3:1 de un
+ * gráfico a CUALQUIER opacidad, porque el problema no es la opacidad sino que el
+ * color de partida es claro. Y a todo color rompe la regla de la sección.
+ *
+ * Así que se queda como sigla compuesta. Si Altea entrega una versión monocroma,
+ * entra como los demás.
+ */
+.nos-firma__gfg b {
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.1em;
+}
+.nos-firma__gfg span,
+.nos-firma__aparte {
   font-size: var(--text-eyebrow);
-  font-weight: 600;
   letter-spacing: var(--tracking-wide);
+  /* 4.98, contra el 39 % del prototipo que daba 2.32. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.nos-firma__gfg span {
   text-transform: uppercase;
-  /* Cream: el acento de la cabecera lo lleva la marca de al lado. */
-  color: var(--altea-cream);
 }
-/* Coral normal: sobre ink da 4.87. El sesgo, de --angulo. */
-.nos-quienes__marca {
-  flex: none;
-  width: 8px;
-  height: 14px;
-  background: var(--accent-on-ink);
-  transform: skewX(calc(var(--angulo) * -1deg));
-}
-.nos-quienes__titulo {
+.nos-firma__aparte {
   margin: 0;
-  max-width: 34ch;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  text-align: right;
+  line-height: 1.5;
+  letter-spacing: normal;
 }
-
-/* --- El cuerpo: lista + imagen --- */
-.nos-quienes__cuerpo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 28%;
-  gap: clamp(24px, 4vw, 64px);
+/*
+ * Goal Capital. Gris por opacidad como los otros ajenos, y A TAMAÑO DE SECTOR.
+ *
+ * No es una sub-marca: en el organigrama real cuelga directo de GFG, igual que
+ * los seis, así que lleva el mismo tamaño que ellos y no el de segundo nivel.
+ * Pasa de 16 px a 31.8 a 1440 —casi el doble—, que es lo que mediría un logotipo
+ * de su proporción (4.48:1) dentro de una caja de sector.
+ *
+ * Aquí no hay caja dibujada —el logotipo va en línea en el párrafo de la raíz—,
+ * así que el tamaño se reconstruye en vw. Y se reconstruye del ANCHO de la caja y
+ * no de su alto: con 4.48:1, Goal Capital topa con el `max-width: 94%` antes de
+ * llegar al alto común, igual que Multimedios y Altea. Por eso tampoco lleva
+ * --factor: cuando manda el ancho, el factor no entra. 0.94 x 0.121667 / 4.479 =
+ * 0.02553 del ancho de ventana.
+ */
+.nos-firma__logo-aparte {
+  display: block;
   /*
-    `stretch` es lo que hace que la imagen tome exactamente el alto de la lista,
-    sin importar cuánto texto tenga. Por eso la columna de foto NO lleva alto
-    fijo ni aspect-ratio en escritorio.
-  */
-  align-items: stretch;
+   * Sale del ANCHO de la caja y no de su alto: con 4.48:1, Goal Capital topa con
+   * el `max-width: 94%` antes de llegar al alto común, igual que Multimedios y
+   * Altea. Por eso tampoco lleva --factor: cuando manda el ancho, el factor no
+   * entra. 0.94 x 2.5 / 4.479 = 0.5247 del alto de caja.
+   *
+   * El tope de 48 px es por el contexto, no por la geometría: a 3 columnas la
+   * caja es mucho más ancha y la fórmula pediría 51 px, que al lado del "GFG" de
+   * la cabecera se ve desproporcionado. Dentro de una caja de sector sí los
+   * mediría.
+   */
+  height: min(calc(var(--alto-caja, 70px) * 0.5247), 48px);
+  width: auto;
+  margin-left: auto;
+  filter: grayscale(1);
+  opacity: 0.55;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+.nos-firma__raiz:hover .nos-firma__logo-aparte {
+  opacity: 0.72;
 }
 
-.nos-quienes__lista {
+/*
+ * Las seis columnas. La separación es una LÍNEA FINA y no un hueco: con hueco se
+ * leen como seis tarjetas y el conjunto deja de ser un organigrama.
+ */
+/*
+ * --ALTO-CAJA ES EL ALTO REAL DE .nos-firma__marca, RECONSTRUIDO EN vw.
+ *
+ * La caja saca su alto de `aspect-ratio: 5/2` sobre un `width: 100%`, y eso no se
+ * puede leer desde otra regla: los sub-logotipos viven fuera de la caja y
+ * necesitan el número para medirse contra ella. Reconstruido: con --container-pad
+ * en 5vw, el hueco en 1vw y el relleno de columna en 1vw, la caja mide 0.121667
+ * del ancho de ventana a 6 columnas, y su alto son dos quintos de eso.
+ *
+ * VA POR BREAKPOINT porque depende de cuántas columnas haya: a 3 columnas la caja
+ * es casi del doble de ancha, y un solo coeficiente dejaría las sub-marcas en el
+ * 35 % de su sector en vez del 65 %. Mismo error que tenía el muro de marcas de
+ * /comercial, y la misma corrección.
+ *
+ * EL max() ES POR --container-pad, que deja de crecer en 80 px a partir de 1600.
+ * Debajo de ahí el relleno es 5vw y la caja escala limpia con la ventana; encima,
+ * el relleno se queda quieto y la columna crece más rápido, así que el
+ * coeficiente cambia: 6.667vw menos 28.8 px. El max() toma el que manda en cada
+ * zona y los dos se cruzan exactamente en 1600. Sin él, el error a 2560 es del
+ * 12 % y las sub-marcas se quedan cortas.
+ *
+ * Vive en la sección y no en la rejilla porque Goal Capital —que va en la
+ * cabecera, fuera de las columnas— también se mide con él.
+ */
+.nos-firma {
+  --alto-caja: clamp(42px, max(4.867vw, 6.667vw - 28.8px), 142px);
+}
+.nos-firma__cols {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(6px, 1vw, 16px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 20%, transparent);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.nos-quienes__fila {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(18px, 3vw, 46px);
-  padding: clamp(24px, 4.2vh, 46px) 0;
-  /* `currentColor` para que la línea siga al color del texto de la sección. */
-  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-  color: var(--altea-cream);
-}
-/* Sólo la última cierra por abajo: en las demás la línea de la siguiente hace de
-   borde inferior y duplicarla dejaría 2px donde debe haber 1. */
-.nos-quienes__fila:last-child {
-  border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-}
-
-/* --- El icono en paralelogramo --- */
-.nos-quienes__ico {
-  width: clamp(58px, 6.4vw, 84px);
-  aspect-ratio: 1;
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--altea-coral) 14%, transparent);
-  clip-path: polygon(var(--d, 0px) 0, 100% 0, calc(100% - var(--d, 0px)) 100%, 0 100%);
-  transition: background 0.45s ease;
-}
-.nos-quienes__ico svg {
-  width: 46%;
-  height: 46%;
-  /* Coral sobre ink: 4.87. Es gráfico y le sobra el 3:1. */
-  color: var(--altea-coral);
-}
-@media (hover: hover) {
-  .nos-quienes__fila:hover .nos-quienes__ico {
-    background: color-mix(in srgb, var(--altea-coral) 26%, transparent);
-  }
-}
-
-/* --- Título, línea y texto --- */
-.nos-quienes__txt {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-.nos-quienes__giro {
-  margin: 0;
-  max-width: 28ch;
-  font-family: var(--font-display);
-  font-size: clamp(1.1rem, 1.9vw, 1.5rem);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
-}
-.nos-quienes__linea {
-  width: 32px;
-  height: 2px;
-  background: var(--altea-coral);
-  transition: width 0.55s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-@media (hover: hover) {
-  .nos-quienes__fila:hover .nos-quienes__linea { width: 72px; }
-}
-.nos-quienes__texto {
-  margin: 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  /* 6.61 sobre ink: apagado y por encima del 4.5 de texto pequeño. */
-  color: var(--text-on-dark-secondary);
-}
-
-/* --- La columna de imagen --- */
-.nos-quienes__media {
+.nos-firma__col {
   position: relative;
-  overflow: hidden;
-}
-/* El sobrante arriba y abajo es el recorrido del parallax. */
-.nos-quienes__foto {
-  position: absolute;
-  inset: -6% 0;
-}
-.nos-quienes__media .nos-quienes__hueco {
-  position: absolute;
-  inset: 0;
-}
-.nos-quienes__media img { object-fit: cover; }
-/* Degradado suave al pie, para que la columna no acabe en un corte seco. */
-.nos-quienes__velo {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--altea-ink) 62%, transparent) 0%,
-    transparent 46%
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nos-quienes__ico,
-  .nos-quienes__linea { transition: none; }
-}
-
-/* --- Móvil --- */
-@media (max-width: 900px) {
-  .nos-quienes__cuerpo {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  /*
-    La imagen sube al principio y se acuesta: una columna estrecha y muy alta no
-    funciona en un teléfono. Aquí sí lleva proporción, porque ya no hay lista
-    de al lado que le dé el alto.
-  */
-  .nos-quienes__media {
-    order: -1;
-    aspect-ratio: 16 / 9;
-  }
-}
-
-/* Por debajo de 820 el icono y el texto siguen en dos columnas, con menos aire:
-   apilar el icono sobre el texto le quitaría el peso que la caja le da. */
-@media (max-width: 820px) {
-  .nos-quienes__fila {
-    gap: var(--space-4);
-    padding-block: var(--space-6);
-  }
-  .nos-quienes__ico { width: 52px; }
-}
-
-/* ==================== 4. Grupo Firma (marcador) =================== */
-/*
-  MARCADOR DE POSICIÓN. El borde discontinuo y el aviso de arriba están para que
-  no se confunda con una sección terminada: el día que llegue el contenido se
-  quitan esas dos cosas y lo demás ya está.
-*/
-.nos-firma {
-  background: var(--surface-page);
-  padding: var(--space-9) var(--container-pad);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-.nos-firma__aviso {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  border: 1px dashed var(--altea-ink-40);
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* ink al 70%: 5.15 sobre cream, texto pequeño. */
-  color: var(--text-secondary);
-}
-/* Coral-dark y no coral: sobre cream el normal da 2.48 y no llega ni al 3:1 de
-   un elemento gráfico. */
-.nos-firma__aviso-punto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--altea-coral-dark);
-}
-.nos-firma__rejilla {
+  padding: clamp(18px, 2.8vh, 30px) clamp(8px, 1vw, 16px) 0;
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: var(--space-8);
-  align-items: center;
-  /* Discontinuo: la señal de que esto es un hueco y no una composición. */
-  border: 1px dashed var(--border-subtle);
-  padding: var(--space-7);
+  gap: clamp(13px, 2vh, 20px);
+  align-content: start;
 }
-.nos-firma__body { display: flex; flex-direction: column; gap: var(--space-4); }
-.nos-firma__eyebrow {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-accent);
-}
-.nos-firma__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  color: var(--altea-ink);
-}
-.nos-firma__texto {
-  margin: 0;
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  color: var(--text-secondary);
-}
-/* Barras del largo aproximado de los párrafos que faltan: enseñan el espacio
-   que van a ocupar sin escribir texto falso. */
-.nos-firma__hueco {
-  height: calc(var(--text-body-lg) * 1.6 * 3);
-  background: repeating-linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--altea-ink) 9%, transparent) 0,
-    color-mix(in srgb, var(--altea-ink) 9%, transparent) calc(var(--text-body-lg) * 1.1),
-    transparent calc(var(--text-body-lg) * 1.1),
-    transparent calc(var(--text-body-lg) * 1.6)
-  );
-}
-.nos-firma__hueco--corto { width: 68%; height: calc(var(--text-body-lg) * 1.6 * 2); }
-
-/* ======================= 3. Nuestra Huella ======================= */
-.nos-huella {
-  background: var(--altea-ink);
-  padding: var(--space-9) var(--container-pad);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-8);
-  /* start, no center: centrado, cualquier cambio de alto en la columna del
-     mapa recorría el copy de la derecha. */
-  align-items: start;
-}
-
-.nos-huella__body { display: flex; flex-direction: column; gap: var(--space-5); }
-.nos-huella__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
-  color: var(--altea-cream);
-}
-.nos-huella__text {
-  margin: 0;
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  color: var(--text-on-dark-secondary);
-}
-.nos-huella__stats {
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-7);
-}
-.nos-huella__value {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 3.4vw, 3rem);
-  font-weight: var(--weight-bold);
-  line-height: 1;
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
-  font-variant-numeric: tabular-nums;
-}
-.nos-huella__label {
-  margin-top: var(--space-2);
-  font-size: var(--text-small);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--text-on-dark-secondary);
-}
-.nos-huella__desglose {
-  margin: 0; padding: var(--space-4) 0 0; list-style: none;
-  border-top: 1px solid var(--border-subtle-on-dark);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  font-size: var(--text-small);
-  color: var(--text-on-dark-secondary);
-}
-.nos-huella__desglose li { display: flex; justify-content: space-between; gap: var(--space-4); }
-.nos-huella__desglose-value { color: var(--altea-cream); font-variant-numeric: tabular-nums; }
-
-/* ================ 4. Introducción a "qué hacemos" ================ */
-.nos-intro {
-  position: relative;
-  isolation: isolate;
-  /* Sin `overflow: hidden` a propósito: convierte a la sección en contenedor
-     de scroll, y entonces `animation-timeline: view()` mide contra ella en vez
-     de contra la ventana — el progreso nunca avanza y la animación no ocurre.
-     El recorte ya lo hacen los clip-path de dentro. */
-  /* Igual que el hero: la foto queda quieta y la sección se desliza encima. */
-  clip-path: inset(0);
-  background: var(--altea-ink);
-  min-height: clamp(340px, 52vh, 520px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-9) var(--container-pad);
-}
-.nos-intro__media { position: fixed; inset: 0; z-index: -1; }
-.nos-intro__media .altea-media { height: 100%; }
-/* Scrim: legibilidad sobre fotografía, el único degradado que permite la marca. */
-.nos-intro__media::after {
+/* La línea va en el hueco entre columnas —de ahí el left negativo a la mitad del
+   gap— y se queda corta por abajo para no cerrar la celda como una caja. */
+.nos-firma__col + .nos-firma__col::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: #212222b3;
-}
-/* Sobre el velo oscuro de la sección, así que coral normal — 4.87. Antes esta
-   clase se aplicaba pero no existía en ningún sitio: el acento no pintaba. */
-.nos-intro__acento { color: var(--accent-on-ink); }
-
-.nos-intro__phrase {
-  margin: 0;
-  max-width: 26ch;
-  /* Texto corriente y no un flex con `gap`: el hueco entre palabras tiene que
-     ser un espacio de verdad para que la frase se copie bien. Ver el mismo
-     arreglo en .home-emblem__text. */
-  word-spacing: -0.03em;
-  text-align: center;
-  text-transform: uppercase;
-  font-family: var(--font-display);
-  /* Un escalón por encima de display-2: es un divisor de capítulo, tiene que
-     pesar más que un título de sección. */
-  font-size: clamp(2.5rem, 4.4vw, 4.5rem);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
-  letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  left: calc(clamp(6px, 1vw, 16px) / -2);
+  top: 0;
+  bottom: clamp(14px, 2vh, 22px);
+  width: 1px;
+  background: color-mix(in srgb, var(--altea-ink) 11%, transparent);
 }
 
-/* ==================== Responsabilidad social ===================== */
-/*
-  El copy en dos columnas arriba y la galería de seis a lo ancho debajo, no
-  lado a lado: a media sección las seis fotos quedaban en baldosas de 300px y
-  con la proporción nativa no se veía nada.
-
-  ⚠ La carpeta de las fotos está escrita `responsabildiad-social`, con la i y la
-  a cambiadas. Está así en disco y en las seis rutas de content.ts, así que hoy
-  funciona; si algún día se renombra hay que tocar los dos sitios a la vez.
-*/
-.nos-rs {
-  background: var(--altea-ink);
-  padding: var(--space-9) var(--container-pad);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-}
-
-/* --- El copy, 38 / 62 --- */
-.nos-rs__copy {
-  display: grid;
-  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
-  /* Arriba, no centradas: el encabezado es corto y los párrafos largos. */
-  align-items: start;
-  gap: var(--space-8);
-}
-.nos-rs__encabezado {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.nos-rs__eyebrow {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-family: var(--font-body);
+.nos-firma__cat {
   font-size: var(--text-eyebrow);
-  font-weight: 600;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  /*
-    Cream, no coral. Sobre ink el coral cumpliría de sobra —4.87—, pero el único
-    acento de color de la sección tiene que ser la marca de al lado: si el texto
-    también va en coral, la marca deja de acentuar nada.
-  */
-  color: var(--altea-cream);
+  line-height: 1.3;
+  /* 4.98. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
-/* El acento. Sesgo de --angulo, la misma geometría que el badge del hero de
-   comercial y los paneles de proyectos: nunca escrito a mano. */
-.nos-rs__marca {
-  flex: none;
-  width: 8px;
-  height: 14px;
+
+/* Proporción fija: con los logotipos reales dentro, la fila sigue alineada. */
+.nos-firma__marca {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 5 / 2;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--text-small);
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+  transition:
+    border-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard);
+}
+.nos-firma__cols:hover .nos-firma__col:not([data-nuestra]) .nos-firma__marca {
+  border-color: color-mix(in srgb, var(--altea-ink) 24%, transparent);
+}
+
+/*
+ * EL FACTOR SE APLICA AL LOGOTIPO, NUNCA A LA CAJA.
+ *
+ * La caja —.nos-firma__marca, arriba— es idéntica para los seis y no lleva ni
+ * una propiedad que dependa del logotipo: `width: 100%` sobre seis columnas
+ * iguales y `aspect-ratio: 5/2`. Lo único que cambia de un sector a otro es
+ * cuánto ocupa el logotipo dentro.
+ *
+ * Y se expresa con TOPES y no con un alto fijado, que es lo que lo hace
+ * imposible de confundir: `max-height` y `max-width` acotan al logotipo contra su
+ * caja y `contain` conserva la proporción del archivo. Con `height: 46%` —como
+ * estaba— el resultado era el mismo, pero un alto fijado sobre un elemento
+ * reemplazado invita a pensar que la caja se mueve con él. No se mueve.
+ *
+ * --objetivo es el ALTO COMÚN: la fracción del alto de caja a la que aspira todo
+ * logotipo antes de su corrección. Hace falta porque con `contain` a secas un
+ * logotipo de 7:1 como Multimedios se queda al 35 % de la caja mientras uno de
+ * 1.5:1 como Delta la llena, y la fila se lee desigual.
+ *
+ * SUBIÓ DE 0.46 A 0.60, y es lo que destrabó el tamaño de las sub-marcas. Con
+ * 0.46 los sectores ocupaban entre el 33 y el 46 % de su caja —mucho aire
+ * muerto—, y para que una sub-marca se leyera tenía que acercarse al 80 % del
+ * alto de su sector, con lo que dejaba de parecer un segundo nivel. Con 0.60 el
+ * sector llena entre el 33 y el 50 % y la sub-marca cabe holgada en su 65 %.
+ *
+ * Los cuatro logotipos anchos NO SE MUEVEN con el cambio: Multimedios (7.07:1),
+ * Altea (5.04:1) y Goal Capital (4.48:1) ya topaban con el `max-width: 94%` antes
+ * de llegar al alto común, así que su tamaño lo decide el ancho de la caja. Sólo
+ * se mueven los compactos, que eran justo los que sobraba aire. Medido, el
+ * abanico de tinta MEJORA: de 2.52x a 2.18x.
+ *
+ * Subirlo al 100 % sería demasiado: Bornos, Foodplay y Delta se duplicarían y
+ * pasarían a dominar a Multimedios, que no puede crecer.
+ *
+ * --factor es la corrección óptica por proporción, con su excepción por archivo.
+ * Ver `factorOptico` y `AJUSTES` en GrupoFirma.tsx, con las tablas.
+ */
+.nos-firma__logo {
+  --objetivo: 0.6;
+  max-height: calc(100% * var(--objetivo) * var(--factor, 1));
+  max-width: 94%;
+  object-fit: contain;
+}
+
+/*
+ * LAS SUB-MARCAS QUE SÍ SON MARCAS, AL 65 % DEL ALTO COMÚN DEL SECTOR.
+ *
+ * El 0.6 es --objetivo, el mismo alto común al que aspira un logotipo de sector,
+ * y el 0.65 es la proporción que pedía el organigrama: por encima del 50 % que
+ * tenían —se leían como notas al pie— y claramente por debajo del sector, que es
+ * lo que las mantiene en el segundo nivel. Escrito como el producto de los dos y
+ * no como el 0.39 resultante, para que al mover el alto común se muevan con él.
+ *
+ * Llevan la MISMA corrección óptica que los de sector, así que KFC (1.06:1) y Tim
+ * Hortons (3.74:1) acaban pareciendo del mismo tamaño aunque uno sea cuadrado y
+ * el otro un wordmark.
+ *
+ * ⚠ EL 65 % ES SOBRE EL ALTO COMÚN, NO SOBRE LA TINTA. Medido tinta contra tinta
+ * —descontando el aire interno de cada archivo— los porcentajes salen muy
+ * distintos y engañan: Firehouse llega al 116 % de Foodplay sin ser más grande,
+ * sólo porque el archivo de Foodplay trae un 37 % de aire vertical y el de
+ * Firehouse un 8 %. La referencia buena es el alto común, que es igual para todos.
+ */
+.nos-firma__sublogo {
+  --alto-sub: calc(var(--alto-caja, 70px) * 0.6 * 0.65);
+  display: block;
+  height: calc(var(--alto-sub) * var(--factor, 1));
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/*
+ * TODOS EN GRIS SALVO ALTEA.
+ *
+ * El gris sale de la OPACIDAD, no del grayscale: los doce archivos del grupo son
+ * negro puro sobre transparente —comprobado píxel a píxel— y grayscale sobre
+ * negro no hace nada. Se deja puesto igual, como seguro para un archivo futuro en
+ * color; lo que no cubre es un color CLARO, que al grisarse puede quedar por
+ * debajo del umbral — ver la nota de .nos-firma__gfg.
+ *
+ * Negro al 55 % sobre el gris de página da rgb(110,110,109) y 4.68 de contraste,
+ * por encima del 3:1 que pide un gráfico y un punto más claro que el texto de la
+ * sección (ink 66 %, 7.05): los logotipos ajenos ceden el paso al texto.
+ */
+.nos-firma__col:not([data-nuestra]) .nos-firma__logo,
+.nos-firma__sublogo {
+  filter: grayscale(1);
+  opacity: 0.55;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+/* Al pasar el cursor por la sección suben a 0.72, que da 8.79: también cumple.
+   Las sub-marcas van con el mismo valor que su sector, no con uno propio. */
+.nos-firma__cols:hover .nos-firma__col:not([data-nuestra]) .nos-firma__logo,
+.nos-firma__cols:hover .nos-firma__sublogo {
+  opacity: 0.72;
+}
+
+.nos-firma__subs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+}
+/*
+ * La fila de cada sub-elemento. `justify-items: start` para que un logotipo con
+ * `width: auto` no se estire a la columna: la rejilla, por defecto, estira a sus
+ * hijos a lo ancho de la celda, y eso le ganaría al `auto`.
+ *
+ * El `min-height` iguala la altura de una fila de texto con la de una de
+ * logotipo, que es lo que evita que las columnas con sub-logotipo y las de
+ * sub-texto queden descuadradas entre sí.
+ */
+.nos-firma__subs li {
+  display: grid;
+  gap: 3px;
+  line-height: 1.3;
+  justify-items: start;
+  align-content: center;
+  min-height: clamp(16px, 1.5vw, 22px);
+}
+.nos-firma__subs b {
+  font-size: var(--text-eyebrow);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.02em;
+  /* 6.45. */
+  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
+}
+.nos-firma__subs em {
+  font-style: normal;
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* 4.98. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+
+/*
+ * ALTEA NO CAMBIA DE SITIO, CAMBIA DE MATERIAL.
+ *
+ * Fondo propio, regla coral arriba y la caja del logotipo rellena en ink con el
+ * texto en cream (12.06). Se distingue sin salirse de la fila — y, lo que
+ * importa, SIGUE distinguiéndose el día que lleguen los logotipos reales y los
+ * otros cinco sean grises. Un simple cambio de color del nombre habría dejado de
+ * funcionar justo entonces.
+ */
+.nos-firma__col[data-nuestra] {
+  background: color-mix(in srgb, var(--altea-ink) 5%, transparent);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding-bottom: clamp(18px, 2.6vh, 28px);
+}
+.nos-firma__col[data-nuestra]::after {
+  content: "";
+  position: absolute;
+  /* -1px: monta la regla sobre el borde superior de la fila en vez de dejarla
+     por dentro, así que no quedan dos líneas de 1px pegadas. */
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--altea-coral);
+}
+/* coral sobre el gris de página da 2.9998 y no llega al 3.0 de un gráfico; esto
+   es texto de 13px, así que va a --text-accent (3.99). */
+.nos-firma__col[data-nuestra] .nos-firma__cat {
+  color: var(--text-accent);
+}
+.nos-firma__col[data-nuestra] .nos-firma__marca {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+  border-color: var(--altea-ink);
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.16em;
+}
+.nos-firma__col[data-nuestra] .nos-firma__subs b {
+  color: var(--text-primary);
+}
+
+.nos-firma__pie {
+  margin: clamp(40px, 7vh, 86px) 0 0;
+  padding-top: clamp(18px, 2.6vh, 30px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* 4.98, contra el 39 % del prototipo. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+
+/* ═══ 4 · nuestra huella ══════════════════════════════════════════════════ */
+
+.nos-huella {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.nos-huella__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+  gap: clamp(24px, 5vw, 90px);
+  align-items: start;
+  margin-bottom: clamp(46px, 8vh, 100px);
+}
+.nos-huella__titulo {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  max-width: 11ch;
+}
+.nos-huella__body {
+  margin: 0;
+  line-height: 1.72;
+  font-size: clamp(1rem, 1.15vw, 1.14rem);
+  max-width: 52ch;
+  /* 6.91 sobre ink. */
+  color: color-mix(in srgb, var(--altea-cream) 72%, transparent);
+}
+
+/* Las dos cifras, escalonadas como en el home: el sangrado sale del índice. */
+.nos-huella__datos {
+  display: grid;
+  gap: clamp(26px, 4.4vh, 54px);
+  margin: 0 0 clamp(40px, 7vh, 84px);
+}
+.nos-hd {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 44px);
+  align-items: baseline;
+  padding-top: clamp(14px, 2vh, 24px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 22%, transparent);
+  margin-left: calc(var(--i) * clamp(0px, 16vw, 260px));
+}
+.nos-hd__cifra {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-size: clamp(2.4rem, 6.6vw, 5.6rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.055em;
+  line-height: 0.86;
+  font-variant-numeric: tabular-nums;
+}
+/* Coral sobre ink: 4.87. Aquí sí es el coral vivo, que es el par documentado
+   para acento sobre superficie oscura. */
+.nos-hd__cifra .altea-count__prefijo,
+.nos-hd__cifra .altea-count__sufijo {
+  color: var(--accent-on-ink);
+}
+.nos-hd__etiqueta {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+  /* 4.76 sobre ink. */
+  color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
+}
+
+/* ── el reparto por territorio ── */
+
+.nos-reparto {
+  display: grid;
+  max-width: 80ch;
+  margin: 0;
+}
+.nos-rp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-5);
+  align-items: center;
+  padding: clamp(14px, 2.4vh, 24px) 0;
+  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 16%, transparent);
+}
+.nos-rp:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--altea-cream) 16%, transparent);
+}
+.nos-rp__t {
+  display: grid;
+  gap: 9px;
+}
+.nos-rp__t dt {
+  font-size: clamp(0.98rem, 1.3vw, 1.16rem);
+  font-weight: var(--weight-medium);
+}
+.nos-rp__barra {
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--altea-cream) 14%, transparent);
+}
+.nos-rp__barra > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
   background: var(--accent-on-ink);
-  transform: skewX(calc(var(--angulo) * -1deg));
+  transform-origin: left;
+}
+.nos-rp__v {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.2vw, 1.1rem);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  /* 5.49 sobre ink. */
+  color: color-mix(in srgb, var(--altea-cream) 62%, transparent);
+}
+
+/* ── el mapa ── */
+
+.nos-mapa {
+  display: grid;
+  /* 250px y no 280: con el mapa acotado, el panel se lleva demasiada fila. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 250px);
+  gap: clamp(22px, 4vw, 64px);
+  /* `center` y no `start`: con el mapa más corto, un panel alineado arriba queda
+     descolgado contra el hueco que deja debajo. */
+  align-items: center;
+  margin-top: clamp(40px, 7vh, 88px);
+}
+/*
+ * EL MAPA, ACOTADO Y CENTRADO. No es sólo estética.
+ *
+ * El radio de los puntos se escala con el ancho del lienzo, así que a todo el
+ * ancho —unos 958px en la columna a 1440— la retícula se abre hasta 9.6px de paso
+ * y la mancha deja de leerse como mancha: quedan 1 856 puntos sueltos y el
+ * contorno flotando alrededor. Acotado a 620 el paso baja a 6.2px y la densidad
+ * vuelve a significar algo.
+ *
+ * La contrapartida es que el extremo bajo del radio se queda por debajo de lo que
+ * una pantalla puede pintar; lo resuelve RADIO_MINIMO_PX en MapaPuntos, con la
+ * medida de por qué no se podía arreglar subiendo el suelo en unidades del mapa.
+ */
+.nos-mapa__rejilla {
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+/*
+ * El lienzo.
+ *
+ * El alto lo fija `aspect-ratio` desde el componente, con la proporción del
+ * viewBox del mapa generado: así la caja reserva su sitio desde el primer
+ * fotograma y no hay salto cuando el lienzo se dimensiona.
+ *
+ * Reemplazó a un <svg> con 1 856 <circle>. El cursor es un foco y TODOS los
+ * puntos reaccionan a cada movimiento: en SVG eso es recalcular estilo y
+ * repintar mil ochocientos nodos por cada `pointermove`. Aquí son 1 856 arcos,
+ * que es trabajo de pintura y nada más.
+ *
+ * `touch-action: pan-y` para que en táctil el gesto vertical siga desplazando la
+ * página: el lienzo escucha `pointermove` y sin esto el navegador podría dárselo
+ * a él en vez de al scroll.
+ */
+.nos-mapa__lienzo {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+}
+
+/*
+ * El panel. El dato vive AQUÍ y no en un globo flotante: un tooltip sólo existe
+ * con el puntero encima, no se alcanza con el teclado y en táctil aparece y se va
+ * con el mismo toque.
+ */
+.nos-mapa__panel {
+  position: sticky;
+  top: clamp(90px, 14vh, 140px);
+  padding: clamp(18px, 2.6vh, 28px);
+  border: 1px solid color-mix(in srgb, var(--altea-cream) 18%, transparent);
+  border-radius: var(--radius-lg);
+  min-height: clamp(140px, 20vh, 180px);
+  display: grid;
+  align-content: center;
+  gap: var(--space-3);
+}
+.nos-mapa__panel small {
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  /* 5.49, contra el 42 % del prototipo que daba 3.28. */
+  color: color-mix(in srgb, var(--altea-cream) 62%, transparent);
+}
+.nos-mapa__panel b {
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.1;
+}
+.nos-mapa__panel span {
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent-on-ink);
+}
+.nos-mapa__panel em {
+  font-style: normal;
+  font-size: var(--text-small);
+  /* 4.76, contra el 50 % del prototipo que daba 4.06. */
+  color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
+}
+
+/* ═══ 5 · pilares de identidad ════════════════════════════════════════════ */
+
+.nos-pilares {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.nos-pilares__titulo {
+  margin: 0 0 clamp(40px, 7vh, 86px);
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  max-width: 16ch;
+}
+.nos-pilares__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3.4vw, 62px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nos-pilar {
+  display: grid;
+  gap: clamp(16px, 2.6vh, 26px);
+  align-content: start;
+  padding-top: clamp(20px, 3vh, 32px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 20%, transparent);
+}
+.nos-pilar__icono {
+  display: block;
+  width: clamp(64px, 6.4vw, 92px);
+  /* Coral sobre ink: 4.87, de sobra para un gráfico. */
+  color: var(--accent-on-ink);
+}
+.nos-pilar__icono svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.nos-pilar__titulo {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 12ch;
+}
+.nos-pilar__texto {
+  margin: 0;
+  line-height: 1.7;
+  font-size: clamp(0.92rem, 1.05vw, 1.02rem);
+  /* 6.91 sobre ink. */
+  color: color-mix(in srgb, var(--altea-cream) 72%, transparent);
+}
+
+/* ═══ 6 · quiénes somos: el acordeón ══════════════════════════════════════ */
+
+.nos-quienes {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.nos-quienes__titulo {
+  margin: 0 0 clamp(34px, 6vh, 72px);
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  max-width: 20ch;
+}
+
+.nos-ac {
+  border-top: 1px solid var(--border-subtle);
+}
+.nos-quienes__acordeon .nos-ac:last-child {
+  border-bottom: 1px solid var(--border-subtle);
+}
+/* El <h3> envuelve al botón para que el acordeón sea una lista de encabezados en
+   el árbol del documento: así se puede navegar por títulos. No aporta estilo. */
+.nos-ac__fila {
+  margin: 0;
+  font: inherit;
+}
+.nos-ac__bt {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: clamp(16px, 3vw, 44px);
+  align-items: center;
+  text-align: left;
+  padding: clamp(20px, 3.4vh, 36px) 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.nos-ac__bt:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 4px;
+}
+.nos-ac__n {
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  /* 4.98, contra el 42 % del prototipo que daba 2.52. */
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+.nos-ac__t {
+  font-size: clamp(1.05rem, 2vw, 1.6rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.14;
+  letter-spacing: -0.03em;
+}
+/* El más que se convierte en menos: dos líneas cruzadas y la vertical rota. */
+.nos-ac__mas {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.nos-ac__mas::before,
+.nos-ac__mas::after {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background: var(--altea-ink);
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+.nos-ac__mas::after {
+  transform: rotate(90deg);
+}
+.nos-ac[data-on] .nos-ac__mas::after {
+  transform: rotate(0deg);
+}
+
+/*
+ * El cuerpo se abre con grid-template-rows de 0fr a 1fr.
+ *
+ * NO con max-height: con max-height hay que adivinar un valor más alto que el
+ * texto más largo, y se rompe en cuanto el copy cambia o envuelve a otro número
+ * de líneas. Con la rejilla, el alto es el que mide el contenido.
+ *
+ * El hijo único con overflow: hidden es obligatorio: la fila de 0fr no recorta
+ * por sí sola.
+ */
+.nos-ac__cuerpo {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.55s cubic-bezier(0.2, 0.7, 0.3, 1),
+    opacity 0.4s var(--ease-standard);
+}
+.nos-ac[data-on] .nos-ac__cuerpo {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.nos-ac__cuerpo > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.nos-ac__cuerpo p {
+  margin: 0 0 clamp(20px, 3.4vh, 34px);
+  /* Sangrado a la altura del número: el texto cuelga del título, no del borde. */
+  padding-left: clamp(28px, 6vw, 100px);
+  max-width: 64ch;
+  line-height: 1.72;
+  font-size: clamp(0.95rem, 1.1vw, 1.06rem);
+  /* 6.05. */
+  color: color-mix(in srgb, var(--altea-ink) 72%, transparent);
+}
+
+/* ═══ 7 · responsabilidad social ══════════════════════════════════════════ */
+
+.nos-rs {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.nos-rs__cab {
+  display: grid;
+  grid-template-columns: minmax(0, 38%) minmax(0, 62%);
+  gap: clamp(24px, 4vw, 80px);
+  align-items: start;
+  margin-bottom: clamp(34px, 6vh, 68px);
 }
 .nos-rs__titulo {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
   letter-spacing: var(--tracking-tight);
-  color: var(--altea-cream);
+  max-width: 13ch;
 }
-/*
-  El subtítulo: entre el título y el cuerpo, y en la columna del encabezado.
-
-  Cream entero y NO --text-on-dark-secondary: sobre ink aquél da 6.61 y pasaría,
-  pero entonces pesaría igual que los párrafos de al lado y dejaría de leerse
-  como bajada del título. Lo que lo separa de éste es el cuerpo y el peso, no el
-  color.
-*/
-.nos-rs__subtitulo {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  color: var(--altea-cream);
+/* coral-dark: 3.58 sobre el hundido. El coral vivo da 2.69 y no llega ni al 3.0
+   de texto grande, y esto son 17-22px. */
+.nos-rs__sub {
+  margin: 0 0 clamp(16px, 2.6vh, 26px);
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--text-accent);
 }
-
-.nos-rs__parrafos {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-.nos-rs__parrafos p {
-  margin: 0;
-  max-width: 68ch;
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-body);
-  color: var(--text-on-dark-secondary);
+.nos-rs__copy p {
+  margin: 0 0 1.15em;
+  line-height: 1.72;
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  max-width: 54ch;
+  /* 6.06 sobre el hundido. */
+  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
 }
 
-/* --- La galería --- */
-.nos-rs__galeria {
+.nos-rs__fotos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
   margin: 0;
   padding: 0;
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  /* La costura del sitio, la misma de los paneles de proyectos. */
-  gap: 5px;
 }
-.nos-rs__foto {
+.nos-fz {
   position: relative;
-  margin: 0;
-  /*
-    16/9, la proporción nativa de cinco de las seis fuentes (1980×1114). Antes
-    iban forzadas a 1/1, que tiraba el 44% de cada una — y en las fotos de grupo
-    se estaba comiendo gente por los lados. La sexta es 4:3 y aquí se recorta
-    algo, pero mucho menos que antes.
-  */
   aspect-ratio: 16 / 9;
   overflow: hidden;
+  border-radius: var(--radius-md);
+  margin: 0;
 }
-.nos-rs__foto .nos-rs__media {
-  position: absolute;
-  inset: 0;
+.nos-fz__img {
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-
+.nos-fz:hover .nos-fz__img {
+  transform: scale(1.05);
+}
 /*
-  El velo del pie. Del 92% abajo a transparente ARRIBA DEL TODO, no a media
-  altura: con el degradado acabando al 62% el alfa bajo el pie dependía mucho
-  del alto de la baldosa, y en las más chicas se quedaba corto. Llegando al
-  100% el alfa donde vive el texto queda casi constante —entre 0.75 y 0.85— en
-  todos los anchos, y el cream no baja de 4.74 contra el peor fondo posible.
-*/
-.nos-rs__velo {
+ * El velo. No es decorativo: es lo que garantiza el contraste del pie. Sobre una
+ * foto cualquiera el blanco no tiene contraste asegurado; al 86 % de #0E1114 en
+ * la zona del texto, el fondo efectivo es casi negro y el blanco pasa de 16:1.
+ */
+.nos-fz::after {
+  content: "";
   position: absolute;
   inset: 0;
-  pointer-events: none;
   opacity: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--altea-ink) 92%, transparent) 0%,
-    transparent 100%
-  );
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s var(--ease-standard);
+  background: linear-gradient(180deg, rgb(14 17 20 / 0) 40%, rgb(14 17 20 / 0.86) 100%);
 }
-.nos-rs__pie {
+.nos-fz figcaption {
   position: absolute;
-  inset: auto 0 0;
-  padding: var(--space-3);
-  font-family: var(--font-body);
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(11px, 1.4vw, 18px);
+  color: #fff;
   font-size: var(--text-small);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* Cream entero: es texto pequeño y necesita 4.5. */
-  color: var(--altea-cream);
+  line-height: 1.4;
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity 0.4s ease,
+    opacity 0.4s var(--ease-standard),
     transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-
 @media (hover: hover) {
-  .nos-rs__foto:hover .nos-rs__velo { opacity: 1; }
-  .nos-rs__foto:hover .nos-rs__pie {
+  .nos-fz:hover::after,
+  .nos-fz:focus-within::after {
     opacity: 1;
+  }
+  .nos-fz:hover figcaption,
+  .nos-fz:focus-within figcaption {
+    opacity: 1;
+    transform: none;
+  }
+}
+/*
+ * EN TÁCTIL, SIEMPRE VISIBLES, con su velo. Si el pie sólo existiera en el hover,
+ * en un teléfono no existiría — y seis fotos sin pie son seis fotos sin explicar.
+ */
+@media (hover: none) {
+  .nos-fz::after,
+  .nos-fz figcaption {
+    opacity: 1;
+  }
+  .nos-fz figcaption {
     transform: none;
   }
 }
 
-/*
-  EN TÁCTIL NO HAY HOVER: el pie va siempre visible, y el velo CON él. Si sólo
-  se encendiera el texto, el contraste no alcanzaría — es lo que nos pasó en la
-  galería de comercial, donde el pie sobre el velo de reposo caía a 3.80.
-*/
-@media (hover: none) {
-  .nos-rs__velo { opacity: 1; }
-  .nos-rs__pie {
-    opacity: 1;
-    transform: none;
+/* ═══ responsive ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 1000px) {
+  /* A 3 columnas la caja mide 0.273333 del ancho; su alto, 10.933vw. */
+  .nos-firma {
+    --alto-caja: clamp(42px, 10.933vw, 142px);
+  }
+  .nos-firma__cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: var(--space-7);
+  }
+  /* La línea sobra en la primera de cada fila: ahí no separa dos columnas. */
+  .nos-firma__col:nth-child(3n + 1)::before {
+    display: none;
   }
 }
+@media (max-width: 900px) {
+  .nos-hero__txt {
+    width: 100%;
+  }
+  /* Con el texto a todo el ancho, el cuerpo vuelve a medirse contra la ventana. */
+  .nos-hero__titulo {
+    font-size: clamp(2rem, 7.6vw, 3.6rem);
+  }
+  .nos-origen__cols,
+  .nos-huella__intro,
+  .nos-rs__cab,
+  .nos-firma__cab {
+    grid-template-columns: 1fr;
+  }
+  .nos-hd {
+    margin-left: 0;
+  }
+  .nos-mapa,
+  .nos-pilares__grid {
+    grid-template-columns: 1fr;
+  }
+  .nos-pilares__grid {
+    gap: clamp(26px, 5vh, 48px);
+  }
+  .nos-mapa__panel {
+    position: static;
+  }
+  .nos-rs__fotos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .nos-firma__raiz {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nos-firma__aparte {
+    text-align: left;
+  }
+  /* A 2 columnas, 0.415 del ancho; su alto, 16.6vw. */
+  .nos-firma {
+    --alto-caja: clamp(42px, 16.6vw, 142px);
+  }
+  .nos-firma__cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .nos-firma__col::before {
+    display: none;
+  }
+  .nos-rs__fotos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ═══ movimiento reducido ═════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .nos-rs__pie {
-    /* Aparece por opacidad, sin desplazamiento. */
-    transform: none;
-    transition: opacity 0.4s ease;
+  /* La nube va directa a su sitio y no alterna: lo hace el componente. Aquí sólo
+     lo que vive en CSS. */
+  .nos-hero__raya {
+    animation: none;
+    transform: scaleX(1);
   }
-  .nos-rs__velo { transition: none; }
+  .nos-fz__img,
+  .nos-ac__cuerpo,
+  .nos-ac__mas::before,
+  .nos-ac__mas::after {
+    transition: none;
+  }
+  /* El mapa no tiene transiciones en CSS: su entrada es un valor que el
+     componente pone a 1 y pinta. Ver la nota de MapaPuntos. */
 }
-
-/* ========================== Responsive ========================== */
-@media (max-width: 900px), (prefers-reduced-motion: reduce) {
-  .nos-intro { clip-path: none; }
-  .nos-intro__media { position: absolute; }
-}
-
-/* --- Tablet --- */
-@media (max-width: 1100px) {
-  .nos-origen { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-}
-
-/* --- Móvil --- */
-@media (max-width: 900px) {
-  .nos-origen,
-  .nos-firma__rejilla,
-  .nos-huella { grid-template-columns: minmax(0, 1fr); }
-  /* .nos-rs ya no es una rejilla de dos carriles: lo que se apila aquí es su
-     copy interior. */
-  .nos-rs__copy { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-  .nos-origen,
-  .nos-firma,
-  .nos-huella,
-  .nos-quienes,
-  .nos-rs,
-  .nos-intro { padding-block: var(--space-8); }
-  .nos-firma__rejilla { padding: var(--space-6); }
-  .nos-intro { min-height: clamp(260px, 40vh, 360px); }
-  .nos-huella__stats { gap: var(--space-6); }
-  .nos-rs__galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-/*
-  La galería baja a UNA columna por debajo de 700, no a dos.
-
-  Medido: a dos columnas en un teléfono de 390 la baldosa 16/9 queda en 172×97,
-  y "Convivencia con adultos mayores" a --text-small envuelve a dos líneas —66px
-  con su padding, el 68% del alto de la foto—. El velo no puede sostener eso: el
-  pie se quedaba en 1.87 de contraste. A una columna la baldosa es 350×197, el
-  pie cabe en una línea y ocupa el 23%.
-
-  De 701 a 900 vuelven las dos: ahí la baldosa ya es 313×176 y el pie entra en
-  una línea.
-*/
-@media (max-width: 700px) {
-  .nos-rs__galeria { grid-template-columns: minmax(0, 1fr); }
-}
-

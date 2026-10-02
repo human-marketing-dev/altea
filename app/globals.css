@@ -7,7 +7,9 @@
   /* Superficie de página de la marca. Se ve en el aire alrededor del hero y en
      el rebote del scroll; en blanco desentonaba con la barra y las secciones
      cream de arriba. */
-  --background: #E7DFD1;
+  /* Espejo de --surface-page en tokens.css: el <body> y las secciones tienen que
+     pintar el mismo fondo o se ve una costura al final del documento. */
+  --background: #F5F5F3;
   --foreground: #212222;
 }
 

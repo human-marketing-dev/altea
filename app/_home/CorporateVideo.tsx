@@ -1,9 +1,15 @@
 "use client";
 
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MediaSlot } from "@/app/ui";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { VIDEO } from "./content";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
 
 /**
  * Video corporativo. Mientras no haya URL se muestra el hueco etiquetado.
@@ -17,8 +23,42 @@ import { VIDEO } from "./content";
  * los activan y el `:focus-visible` es el mismo del resto.
  */
 export function CorporateVideo() {
+  const raiz = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const reducido = useMovimientoReducido();
+
+  /*
+   * Parallax suave: el clip se desplaza dentro de su caja mientras la sección
+   * cruza la pantalla. Es un 10% de recorrido sobre un 112% de alto, así que
+   * nunca asoma el fondo por arriba ni por abajo — ver .home-video__player.
+   *
+   * Va aparte del resto de efectos del componente porque no tiene nada que ver
+   * con la reproducción: si mañana se quita el parallax, los controles siguen.
+   */
+  useGSAP(
+    () => {
+      const nodo = raiz.current;
+      if (!nodo || reducido) return;
+      const clip = nodo.querySelector<HTMLElement>(".home-video__player");
+      if (!clip) return;
+      gsap.fromTo(
+        clip,
+        { yPercent: -5 },
+        {
+          yPercent: 5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: nodo,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    },
+    { scope: raiz, dependencies: [reducido] },
+  );
   const [sonando, setSonando] = useState(false);
   const [conSonido, setConSonido] = useState(false);
 
@@ -73,7 +113,7 @@ export function CorporateVideo() {
   }, []);
 
   return (
-    <section className="home-video">
+    <section className="home-video" ref={raiz}>
       <figure className="home-video__frame">
         {VIDEO.url ? (
           <>

@@ -1,3 +1,11 @@
+/*
+ * ⚠ SIN CONSUMIDORES. Era el hero de /comercial —tarjeta de foto con ceja y
+ * titular— y lo sustituyó el hero calado del rediseño. Las otras tres unidades
+ * (/industrial, /vivienda, /forestal) usan <Proximamente>, no esto.
+ *
+ * Se conserva porque es el hero que esas tres necesitarán el día que tengan
+ * contenido propio, y porque volver es una línea en su página.
+ */
 import { MediaSlot } from "./MediaSlot";
 
 export interface HeroUnidadFoto {

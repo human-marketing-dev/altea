@@ -83,7 +83,14 @@ export function HeroA() {
         return;
       }
 
-      /* Entrada, sin scroll: el titular sube desde su propia caja recortada. */
+      /*
+       * Entrada, sin scroll: el titular sube desde su propia caja recortada.
+       *
+       * Era la segunda de dos: había otra para `.js-entra`, que animaba la ceja
+       * con un desvanecido y 0.5 s de retardo. Se fue con ella —la ceja era su
+       * único objetivo— y con ella el escalonado entre las dos, que ya no tiene
+       * nada que escalonar.
+       */
       gsap.from(gsap.utils.toArray<HTMLElement>(".js-linea > span", nodo), {
         yPercent: 112,
         duration: 1.1,
@@ -91,15 +98,6 @@ export function HeroA() {
         stagger: 0.09,
         delay: 0.1,
       });
-      gsap.from(gsap.utils.toArray<HTMLElement>(".js-entra", nodo), {
-        opacity: 0,
-        y: 14,
-        duration: 0.8,
-        ease: "power2.out",
-        stagger: 0.09,
-        delay: 0.5,
-      });
-
       const est = estado.current;
       const linea = gsap.timeline({
         defaults: { ease: "none" },
@@ -160,10 +158,6 @@ export function HeroA() {
         {!reducido && <Escena3D estado={estado} reducido={reducido} />}
 
         <div className="hero-a__titular js-titular">
-          <p className="hero-a__ceja js-entra">
-            <i className="hero-a__marca" aria-hidden="true" />
-            {HERO_A.eyebrow}
-          </p>
           {/*
             El aria-label lleva la frase entera y las líneas van aria-hidden, como
             en el resto del sitio: partida en dos cajas recortadas, un lector de

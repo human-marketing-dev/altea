@@ -151,7 +151,6 @@ export const TITULO_HERO = "Creando proyectos que materializan sueños";
 export type TrozoTitular = { texto: string; atenuado?: boolean };
 
 export const HERO_A = {
-  eyebrow: "Desarrollo inmobiliario integral",
   /**
    * El titular partido en líneas y trozos.
    *

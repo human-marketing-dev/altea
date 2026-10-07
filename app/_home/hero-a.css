@@ -11,9 +11,6 @@
  *   · el velo del muro ACLARA. Sobre oscuro se hunden las fotos para separarlas
  *     del fondo; sobre claro hay que subirlas.
  *   · el tratamiento de las fotos sube el rango en vez de bajarlo. Ver .hero-a__foto.
- *   · la ceja NO puede ser ink al 62 %, que es el equivalente directo del cream al
- *     62 % que tenía: da 4.41 y son 13 px, o sea por debajo de 4.5. Va a
- *     --text-secondary (ink 70 %, 5.67).
  *   · el coral pasa a --text-accent. Coral normal sobre --surface-page da
  *     2.9998, que no llega al 3.0 de un objeto gráfico; coral-dark da 3.99.
  *
@@ -220,38 +217,6 @@
   pointer-events: none;
 }
 
-.hero-a__ceja {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: 0 0 clamp(12px, 2.2vh, 24px);
-  font-size: var(--text-eyebrow);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /*
-   * --text-secondary (ink 70 %) y no un ink al 62 %, que sería el equivalente
-   * directo del cream al 62 % que llevaba sobre oscuro: ése da 4.41 y esto son
-   * 13 px, o sea que necesita 4.5. El token da 5.67.
-   */
-  color: var(--text-secondary);
-}
-
-/*
- * La marca sesgada, el mismo recurso que la píldora y las bandas.
- *
- * --text-accent (coral-dark) y no el coral normal: sobre --surface-page el coral
- * da 2.9998 y no llega al 3.0 que pide un objeto gráfico —por dos diezmilésimas,
- * pero no llega—, y coral-dark da 3.99. Es el par documentado en tokens.css: el
- * coral normal es para rellenos con texto encima, no para el gráfico en sí.
- */
-.hero-a__marca {
-  flex: none;
-  width: 8px;
-  height: 13px;
-  background: var(--text-accent);
-  transform: skewX(calc(var(--angulo) * -1deg));
-}
 
 .hero-a__titulo {
   margin: 0;

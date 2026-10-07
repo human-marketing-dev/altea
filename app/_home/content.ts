@@ -167,29 +167,6 @@ export const HERO_A = {
   ] as TrozoTitular[][],
 };
 
-/**
- * Las hojas del muro que se pliega detrás de la A.
- *
- * Son los ocho centros comerciales, y las fichas de verdad —ubicación, formato,
- * afluencia, descripción— viven en app/_comercial/content.ts. Aquí solo
- * hacen falta el nombre y la foto: el muro es FONDO, va velado y desenfocado por
- * sus cuatro cantos, y nada de lo que lleva encima es legible del todo.
- *
- * Por eso `alt` va vacío en las ocho y las hojas son aria-hidden: es decoración,
- * y describir ocho fotos que nadie puede ver bien solo alarga el lector de
- * pantalla sin aportar nada. Lo que sí se anuncia es el titular.
- */
-export const MURO_HERO: { nombre: string; foto: string }[] = [
-  { nombre: "Paseo La Fe", foto: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp" },
-  { nombre: "Paseo Tec", foto: "/images/comercial/centros-comerciales/paso-tec-altea.webp" },
-  { nombre: "Paseo Durango", foto: "/images/comercial/centros-comerciales/paseo-durango-altea.webp" },
-  { nombre: "Punto Huinalá", foto: "/images/comercial/centros-comerciales/punto-huinala-altea.webp" },
-  { nombre: "Paseo Juárez", foto: "/images/comercial/centros-comerciales/paseo-juarez-altea.webp" },
-  { nombre: "Paseo Los Mochis", foto: "/images/comercial/centros-comerciales/paseo-los-mochis-altea.webp" },
-  { nombre: "Punto Río Nilo", foto: "/images/comercial/centros-comerciales/punto-rio-nilo.webp" },
-  { nombre: "Paseo Gómez Palacio", foto: "/images/comercial/centros-comerciales/paseo-gomez-palacio-altea.webp" },
-];
-
 export const EMBLEM = {
   /* Van partidas en palabras porque .home-emblem__text es un flex con
      `gap: 0 0.26em`: ese hueco es el espaciado entre palabras, no un espacio

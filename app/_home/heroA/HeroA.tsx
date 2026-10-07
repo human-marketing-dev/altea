@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { HERO_A } from "../content";
 import {
@@ -14,7 +14,7 @@ import {
   GIRO_MEDIO,
   type EstadoHero,
 } from "./estado";
-import { MuroProyectos } from "./MuroProyectos";
+import { CampoPuntos } from "./CampoPuntos";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -25,8 +25,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * SON DOS MOMENTOS, Y ESO ES LO IMPORTANTE
  *
  *   1 · el titular se va, y las piezas se ensamblan EN ESCORZO
- *   2 · ya montada, la A gira hasta quedar de frente
- *   3 · el muro de proyectos aparece detrás
+ *   2 · ya montada, la A gira hasta quedar de frente, y con ella sube la luz
+ *   3 · el campo de puntos se construye detrás, empujado por el mismo scroll
  *
  * No se solapan. Con las dos cosas pasando a la vez no se leía ninguna: el giro
  * tapaba el ensamble y el ensamble desordenaba el giro. Por eso el primer tramo
@@ -42,9 +42,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  *   · WebGLRenderer toca `document` al construirse, así que en SSR revienta.
  *   · Son 143 KB gzip medidos (567 851 B en crudo, minificado y con el árbol
  *     sacudido, contra three 0.186.1). Sacar eso del bundle del home y pedirlo
- *     sólo al montar es gratis, porque el hero NO NECESITA el objeto: titular,
- *     fondo y muro son HTML y CSS, y la A es decorativa. Lo que se ve mientras
- *     carga el chunk es el hero completo sin la pieza de hormigón.
+ *     sólo al montar es gratis, porque el hero NO NECESITA el objeto: titular y
+ *     campo de puntos son HTML y canvas 2D, y la A es decorativa. Lo que se ve
+ *     mientras carga el chunk es el hero completo sin la pieza de hormigón.
  *
  * Con prefers-reduced-motion ni se pide el chunk: no hay nada que animar y una A
  * de hormigón quieta no aporta sobre el titular.
@@ -62,24 +62,16 @@ export function HeroA() {
    */
   const estado = useRef<EstadoHero>(reducido ? estadoFinal() : estadoInicial());
 
-  /* Espejo de muroListo, para no llamar a setState por frame. Ver onUpdate. */
-  const muro = useRef(reducido);
-  /* Ver el comentario de `visible` en MuroProyectos: las ocho fotos no se montan
-     hasta que el recorrido arranca, para no competir con el LCP. */
-  const [muroListo, setMuroListo] = useState(reducido);
-
   useGSAP(
     () => {
       const nodo = raiz.current;
       if (!nodo) return;
 
       if (reducido) {
-        estado.current = estadoFinal();
-        /* No basta el useState(reducido) del principio: si la preferencia se
+        /* No basta el useRef(reducido) del principio: si la preferencia se
            activa con la página ya abierta, el estado inicial ya se calculó a
-           false y el muro se quedaría visible pero sin fotos. */
-        muro.current = true;
-        setMuroListo(true);
+           false y la A se quedaría despiezada. */
+        estado.current = estadoFinal();
         return;
       }
 
@@ -108,22 +100,13 @@ export function HeroA() {
           scrub: 0.6,
           invalidateOnRefresh: true,
           /*
-           * El callback NO se fue con el rótulo de fase, aunque casi todo lo que
-           * hacía era para él. Lo que queda es la única línea que no tenía nada
-           * que ver: encender las ocho fotos del muro en cuanto el recorrido
-           * arranca. Están dentro del viewport desde el primer frame —el muro
-           * empieza en opacity 0 y la opacidad no cuenta para
-           * IntersectionObserver—, así que sin esta puerta se descargarían
-           * compitiendo con el LCP, que es el titular.
-           *
-           * La guarda por referencia se queda: onUpdate corre a 60 fps y esto
-           * tiene que pasar una sola vez.
+           * El avance del campo es el progreso CRUDO del recorrido, no un tramo
+           * del timeline: la onda recorre el cuadro de principio a fin mientras
+           * la A se arma y se endereza. Por eso se escribe aquí y no con un
+           * .to() más, que lo ataría a un tramo.
            */
           onUpdate: (s) => {
-            if (s.progress > 0.02 && !muro.current) {
-              muro.current = true;
-              setMuroListo(true);
-            }
+            est.campo = s.progress;
           },
         },
       });
@@ -134,11 +117,14 @@ export function HeroA() {
            la atención es el ensamble, no la cámara. */
         .to(est, { ensamble: 1, duration: 1.5 }, 0.1)
         .to(est, { giro: GIRO_MEDIO, alto: ALTO_MEDIO, duration: 1.5 }, 0.1)
-        /* 2 · ya montada, se presenta de frente. */
-        .to(est, { giro: 0, alto: 0, duration: 1.15, ease: "power2.inOut" }, 1.62)
-        /* El muro entra al irse el titular, mientras la A se arma: así el fondo
-           ya está puesto cuando la pieza se endereza y no aparece encima. */
-        .to(".js-muro", { opacity: 1, duration: 0.85, ease: "power2.out" }, 0.45);
+        /* 2 · ya montada, se presenta de frente. La luz sube con el mismo
+           tramo: la pieza se queda centrada y lo que recoge la sombra es la
+           clave, que pasa de lateral a casi cenital. Ver el bucle de Escena3D. */
+        .to(est, { giro: 0, alto: 0, cenit: 1, duration: 1.15, ease: "power2.inOut" }, 1.62)
+        /* La puerta del campo: se abre al irse el titular, para que los primeros
+           puntos de la onda no asomen por debajo de la frase. Lo que construye el
+           campo es la onda, no este fundido. */
+        .to(".js-campo", { opacity: 1, duration: 0.85, ease: "power2.out" }, 0.45);
 
     },
     { scope: raiz, dependencies: [reducido] },
@@ -151,8 +137,8 @@ export function HeroA() {
   return (
     <div className="hero-a" ref={raiz}>
       <div className="hero-a__escena">
-        <div className="hero-a__fondo js-muro">
-          <MuroProyectos visible={muroListo} reducido={reducido} />
+        <div className="hero-a__fondo js-campo">
+          <CampoPuntos estado={estado} reducido={reducido} />
         </div>
 
         {!reducido && <Escena3D estado={estado} reducido={reducido} />}

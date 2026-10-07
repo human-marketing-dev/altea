@@ -1,260 +1,117 @@
 import {
-  CanvasTexture,
-  type Texture,
   RepeatWrapping,
   SRGBColorSpace,
+  type Texture,
+  TextureLoader,
+  type WebGLRenderer,
 } from "three";
 
 /**
- * Hormigón visto, generado en el cliente.
+ * El hormigón, fotografiado.
  *
- * La textura NO es lo que da el realismo —eso es el entorno de entorno.ts—, es
- * lo que trae las MARCAS DE FABRICACIÓN. El ruido solo da un gris cualquiera; lo
- * que se lee como hormigón visto son las juntas de la cimbra, los agujeros del
- * tirante y los escurrimientos.
+ * Cuatro mapas de una superficie real —grava fina de ambientCG, Gravel 043, con
+ * la oclusión derivada del mapa de color—, en public/images/hero/.
  *
  * ────────────────────────────────────────────────────────────────────────────
- * ⚠ TRES PASADAS DEL PROTOTIPO NO ESCRIBÍAN NADA
+ * SUSTITUYE A UN HORMIGÓN PROCEDIMENTAL, y el motivo no es la calidad del código
  *
- * En el prototipo, `separadores`, `escurrimientos` y `poros` modificaban CERO
- * celdas del mapa de altura. Medido: 0, 0 y 0 de 1 048 576. El motivo es el
- * mismo en las tres — el bucle arrancaba en un valor fraccionario:
+ * Lo que había era un generador por octavas con juntas de cimbra, separadores,
+ * escurrimientos y poros: 264 líneas, 57-75 ms de CPU al montar y cero bytes de
+ * descarga. Funcionaba. Pero un procedimental SE LEE COMO DIBUJADO por bueno que
+ * sea, porque su grano es regular: tiene la estadística del ruido y no la de un
+ * árido, que son piedras de tamaños distintos con sombra propia y huecos entre
+ * ellas. Eso no se arregla añadiéndole octavas.
  *
- *   const grueso = 6 + Math.random()*26;          // 23.47
- *   for (let dx = -grueso; dx <= grueso; dx++)    // dx = -23.47, -22.47, …
- *     alt[(y%s)*s + ((px+dx+s)%s)] -= …           // índice FRACCIONARIO
+ * El trato es 324 KB de descarga contra 60 ms de CPU y un material que no cuela.
  *
- * Un Float32Array indexado con una clave no entera devuelve `undefined` al leer
- * y DESCARTA LA ESCRITURA en silencio. Y encima es lentísimo: V8 abandona la
- * ruta rápida del array tipado y hace una búsqueda genérica de propiedad, unas
- * 870 000 veces. Los escurrimientos costaban 275-300 ms de los 365-375 totales
- * sin pintar un solo píxel.
+ * ────────────────────────────────────────────────────────────────────────────
+ * LOS CUATRO MAPAS, Y POR QUÉ NO MIDEN LO MISMO
  *
- * Aquí los radios pasan por Math.ceil y el grosor por Math.round, así que los
- * bucles recorren enteros. Resultado medido en node 24 sobre Apple Silicon:
+ *   color     512   el albedo. Es el único que es COLOR.
+ *   normal    384   el relieve. Es de frecuencia más baja que el árido, así que
+ *                   no necesita tanto detalle como el color.
+ *   rugosidad 512   dónde resbala la luz y dónde no.
+ *   oclusión  512   cuánta luz de entorno llega al fondo de cada hueco. Es la
+ *                   que de verdad saca la textura, así que es la única que no
+ *                   se encoge: ver ACABADO en Escena3D.
  *
- *              prototipo          este archivo
- *   total      365-375 ms         57-75 ms
- *   separad.   0 celdas           ~6 700
- *   escurr.    0 celdas           ~870 000
- *   poros      0 celdas           ~42 000
+ * Los originales son JPEG de 1024/768/1024/512 y pesan 1108 KB entre los cuatro.
+ * El recorte está MEDIDO, no estimado: renderizando la pieza a 1800x1120 —el
+ * caso peor, pantalla ancha con dpr 2— contra el juego original, la diferencia
+ * media es de 1.16 niveles sobre 255 y sólo el 0.58 % de los píxeles se mueve
+ * más de 16. A tamaño real no se distingue ninguno de los dos.
  *
- * 5x más rápido Y además dibuja. Por eso no hace falta ni worker ni hornear la
- * textura a archivo: hornearla serían 3-4 MB de descarga —el ruido no comprime—
- * para ahorrar 60 ms de CPU, que es un mal trato en cualquier conexión.
+ * Y una medida que sale al revés de lo que uno espera: bajar el color a 512 se
+ * ALEJA MENOS del original que dejarlo en 768. A estos tamaños de pantalla la
+ * GPU ya está muestreando un nivel de mipmap cercano a 512, así que el archivo
+ * de 512 se parece más a lo que de verdad se pinta que uno intermedio, que
+ * obliga a una cadena de mipmaps distinta.
  *
- * Si algún día hiciera falta el worker: mapaDeAltura() es matemática pura sin
- * DOM, y los tres Uint8ClampedArray de mapasRGBA() vuelven como buffers
- * transferibles. Está separado en dos funciones justamente para eso.
+ * ⚠ EL sRGB VA SOLO EN EL DE COLOR. Los otros tres son DATOS, no color: un
+ * número que dice cuánto se inclina la superficie, cuánto dispersa o cuánto
+ * ocluye. Etiquetarlos como sRGB les aplica la curva de la pantalla y los
+ * deforma —el relieve sale blando y la rugosidad, contrastada—, y es de los
+ * errores que no dan ningún aviso: el material simplemente se ve mal y no sabes
+ * por qué.
+ *
+ * ────────────────────────────────────────────────────────────────────────────
+ * EL CANAL DE LAS UV DEL aoMap: EN THREE MODERNA YA NO HAY TRAMPA
+ *
+ * En la three del prototipo (r128) el `aoMap` era el único mapa de
+ * MeshStandardMaterial que no leía el atributo `uv`: leía `uv2`, el segundo
+ * juego, y había que duplicarlo a mano. Sin esa línea la oclusión se montaba sin
+ * dar ningún error y no se veía nada.
+ *
+ * Desde r151 cada textura lleva `channel`, que vale 0 por defecto y se traduce
+ * literalmente al nombre del atributo: 0 → `uv`, 1 → `uv1` (el antiguo `uv2`).
+ * Comprobado en el código de esta versión, WebGLPrograms.getChannel. O sea que
+ * dejando `channel` en 0 el aoMap lee las MISMAS UV que el resto y no hace falta
+ * ni segundo atributo ni `aoMap.channel = 1`: la traducción directa del
+ * prototipo funcionaría, pero sube un atributo de más por geometría para acabar
+ * en el mismo sitio.
  */
 
-/** Lado de los mapas. 1024 es el mínimo donde la cimbra no se ve pixelada. */
-const LADO = 1024;
-
-/**
- * Ruido por octavas, no ruido plano.
- *
- * El hormigón tiene manchas grandes, grano medio y árido fino a la vez. Con una
- * sola frecuencia se ve a televisión sin señal.
- */
-function ruido(lado: number, celdas: number): Float32Array {
-  const rej = celdas + 1;
-  const semilla = new Float32Array(rej * rej);
-  for (let i = 0; i < semilla.length; i++) semilla[i] = Math.random();
-
-  const out = new Float32Array(lado * lado);
-  const suave = (t: number) => t * t * (3 - 2 * t);
-  for (let y = 0; y < lado; y++) {
-    for (let x = 0; x < lado; x++) {
-      const fx = (x / lado) * celdas;
-      const fy = (y / lado) * celdas;
-      const x0 = Math.floor(fx);
-      const y0 = Math.floor(fy);
-      const tx = suave(fx - x0);
-      const ty = suave(fy - y0);
-      const a = semilla[y0 * rej + x0];
-      const b = semilla[y0 * rej + x0 + 1];
-      const c = semilla[(y0 + 1) * rej + x0];
-      const d = semilla[(y0 + 1) * rej + x0 + 1];
-      const arriba = a + (b - a) * tx;
-      const abajo = c + (d - c) * tx;
-      out[y * lado + x] = arriba + (abajo - arriba) * ty;
-    }
-  }
-  return out;
-}
-
-/** Cinco tablas por baldosa: el paso real de una cimbra de obra. */
-const TABLAS = 5;
-
-/** Sin DOM: se puede mover a un worker tal cual. */
-function mapaDeAltura(s: number): Float32Array {
-  const capas: [Float32Array, number][] = [
-    [ruido(s, 5), 0.4],
-    [ruido(s, 17), 0.27],
-    [ruido(s, 58), 0.19],
-    [ruido(s, 190), 0.14],
-  ];
-  const alt = new Float32Array(s * s);
-  for (let i = 0; i < s * s; i++) {
-    let n = 0;
-    for (const [capa, peso] of capas) n += capa[i] * peso;
-    alt[i] = n * 0.55 + 0.22;
-  }
-
-  /*
-   * CIMBRA. El hormigón arquitectónico se cuela contra tablones, y esas juntas
-   * horizontales son su firma. Sin ellas el material es un gris cualquiera.
-   */
-  const ancho = s / TABLAS;
-  for (let t = 0; t < TABLAS; t++) {
-    const y0 = Math.round(t * ancho);
-    /* ninguna tabla es igual a la siguiente: su tono y su panza */
-    const tono = (Math.random() - 0.5) * 0.09;
-    const resalte = 0.012 + Math.random() * 0.02;
-    for (let y = y0; y < y0 + ancho && y < s; y++) {
-      const dentro = (y - y0) / ancho;
-      /* la junta: un rebaje estrecho arriba y abajo de la tabla */
-      const junta = dentro < 0.016 || dentro > 0.984 ? -0.09 : 0;
-      /* y el abombamiento de la madera hacia el centro */
-      const panza = Math.sin(dentro * Math.PI) * resalte;
-      for (let x = 0; x < s; x++) alt[y * s + x] += tono + junta + panza;
-    }
-  }
-
-  /* SEPARADORES: los agujeros que deja el tirante de la cimbra, con su labio. */
-  const REJ = 4;
-  for (let a = 0; a < REJ; a++) {
-    for (let b = 0; b < TABLAS; b++) {
-      const px = Math.round(((a + 0.5) * s) / REJ + (Math.random() - 0.5) * 26);
-      const py = Math.round((b + 0.5) * ancho + (Math.random() - 0.5) * 10);
-      const r = 7 + Math.random() * 3;
-      /* Math.ceil: el radio es fraccionario, el BUCLE no puede serlo. */
-      const alcance = Math.ceil(r) + 2;
-      for (let dy = -alcance; dy <= alcance; dy++) {
-        for (let dx = -alcance; dx <= alcance; dx++) {
-          const d = Math.hypot(dx, dy);
-          const ix = ((py + dy + s) % s) * s + ((px + dx + s) % s);
-          if (d <= r) alt[ix] -= 0.34 * (1 - (d / r) * (d / r));
-          else if (d <= r + 2) alt[ix] += 0.03 * (1 - (d - r) / 2);
-        }
-      }
-    }
-  }
-
-  /* ESCURRIMIENTOS: las manchas verticales de intemperie. */
-  for (let k = 0; k < 26; k++) {
-    const px = (Math.random() * s) | 0;
-    /* Math.round por lo mismo que arriba: este era el bucle de los 300 ms. */
-    const grueso = Math.round(6 + Math.random() * 26);
-    const fuerza = 0.02 + Math.random() * 0.05;
-    const desde = (Math.random() * s * 0.5) | 0;
-    for (let y = desde; y < s; y++) {
-      const caida = Math.min(1, (y - desde) / 120);
-      for (let dx = -grueso; dx <= grueso; dx++) {
-        const peso = 1 - Math.abs(dx) / grueso;
-        alt[(y % s) * s + ((px + dx + s) % s)] -= fuerza * peso * caida * 0.5;
-      }
-    }
-  }
-
-  /* POROS del árido. */
-  for (let k = 0; k < 3400; k++) {
-    const px = (Math.random() * s) | 0;
-    const py = (Math.random() * s) | 0;
-    const r = 0.8 + Math.random() * 2.2;
-    const alcance = Math.ceil(r);
-    for (let dy = -alcance; dy <= alcance; dy++) {
-      for (let dx = -alcance; dx <= alcance; dx++) {
-        const d = Math.hypot(dx, dy);
-        if (d > r) continue;
-        alt[((py + dy + s) % s) * s + ((px + dx + s) % s)] -= (1 - d / r) * 0.2;
-      }
-    }
-  }
-
-  return alt;
-}
-
-/** Cuánto exagera el mapa de normales las pendientes del mapa de altura. */
-const RELIEVE = 3.4;
-
-/** Tampoco toca el DOM: los tres buffers son transferibles a un worker. */
-function mapasRGBA(alt: Float32Array, s: number) {
-  const color = new Uint8ClampedArray(new ArrayBuffer(s * s * 4));
-  const normal = new Uint8ClampedArray(new ArrayBuffer(s * s * 4));
-  const rugosidad = new Uint8ClampedArray(new ArrayBuffer(s * s * 4));
-  const H = (a: number, b: number) => alt[((b + s) % s) * s + ((a + s) % s)];
-
-  for (let y = 0; y < s; y++) {
-    for (let x = 0; x < s; x++) {
-      const i = y * s + x;
-      const n = alt[i];
-
-      const g = 146 + (n - 0.5) * 58;
-      color[i * 4] = g + 4;
-      color[i * 4 + 1] = g + 1;
-      color[i * 4 + 2] = g - 5;
-      color[i * 4 + 3] = 255;
-
-      const dx = (H(x + 1, y) - H(x - 1, y)) * RELIEVE;
-      const dy = (H(x, y + 1) - H(x, y - 1)) * RELIEVE;
-      const largo = Math.hypot(-dx, -dy, 1);
-      normal[i * 4] = ((-dx / largo) * 0.5 + 0.5) * 255;
-      normal[i * 4 + 1] = ((-dy / largo) * 0.5 + 0.5) * 255;
-      normal[i * 4 + 2] = ((1 / largo) * 0.5 + 0.5) * 255;
-      normal[i * 4 + 3] = 255;
-
-      /* Lo hundido está más rugoso y retiene más suciedad: es lo que hace que
-         la luz no resbale igual por toda la pieza. */
-      const rr = 150 + (1 - n) * 88;
-      rugosidad[i * 4] = rr;
-      rugosidad[i * 4 + 1] = rr;
-      rugosidad[i * 4 + 2] = rr;
-      rugosidad[i * 4 + 3] = 255;
-    }
-  }
-  return { color, normal, rugosidad };
-}
-
-/*
- * `Uint8ClampedArray<ArrayBuffer>` y no el genérico a secas: desde TS 5.7 los
- * arrays tipados llevan parámetro de buffer, e `ImageData` solo acepta los
- * respaldados por un ArrayBuffer normal, nunca por un SharedArrayBuffer.
- */
-type Bytes = Uint8ClampedArray<ArrayBuffer>;
-
-function aTextura(datos: Bytes, s: number, esColor: boolean): CanvasTexture {
-  const lienzo = document.createElement("canvas");
-  lienzo.width = lienzo.height = s;
-  const ctx = lienzo.getContext("2d");
-  if (!ctx) throw new Error("sin contexto 2d");
-  ctx.putImageData(new ImageData(datos, s, s), 0, 0);
-  const tex = new CanvasTexture(lienzo);
-  tex.wrapS = tex.wrapT = RepeatWrapping;
-  /* Solo el mapa de color va en sRGB. El de normales y el de rugosidad son
-     datos, no color: etiquetarlos como sRGB les aplicaría la curva y el
-     relieve saldría mal. */
-  if (esColor) tex.colorSpace = SRGBColorSpace;
-  return tex;
-}
+const RUTA = "/images/hero/";
 
 export type Mapas = {
   color: Texture;
   normal: Texture;
   rugosidad: Texture;
+  oclusion: Texture;
   liberar: () => void;
 };
 
-export function texturaHormigon(anisotropia: number): Mapas {
-  const s = LADO;
-  const { color, normal, rugosidad } = mapasRGBA(mapaDeAltura(s), s);
-  const mapas = {
-    color: aTextura(color, s, true),
-    normal: aTextura(normal, s, false),
-    rugosidad: aTextura(rugosidad, s, false),
+/**
+ * Carga los cuatro mapas.
+ *
+ * `repintar` se llama cuando llega cada uno: la escena se arma con lo que haya y
+ * se vuelve a pintar según van cayendo, así que la pieza se ve desde el primer
+ * fotograma en vez de esperar al megabyte entero. Sin esto el hero arranca en
+ * blanco durante lo que tarde la red.
+ */
+export function texturaHormigon(renderer: WebGLRenderer, repintar: () => void): Mapas {
+  const cargador = new TextureLoader();
+  const anisotropia = renderer.capabilities.getMaxAnisotropy();
+
+  const carga = (archivo: string, esColor: boolean): Texture => {
+    const t = cargador.load(`${RUTA}${archivo}`, repintar);
+    /* El grano se repite por unidad de pieza, no se estira: las UV de la
+       proyección de caja se salen de [0,1] a propósito. */
+    t.wrapS = t.wrapT = RepeatWrapping;
+    /* Las piezas se ven muy en escorzo durante todo el ensamble, que es justo
+       donde un mapa sin anisotropía se emborrona. */
+    t.anisotropy = anisotropia;
+    if (esColor) t.colorSpace = SRGBColorSpace;
+    return t;
   };
-  for (const t of Object.values(mapas)) t.anisotropy = anisotropia;
+
+  const mapas = {
+    color: carga("concreto-color.webp", true),
+    normal: carga("concreto-normal.webp", false),
+    rugosidad: carga("concreto-rug.webp", false),
+    oclusion: carga("concreto-ao.webp", false),
+  };
+
   return {
     ...mapas,
     liberar: () => {

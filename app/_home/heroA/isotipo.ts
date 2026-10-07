@@ -2,78 +2,67 @@
  * El isotipo de Altea partido en piezas, para el hero que lo construye.
  *
  * ────────────────────────────────────────────────────────────────────────────
- * DE DÓNDE SALEN ESTOS NÚMEROS
+ * DE DÓNDE SALEN LOS CORTES
  *
- * De `public/brand/logos/altea-icon-dark.svg`, que es un solo <path> con dos
- * subrutas —contorno exterior y contraforma— en un viewBox de 318.06 × 324:
+ * La geometría de la marca —el viewBox, su normalización a unidades de escena,
+ * las tres alturas de corte, las dos aristas y los dos triángulos de la
+ * banderola— vive en lib/isotipo.ts, porque la comparte con la nube de puntos
+ * del hero de /nosotros. Aquí sólo está el DESPIECE: cómo se reparte ese dibujo
+ * en las ocho piezas que se extruyen.
  *
- *   M318.06,324 h-53.86 l-29.26,-60.22 H83.12 l-29.26,60.22 H0 L159.03,0 … Z
- *   M213.31,219.25 l-54.28,-111.11 l-54.28,111.11 h108.57 Z
+ * El pórtico, leído de arriba abajo, cambia de naturaleza exactamente tres
+ * veces, y esas tres alturas son las líneas de corte. No hay que elegirlas:
+ * están en el trazado.
  *
- * No es una A maciza: es un PÓRTICO. Leído de arriba abajo cambia de naturaleza
- * exactamente tres veces, y esas tres alturas son las líneas de corte. No hay
- * que elegirlas: están en el dibujo.
+ *   y = 143.52  (33.4 %)  ápice de la contraforma. Arriba macizo, abajo DOS brazos.
+ *   y = 290.98  (67.7 %)  base de la contraforma. Vuelve a ser UNA pieza.
+ *   y = 350.08  (81.4 %)  vértice del rebaje. Abajo, DOS patas separadas.
  *
- *   y = 108.14  (33.4 %)  ápice de la contraforma. Arriba macizo, abajo DOS brazos.
- *   y = 219.25  (67.7 %)  base de la contraforma. Vuelve a ser UNA pieza.
- *   y = 263.78  (81.4 %)  vértice del rebaje. Abajo, DOS patas separadas.
- *
- * Entre 219.25 y 263.78 hay una banda maciza de 44.53 de canto que va de lado a
+ * Entre 290.98 y 350.08 hay una banda maciza de 59.1 de canto que va de lado a
  * lado. Es un TIRANTE: el elemento que ata los dos brazos. Cortar ahí no es una
  * comodidad, es que ahí hay una viga.
  *
- * Cortar en 108.14 tiene además una consecuencia práctica que decidió el
+ * Cortar en 143.52 tiene además una consecuencia práctica que decidió el
  * reparto: NINGUNA PIEZA NECESITA `shape.holes`. El hueco deja de ser un
  * agujero y pasa a ser el canto interior de los dos brazos. Una pieza con
  * agujero en ExtrudeGeometry teselaría peor, rompería la proyección de caja de
  * las UV y le daría aristas interiores a EdgesGeometry.
  *
- * Las x de cada corte salen de intersectar las aristas reales. La pendiente
- * exterior es dx/dy = ±0.490830 y la de la contraforma ±0.488516: NO son
- * paralelas, se abren 0.0023, así que el brazo engorda de 53.08 a 53.34 de
- * arriba abajo. Por eso las x están calculadas y no interpoladas a ojo.
+ * Que las seis piezas del pórtico reconstruyen el dibujo está comprobado: la
+ * suma de sus áreas da 1.252946 y el contorno real menos la contraforma da
+ * 1.252946 — la misma cifra hasta la sexta decimal, porque las x de cada corte
+ * se calculan con la pendiente en vez de transcribirse redondeadas. Ni huecos
+ * ni solapes entre vecinas.
  *
  * ────────────────────────────────────────────────────────────────────────────
- * POR QUÉ 6 Y NO 5
+ * POR QUÉ 6 Y NO 5, Y POR QUÉ 8 Y NO 6
  *
- * Por debajo de y = 263.78 el isotipo son dos sólidos DESCONECTADOS, y un
+ * Por debajo de y = 350.08 el pórtico son dos sólidos DESCONECTADOS, y un
  * THREE.Shape no puede ser discontinuo. Los repartos que el dibujo admite son 6
  * (éste) y 4 —fundiendo clave y brazos en un galón—. Con 5 habría que partir el
  * tirante por el eje, que es el peor sitio posible de una viga.
  *
- * ────────────────────────────────────────────────────────────────────────────
- * ⚠ ESTE ISOTIPO ES PROVISIONAL
- *
- * Su propio archivo lo dice: se sintetizó copiando la A del wordmark porque no
- * existía ningún isotipo en el repositorio. Si Altea entrega el suyo, estos seis
- * cortes se rehacen enteros — pero solo este archivo, porque Escena3D no sabe
- * nada de la letra: recorre PIEZAS y extruye lo que encuentre.
+ * Las otras dos son la banderola, que en el isotipo real ya viene partida en dos
+ * triángulos porque uno es cream y el otro coral. Ese coral es el único acento
+ * de color de la marca, así que entra como pieza y no como adorno pintado.
  */
 
 import {
+  BANDEROLA_CORAL,
+  BANDEROLA_CREAM,
   CORTE_CLAVE,
   CORTE_TIRANTE,
   CORTE_ZAPATA,
   SEMI_ALTO,
-  SEMI_ANCHO,
   vertice as v,
   xDer,
   xIzq,
 } from "@/lib/isotipo";
 
-export { SEMI_ALTO, SEMI_ANCHO };
+export { SEMI_ALTO };
 
-/*
- * La geometría base —el viewBox, su normalización, las tres alturas de corte y
- * las dos aristas— vive en lib/isotipo.ts, porque la comparte con la nube de
- * puntos del hero de /nosotros. Aquí sólo están los CORTES: cómo se reparte ese
- * contorno en las seis piezas que se extruyen.
- *
- * Que las seis piezas reconstruyen el dibujo está comprobado: la suma de sus
- * áreas da 1.25293 contra 1.25294 del contorno real menos la contraforma, y la
- * diferencia —una cienmilésima— es el redondeo a dos decimales del propio SVG.
- */
-const CX = 159.03;
+/** Eje de simetría del pórtico, en el viewBox. */
+const CX = 211.06;
 
 /*
  * TODOS los contornos van en el mismo sentido de giro: horario en coordenadas de
@@ -85,25 +74,35 @@ const CX = 159.03;
  * constructor: en cuanto alguien pase estos contornos por ShapeGeometry, por una
  * triangulación propia o por un extrusor distinto, la pieza que gire al revés
  * sale con la cara delantera mirando hacia dentro, y en una escena con luz
- * direccional eso se ve como una pieza apagada entre cinco iluminadas.
+ * direccional eso se ve como una pieza apagada entre siete iluminadas.
  *
- * La clave estaba al revés —apice, izquierda, derecha da antihorario— y va
- * escrita apice, derecha, izquierda por esto.
+ * Los dos triángulos de la banderola vienen ya volteados de lib/isotipo.ts: el
+ * SVG los declara al revés que el pórtico.
  */
 export type Pieza = {
   /** Identificador constructivo, no decorativo: es lo que la pieza ES. */
-  id: "clave" | "brazoIzq" | "brazoDer" | "tirante" | "zapataIzq" | "zapataDer";
+  id:
+    | "clave"
+    | "brazoIzq"
+    | "brazoDer"
+    | "tirante"
+    | "zapataIzq"
+    | "zapataDer"
+    | "bandCream"
+    | "bandCoral";
   /** Contorno cerrado en unidades de escena. Simple, sin huecos. */
   contorno: readonly [number, number][];
   /**
    * Orden de llegada, 0 = primero.
    *
-   * Un pórtico se levanta de abajo arriba: zapatas, tirante, brazos y la clave
-   * al final. El ensamble cuenta eso en vez de mover las seis piezas a la vez,
-   * que era lo que hacía el prototipo y lo que lo dejaba en un movimiento sin
-   * argumento. Ver DESFASE en Escena3D para cuánto se solapan entre sí.
+   * Un pórtico se levanta de abajo arriba: zapatas, tirante, brazos, la clave y
+   * la banderola al final. El ensamble cuenta eso en vez de mover las ocho
+   * piezas a la vez, que era lo que hacía el prototipo y lo que lo dejaba en un
+   * movimiento sin argumento. Ver DESFASE en Escena3D para cuánto se solapan.
    */
   turno: number;
+  /** Lleva el coral de marca en vez del gris del hormigón. */
+  coral?: true;
 };
 
 export const PIEZAS: readonly Pieza[] = [
@@ -112,19 +111,19 @@ export const PIEZAS: readonly Pieza[] = [
     turno: 0,
     contorno: [
       v(xIzq(CORTE_ZAPATA), CORTE_ZAPATA),
-      v(83.12, CORTE_ZAPATA),
-      v(53.86, 324),
-      v(0, 324),
+      v(110.31, CORTE_ZAPATA),
+      v(71.48, 430),
+      v(0, 430),
     ],
   },
   {
     id: "zapataDer",
     turno: 0,
     contorno: [
-      v(234.94, CORTE_ZAPATA),
+      v(311.81, CORTE_ZAPATA),
       v(xDer(CORTE_ZAPATA), CORTE_ZAPATA),
-      v(318.06, 324),
-      v(264.2, 324),
+      v(422.12, 430),
+      v(350.64, 430),
     ],
   },
   {
@@ -143,7 +142,7 @@ export const PIEZAS: readonly Pieza[] = [
     contorno: [
       v(xIzq(CORTE_CLAVE), CORTE_CLAVE),
       v(CX, CORTE_CLAVE),
-      v(104.75, CORTE_TIRANTE),
+      v(139.02, CORTE_TIRANTE),
       v(xIzq(CORTE_TIRANTE), CORTE_TIRANTE),
     ],
   },
@@ -154,7 +153,7 @@ export const PIEZAS: readonly Pieza[] = [
       v(CX, CORTE_CLAVE),
       v(xDer(CORTE_CLAVE), CORTE_CLAVE),
       v(xDer(CORTE_TIRANTE), CORTE_TIRANTE),
-      v(213.31, CORTE_TIRANTE),
+      v(283.1, CORTE_TIRANTE),
     ],
   },
   {
@@ -164,6 +163,8 @@ export const PIEZAS: readonly Pieza[] = [
        tangente al hueco, así que la clave es un triángulo limpio. */
     contorno: [v(CX, 0), v(xDer(CORTE_CLAVE), CORTE_CLAVE), v(xIzq(CORTE_CLAVE), CORTE_CLAVE)],
   },
+  { id: "bandCream", turno: 4, contorno: BANDEROLA_CREAM },
+  { id: "bandCoral", turno: 4, contorno: BANDEROLA_CORAL, coral: true },
 ];
 
 /** Cuántos turnos distintos hay. Lo usa el escalonado del ensamble. */
@@ -190,30 +191,63 @@ export function centroide(p: Pieza): [number, number] {
   ];
 }
 
+/** Área del contorno. Pesa el centroide de masa del conjunto. */
+function area(p: Pieza): number {
+  const c = p.contorno;
+  return (
+    Math.abs(
+      c.reduce((acc, q, i) => {
+        const r = c[(i + 1) % c.length];
+        return acc + (q[0] * r[1] - r[0] * q[1]);
+      }, 0),
+    ) / 2
+  );
+}
+
+/*
+ * LA CAJA DEL CONJUNTO Y EL CENTROIDE DE SU MASA.
+ *
+ * Los dos se CALCULAN de PIEZAS, no se escriben a mano: si el despiece cambia,
+ * el encuadre de Escena3D se ajusta solo.
+ */
+const xs = PIEZAS.flatMap((p) => p.contorno.map((q) => q[0]));
+
 /**
- * Altura del centroide de ÁREA del isotipo. Sale en −0.2083.
+ * Semiancho del CONJUNTO, banderola incluida: 1.1201 contra los 0.9571 del
+ * pórtico solo. O sea que la banderola ensancha el isotipo un 17 %, y el
+ * encuadre tiene que contar con ella o la punta coral se sale por la derecha.
  *
- * O sea: la masa del dibujo está un 10.7 % de su altura por debajo del centro de
- * su caja, porque abajo hay dos zapatas anchas y el tirante, y arriba sólo la
- * clave. Centrar la caja en pantalla deja la letra ópticamente baja —se lee
- * apoyada, no centrada—, y por eso el encuadre de Escena3D coloca este punto y no
- * el centro geométrico.
+ * El semialto NO se recalcula aquí: la banderola llega exactamente al ápice de
+ * la clave —los dos a y = 0 del viewBox—, así que sigue siendo el SEMI_ALTO de
+ * lib/isotipo.ts.
+ */
+export const SEMI_ANCHO = (Math.max(...xs) - Math.min(...xs)) / 2;
+
+/**
+ * Cuánto hay que correr el conjunto para que quede centrado: −0.163.
  *
- * Se calcula, no se escribe a mano: si los cortes cambian, el encuadre se ajusta
- * solo. Son seis polígonos de tres o cuatro vértices, así que el coste es nada.
+ * LA BANDEROLA SOBRESALE 0.326 POR LA DERECHA, así que el isotipo completo no
+ * está centrado en el eje del pórtico. Hay que recolocarlo por su CAJA REAL, no
+ * por el eje: sin esto la pieza se ve corrida hacia la derecha en pantalla y
+ * cuesta ver por qué, porque el eje de simetría de la A sigue estando en 0.
+ */
+export const RECENTRADO_X = -(Math.min(...xs) + Math.max(...xs)) / 2;
+
+/**
+ * Altura del centroide de ÁREA del isotipo. Sale en −0.0987.
+ *
+ * O sea: la masa del dibujo está un 5.1 % de su altura por debajo del centro de
+ * su caja, porque abajo hay dos zapatas anchas y el tirante. Centrar la caja en
+ * pantalla deja la letra ópticamente baja —se lee apoyada, no centrada—, y por
+ * eso el encuadre de Escena3D coloca este punto y no el centro geométrico.
+ *
+ * CON BANDEROLA LA CORRECCIÓN ES LA MITAD: el pórtico solo da −0.2082, porque
+ * arriba sólo está la clave. La banderola añade 0.218 de área en la franja alta
+ * y sube el centroide a −0.0987. Por eso se calcula sobre PIEZAS y no se hereda:
+ * el número depende del despiece, no del dibujo.
  */
 export const CENTROIDE_Y = (() => {
-  const areaYcentro = PIEZAS.map((p) => {
-    const c = p.contorno;
-    const a =
-      Math.abs(
-        c.reduce((acc, q, i) => {
-          const r = c[(i + 1) % c.length];
-          return acc + (q[0] * r[1] - r[0] * q[1]);
-        }, 0),
-      ) / 2;
-    return { a, y: centroide(p)[1] };
-  });
-  const total = areaYcentro.reduce((acc, x) => acc + x.a, 0);
-  return areaYcentro.reduce((acc, x) => acc + x.a * x.y, 0) / total;
+  const pesos = PIEZAS.map((p) => ({ a: area(p), y: centroide(p)[1] }));
+  const total = pesos.reduce((acc, x) => acc + x.a, 0);
+  return pesos.reduce((acc, x) => acc + x.a * x.y, 0) / total;
 })();

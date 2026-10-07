@@ -488,7 +488,7 @@ const GIROS: Giro[] = [
       numero: "01",
       title: "Hoteles",
       description:
-        "Nuestra experiencia también se extiende al desarrollo de hoteles de marcas reconocidas, integrados en nuestros centros comerciales para crear destinos más completos y funcionales. A través de proyectos como Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, hemos desarrollado espacios de hospitalidad en distintos puntos de la República Mexicana.",
+        "Desarrollamos hoteles de marcas reconocidas integrados en nuestros centros comerciales, para convertirlos en destinos más completos y funcionales. Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, en distintos puntos de la República Mexicana.",
       image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
       alt: "Fiesta Inn dentro de un desarrollo de Altea",
     },
@@ -497,7 +497,7 @@ const GIROS: Giro[] = [
       numero: "02",
       title: "Hospital",
       description:
-        "Este desarrollo del Sierra Madre implicó la integración de nueva infraestructura con instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno, con el objetivo de entregar un espacio equipado y listo para operar desde el primer día. Con este proyecto, fortalecemos nuestra capacidad para desarrollar espacios especializados que requieren altos estándares de planeación y tecnología.",
+        "En el Sierra Madre integramos infraestructura nueva con las instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno para entregarlo listo para operar desde el primer día. Espacios especializados que exigen los más altos estándares de planeación y tecnología.",
       image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
       alt: "Hospital dentro de un desarrollo de Altea",
     },
@@ -506,7 +506,7 @@ const GIROS: Giro[] = [
       numero: "03",
       title: "Educación",
       description:
-        "Tálisis es un proyecto de infraestructura educativa desarrollado en el centro de Monterrey, diseñado para atender la creciente demanda de espacios académicos dentro del entorno urbano. Incorpora coworking académico, laboratorios especializados y espacios modulares que permiten adaptarse a distintas necesidades pedagógicas.",
+        "Tálisis es infraestructura educativa en el centro de Monterrey, para la creciente demanda de espacios académicos del entorno urbano: coworking académico, laboratorios especializados y espacios modulares adaptables a distintas necesidades pedagógicas.",
       image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
       alt: "Centro educativo dentro de un desarrollo de Altea",
     },
@@ -556,13 +556,73 @@ export interface MarcaComercial {
   nombre: string;
   src: string;
   /**
-   * Proporción ancho/alto del archivo. La consume la corrección óptica del muro.
+   * Proporción ancho/alto DEL LIENZO. Es la que tiene el elemento <img>, así que
+   * de ella salen los atributos width/height y el ancho que ocupa en la celda.
    *
    * Medida de los 32 archivos, no estimada: van de 0.94 (IMSS, más alto que
-   * ancho) a 5.60 (Bodega Aurrera), con la celda en 1.67. Es un abanico de seis
-   * veces, y por eso el alto común no basta.
+   * ancho) a 5.60 (Bodega Aurrera), con la celda en 1.67.
    */
   ratio: number;
+  /**
+   * Fracción del ALTO del lienzo que es tinta: 1 menos el margen transparente de
+   * arriba y abajo. Va de 0.42 a 0.90 en los 32.
+   *
+   * El alto que se le pide al <img> se divide entre esto, porque lo que tiene que
+   * medir lo mismo entre logotipos es la MANCHA, no el recuadro que la contiene.
+   */
+  tinta: number;
+  /**
+   * Proporción de la MANCHA, que no es la del lienzo. La diferencia llega a ser
+   * grande: Banorte declara 5.14:1 y su tinta es 8.11:1; KFC declara 1.29 y su
+   * tinta es 1.00 exacto.
+   *
+   * Es la que entra en la corrección óptica. Alimentarla con la del lienzo era el
+   * error: corregía por la forma del archivo en vez de por la de la marca.
+   */
+  rTinta: number;
+  /**
+   * Subida vertical, en fracción del alto del propio logotipo. Negativo sube.
+   *
+   * ⚠ SÓLO LA LLEVAN LOS LOCKUPS APILADOS, y es una corrección de ALINEACIÓN, no
+   * de tamaño. Son dos cosas distintas y conviene no confundirlas.
+   *
+   * En los 29 logotipos restantes el nombre de la marca ES el logotipo entero, así
+   * que centrar el recuadro deja las letras sobre la línea media de la fila y todo
+   * el muro se lee como un renglón. En tres —Bolerama, IMSS y KFC— el símbolo va
+   * ENCIMA y el nombre debajo: centrar el recuadro deja el símbolo sobre la línea
+   * y el nombre colgando por abajo, fuera del renglón.
+   *
+   * La prueba de que es alineación y no tamaño está en Boston Pizza: es igual de
+   * alto y también es insignia más texto, pero ahí el símbolo va AL LADO, el nombre
+   * cruza la línea, y nunca se vio mal.
+   *
+   * Los valores son la MITAD de lo que haría falta para poner el nombre justo sobre
+   * la línea. Con la corrección entera el símbolo se va al borde superior de la
+   * celda y la marca se ve despegada; con la mitad, el nombre llega al renglón y el
+   * conjunto sigue dentro de su hueco. Comprobado renderizando el muro.
+   */
+  alza?: number;
+  /**
+   * Multiplicador de tamaño sobre el alto que le tocaría por fórmula. 1 = sin tocar.
+   *
+   * ⚠ ES UNA EXCEPCIÓN DELIBERADA AL TOPE DE BANDA, no un parche. Lo llevan los
+   * tres logotipos que, ya con la geometría correcta, se seguían leyendo pequeños
+   * en el muro: Bolerama, C&A, IMSS y KFC. Son marcas de mancha compacta y
+   * encerrada —una insignia, un marco, una cubeta— y a igual alto pesan menos que
+   * un wordmark que cruza la celda de lado a lado.
+   *
+   * El tope de banda los deja a todos clavados en el mismo alto, que es lo correcto
+   * por defecto; estos cuatro lo rebasan un 30 %, afinado mirando el muro
+   * renderizado y comprobando en el navegador que ninguno se sale de su hueco.
+   *
+   * ⚠ VA AQUÍ Y NO SUBIENDO --tope-banda. Subir el tope agrandaría CATORCE
+   * logotipos —todos los que topan contra él— y sólo estos cuatro lo necesitan.
+   *
+   * Y OJO AL CRECER: subir la escala empuja el borde SUPERIOR hacia arriba aunque
+   * el centro baje, así que cada vez que se mueve `escala` en un logotipo con
+   * `alza` hay que revisar las dos juntas. Pasó con IMSS y KFC.
+   */
+  escala?: number;
 }
 
 /**
@@ -582,38 +642,38 @@ export interface MarcaComercial {
  * de la opacidad y no del grayscale — lo mismo que en Grupo Firma.
  */
 export const MARCAS_COMERCIAL: MarcaComercial[] = [
-  { nombre: "Banorte", src: `${MARCAS_DIR}/banorte-logo-black.webp`, ratio: 5.14 },
-  { nombre: "Bershka", src: `${MARCAS_DIR}/bershka-logo-black.webp`, ratio: 3.40 },
-  { nombre: "Bodega Aurrera", src: `${MARCAS_DIR}/bodega-aurrera-logo-black.webp`, ratio: 5.62 },
-  { nombre: "Bolerama", src: `${MARCAS_DIR}/bolerama-logo-black.webp`, ratio: 1.29 },
-  { nombre: "Boston Pizza", src: `${MARCAS_DIR}/boston-pizza-logo-black.webp`, ratio: 2.90 },
-  { nombre: "C&A", src: `${MARCAS_DIR}/c-and-a-logo-black.webp`, ratio: 1.21 },
-  { nombre: "Calvin Klein", src: `${MARCAS_DIR}/calvin-klein-logo-black.webp`, ratio: 4.00 },
-  { nombre: "Carl's Jr.", src: `${MARCAS_DIR}/carlos-jr-logo-black.webp`, ratio: 3.21 },
-  { nombre: "Chuck E. Cheese", src: `${MARCAS_DIR}/chuck-e-cheese-logo-black.webp`, ratio: 4.50 },
-  { nombre: "Cinemex", src: `${MARCAS_DIR}/cinemex-logo-black.webp`, ratio: 3.75 },
-  { nombre: "Cinépolis", src: `${MARCAS_DIR}/cinepolis-logo-black.webp`, ratio: 4.09 },
-  { nombre: "Fiesta Inn", src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`, ratio: 3.33 },
-  { nombre: "Firehouse Subs", src: `${MARCAS_DIR}/firehouse-subs-logo-black.webp`, ratio: 2.77 },
-  { nombre: "H&M", src: `${MARCAS_DIR}/h-and-m-logo-black.webp`, ratio: 1.36 },
-  { nombre: "Happyland", src: `${MARCAS_DIR}/happyland-logo-black.webp`, ratio: 4.62 },
-  { nombre: "Helados Dreambox", src: `${MARCAS_DIR}/helados-dreambox-logo-black.webp`, ratio: 3.53 },
-  { nombre: "IHOP", src: `${MARCAS_DIR}/ihop-logo-black.webp`, ratio: 2.14 },
-  { nombre: "IMSS", src: `${MARCAS_DIR}/imss-logo-black.webp`, ratio: 0.94 },
-  { nombre: "INE", src: `${MARCAS_DIR}/ine-logo-black.webp`, ratio: 3.05 },
-  { nombre: "Innova Sport", src: `${MARCAS_DIR}/innova-sport-logo-black.webp`, ratio: 1.54 },
-  { nombre: "KFC", src: `${MARCAS_DIR}/kfc-logo-black.webp`, ratio: 1.29 },
-  { nombre: "Liverpool", src: `${MARCAS_DIR}/liverpool-logo-black.webp`, ratio: 2.77 },
-  { nombre: "Miniso", src: `${MARCAS_DIR}/miniso-logo-black.webp`, ratio: 3.75 },
-  { nombre: "Office Depot", src: `${MARCAS_DIR}/office-depot-logo-black.webp`, ratio: 2.34 },
-  { nombre: "Old Navy", src: `${MARCAS_DIR}/old-navy-logo-black.webp`, ratio: 3.40 },
-  { nombre: "Pandora", src: `${MARCAS_DIR}/pandora-logo-black.webp`, ratio: 4.39 },
-  { nombre: "Pull&Bear", src: `${MARCAS_DIR}/pull-and-bear-logo-black.webp`, ratio: 3.75 },
-  { nombre: "Sephora", src: `${MARCAS_DIR}/sephora-logo-black.webp`, ratio: 3.40 },
-  { nombre: "Suburbia", src: `${MARCAS_DIR}/suburbia-logo-black.webp`, ratio: 3.33 },
-  { nombre: "Tim Hortons", src: `${MARCAS_DIR}/tim-hortons-logo-black.webp`, ratio: 3.67 },
-  { nombre: "Ulta Beauty", src: `${MARCAS_DIR}/ulta-beauty-logo-black.webp`, ratio: 2.19 },
-  { nombre: "Walmart", src: `${MARCAS_DIR}/walmart-logo-black.webp`, ratio: 2.95 },
+  { nombre: "Banorte", src: `${MARCAS_DIR}/banorte-logo-black.webp`, ratio: 5.14, tinta: 0.577, rTinta: 8.11 },
+  { nombre: "Bershka", src: `${MARCAS_DIR}/bershka-logo-black.webp`, ratio: 3.40, tinta: 0.557, rTinta: 4.53 },
+  { nombre: "Bodega Aurrera", src: `${MARCAS_DIR}/bodega-aurrera-logo-black.webp`, ratio: 5.62, tinta: 0.831, rTinta: 6.07 },
+  { nombre: "Bolerama", src: `${MARCAS_DIR}/bolerama-logo-black.webp`, ratio: 1.29, tinta: 0.799, rTinta: 1.01, alza: -0.06, escala: 1.3 },
+  { nombre: "Boston Pizza", src: `${MARCAS_DIR}/boston-pizza-logo-black.webp`, ratio: 2.90, tinta: 0.714, rTinta: 3.63 },
+  { nombre: "C&A", src: `${MARCAS_DIR}/c-and-a-logo-black.webp`, ratio: 1.21, tinta: 0.821, rTinta: 1.3, escala: 1.3 },
+  { nombre: "Calvin Klein", src: `${MARCAS_DIR}/calvin-klein-logo-black.webp`, ratio: 4.00, tinta: 0.549, rTinta: 6.18 },
+  { nombre: "Carl's Jr.", src: `${MARCAS_DIR}/carlos-jr-logo-black.webp`, ratio: 3.21, tinta: 0.893, rTinta: 3.28 },
+  { nombre: "Chuck E. Cheese", src: `${MARCAS_DIR}/chuck-e-cheese-logo-black.webp`, ratio: 4.50, tinta: 0.854, rTinta: 4.88 },
+  { nombre: "Cinemex", src: `${MARCAS_DIR}/cinemex-logo-black.webp`, ratio: 3.75, tinta: 0.714, rTinta: 4.57 },
+  { nombre: "Cinépolis", src: `${MARCAS_DIR}/cinepolis-logo-black.webp`, ratio: 4.09, tinta: 0.861, rTinta: 4.44 },
+  { nombre: "Fiesta Inn", src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`, ratio: 3.33, tinta: 0.889, rTinta: 3.12 },
+  { nombre: "Firehouse Subs", src: `${MARCAS_DIR}/firehouse-subs-logo-black.webp`, ratio: 2.77, tinta: 0.717, rTinta: 3.36 },
+  { nombre: "H&M", src: `${MARCAS_DIR}/h-and-m-logo-black.webp`, ratio: 1.36, tinta: 0.73, rTinta: 1.51 },
+  { nombre: "Happyland", src: `${MARCAS_DIR}/happyland-logo-black.webp`, ratio: 4.62, tinta: 0.595, rTinta: 7.14 },
+  { nombre: "Helados Dreambox", src: `${MARCAS_DIR}/helados-dreambox-logo-black.webp`, ratio: 3.53, tinta: 0.67, rTinta: 4.36 },
+  { nombre: "IHOP", src: `${MARCAS_DIR}/ihop-logo-black.webp`, ratio: 2.14, tinta: 0.834, rTinta: 1.89 },
+  { nombre: "IMSS", src: `${MARCAS_DIR}/imss-logo-black.webp`, ratio: 0.94, tinta: 0.784, rTinta: 0.81, alza: -0.05, escala: 1.3 },
+  { nombre: "INE", src: `${MARCAS_DIR}/ine-logo-black.webp`, ratio: 3.05, tinta: 0.739, rTinta: 3.25 },
+  { nombre: "Innova Sport", src: `${MARCAS_DIR}/innova-sport-logo-black.webp`, ratio: 1.54, tinta: 0.812, rTinta: 1.62 },
+  { nombre: "KFC", src: `${MARCAS_DIR}/kfc-logo-black.webp`, ratio: 1.29, tinta: 0.837, rTinta: 1, alza: -0.06, escala: 1.3 },
+  { nombre: "Liverpool", src: `${MARCAS_DIR}/liverpool-logo-black.webp`, ratio: 2.77, tinta: 0.754, rTinta: 3.39 },
+  { nombre: "Miniso", src: `${MARCAS_DIR}/miniso-logo-black.webp`, ratio: 3.75, tinta: 0.698, rTinta: 4.78 },
+  { nombre: "Office Depot", src: `${MARCAS_DIR}/office-depot-logo-black.webp`, ratio: 2.34, tinta: 0.81, rTinta: 2.21 },
+  { nombre: "Old Navy", src: `${MARCAS_DIR}/old-navy-logo-black.webp`, ratio: 3.40, tinta: 0.975, rTinta: 3.06 },
+  { nombre: "Pandora", src: `${MARCAS_DIR}/pandora-logo-black.webp`, ratio: 4.39, tinta: 0.731, rTinta: 4.74 },
+  { nombre: "Pull&Bear", src: `${MARCAS_DIR}/pull-and-bear-logo-black.webp`, ratio: 3.75, tinta: 0.528, rTinta: 6.42 },
+  { nombre: "Sephora", src: `${MARCAS_DIR}/sephora-logo-black.webp`, ratio: 3.40, tinta: 0.401, rTinta: 7.57 },
+  { nombre: "Suburbia", src: `${MARCAS_DIR}/suburbia-logo-black.webp`, ratio: 3.33, tinta: 0.774, rTinta: 3.89 },
+  { nombre: "Tim Hortons", src: `${MARCAS_DIR}/tim-hortons-logo-black.webp`, ratio: 3.67, tinta: 0.605, rTinta: 5.07 },
+  { nombre: "Ulta Beauty", src: `${MARCAS_DIR}/ulta-beauty-logo-black.webp`, ratio: 2.19, tinta: 0.771, rTinta: 2.47 },
+  { nombre: "Walmart", src: `${MARCAS_DIR}/walmart-logo-black.webp`, ratio: 2.95, tinta: 0.86, rTinta: 3.02 },
 ];
 
 /*

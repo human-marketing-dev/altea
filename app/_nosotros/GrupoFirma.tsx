@@ -1,5 +1,22 @@
+import {
+  BedDouble,
+  Factory,
+  Globe,
+  GraduationCap,
+  House,
+  type LucideIcon,
+  Megaphone,
+  Music,
+  Newspaper,
+  Radio,
+  Stethoscope,
+  Store,
+  Trees,
+  Trophy,
+  Tv,
+} from "lucide-react";
 import Image from "next/image";
-import { GRUPO_FIRMA } from "./content";
+import { GRUPO_FIRMA, type IconoSub } from "./content";
 
 /**
  * Grupo Firma: los seis sectores, en fila.
@@ -107,42 +124,124 @@ const factorOptico = (ratio: number) => Math.min(1, BASE + ratio * PENDIENTE);
  */
 const AJUSTES: Record<string, number> = {
   /*
-   * 0.52, Y SOBREVIVE AL RECORTE DEL ARCHIVO — pero por un motivo distinto y más
-   * simple que antes. Conviene leerlo entero antes de tocarlo.
+   * ── Logotipos de sector ──
    *
-   * EL ARCHIVO YA NO MIENTE. Venía en 360x234 con la marca en 305x125 dentro: el
-   * 46.6 % del alto y el 15.3 % del ancho eran margen transparente, así que
-   * declaraba 1.538:1 cuando la marca era 2.440:1. Está recortado a 305x125 y su
-   * proporción es ahora la de la mancha. Eso arregló la geometría: `factorOptico`
-   * recibe el número correcto y el tope de ancho se calcula sobre la marca real.
+   * Delta: el archivo está recortado a su mancha —ver `logoRatio` en content.ts—,
+   * así que es el único de los seis sin aire interno y el presupuesto de alto se
+   * le aprovecha entero. Por eso va por debajo de 1 y no por encima.
    *
-   * LO QUE EL RECORTE NO PUEDE ARREGLAR ES LA COMPARACIÓN, porque los otros cinco
-   * archivos siguen sin recortar y traen entre el 33 % y el 58 % de aire interno.
-   * El alto común (--objetivo, 0.60) se gasta en el ELEMENTO, no en la mancha, así
-   * que un archivo ajustado aprovecha el presupuesto entero y uno con aire pierde
-   * la mitad por el camino. Delta es ahora el único honesto de los seis, y el
-   * honesto sale perdiendo: sin corrección se iría a 34.3 px de tinta, el más
-   * grande de la fila, cuando los demás están entre 15.0 y 32.7.
-   *
-   * 0.52 lo deja en 22.0 px de tinta, la mediana exacta de los otros cinco
-   * (Multimedios 15.0, Goal Capital 15.5, Foodplay 22.0, Bornos 23.6, Altea 32.7).
-   *
-   * ⚠ NO SE LIMPIA. Lo que lo haría desaparecer de verdad es RECORTAR LOS OTROS
-   * CINCO: con los seis lienzos ajustados a su mancha, el alto común se reparte
-   * igual para todos y la fórmula basta sola. Goal Capital es el que más lo pide
-   * —57.9 % de aire vertical, mancha de 8.608:1 contra un lienzo de 4.479—, y le
-   * siguen Multimedios, Bornos y Foodplay, entre el 33 y el 37 %.
+   * Altea baja y Delta sube para juntarlas con el resto: medidos los seis en el
+   * navegador, la tinta iba de 14.8 (Multimedios) a 32.3 (Altea), y Altea sacaba
+   * once píxeles al segundo. Ahora el abanico es la mitad. Altea no necesita ser
+   * la más grande para distinguirse: tiene la caja sólida en ink y el trazo coral.
    */
-  "logo-delta-electric-grupo-firma-globales.webp": 0.52,
+  "logo-delta-electric-grupo-firma-globales.webp": 0.62,
+  "altea-logo-light.svg": 0.58,
+
+  /*
+   * ── Sub-marcas compactas ──
+   *
+   * ⚠ POR ENCIMA DE 1, Y NO ES UN ERROR. La fórmula tope en 1 porque está pensada
+   * para repartir un alto común; estas tres lo rebasan a propósito.
+   *
+   * El motivo es el mismo que en el muro de /comercial y vale la pena no volver a
+   * tropezar: en una marca compacta el problema NO es el alto. Medido, KFC daba
+   * 17.6 px de tinta, MÁS que Tim Hortons (16.3) y que Bolerama (15.3) — y aun así
+   * se veía diminuto, porque su elemento mide 20 px de ancho contra los 94 de Tim
+   * Hortons. En masa estaba a una quinta parte.
+   *
+   * Lo que se iguala aquí es la presencia, no la altura. Con 1.10 pasan de 19-20 px
+   * de alto a 30, y de ~400 de masa a ~950 contra los ~2 100 de los wordmarks: no
+   * llegan a la par —no pueden, son cuadradas en una fila de marcas alargadas— pero
+   * dejan de desaparecer.
+   */
+  "logo-kfc-grupo-firma-globales.webp": 1.1,
+  "logo-sultanes-grupo-firma-globales.webp": 1.1,
+  "logo-fuerza-regia-grupo-firma-globales.webp": 1.1,
 };
 
+/*
+ * ⚠ DEPORTES NO TIENE LOGOTIPO: LLEVA UN ICONO GENÉRICO, Y LA DIFERENCIA IMPORTA.
+ *
+ * Es el único de los seis sin archivo. En logos-grupo-firmas-globales/ están
+ * Sultanes y Fuerza Regia —las dos sub-marcas— pero no hay marca paraguas de
+ * "Deportes", ni ahí ni en ningún otro sitio del repositorio.
+ *
+ * El icono es `Trophy` de lucide-react (ISC), no un dibujo propio. Hubo aquí un
+ * SVG hecho a mano y se quitó: un símbolo inventado para una marca que existe de
+ * verdad se lee como si FUERA su identidad, y eso sí engaña. Un icono de librería
+ * se lee como lo que es —un marcador de categoría— y nadie lo confunde con un
+ * logotipo.
+ *
+ * El texto NO se quita: el icono va encima y el nombre debajo. El icono es
+ * decorativo (`aria-hidden` lo pone lucide por defecto al no haber `aria-label`),
+ * así que lo que se lee sigue siendo "Deportes".
+ *
+ * `strokeWidth` baja de los 2 de lucide a 1.6: los iconos propios del sitio —los
+ * de los pilares, los del footer— van entre 1.3 y 1.8, y a 2 éste se vería más
+ * pesado que todo lo demás.
+ *
+ * PENDIENTE: pedir a Altea el logotipo de la rama de deportes. En cuanto exista,
+ * se añaden `logo` y `logoRatio` al sector en content.ts y entra por el mismo
+ * camino que los otros cinco; esto se vuelve el respaldo de un caso que ya no
+ * ocurre.
+ */
 
+/*
+ * LOS ICONOS DE LAS SUB-MARCAS QUE NO SON MARCAS.
+ *
+ * Medios e Inmobiliaria no cuelgan marcas sino CATEGORÍAS —Prensa, Radio,
+ * Vivienda, Forestal— y nunca van a tener logotipo, porque no son marcas. En una
+ * lista de texto suelto, bajo una columna donde las vecinas sí traen logotipo, se
+ * leían como una nota al pie. El icono les devuelve el peso.
+ *
+ * Todos de lucide-react (ISC) y a 1.6 de trazo, como el de Deportes: ninguno es un
+ * dibujo propio y ninguno pretende ser un logotipo.
+ *
+ * El mapa vive aquí y no en content.ts porque content.ts es contenido y no debe
+ * importar JSX: allá va la clave, aquí el componente.
+ *
+ * Las elecciones que no son obvias, por si hay que revisarlas:
+ *   · Exteriores → Megaphone. Es publicidad exterior, no "el campo": el megáfono
+ *     dice difusión, que es de lo que vive esa rama.
+ *   · Sector salud → Stethoscope y no una cruz. La cruz roja es un emblema
+ *     protegido por los Convenios de Ginebra; el estetoscopio no arrastra nada.
+ *   · Digital → Globe. Lo abstracto gana aquí: un monitor o un móvil elegirían un
+ *     soporte, y "Digital" los cubre todos.
+ */
+const ICONOS_SUB: Record<IconoSub, LucideIcon> = {
+  prensa: Newspaper,
+  digital: Globe,
+  televisión: Tv,
+  exteriores: Megaphone,
+  radio: Radio,
+  educación: GraduationCap,
+  comercial: Store,
+  industrial: Factory,
+  vivienda: House,
+  hoteles: BedDouble,
+  salud: Stethoscope,
+  forestal: Trees,
+  conciertos: Music,
+};
 
 /** El factor de un logotipo: su excepción si la tiene, y si no la fórmula. */
 function factorDe(logo: string | undefined, ratio: number) {
   const archivo = logo?.slice(logo.lastIndexOf("/") + 1);
   return (archivo && AJUSTES[archivo]) ?? factorOptico(ratio);
 }
+/** Resuelve la clave a su componente. Aparte para no meter un IIFE en el JSX. */
+function SubIcono({ clave }: { clave: IconoSub }) {
+  const Icono = ICONOS_SUB[clave];
+  return (
+    <Icono
+      className="nos-firma__subicono"
+      strokeWidth={1.6}
+      aria-hidden="true"
+    />
+  );
+}
+
 export function GrupoFirma() {
   return (
     <section className="nos-firma" aria-labelledby="firma-titulo">
@@ -153,14 +252,30 @@ export function GrupoFirma() {
         <p className="nos-firma__intro">{GRUPO_FIRMA.intro}</p>
       </div>
 
-      {/* La raíz y el family office, encima de la fila. Goal Capital va aparte
-          porque no es un sector operativo: no le corresponde una columna. */}
+      {/*
+        LA RAÍZ, CENTRADA, Y EL NUDO DEL QUE CUELGA TODO.
+
+        El nudo es un contenedor de ancho completo con el tronco dibujado en su
+        ::before. Tiene que ser de ancho completo: si el bloque de Goal Capital
+        colgara de la propia línea del tronco —un elemento de 1 px—, sus
+        porcentajes se calcularían contra ese píxel y acabaría en cualquier sitio.
+
+        El codo sale del tronco y va RECTO DE LADO, sin bajar después. Con la
+        bajada, Goal Capital cae sobre la fila de ramas y se monta con ellas.
+      */}
       <div className="nos-firma__raiz">
         <p className="nos-firma__gfg">
           <b>{GRUPO_FIRMA.raiz.sigla}</b>
           <span>{GRUPO_FIRMA.raiz.nombre}</span>
         </p>
+      </div>
+
+      <div className="nos-firma__nudo">
+        <span className="nos-firma__codo" aria-hidden="true" />
+        {/* Goal Capital cuelga de la raíz, no de la fila: es el family office y
+            no un sector operativo, así que no le corresponde una rama. */}
         <p className="nos-firma__aparte">
+          <span className="nos-firma__cat">{GRUPO_FIRMA.aparte.rol}</span>
           <Image
             className="nos-firma__logo-aparte"
             src={GRUPO_FIRMA.aparte.logo}
@@ -175,14 +290,13 @@ export function GrupoFirma() {
             }}
             unoptimized
           />
-          {GRUPO_FIRMA.aparte.rol}
         </p>
       </div>
 
-      <ul className="nos-firma__cols">
+      <ul className="nos-firma__ramas">
         {GRUPO_FIRMA.sectores.map((sector) => (
           <li
-            className="nos-firma__col"
+            className="nos-firma__rama"
             key={sector.id}
             data-nuestra={sector.nuestra ? "si" : undefined}
           >
@@ -208,42 +322,55 @@ export function GrupoFirma() {
                   unoptimized
                 />
               ) : (
-                sector.marca
+                <span className="nos-firma__sinlogo">
+                  <Trophy className="nos-firma__icono" strokeWidth={1.6} />
+                  {sector.marca}
+                </span>
               )}
             </span>
 
             {sector.subs.length > 0 && (
-              <ul className="nos-firma__subs">
-                {sector.subs.map((sub) => (
-                  <li key={sub.nombre}>
-                    {/* Sólo Deportes trae categoría por sub-marca, y la lleva igual
+              /* El envoltorio es el que dibuja la bajada corta desde la caja del
+                 sector hasta las sub-marcas; sin él la lista colgaría sin trazo. */
+              <div className="nos-firma__colgante">
+                <ul className="nos-firma__subs">
+                  {sector.subs.map((sub) => (
+                    <li key={sub.nombre}>
+                      {/* Sólo Deportes trae categoría por sub-marca, y la lleva igual
                         tenga logotipo o no: Béisbol encima de Sultanes, Básquetbol
                         encima de Fuerza Regia. En las demás ramas la columna ya
                         dice de qué sector son. */}
-                    {sub.categoria && <em>{sub.categoria}</em>}
-                    {sub.logo ? (
-                      <Image
-                        className="nos-firma__sublogo"
-                        src={sub.logo}
-                        alt={sub.nombre}
-                        width={200}
-                        height={Math.round(200 / (sub.logoRatio ?? 2.5))}
-                        /* Misma corrección óptica que los de sector: los compactos
+                      {sub.categoria && <em>{sub.categoria}</em>}
+                      {sub.logo ? (
+                        <Image
+                          className="nos-firma__sublogo"
+                          src={sub.logo}
+                          alt={sub.nombre}
+                          width={200}
+                          height={Math.round(200 / (sub.logoRatio ?? 2.5))}
+                          /* Misma corrección óptica que los de sector: los compactos
                            como KFC bajan y los alargados como Tim Hortons no. */
-                        style={{
-                          ["--factor" as string]: factorDe(
-                            sub.logo,
-                            sub.logoRatio ?? 2.5,
-                          ),
-                        }}
-                        unoptimized
-                      />
-                    ) : (
-                      <b>{sub.nombre}</b>
-                    )}
-                  </li>
-                ))}
-              </ul>
+                          style={{
+                            ["--factor" as string]: factorDe(
+                              sub.logo,
+                              sub.logoRatio ?? 2.5,
+                            ),
+                          }}
+                          unoptimized
+                        />
+                      ) : (
+                        /* Icono a la izquierda y nombre a la derecha, en la misma
+                           línea: apilados ocuparían el doble de alto y la lista de
+                           seis se iría a doce renglones. */
+                        <b className="nos-firma__subnombre">
+                          {sub.icono ? <SubIcono clave={sub.icono} /> : null}
+                          {sub.nombre}
+                        </b>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </li>
         ))}

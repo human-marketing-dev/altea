@@ -111,7 +111,35 @@ export interface SubMarca {
   logo?: string;
   /** Proporción ancho/alto del archivo. La consume la corrección óptica. */
   logoRatio?: number;
+  /**
+   * El icono, SÓLO donde la sub-marca NO es una marca.
+   *
+   * Es el complemento exacto de `logo`: las de Medios e Inmobiliaria son
+   * categorías —Prensa, Vivienda— y nunca van a tener logotipo porque no son
+   * marcas. Un icono les da el peso que les falta en una lista de texto suelto.
+   *
+   * Es una CLAVE, no un componente: content.ts es contenido y no debe importar
+   * JSX. El mapa de clave a icono vive en GrupoFirma.tsx, junto al resto del
+   * dibujo.
+   */
+  icono?: IconoSub;
 }
+
+/** Las claves de icono admitidas. El mapa está en GrupoFirma.tsx. */
+export type IconoSub =
+  | "prensa"
+  | "digital"
+  | "televisión"
+  | "exteriores"
+  | "radio"
+  | "educación"
+  | "comercial"
+  | "industrial"
+  | "vivienda"
+  | "hoteles"
+  | "salud"
+  | "forestal"
+  | "conciertos";
 
 export interface SectorFirma {
   id: string;
@@ -170,12 +198,12 @@ const SECTORES: SectorFirma[] = [
     categoria: "Medios",
     marca: "Multimedios",
     subs: [
-      { nombre: "Prensa" },
-      { nombre: "Digital" },
-      { nombre: "Televisión" },
-      { nombre: "Exteriores" },
-      { nombre: "Radio" },
-      { nombre: "Educación" },
+      { nombre: "Prensa", icono: "prensa" },
+      { nombre: "Digital", icono: "digital" },
+      { nombre: "Televisión", icono: "televisión" },
+      { nombre: "Exteriores", icono: "exteriores" },
+      { nombre: "Radio", icono: "radio" },
+      { nombre: "Educación", icono: "educación" },
     ],
   },
   {
@@ -186,12 +214,12 @@ const SECTORES: SectorFirma[] = [
     marca: "ALTEA",
     nuestra: true,
     subs: [
-      { nombre: "Comercial" },
-      { nombre: "Industrial" },
-      { nombre: "Vivienda" },
-      { nombre: "Hoteles" },
-      { nombre: "Sector salud" },
-      { nombre: "Forestal" },
+      { nombre: "Comercial", icono: "comercial" },
+      { nombre: "Industrial", icono: "industrial" },
+      { nombre: "Vivienda", icono: "vivienda" },
+      { nombre: "Hoteles", icono: "hoteles" },
+      { nombre: "Sector salud", icono: "salud" },
+      { nombre: "Forestal", icono: "forestal" },
     ],
   },
   {
@@ -256,7 +284,7 @@ const SECTORES: SectorFirma[] = [
       },
       /* Conciertos no es una marca y no tiene archivo: se queda en texto, junto a
          dos que sí lo tienen. */
-      { nombre: "Conciertos" },
+      { nombre: "Conciertos", icono: "conciertos" },
     ],
   },
   {

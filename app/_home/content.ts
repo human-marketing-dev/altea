@@ -328,14 +328,14 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   },
   {
     estado: "En desarrollo",
-    slug: "aeropuerto-industrial-center",
+    slug: "aeropuerto-industrial-park",
     href: ruta("/industrial"),
-    name: "Aeropuerto Industrial Center",
+    name: "Aeropuerto Industrial Park",
     unit: "Industrial",
     // Resuelto: decía Saltillo y su descripción decía Apodaca. Vale Apodaca.
     location: "Apodaca, Nuevo León",
-    // PENDIENTE: el archivo se llama "Aeropuerto Industrial Park" y vive en
-    // proximos-proyectos/. Confirmar si es el mismo desarrollo y qué nombre va.
+    /* Resuelto: decía "Center" y el archivo decía "Park". Es el mismo desarrollo
+       y el nombre que vale es Park, el del archivo. El slug se movió con él. */
     image: "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
     descripcion:
       "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque industrial que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey."

@@ -191,16 +191,31 @@ export function MapaPuntos() {
         /*
          * El contorno va PRIMERO, para que los puntos queden encima.
          *
-         * Al 10 % de cream es un susurro —1.45 de contraste contra el ink— y no
-         * compite con los puntos; lo que hace es que el ojo complete la forma
-         * donde la mancha se adelgaza. Se traza bajo una transformación de escala
-         * en vez de reconstruir el path a cada tamaño, y de ahí el `1 / esc` del
-         * grosor: dentro de la escala, eso es un píxel en pantalla.
+         * AL 28 % DE CREAM, y el número está calibrado contra la propia mancha.
+         *
+         * Estuvo al 10 %, que sobre el ink da 1.30 de contraste: un susurro de
+         * verdad, invisible en la práctica. (El comentario anterior decía 1.45;
+         * estaba mal, el valor medido es 1.30.)
+         *
+         *   10 %  #353534  1.30      28 %  #585753  2.21  ← aquí
+         *   22 %  #4D4C48  1.86      34 %  #64625E  2.62
+         *                            40 %  #706E68  3.13
+         *
+         * El 28 % se elige contra OPACIDAD_BASE: el punto más apagado del mapa
+         * —campo 0— va al 13 %, que da 1.42. Con el contorno en 2.21 las
+         * divisiones quedan claramente por encima de los puntos tenues y muy por
+         * debajo de los encendidos, así que se leen sin disputarle el mando a la
+         * mancha de intensidad. Pasado el 34 % el contorno empieza a competir con
+         * los puntos de campo bajo y esto se convierte en un mapa político.
+         *
+         * Se traza bajo una transformación de escala en vez de reconstruir el path
+         * a cada tamaño, y de ahí el `1 / esc` del grosor: dentro de la escala, eso
+         * es un píxel en pantalla.
          */
         ctx.save();
         ctx.scale(esc, esc);
         ctx.lineWidth = 1 / esc;
-        ctx.strokeStyle = "rgba(231,223,209,.10)";
+        ctx.strokeStyle = "rgba(231,223,209,.28)";
         ctx.stroke(contorno);
         ctx.restore();
 
@@ -361,7 +376,12 @@ export function MapaPuntos() {
   const estado = activo !== null ? ESTADOS_MAPA[activo] : undefined;
 
   return (
-    <div className="nos-mapa">
+    /*
+      data-on gobierna el cruce de los dos bloques del panel. Lo pone el mismo
+      estado que ya alimenta al panel —`activo`—, así que no hay un manejador
+      nuevo ni una fuente de verdad nueva.
+    */
+    <div className="nos-mapa" data-on={estado ? "si" : "no"}>
       <div className="nos-mapa__rejilla">
         {/* El lienzo es una ilustración: lo que se puede leer y recorrer es la
             lista de abajo. De ahí el role="img" y el aria-hidden de los puntos. */}
@@ -372,26 +392,38 @@ export function MapaPuntos() {
           role="img"
           aria-label="Mapa de presencia de Altea en México"
         />
-      </div>
 
-      <div className="nos-mapa__panel" aria-live="polite">
-        {estado ? (
-          <>
-            <small>{HUELLA.mapa.etiquetaEstado}</small>
-            <b>{estado.nombre}</b>
-            {estado.m2 ? (
-              <span>{estado.m2.toLocaleString("es-MX")} m²</span>
-            ) : (
-              <em>{HUELLA.mapa.sinDato}</em>
-            )}
-          </>
-        ) : (
-          <>
-            <small>{HUELLA.mapa.etiqueta}</small>
-            <b>{HUELLA.mapa.titulo}</b>
-            <em>{HUELLA.mapa.pista}</em>
-          </>
-        )}
+        {/*
+          EL DATO Y EL REPOSO SON DOS BLOQUES, no uno que cambia de contenido, y
+          viven DENTRO del lienzo —en el hueco del Pacífico, abajo a la izquierda—
+          en vez de en una columna aparte.
+
+          Son dos para que puedan cruzarse: uno se desvanece mientras el otro
+          aparece, así que el hueco nunca queda vacío ni se amontonan los dos. Con
+          un solo bloque que cambia de texto, el cambio sería un salto seco.
+
+          El aria-live va sólo en el del dato: es lo que cambia al señalar. El de
+          reposo es texto fijo y anunciarlo al salir de cada estado sería ruido.
+        */}
+        <p className="nos-mapa__dato" aria-live="polite">
+          {estado && (
+            <>
+              <small>{HUELLA.mapa.etiquetaEstado}</small>
+              <b>{estado.nombre}</b>
+              {estado.m2 ? (
+                <span>{estado.m2.toLocaleString("es-MX")} m²</span>
+              ) : (
+                <em>{HUELLA.mapa.sinDato}</em>
+              )}
+            </>
+          )}
+        </p>
+
+        <p className="nos-mapa__reposo">
+          <small>{HUELLA.mapa.etiqueta}</small>
+          <b>{HUELLA.mapa.titulo}</b>
+          <em>{HUELLA.mapa.pista}</em>
+        </p>
       </div>
 
       {/*

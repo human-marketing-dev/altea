@@ -3,7 +3,7 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { CountUp } from "@/app/ui";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { CIFRAS_COMERCIAL, HERO_CALADO, PLAZAS } from "./content";
@@ -26,7 +26,14 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * la silueta. Es decorativa y va aria-hidden: la palabra ya la dice el <h1>.
  *
  * ────────────────────────────────────────────────────────────────────────────
- * LA FOTO ALTERNA ENTRE LAS OCHO PLAZAS
+ * LA FOTO ALTERNA ENTRE LAS OCHO PLAZAS, Y LA ALTERNANCIA NO PASA POR REACT.
+ *
+ * Había un `useState` con el índice de la plaza, y existía sólo para escribir el
+ * pie que decía cuál se estaba viendo. Al quitar ese pie, el estado se quedó sin
+ * consumidor: la rotación ya la llevaba la variable `k` del intervalo, que es la
+ * que alimenta a `pintar()`. Quitándolo, el hero dejó de volver a renderizarse
+ * cada seis segundos para nada.
+ *
  *
  * Cada 4.2 s, y arriba a la derecha aparece cuál es. Así el hero enseña los ocho
  * centros sin ocupar más sitio, y el nombre convierte la imagen en información en
@@ -53,7 +60,6 @@ const VELO = 0.25;
 export function HeroCalado() {
   const raiz = useRef<HTMLElement>(null);
   const reducido = useMovimientoReducido();
-  const [i, setI] = useState(0);
 
   useGSAP(
     () => {
@@ -115,7 +121,6 @@ export function HeroCalado() {
           ease: "power2.in",
           onComplete: () => {
             pintar(k);
-            setI(k);
             gsap.to(palabra, { opacity: 1, duration: 0.6, ease: "power2.out" });
           },
         });
@@ -126,16 +131,8 @@ export function HeroCalado() {
     { scope: raiz, dependencies: [reducido] },
   );
 
-  const plaza = PLAZAS[i];
-
   return (
     <section className="com-hero" ref={raiz}>
-      {/* Con el eyebrow fuera queda sólo el dato de la plaza, así que se alinea a
-          la derecha en vez de dejar el hueco de una columna vacía. */}
-      <p className="com-hero__cual js-entra">
-        {plaza.nombre} · {plaza.ubicacion}
-      </p>
-
       <div className="com-hero__calado">
         <div className="com-hero__capas">
           <h1 className="com-hero__t js-calado">{HERO_CALADO.palabra}</h1>

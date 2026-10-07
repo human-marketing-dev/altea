@@ -16,19 +16,11 @@
   min-height: 100svh;
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  /* Dos filas desde que salió el pie que decía qué plaza se veía: la palabra
+     calada, centrada en el 1fr, y el pie de página. Eran tres. */
+  grid-template-rows: 1fr auto;
   padding: clamp(92px, 13vh, 140px) var(--container-pad) clamp(26px, 4.4vh, 50px);
   background: var(--surface-page);
-}
-
-/* Con el eyebrow fuera queda sólo el dato de la plaza: se alinea a la derecha en
-   vez de dejar el hueco de una columna vacía. */
-.com-hero__cual {
-  margin: 0;
-  justify-self: end;
-  font-size: var(--text-eyebrow);
-  /* 4.98 sobre el gris de página: el prototipo lo dejaba al 48 %, que da 2.94. */
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
 
 .com-hero__calado {
@@ -258,9 +250,34 @@
  * dice "esto se abre" sin tener que escribirlo. Sólo con puntero: en táctil no
  * hay estado intermedio entre no tocar y tocar.
  */
+/*
+ * LAS PISTAS NO PUEDEN SER `auto`, Y AHÍ ESTABA LA DESALINEACIÓN.
+ *
+ * Cada fila es su propio contenedor de grid —la lista es <ul><li><button>, y el
+ * `display: grid` está en el botón—, así que una pista `auto` se mide contra el
+ * contenido DE SU FILA y no contra la columna entera. Con eso, "Fashion Mall ·
+ * 1 millón al mes" y "Street Mall · —" empezaban en equis distintas y la tabla
+ * se leía torcida.
+ *
+ * La solución es que ninguna pista dependa del contenido. Medidos los textos en
+ * Gotham-Medium: el formato más largo ("Fashion Mall") pide 101.5 px y el dato de
+ * visitantes más largo ("+650 mil al mes") 117.5, que a 16 px de base son 8.8 y
+ * 10.1 ch. Con 10ch y 11ch sobra un poco para un valor algo más largo, y si
+ * alguno creciera de más parte línea dentro de su columna sin arrastrar a las
+ * vecinas, porque `align-items: baseline` alinea la PRIMERA línea.
+ *
+ * El número y la flecha se dejan en `auto` a propósito: son el mismo contenido en
+ * las ocho filas —dos dígitos con `tabular-nums` y el mismo glifo—, así que `auto`
+ * ya da la misma medida. No son el problema.
+ *
+ * Y la ubicación lleva un suelo de 17ch: el 20 % a secas se queda en 173.8 px a
+ * 1100 y "San Nicolás, Nuevo León" necesita 183.4, con lo que partía en dos
+ * líneas justo en la banda de 900 a 1160. Cuando el 20 % es menor que el suelo,
+ * manda el suelo.
+ */
 .com-ix__f {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 20%) auto auto auto;
+  grid-template-columns: auto minmax(0, 1fr) minmax(17ch, 20%) 10ch 11ch auto;
   gap: clamp(12px, 2.2vw, 36px);
   align-items: baseline;
   width: 100%;
@@ -785,6 +802,9 @@
   aspect-ratio: auto;
   /* El mismo fondo que la sección: la celda tapa la rejilla salvo en el gap. */
   background: var(--surface-sunken);
+  /* ⚠ El 0.2 de arriba y abajo deja el hueco útil en 0.6 del alto de fila, y ese
+     0.6 está escrito también en --hueco, en .com-mc__logo. Si se cambia uno hay
+     que cambiar el otro. */
   padding: calc(var(--alto-fila, 100px) * 0.2) 14%;
   transition: background var(--duration-base) var(--ease-standard);
 }
@@ -814,16 +834,87 @@
  * sobre una caja de alto automático no acota nada y el logotipo crecía a su
  * tamaño natural, empujando la celda. Es la otra mitad de la corrección.
  *
- * El 0.78 deja aire dentro del hueco útil. Con el hueco entero (1.00) los
- * logotipos compactos se estiran hasta 47.4 px a 1440 frente a los 13.5 px del
- * más ancho —3.94x— y el muro se desordena; con 0.78 el abanico baja a 2.96x.
+ * Los dos topes trabajan de verdad desde que el alto se divide entre --tinta: en
+ * los más cuadrados es `max-height` el que manda, y en los wordmarks largos
+ * `max-width`. Cuando `max-width` recorta, el navegador baja el alto con él —la
+ * tabla de violaciones de restricciones de CSS 2.1 §10.4 para elementos
+ * reemplazados— así que la proporción nunca se deforma.
+ *
+ * EL ALTO SE PIDE SOBRE LA TINTA Y SE DIVIDE ENTRE ELLA.
+ *
+ * --tinta es la fracción del alto del archivo que de verdad es mancha, y --factor
+ * la corrección óptica, las dos publicadas por el componente desde datos medidos
+ * de los 32 archivos. Dividir entre --tinta es lo que hace que lo que mide igual
+ * entre logotipos sea LA MARCA y no el recuadro transparente que la contiene: con
+ * márgenes internos que van del 16 al 27 % del alto, pedir el alto del elemento
+ * daba manchas de tamaños muy distintos. Ver el comentario largo de
+ * MuroMarcas.tsx, con el diagnóstico completo.
+ *
+ * EL TOPE DE BANDA (53 %) ES LO QUE MANTIENE EL MURO EN ORDEN.
+ *
+ * El alto común del 52 % corregido por --factor reparte la masa, pero a los cinco
+ * logotipos de lienzo casi cuadrado —Bolerama, C&A, H&M, IMSS y KFC— les daba
+ * entre el 62 y el 70 % del alto del hueco, por encima de los 32. Y ésa es la
+ * medida que de verdad se ve: los otros 27 viven en una banda horizontal de 22 a
+ * 53 % de alto, y cualquier cosa que la rebase se lee fuera de sitio por grande
+ * que sea el resto de la celda. Renderizado el muro y mirado, se nota al instante.
+ *
+ * El 53 % es el techo de esa banda: el alto de Liverpool, el más alto de los 27.
+ * Con el `min`, los cinco suben respecto a lo que tenían —que era la queja
+ * original, se veían diminutos— pero se detienen justo donde empieza a notarse.
+ *
+ * ⚠ EL `min` VA SOBRE LA TINTA, ANTES DE DIVIDIR ENTRE --tinta. Si se aplicara
+ * después, el tope limitaría el ELEMENTO y volvería a depender del margen
+ * transparente que traiga cada archivo, que es justo lo que esto quita de en medio.
  */
 .com-mc__logo {
-  height: calc(100% * 0.78 * var(--factor, 1));
+  /*
+   * ⚠ TODO EN LONGITUDES, NUNCA EN PORCENTAJES. Esto no es estilo: es el arreglo
+   * de un error que estuvo rompiendo el muro entero y costó encontrar.
+   *
+   * Un `height` en porcentaje sobre este <img> NO se resuelve contra el hueco con
+   * relleno de la celda, que es lo que uno supone y lo que yo supuse. Medido en el
+   * navegador: con la celda en 97.2 px y el hueco en 58.3, un `height: 64.56%`
+   * daba 62.1 px —el 64.56 % de ~96, casi la fila entera— en vez de los 37.6 que
+   * tocaban. Factor 1.65 de más.
+   *
+   * Las consecuencias eran tres, y las tres se veían: los logotipos salían mucho
+   * más grandes de lo calculado; `max-height: 100%` tampoco acotaba, porque se
+   * resolvía contra la misma base inflada; y el sobrante se iba HACIA ABAJO, así
+   * que los más altos —C&A, H&M e IMSS— se veían caídos y hasta desbordaban la
+   * celda. Comprobado contra el navegador: 62.1 px de alto con 20.8 px fuera.
+   *
+   * Con todo derivado de --alto-fila, que es una longitud, el navegador da
+   * exactamente lo calculado y `arriba` e `abajo` salen iguales.
+   */
+  --hueco: calc(var(--alto-fila, 100px) * 0.6);
+  --alto-comun: calc(var(--hueco) * 0.52 * var(--factor, 1));
+  --tope-banda: calc(var(--hueco) * 0.53);
+  /* --escala es la excepción por logotipo al tope de banda. Va fuera del `min`,
+     así que un logotipo con escala rebasa el tope a propósito; ver `escala` en
+     content.ts. Los 29 restantes la reciben en 1 y no cambian nada. */
+  height: calc(
+    min(var(--alto-comun), var(--tope-banda)) * var(--escala, 1) / var(--tinta, 1)
+  );
   width: auto;
   max-width: 100%;
-  max-height: 100%;
+  max-height: var(--hueco);
   object-fit: contain;
+  /*
+   * LA SUBIDA DE LOS LOCKUPS APILADOS. Es alineación, no tamaño.
+   *
+   * `place-items: center` centra el RECUADRO del logotipo. En 29 de los 32 eso
+   * basta, porque el nombre de la marca es el logotipo entero y sus letras caen
+   * sobre la línea media de la fila: el muro se lee como un renglón. En Bolerama,
+   * IMSS y KFC el símbolo va encima y el nombre debajo, así que centrar el
+   * recuadro pone el SÍMBOLO en la línea y deja el nombre colgando por abajo.
+   *
+   * --alza lo sube. El porcentaje de `translateY` se mide contra el alto del
+   * propio elemento, que es justo la unidad en la que está medido el dato. Ver
+   * `alza` en content.ts, con los valores y por qué son la mitad de la corrección
+   * teórica.
+   */
+  transform: translateY(calc(var(--alza, 0) * 100%));
   filter: grayscale(1);
   opacity: 0.55;
   transition: opacity var(--duration-base) var(--ease-standard);

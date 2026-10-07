@@ -207,18 +207,29 @@
   color: var(--text-secondary);
 }
 
+/*
+ * ═══ EL ÁRBOL ═══
+ *
+ * La sección dejó de ser seis columnas y es un organigrama: GFG arriba, el nudo
+ * con el codo a Goal Capital, la barra horizontal y las seis ramas.
+ *
+ * TODO EL TRAZADO VA CON BORDES Y PSEUDO-ELEMENTOS, no con SVG. Un SVG habría que
+ * recalcularlo en cada cambio de ancho —midiendo dónde quedó cada caja y
+ * redibujando— y cualquier desajuste del layout lo descuadra. Con bordes, los
+ * trazos SON el layout: no pueden desalinearse de lo que unen.
+ */
 .nos-firma__raiz {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-5);
-  padding-bottom: clamp(16px, 2.4vh, 26px);
+  justify-content: center;
+  margin: 0;
 }
 .nos-firma__gfg {
   display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   margin: 0;
+  text-align: center;
 }
 /*
  * La raíz del grupo va EN TEXTO a propósito, aunque su logotipo exista.
@@ -247,11 +258,162 @@
 .nos-firma__gfg span {
   text-transform: uppercase;
 }
+/*
+ * EL NUDO: el tramo entre GFG y la barra, con el tronco centrado.
+ *
+ * ⚠ ES DE ANCHO COMPLETO A PROPÓSITO, y aquí está la trampa que costó encontrar:
+ * el bloque de Goal Capital NO puede colgar de la línea del tronco. Esa línea es
+ * un elemento de 1 px de ancho, y un hijo posicionado dentro calcula sus
+ * porcentajes contra ese píxel, así que acaba en cualquier sitio. El contenedor
+ * ocupa el ancho entero y es él quien posiciona; el tronco es sólo su ::before.
+ */
+.nos-firma__nudo {
+  position: relative;
+  /*
+   * El suelo es 78 y no 66, y es por ventanas ANCHAS Y BAJAS. El alto del nudo
+   * va en vh, pero el de Goal Capital va en vw: en 1920x473 el nudo cae a su
+   * mínimo mientras la caja sigue en 48 px, y con 66 quedaban 9 px de aire a cada
+   * lado — no se montaba con la fila, pero rozaba. Con 78 el peor caso son 15.
+   */
+  height: clamp(78px, 10vh, 112px);
+}
+.nos-firma__nudo::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--linea-arbol);
+}
+/*
+ * EL CODO SALE DEL TRONCO Y VA RECTO DE LADO, SIN BAJAR DESPUÉS.
+ *
+ * La tentación es llevarlo de lado y luego bajar hasta la caja, como un codo de
+ * verdad. No funciona: con la bajada, Goal Capital queda a la altura de la fila
+ * de ramas y se monta con ellas. Yendo recto, la caja se queda a media altura del
+ * nudo, en la franja que no ocupa nadie.
+ */
+.nos-firma__codo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14%;
+  height: 1px;
+  background: var(--linea-arbol);
+}
 .nos-firma__aparte {
+  position: absolute;
+  top: 50%;
+  /*
+   * 67 y no 64. El codo termina en el 64 % —mide 14 % desde el tronco, que está en
+   * el 50— así que arrancar el bloque ahí mismo dejaba "FAMILY OFFICE" pegado a la
+   * punta de la línea. Con 67 quedan 3 puntos de aire, unos 39 px a 1440.
+   */
+  left: 67%;
+  transform: translateY(-50%);
+  width: clamp(112px, 14vw, 200px);
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 18px);
   margin: 0;
-  text-align: right;
   line-height: 1.5;
   letter-spacing: normal;
+}
+/*
+ * LAS SEIS RAMAS, CON SU BARRA Y SUS CAÍDAS.
+ *
+ * La barra horizontal no es un borde del contenedor: es el ::before de cada rama,
+ * de lado a lado de su celda. Así se corta sola en los extremos —la primera
+ * arranca en su centro y la última termina en el suyo— y queda exactamente del
+ * ancho que une los seis troncos, en vez de sobresalir por los lados.
+ *
+ * El ::after es la caída desde la barra hasta la caja, y mide lo mismo que el
+ * relleno superior de la rama (--caida): si no coincidieran, el trazo se quedaría
+ * corto o entraría en la caja.
+ */
+.nos-firma__ramas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--hueco-ramas);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nos-firma__rama {
+  position: relative;
+  padding: var(--caida) clamp(8px, 1vw, 16px) 0;
+  display: grid;
+  gap: clamp(13px, 2vh, 20px);
+  align-content: start;
+}
+/*
+ * ⚠ LA BARRA SE ESTIRA MEDIO HUECO POR LADO, y sin eso sale rota.
+ *
+ * Cada tramo es el ::before de SU rama, así que por defecto llega sólo hasta el
+ * borde de su celda y el `gap` de la rejilla deja cinco mordiscos de aire en lo
+ * que debería ser una línea continua. Sacando cada tramo medio hueco a cada lado,
+ * los seis se tocan exactamente en el centro del hueco.
+ */
+.nos-firma__rama::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(var(--hueco-ramas) / -2);
+  right: calc(var(--hueco-ramas) / -2);
+  height: 1px;
+  background: var(--linea-arbol);
+}
+.nos-firma__rama:first-child::before {
+  left: 50%;
+}
+.nos-firma__rama:last-child::before {
+  right: 50%;
+}
+.nos-firma__rama::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: var(--caida);
+  background: var(--linea-arbol);
+}
+
+/* La bajada corta de la caja del sector a sus sub-marcas. */
+/* El sector sin logotipo: icono encima y nombre debajo. El alto del icono sale
+   del mismo --alto-caja que los logotipos, así que crece y encoge con ellos. */
+.nos-firma__sinlogo {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+}
+.nos-firma__icono {
+  display: block;
+  width: auto;
+  height: calc(var(--alto-caja, 70px) * 0.3);
+  /* Más apagado que el texto: es un marcador de categoría, no la marca. */
+  color: color-mix(in srgb, var(--altea-ink) 48%, transparent);
+}
+
+.nos-firma__colgante {
+  position: relative;
+  margin-top: clamp(16px, 2.4vh, 26px);
+  padding-top: clamp(16px, 2.4vh, 26px);
+}
+.nos-firma__colgante::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: clamp(16px, 2.4vh, 26px);
+  background: var(--linea-arbol);
+}
+
+.nos-firma__aparte .nos-firma__cat {
+  flex: none;
+  max-width: 7ch;
 }
 /*
  * Goal Capital. Gris por opacidad como los otros ajenos, y A TAMAÑO DE SECTOR.
@@ -283,7 +445,6 @@
    */
   height: min(calc(var(--alto-caja, 70px) * 0.5247), 48px);
   width: auto;
-  margin-left: auto;
   filter: grayscale(1);
   opacity: 0.55;
   transition: opacity var(--duration-base) var(--ease-standard);
@@ -292,10 +453,7 @@
   opacity: 0.72;
 }
 
-/*
- * Las seis columnas. La separación es una LÍNEA FINA y no un hueco: con hueco se
- * leen como seis tarjetas y el conjunto deja de ser un organigrama.
- */
+
 /*
  * --ALTO-CAJA ES EL ALTO REAL DE .nos-firma__marca, RECONSTRUIDO EN vw.
  *
@@ -322,35 +480,45 @@
  */
 .nos-firma {
   --alto-caja: clamp(42px, max(4.867vw, 6.667vw - 28.8px), 142px);
+  /* El gris de todos los trazos del árbol, en un sitio. */
+  --linea-arbol: color-mix(in srgb, var(--altea-ink) 20%, transparent);
+  /* La bajada de la barra a cada rama, y también el relleno superior de la rama:
+     los dos tienen que medir lo mismo o el trazo no llega a la caja. */
+  --caida: clamp(26px, 4vh, 46px);
+  /* El hueco entre ramas. Se declara aquí porque lo usan DOS cosas que tienen que
+     cuadrar: el `gap` de la rejilla y cuánto se estira la barra para cruzarlo. */
+  --hueco-ramas: clamp(6px, 1vw, 16px);
 }
-.nos-firma__cols {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(6px, 1vw, 16px);
-  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 20%, transparent);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+/*
+ * LA CATEGORÍA RESERVA DOS LÍNEAS AUNQUE OCUPE UNA.
+ *
+ * "Alimentos y diversiones" parte en dos y las otras cinco no, así que sin esto
+ * su caja baja 15 px respecto a la fila y los seis logotipos dejan de estar a la
+ * misma altura. En columnas se notaba poco; en un árbol, con la barra y las seis
+ * caídas marcando una horizontal, el escalón canta. 2.6em son dos líneas a 1.3.
+ */
+.nos-firma__rama .nos-firma__cat {
+  min-height: 2.6em;
 }
-.nos-firma__col {
-  position: relative;
-  padding: clamp(18px, 2.8vh, 30px) clamp(8px, 1vw, 16px) 0;
-  display: grid;
-  gap: clamp(13px, 2vh, 20px);
-  align-content: start;
+.nos-firma__rama .nos-firma__cat,
+.nos-firma__colgante .subs,
+.nos-firma__rama .nos-firma__subs {
+  text-align: center;
 }
-/* La línea va en el hueco entre columnas —de ahí el left negativo a la mitad del
-   gap— y se queda corta por abajo para no cerrar la celda como una caja. */
-.nos-firma__col + .nos-firma__col::before {
-  content: "";
-  position: absolute;
-  left: calc(clamp(6px, 1vw, 16px) / -2);
-  top: 0;
-  bottom: clamp(14px, 2vh, 22px);
-  width: 1px;
-  background: color-mix(in srgb, var(--altea-ink) 11%, transparent);
+/*
+ * ⚠ SE CENTRA LA LISTA, NO CADA FILA. Es lo que alinea los iconos en una vertical.
+ *
+ * Con `justify-items: center` en la lista, cada fila se centra POR SU CUENTA: como
+ * "Prensa" y "Exteriores" no miden lo mismo, sus iconos caen en equis distintas y
+ * la columna se lee como un zigzag. Centrando el bloque entero —`fit-content` más
+ * `margin-inline: auto`— las filas comparten borde izquierdo y los seis iconos
+ * forman una sola columna.
+ */
+.nos-firma__rama .nos-firma__subs {
+  justify-items: start;
+  width: fit-content;
+  margin-inline: auto;
 }
-
 .nos-firma__cat {
   font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-wide);
@@ -376,7 +544,7 @@
     border-color var(--duration-base) var(--ease-standard),
     color var(--duration-base) var(--ease-standard);
 }
-.nos-firma__cols:hover .nos-firma__col:not([data-nuestra]) .nos-firma__marca {
+.nos-firma__ramas:hover .nos-firma__rama:not([data-nuestra]) .nos-firma__marca {
   border-color: color-mix(in srgb, var(--altea-ink) 24%, transparent);
 }
 
@@ -465,7 +633,7 @@
  * por encima del 3:1 que pide un gráfico y un punto más claro que el texto de la
  * sección (ink 66 %, 7.05): los logotipos ajenos ceden el paso al texto.
  */
-.nos-firma__col:not([data-nuestra]) .nos-firma__logo,
+.nos-firma__rama:not([data-nuestra]) .nos-firma__logo,
 .nos-firma__sublogo {
   filter: grayscale(1);
   opacity: 0.55;
@@ -473,8 +641,8 @@
 }
 /* Al pasar el cursor por la sección suben a 0.72, que da 8.79: también cumple.
    Las sub-marcas van con el mismo valor que su sector, no con uno propio. */
-.nos-firma__cols:hover .nos-firma__col:not([data-nuestra]) .nos-firma__logo,
-.nos-firma__cols:hover .nos-firma__sublogo {
+.nos-firma__ramas:hover .nos-firma__rama:not([data-nuestra]) .nos-firma__logo,
+.nos-firma__ramas:hover .nos-firma__sublogo {
   opacity: 0.72;
 }
 
@@ -502,6 +670,20 @@
   align-content: center;
   min-height: clamp(16px, 1.5vw, 22px);
 }
+/* Icono a la izquierda del nombre, en la misma línea de base. El alto va en `em`
+   —no en px ni en vw— para que siga al cuerpo del texto sin un clamp aparte. */
+.nos-firma__subnombre {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.nos-firma__subicono {
+  flex: none;
+  width: auto;
+  height: 1.25em;
+  /* Un punto por debajo del nombre: acompaña, no compite. */
+  color: color-mix(in srgb, var(--altea-ink) 46%, transparent);
+}
 .nos-firma__subs b {
   font-size: var(--text-eyebrow);
   font-weight: var(--weight-medium);
@@ -521,34 +703,27 @@
 /*
  * ALTEA NO CAMBIA DE SITIO, CAMBIA DE MATERIAL.
  *
- * Fondo propio, regla coral arriba y la caja del logotipo rellena en ink con el
- * texto en cream (12.06). Se distingue sin salirse de la fila — y, lo que
- * importa, SIGUE distinguiéndose el día que lleguen los logotipos reales y los
- * otros cinco sean grises. Un simple cambio de color del nombre habría dejado de
- * funcionar justo entonces.
+ * Fondo propio no: en un árbol, un panel de color bajo una rama la convierte en
+ * una tarjeta y rompe el dibujo. Lo que la distingue es EL TRAZO —su caída y la
+ * bajada a sus sub-marcas van en coral y a dos píxeles, contra el gris de un
+ * píxel de las otras cinco— más la caja del logotipo rellena en ink con el
+ * logotipo en claro, que es el tratamiento que ya tenía.
+ *
+ * Se distingue sin salirse de la fila, y SIGUE distinguiéndose el día que lleguen
+ * los logotipos reales y los otros cinco sean grises. Un simple cambio de color
+ * del nombre habría dejado de funcionar justo entonces.
  */
-.nos-firma__col[data-nuestra] {
-  background: color-mix(in srgb, var(--altea-ink) 5%, transparent);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
-  padding-bottom: clamp(18px, 2.6vh, 28px);
-}
-.nos-firma__col[data-nuestra]::after {
-  content: "";
-  position: absolute;
-  /* -1px: monta la regla sobre el borde superior de la fila en vez de dejarla
-     por dentro, así que no quedan dos líneas de 1px pegadas. */
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
+.nos-firma__rama[data-nuestra]::after,
+.nos-firma__rama[data-nuestra] .nos-firma__colgante::before {
   background: var(--altea-coral);
+  width: 2px;
 }
 /* coral sobre el gris de página da 2.9998 y no llega al 3.0 de un gráfico; esto
    es texto de 13px, así que va a --text-accent (3.99). */
-.nos-firma__col[data-nuestra] .nos-firma__cat {
+.nos-firma__rama[data-nuestra] .nos-firma__cat {
   color: var(--text-accent);
 }
-.nos-firma__col[data-nuestra] .nos-firma__marca {
+.nos-firma__rama[data-nuestra] .nos-firma__marca {
   background: var(--altea-ink);
   color: var(--altea-cream);
   border-color: var(--altea-ink);
@@ -556,7 +731,7 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.16em;
 }
-.nos-firma__col[data-nuestra] .nos-firma__subs b {
+.nos-firma__rama[data-nuestra] .nos-firma__subs b {
   color: var(--text-primary);
 }
 
@@ -577,17 +752,37 @@
 
 /* ═══ 4 · nuestra huella ══════════════════════════════════════════════════ */
 
+/*
+ * DOS COLUMNAS: la información a la izquierda y el mapa a la derecha.
+ *
+ * El 36/64 es por el mapa, no por el texto: con el mapa ocupando su columna
+ * entera, el 64 % le da el ancho que antes tenía acotado a 620 px y además deja
+ * sitio al panel dentro de la silueta. La información cabe holgada en el 36 %
+ * porque sus tres bloques —titular, cifras y reparto— son estrechos de por sí.
+ *
+ * `center` y no `start`: los dos lados tienen altos muy distintos y alinearlos
+ * arriba deja el más corto colgando contra un vacío.
+ */
 .nos-huella {
   background: var(--altea-ink);
   color: var(--altea-cream);
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
+  display: grid;
+  grid-template-columns: minmax(0, 36%) minmax(0, 64%);
+  gap: clamp(32px, 5vw, 90px);
+  align-items: center;
 }
+/* La columna de texto. Lo que antes separaba cada bloque con un margin propio
+   ahora lo reparte este hueco, que es uno solo y se lee en un sitio. */
+.nos-huella__info {
+  display: grid;
+  gap: clamp(36px, 6vh, 76px);
+  align-content: center;
+}
+/* Apilado: el titular y el cuerpo ya no caben uno al lado del otro en el 36 %. */
 .nos-huella__intro {
   display: grid;
-  grid-template-columns: minmax(0, 42%) minmax(0, 58%);
-  gap: clamp(24px, 5vw, 90px);
-  align-items: start;
-  margin-bottom: clamp(46px, 8vh, 100px);
+  gap: clamp(16px, 2.6vh, 28px);
 }
 .nos-huella__titulo {
   margin: 0;
@@ -610,22 +805,56 @@
 .nos-huella__datos {
   display: grid;
   gap: clamp(26px, 4.4vh, 54px);
-  margin: 0 0 clamp(40px, 7vh, 84px);
+  /* Sin margen inferior: la separación con el reparto la pone el gap de
+     .nos-huella__info. */
+  margin: 0;
 }
+/*
+ * ⚠ LA ETIQUETA PASÓ DE AL LADO A DEBAJO, y no es una decisión de estilo: es lo
+ * único que deja la cifra legible en una columna del 36 %.
+ *
+ * Medido con la cifra más larga, "+44,000,000 m²", a 1440: la columna da 441 px y
+ * el escalón se come 79. Con la etiqueta al lado quedan 218 px útiles, en los que
+ * la cifra cabe a 25 px de cuerpo —ya no es una cifra de titular, es un dato
+ * suelto—. Con la etiqueta debajo quedan 361 y el cuerpo sube a 42.
+ *
+ * La línea superior, el escalonado y el tratamiento se quedan igual; lo que cambia
+ * es dónde cae la etiqueta.
+ */
 .nos-hd {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(16px, 3vw, 44px);
-  align-items: baseline;
+  gap: clamp(4px, 0.8vh, 10px);
+  justify-items: start;
   padding-top: clamp(14px, 2vh, 24px);
   border-top: 1px solid color-mix(in srgb, var(--altea-cream) 22%, transparent);
-  margin-left: calc(var(--i) * clamp(0px, 16vw, 260px));
+  /*
+   * El sangrado del escalonado, REEXPRESADO para la columna estrecha. Era
+   * clamp(0px, 16vw, 260px), medido contra la fila completa; en el 36 % de ancho
+   * que tiene ahora la columna, esos 230 px a 1440 echarían la segunda cifra
+   * fuera. El valor nuevo conserva la MISMA PROPORCIÓN: el sangrado valía el
+   * 17.8 % del ancho de su contenedor a 1440 y el 14.8 % a 1920, y con 5.5vw
+   * topado en 90 px vale exactamente eso dentro de la columna. El escalón se ve
+   * igual; lo que cambió es contra qué se mide.
+   */
+  margin-left: calc(var(--i) * clamp(0px, 5.5vw, 90px));
 }
 .nos-hd__cifra {
-  grid-column: 1;
-  grid-row: 1;
   margin: 0;
-  font-size: clamp(2.4rem, 6.6vw, 5.6rem);
+  /*
+   * EL CUERPO, REEXPRESADO PARA LA COLUMNA. Era clamp(2.4rem, 6.6vw, 5.6rem),
+   * medido contra la fila completa: a 1440 daban 89.6 px, y "+44,000,000 m²" a
+   * ese cuerpo mide 915 px contra una columna de 441.
+   *
+   * 2.85vw es el mayor valor que deja esa cifra dentro de su hueco en TODOS los
+   * anchos: a 1200 pide 34.9 y da 34.2; a 1000 pide 29.1 y da 28.5; de 1440 para
+   * arriba sobra holgura. El tope de 4.6rem entra a los 2 580 px.
+   *
+   * ⚠ NO ES EL MISMO CUERPO QUE ANTES —a 1440 pasa de 89.6 a 41.0 px— y no podía
+   * serlo: la cifra más larga no cabe en un tercio del ancho a ningún tamaño
+   * parecido al anterior. Si hace falta recuperarlo, la palanca es el reparto de
+   * columnas de .nos-huella, no este clamp.
+   */
+  font-size: clamp(1.6rem, 2.85vw, 4.6rem);
   font-weight: var(--weight-bold);
   letter-spacing: -0.055em;
   line-height: 0.86;
@@ -638,8 +867,6 @@
   color: var(--accent-on-ink);
 }
 .nos-hd__etiqueta {
-  grid-column: 2;
-  grid-row: 1;
   font-size: clamp(0.9rem, 1.1vw, 1.05rem);
   /* 4.76 sobre ink. */
   color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
@@ -695,52 +922,33 @@
 
 /* ── el mapa ── */
 
+/* Ya no es una rejilla de dos columnas: el panel se fue adentro del lienzo, así
+   que aquí sólo queda el lienzo y la lista accesible. */
 .nos-mapa {
-  display: grid;
-  /* 250px y no 280: con el mapa acotado, el panel se lleva demasiada fila. */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 250px);
-  gap: clamp(22px, 4vw, 64px);
-  /* `center` y no `start`: con el mapa más corto, un panel alineado arriba queda
-     descolgado contra el hueco que deja debajo. */
-  align-items: center;
-  margin-top: clamp(40px, 7vh, 88px);
+  position: relative;
 }
 /*
- * EL MAPA, ACOTADO Y CENTRADO. No es sólo estética.
+ * EL LIENZO A TODO EL ANCHO DE SU COLUMNA. Antes iba acotado a 620 px y centrado,
+ * y eso dejaba aire muerto a los lados; con la sección en dos columnas el mapa ya
+ * no compite con el texto por el ancho y puede llenar lo suyo.
  *
- * El radio de los puntos se escala con el ancho del lienzo, así que a todo el
- * ancho —unos 958px en la columna a 1440— la retícula se abre hasta 9.6px de paso
- * y la mancha deja de leerse como mancha: quedan 1 856 puntos sueltos y el
- * contorno flotando alrededor. Acotado a 620 el paso baja a 6.2px y la densidad
- * vuelve a significar algo.
+ * ⚠ EL TOPE DE 620 TENÍA UN MOTIVO Y SIGUE VIGENTE: el radio de los puntos se
+ * escala con el ancho del lienzo, y pasado cierto punto la retícula se abre tanto
+ * que la mancha deja de leerse como mancha —quedan 1 856 puntos sueltos—. Lo que
+ * cambia es que el ancho ya no se dispara: en la columna del 64 % son unos 790 px
+ * a 1440 y 1 070 a 1920, no los 958 que daba antes la fila completa a 1440 ni los
+ * 1 500 que daría a 1920. El suelo de radio en píxeles lo sigue cubriendo
+ * RADIO_MINIMO_PX en MapaPuntos.tsx.
  *
- * La contrapartida es que el extremo bajo del radio se queda por debajo de lo que
- * una pantalla puede pintar; lo resuelve RADIO_MINIMO_PX en MapaPuntos, con la
- * medida de por qué no se podía arreglar subiendo el suelo en unidades del mapa.
+ * `position: relative` es lo que ancla al panel: sus porcentajes de `left` y
+ * `bottom` se miden contra ESTA caja, que es exactamente la del lienzo, y no
+ * contra el contenedor.
  */
 .nos-mapa__rejilla {
   position: relative;
   width: 100%;
-  max-width: 620px;
-  margin-inline: auto;
 }
 
-/*
- * El lienzo.
- *
- * El alto lo fija `aspect-ratio` desde el componente, con la proporción del
- * viewBox del mapa generado: así la caja reserva su sitio desde el primer
- * fotograma y no hay salto cuando el lienzo se dimensiona.
- *
- * Reemplazó a un <svg> con 1 856 <circle>. El cursor es un foco y TODOS los
- * puntos reaccionan a cada movimiento: en SVG eso es recalcular estilo y
- * repintar mil ochocientos nodos por cada `pointermove`. Aquí son 1 856 arcos,
- * que es trabajo de pintura y nada más.
- *
- * `touch-action: pan-y` para que en táctil el gesto vertical siga desplazando la
- * página: el lienzo escucha `pointermove` y sin esto el navegador podría dárselo
- * a él en vez de al scroll.
- */
 .nos-mapa__lienzo {
   display: block;
   width: 100%;
@@ -749,42 +957,77 @@
 }
 
 /*
- * El panel. El dato vive AQUÍ y no en un globo flotante: un tooltip sólo existe
- * con el puntero encima, no se alcanza con el teclado y en táctil aparece y se va
- * con el mismo toque.
+ * EL PANEL, DENTRO DEL MAPA. El dato vive AQUÍ y no en un globo flotante: un
+ * tooltip sólo existe con el puntero encima, no se alcanza con el teclado y en
+ * táctil aparece y se va con el mismo toque.
+ *
+ * Va en el hueco que deja la propia silueta —abajo a la izquierda, el Pacífico—
+ * en vez de en una columna aparte. Medido contra la nube de puntos: el estado más
+ * cercano por ese lado es Jalisco, que empieza en el 39.5 % del ancho, y Baja
+ * California Sur termina en el 54 % del alto. El panel ocupa hasta el 37.6 % del
+ * ancho y desde el 76 % del alto, así que no toca ninguno de los dos.
+ *
+ * SIN BORDE NI RELLENO: dentro del mapa una caja con marco se lee como un parche
+ * pegado encima. Sin ella, el dato parece escrito sobre el territorio.
+ *
+ * ⚠ `pointer-events: none` NO ES OPCIONAL. El lienzo escucha `pointermove` para
+ * saber qué estado señalas; un bloque opaco a los eventos encima de él crearía un
+ * agujero muerto justo en esa esquina, y el foco del cursor se congelaría al
+ * pasar por ahí.
  */
-.nos-mapa__panel {
-  position: sticky;
-  top: clamp(90px, 14vh, 140px);
-  padding: clamp(18px, 2.6vh, 28px);
-  border: 1px solid color-mix(in srgb, var(--altea-cream) 18%, transparent);
-  border-radius: var(--radius-lg);
-  min-height: clamp(140px, 20vh, 180px);
+.nos-mapa__dato,
+.nos-mapa__reposo {
+  position: absolute;
+  z-index: 3;
+  left: 1%;
+  bottom: 4%;
+  width: min(34%, 290px);
+  margin: 0;
   display: grid;
-  align-content: center;
   gap: var(--space-3);
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.nos-mapa__panel small {
+/* El dato entra; el reposo sale. Los dos ocupan el mismo sitio, así que el hueco
+   nunca queda vacío ni se amontonan. */
+.nos-mapa__dato {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.nos-mapa[data-on="si"] .nos-mapa__dato {
+  opacity: 1;
+  transform: none;
+}
+.nos-mapa[data-on="si"] .nos-mapa__reposo {
+  opacity: 0;
+}
+
+.nos-mapa__dato small,
+.nos-mapa__reposo small {
   font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   /* 5.49, contra el 42 % del prototipo que daba 3.28. */
   color: color-mix(in srgb, var(--altea-cream) 62%, transparent);
 }
-.nos-mapa__panel b {
+.nos-mapa__dato b,
+.nos-mapa__reposo b {
   font-size: clamp(1.1rem, 1.8vw, 1.5rem);
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
   line-height: 1.1;
 }
-.nos-mapa__panel span {
+.nos-mapa__dato span {
   font-size: clamp(1.3rem, 2.4vw, 2rem);
   font-weight: var(--weight-bold);
   letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
   color: var(--accent-on-ink);
 }
-.nos-mapa__panel em {
+.nos-mapa__dato em,
+.nos-mapa__reposo em {
   font-style: normal;
   font-size: var(--text-small);
   /* 4.76, contra el 50 % del prototipo que daba 4.06. */
@@ -1082,18 +1325,185 @@
 
 /* ═══ responsive ══════════════════════════════════════════════════════════ */
 
-@media (max-width: 1000px) {
-  /* A 3 columnas la caja mide 0.273333 del ancho; su alto, 10.933vw. */
-  .nos-firma {
-    --alto-caja: clamp(42px, 10.933vw, 142px);
+/*
+ * LA HUELLA VUELVE A UNA COLUMNA EN 980, antes que el resto de la página.
+ *
+ * El umbral es suyo y no el de 900 que usan las demás secciones: el mapa necesita
+ * ancho para que la retícula siga leyéndose, y en una columna del 64 % se queda
+ * corto antes que cualquier bloque de texto. Pasado el umbral, el mapa ocupa el
+ * ancho entero.
+ */
+@media (max-width: 980px) {
+  .nos-huella {
+    grid-template-columns: 1fr;
+    gap: clamp(36px, 6vh, 76px);
   }
-  .nos-firma__cols {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    row-gap: var(--space-7);
+  /* Sin el escalonado: en una columna a todo el ancho vuelve a ser el de antes,
+     y aquí lo que hace falta es que las dos cifras arranquen de la misma vertical. */
+  .nos-hd {
+    margin-left: 0;
   }
-  /* La línea sobra en la primera de cada fila: ahí no separa dos columnas. */
-  .nos-firma__col:nth-child(3n + 1)::before {
+  /*
+   * EL PANEL SALE DEL MAPA Y VUELVE AL FLUJO, debajo del lienzo.
+   *
+   * Posicionado dentro no funciona en un teléfono: no hay cursor, así que no hay
+   * estado señalado casi nunca, y el hueco de la silueta es demasiado pequeño a
+   * ese ancho para alojar tres líneas de texto.
+   *
+   * Sólo uno de los dos está en el flujo a la vez —el otro sale con `display`— en
+   * vez de cruzarse por opacidad: dos bloques estáticos superpuestos por opacidad
+   * ocuparían los dos su sitio y dejarían un hueco vacío debajo.
+   */
+  .nos-mapa__dato,
+  .nos-mapa__reposo {
+    position: static;
+    width: auto;
+    transform: none;
+    margin-top: clamp(20px, 3.4vh, 34px);
+  }
+  .nos-mapa__dato {
+    opacity: 1;
+  }
+  .nos-mapa[data-on="no"] .nos-mapa__dato,
+  .nos-mapa[data-on="si"] .nos-mapa__reposo {
     display: none;
+  }
+}
+
+/*
+ * ═══ EL ÁRBOL, TUMBADO ═══
+ *
+ * El umbral es 1000 porque es donde la fila de seis deja de existir. El árbol
+ * horizontal sólo funciona con las seis ramas en una línea: partido en dos filas,
+ * la barra une tres y las otras tres cuelgan de nada.
+ *
+ * ⚠ ESTE BLOQUE SE REESCRIBE ENTERO, NO SE PARCHEA. El de escritorio dibuja con
+ * posicionamiento absoluto y pseudo-elementos; sobrescribirlos uno a uno deja
+ * restos —medio trazo aquí, un codo huérfano allá— que aparecen sólo en algunos
+ * anchos. Se apagan todos de golpe y se construye de nuevo.
+ */
+@media (max-width: 1000px) {
+  .nos-firma__rama::before,
+  .nos-firma__rama::after,
+  .nos-firma__nudo::before,
+  .nos-firma__codo,
+  .nos-firma__colgante::before {
+    display: none !important;
+  }
+
+  /*
+   * UNA SOLA SANGRÍA PARA TODO LO QUE CUELGA DE GFG.
+   *
+   * Goal Capital y las seis ramas tienen que caer en la MISMA x: la espina no es
+   * un elemento, es el borde izquierdo de cada uno, y si van a sangrías distintas
+   * sale partida en dos tramos con un escalón entre ellos.
+   */
+  .nos-firma {
+    --sangria: clamp(14px, 4vw, 26px);
+    /* La caja ya no vive en una rejilla de seis: en vertical es la columna
+       derecha de cada rama, acotada en 200 px. Medido en el navegador: se queda
+       en 200 x 80 desde 999 px hasta 320, sin desbordar nunca. De aquí salen el
+       alto de los sub-logotipos y el de Goal Capital. */
+    --alto-caja: 80px;
+  }
+
+  .nos-firma__raiz {
+    justify-content: flex-start;
+  }
+  .nos-firma__gfg {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /*
+   * LA ESPINA ES UN BORDE IZQUIERDO, no un elemento posicionado. Continua por
+   * construcción: no hay forma de que se despegue de lo que encadena.
+   */
+  .nos-firma__nudo {
+    position: relative;
+    height: auto;
+    margin-left: var(--sangria);
+  }
+  /* El tramo corto que une GFG con el arranque de la espina. Sin él la línea
+     empieza en Goal Capital y la raíz queda suelta encima. */
+  .nos-firma__nudo::after {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: calc(var(--space-4) * -1);
+    width: 1px;
+    height: var(--space-4);
+    background: var(--linea-arbol);
+  }
+  /* Goal Capital va pegado debajo de GFG y antes de las seis: cuelga de la raíz,
+     no es un sector más. */
+  .nos-firma__aparte {
+    position: static;
+    transform: none;
+    width: auto;
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+    padding: var(--space-4) 0 var(--space-4) clamp(18px, 5vw, 30px);
+    border-left: 1px solid var(--linea-arbol);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .nos-firma__aparte .nos-firma__cat {
+    max-width: none;
+    text-align: left;
+  }
+
+  .nos-firma__ramas {
+    display: block;
+    margin-left: var(--sangria);
+  }
+  /*
+   * Sin codos hacia cada rama: a este ancho la espina sola ya las encadena, y un
+   * trazo corto por rama sólo mete ruido. El ritmo lo da la línea de arriba.
+   */
+  .nos-firma__rama {
+    display: grid;
+    /* 11ch y no 7.5: la categoría más larga de una sola palabra —INMOBILIARIA,
+       doce caracteres en versalitas con tracking— se salía de su columna y se
+       montaba sobre la caja. Con 11ch entra en una línea y las compuestas
+       ("Alimentos y diversiones") parten limpio en dos o tres. */
+    grid-template-columns: minmax(0, 11ch) minmax(0, 200px);
+    gap: clamp(10px, 3vw, 20px);
+    align-items: center;
+    padding: clamp(16px, 2.6vh, 24px) 0 clamp(16px, 2.6vh, 24px)
+      clamp(18px, 5vw, 30px);
+    border-left: 1px solid var(--linea-arbol);
+  }
+  .nos-firma__rama + .nos-firma__rama {
+    border-top: 1px solid var(--border-subtle);
+  }
+  .nos-firma__rama[data-nuestra] {
+    border-left-color: var(--altea-coral);
+  }
+  /* En vertical la categoría es una columna lateral, no una cabecera: no hay
+     fila que alinear y reservar dos líneas sólo abriría la fila. */
+  .nos-firma__rama .nos-firma__cat {
+    min-height: 0;
+    text-align: left;
+  }
+  /* Las sub-marcas pasan a línea continua: en columna, a este ancho, cada rama se
+     estiraría media pantalla. */
+  .nos-firma__colgante {
+    grid-column: 1 / -1;
+    margin-top: var(--space-3);
+    padding-top: 0;
+  }
+  .nos-firma__rama .nos-firma__subs {
+    display: flex;
+    flex-wrap: wrap;
+    /* En vertical la lista fluye a todo el ancho: ni se centra ni se acota. */
+    width: auto;
+    margin-inline: 0;
+    gap: var(--space-2) clamp(12px, 4vw, 24px);
+    text-align: left;
+  }
+  .nos-firma__rama .nos-firma__subs li {
+    justify-items: start;
   }
 }
 @media (max-width: 900px) {
@@ -1105,46 +1515,21 @@
     font-size: clamp(2rem, 7.6vw, 3.6rem);
   }
   .nos-origen__cols,
-  .nos-huella__intro,
   .nos-rs__cab,
   .nos-firma__cab {
     grid-template-columns: 1fr;
   }
-  .nos-hd {
-    margin-left: 0;
-  }
-  .nos-mapa,
   .nos-pilares__grid {
     grid-template-columns: 1fr;
   }
   .nos-pilares__grid {
     gap: clamp(26px, 5vh, 48px);
   }
-  .nos-mapa__panel {
-    position: static;
-  }
   .nos-rs__fotos {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 700px) {
-  .nos-firma__raiz {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .nos-firma__aparte {
-    text-align: left;
-  }
-  /* A 2 columnas, 0.415 del ancho; su alto, 16.6vw. */
-  .nos-firma {
-    --alto-caja: clamp(42px, 16.6vw, 142px);
-  }
-  .nos-firma__cols {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .nos-firma__col::before {
-    display: none;
-  }
   .nos-rs__fotos {
     grid-template-columns: 1fr;
   }

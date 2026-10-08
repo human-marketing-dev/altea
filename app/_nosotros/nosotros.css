@@ -150,7 +150,56 @@
   color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
 }
 
-/* ═══ 3 · Grupo Firma ═════════════════════════════════════════════════════ */
+/* ═══ 3 · pilares de identidad ════════════════════════════════════════════ */
+
+.nos-pilares {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.nos-pilares__titulo {
+  margin: 0 0 clamp(40px, 7vh, 86px);
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  max-width: 16ch;
+}
+.nos-pilares__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3.4vw, 62px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nos-pilar {
+  display: grid;
+  gap: clamp(16px, 2.6vh, 26px);
+  align-content: start;
+  padding-top: clamp(20px, 3vh, 32px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 20%, transparent);
+}
+.nos-pilar__icono {
+  display: block;
+  width: clamp(64px, 6.4vw, 92px);
+  /* Coral sobre ink: 4.87, de sobra para un gráfico. */
+  color: var(--accent-on-ink);
+}
+.nos-pilar__icono svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.nos-pilar__titulo {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 12ch;
+}
+/* ═══ 4 · Grupo Firma ═════════════════════════════════════════════════════ */
 
 .nos-firma {
   padding: clamp(66px, 12vh, 150px) var(--container-pad)
@@ -605,7 +654,7 @@
   color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
 
-/* ═══ 4 · nuestra huella ══════════════════════════════════════════════════ */
+/* ═══ 5 · nuestra huella ══════════════════════════════════════════════════ */
 
 /*
  * DOS COLUMNAS: la información a la izquierda y el mapa a la derecha.
@@ -888,63 +937,6 @@
   font-size: var(--text-small);
   /* 4.76, contra el 50 % del prototipo que daba 4.06. */
   color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
-}
-
-/* ═══ 5 · pilares de identidad ════════════════════════════════════════════ */
-
-.nos-pilares {
-  background: var(--altea-ink);
-  color: var(--altea-cream);
-  padding: clamp(70px, 13vh, 170px) var(--container-pad);
-}
-.nos-pilares__titulo {
-  margin: 0 0 clamp(40px, 7vh, 86px);
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
-  max-width: 16ch;
-}
-.nos-pilares__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(20px, 3.4vw, 62px);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.nos-pilar {
-  display: grid;
-  gap: clamp(16px, 2.6vh, 26px);
-  align-content: start;
-  padding-top: clamp(20px, 3vh, 32px);
-  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 20%, transparent);
-}
-.nos-pilar__icono {
-  display: block;
-  width: clamp(64px, 6.4vw, 92px);
-  /* Coral sobre ink: 4.87, de sobra para un gráfico. */
-  color: var(--accent-on-ink);
-}
-.nos-pilar__icono svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.nos-pilar__titulo {
-  margin: 0;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  max-width: 12ch;
-}
-.nos-pilar__texto {
-  margin: 0;
-  line-height: 1.7;
-  font-size: clamp(0.92rem, 1.05vw, 1.02rem);
-  /* 6.91 sobre ink. */
-  color: color-mix(in srgb, var(--altea-cream) 72%, transparent);
 }
 
 /* ═══ 6 · responsabilidad social ══════════════════════════════════════════ */
@@ -1243,11 +1235,17 @@
   .nos-firma__cab {
     grid-template-columns: 1fr;
   }
+  /*
+   * LOS PILARES SE QUEDAN EN TRES COLUMNAS, y esto cambió al quitarles el texto.
+   *
+   * Con un párrafo debajo de cada uno, tres columnas a este ancho dejaban líneas
+   * de cinco o seis palabras y había que apilarlas. Sin él, cada pilar es un
+   * icono y dos palabras: apilados, tres elementos diminutos ocupaban 600 px de
+   * alto para decir seis palabras. En fila siguen cabiendo —el icono baja a 64 px
+   * y el nombre parte en dos líneas— y la sección recupera su proporción.
+   */
   .nos-pilares__grid {
-    grid-template-columns: 1fr;
-  }
-  .nos-pilares__grid {
-    gap: clamp(26px, 5vh, 48px);
+    gap: clamp(14px, 2.6vw, 48px);
   }
   .nos-rs__fotos {
     grid-template-columns: repeat(2, minmax(0, 1fr));

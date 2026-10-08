@@ -6,9 +6,9 @@ import {
 /**
  * Página NOSOTROS, rediseñada.
  *
- *   1. hero — la nube de puntos      4. nuestra huella
- *   2. origen                        5. pilares de identidad
- *   3. Grupo Firma                   6. responsabilidad social
+ *   1. hero — la nube de puntos      4. Grupo Firma
+ *   2. origen                        5. nuestra huella
+ *   3. pilares de identidad          6. responsabilidad social
  *
  * Lo marcado PENDIENTE es texto provisional, no confirmado por Altea.
  *
@@ -81,15 +81,43 @@ export const ORIGEN = {
    */
 };
 
-/**
- * Interruptor del bloque de captación en /nosotros.
- *
- * En `false` por decisión de contenido, no por diseño: la página termina en
- * Responsabilidad social y va directo al pie. Apagado y no borrado — el
- * componente <LeadCTA> lo siguen montando las otras CINCO rutas (home,
- * comercial, industrial, vivienda y forestal), así que reactivarlo aquí es
- * cambiar este `false` por `true`.
- */
+/* ─── 3 · Pilares de identidad ─────────────────────────────────────────── */
+
+/** Los tres iconos de los pilares. Ver ICONOS_PILAR en Pilares.tsx. */
+export type IconoPilar = "retícula" | "red" | "triángulo";
+
+export const PILARES = {
+  title: "Los pilares de nuestra identidad",
+  /**
+   * Los tres, SIN TEXTO: icono y nombre y nada más.
+   *
+   * Cada uno traía un párrafo de dos o tres líneas que se quitó. Lo que queda es
+   * un enunciado, no una explicación — tres palabras que la página sostiene en
+   * otro sitio: lo que hacen esos pilares lo cuentan "Cómo nació Altea" justo
+   * encima y las fichas de los proyectos. Repetido aquí en prosa, la sección era
+   * un resumen de la página dentro de la página.
+   *
+   * Los textos siguen en el historial; si vuelven, vuelve también
+   * .nos-pilar__texto en la hoja.
+   */
+  bloques: [
+    {
+      id: "innovacion",
+      icono: "retícula",
+      title: "Innovación disruptiva",
+    },
+    {
+      id: "comunidades",
+      icono: "red",
+      title: "Comunidades vibrantes",
+    },
+    {
+      id: "trascendencia",
+      icono: "triángulo",
+      title: "Trascendencia",
+    },
+  ] satisfies { id: string; icono: IconoPilar; title: string }[],
+};
 
 /**
  * Altea forma parte de Grupo Firma.
@@ -285,58 +313,6 @@ export const HUELLA = {
     sinDato: "Sin superficie construida registrada",
   },
 };
-
-/* ─── 5 · Pilares de identidad ─────────────────────────────────────────── */
-
-/** Los tres iconos de los pilares. Ver ICONOS_PILAR en Pilares.tsx. */
-export type IconoPilar = "retícula" | "red" | "triángulo";
-
-export const PILARES = {
-  title: "Los pilares de nuestra identidad",
-  /**
-   * Los tres, con su texto AL LADO del título y no en una banda aparte.
-   *
-   * La referencia del cliente separaba los textos abajo, y eso obliga a mirar
-   * arriba y abajo para emparejar cada uno con su pilar. Juntos se leen de una
-   * pasada.
-   */
-  bloques: [
-    {
-      id: "innovacion",
-      icono: "retícula",
-      title: "Innovación disruptiva",
-      description:
-        "Reinventamos el hábitat. Desafiamos el status quo de la construcción e integramos tecnologías y diseño de vanguardia para crear espacios que anticipan las necesidades futuras.",
-    },
-    {
-      id: "comunidades",
-      icono: "red",
-      title: "Comunidades vibrantes",
-      description:
-        "Diseñamos para las personas. Creamos ecosistemas de conexión con infraestructura social y comunitaria que activa la interacción, el bienestar y el sentido de pertenencia en cada desarrollo.",
-    },
-    {
-      id: "trascendencia",
-      icono: "triángulo",
-      title: "Trascendencia",
-      description:
-        "Construimos un patrimonio. La calidad es nuestro estándar. Entregamos desarrollos con una estética atemporal y una solidez perdurable que añaden valor a la ciudad y a la vida de sus propietarios por generaciones.",
-    },
-  ] satisfies {
-    id: string;
-    icono: IconoPilar;
-    title: string;
-    description: string;
-  }[],
-};
-
-/**
- * Interruptor de la sección de la frase a sangre.
- *
- * Apagada a propósito, no comentada: repetía casi literalmente el titular de
- * "Quiénes somos", que va justo debajo. El componente y sus datos siguen en su
- * sitio y volver a mostrarla es cambiar este `false` por `true`.
- */
 
 /** El bloque del acordeón de Quiénes somos. Sin consumidor: ver QUIENES_SOMOS. */
 

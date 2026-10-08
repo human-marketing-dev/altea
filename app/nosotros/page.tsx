@@ -30,9 +30,9 @@ export default function Nosotros() {
       <main>
         <HeroNube />
         <Origen />
+        <Pilares />
         <GrupoFirma />
         <Huella />
-        <Pilares />
         <ResponsabilidadSocial />
       </main>
       <CierreContacto {...CONTACT_CTA} />

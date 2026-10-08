@@ -6,12 +6,14 @@ import {
 /**
  * Página NOSOTROS, rediseñada.
  *
- *   1. hero — la nube de puntos      5. pilares de identidad
- *   2. origen                        6. quiénes somos (acordeón)
- *   3. Grupo Firma                   7. responsabilidad social
- *   4. nuestra huella
+ *   1. hero — la nube de puntos      4. nuestra huella
+ *   2. origen                        5. pilares de identidad
+ *   3. Grupo Firma                   6. responsabilidad social
  *
  * Lo marcado PENDIENTE es texto provisional, no confirmado por Altea.
+ *
+ * Se fue después del rediseño la sección de QUIÉNES SOMOS, el acordeón de tres
+ * bloques: ver QUIENES_SOMOS más abajo, que se conserva sin consumidor.
  *
  * Se fueron con el rediseño: BANNER (el copy del hero por capas),
  * QUE_HACEMOS_INTRO y su interruptor, MOSTRAR_GRUPO_FIRMA —la sección ya tiene
@@ -336,7 +338,7 @@ export const PILARES = {
  * sitio y volver a mostrarla es cambiar este `false` por `true`.
  */
 
-/** Sección 5 del sitemap — "Quiénes somos". */
+/** El bloque del acordeón de Quiénes somos. Sin consumidor: ver QUIENES_SOMOS. */
 
 export interface BloqueQuienes {
   id: string;
@@ -345,17 +347,15 @@ export interface BloqueQuienes {
 }
 
 /**
- * Sección 6 — Quiénes somos, en acordeón.
+ * ⚠ SIN CONSUMIDOR. La sección de Quiénes somos se quitó de la página entera, y
+ * con ella el acordeón —QuienesSomos.tsx— y sus estilos.
  *
- * UNO ABIERTO A LA VEZ: con tres textos de este largo, dos abiertos ya obligan a
- * desplazarse para comparar, que es justo lo que el acordeón venía a evitar.
+ * Se conserva porque LOS TRES TEXTOS SON COPY ENTREGADO POR ALTEA y no hay otro
+ * sitio del repositorio donde vivan: el del talento y el de los ecosistemas no
+ * aparecen en ninguna otra sección. Si vuelve, vuelve con el copy puesto.
  *
- * Los tres textos son los mismos de siempre. Lo que se fue con el rediseño son el
- * icono de cada bloque y la fotografía vertical de la sección: el acordeón no
- * tiene dónde ponerlos.
- *
- * ⚠ PENDIENTE: el modelo integral está a la espera de retroalimentación de Ruva.
- * Los tres textos son los que entregó Altea, pero pueden cambiar.
+ * ⚠ PENDIENTE, de antes: el modelo integral estaba a la espera de
+ * retroalimentación de Ruva, así que los tres textos podían cambiar todavía.
  */
 export const QUIENES_SOMOS = {
   /** PENDIENTE: la ceja no venía en el copy de Altea. */
@@ -386,7 +386,7 @@ export const QUIENES_SOMOS = {
   ] satisfies BloqueQuienes[],
 };
 
-/** Sección 7 del sitemap — Responsabilidad social. */
+/** Sección 6 del sitemap — Responsabilidad social. */
 export interface FotoGaleria {
   id: string;
   /** Qué debe ir en el hueco mientras no haya imagen. */

@@ -14,36 +14,53 @@
 /* Duración propia para las entradas. Los 150–220ms del sistema son para
    hover y focus, donde la respuesta tiene que ser inmediata; una aparición al
    entrar en pantalla necesita más recorrido para que se alcance a ver. */
-:root { --duration-revelar: 700ms; }
+:root {
+  --duration-revelar: 700ms;
+}
 
 @keyframes revelar {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Cada palabra del emblema entra por su cuenta conforme avanza el scroll. No es
    máquina de escribir: no hay temporizador ni espera — si bajas rápido, la frase
    ya está completa. */
 @keyframes revelar-palabra {
-  from { opacity: 0; transform: translateY(0.3em); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(0.3em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @keyframes altea-hero-barrido {
-  from { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+  from {
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+  }
   to {
-    clip-path: polygon(
-      calc(var(--barrido) * -1) 0,
-      100% 0,
-      100% 100%,
-      0 100%
-    );
+    clip-path: polygon(calc(var(--barrido) * -1) 0, 100% 0, 100% 100%, 0 100%);
   }
 }
 
 @keyframes entrar {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* ===================== Entradas al scroll ===================== */
@@ -66,8 +83,6 @@
        pausa entre sus vecinas y su valor está en quedarse quieta. */
     .nos-huella__body,
     .nos-intro__phrase,
-    /* .nos-quienes NO entra aquí: sus filas las escalona GSAP dentro del
-       componente, con su propio trigger. */
     .nos-firma__rejilla,
     .nos-rs__galeria > li,
     .nos-rs__copy,
@@ -91,20 +106,30 @@
     .home-stats__item:nth-child(2),
     .home-units__grid > li:nth-child(2),
     .com-cifras__item:nth-child(2),
-    .nos-rs__galeria > li:nth-child(2) { animation-range: cover 19% cover 37%; }
+    .nos-rs__galeria > li:nth-child(2) {
+      animation-range: cover 19% cover 37%;
+    }
 
     .home-stats__item:nth-child(3),
     .home-units__grid > li:nth-child(3),
     .com-cifras__item:nth-child(3),
-    .nos-rs__galeria > li:nth-child(3) { animation-range: cover 22% cover 40%; }
+    .nos-rs__galeria > li:nth-child(3) {
+      animation-range: cover 22% cover 40%;
+    }
 
     .home-stats__item:nth-child(4),
     .home-units__grid > li:nth-child(4),
     .com-cifras__item:nth-child(4),
-    .nos-rs__galeria > li:nth-child(4) { animation-range: cover 25% cover 43%; }
+    .nos-rs__galeria > li:nth-child(4) {
+      animation-range: cover 25% cover 43%;
+    }
 
-    .nos-rs__galeria > li:nth-child(5) { animation-range: cover 28% cover 46%; }
-    .nos-rs__galeria > li:nth-child(6) { animation-range: cover 31% cover 49%; }
+    .nos-rs__galeria > li:nth-child(5) {
+      animation-range: cover 28% cover 46%;
+    }
+    .nos-rs__galeria > li:nth-child(6) {
+      animation-range: cover 31% cover 49%;
+    }
 
     /* El emblema ya no está aquí: su encendido palabra por palabra pasó a GSAP
        con scrub, para que sea el mismo recurso que usa <FraseCifras> en la
@@ -151,13 +176,20 @@
     animation: altea-hero-barrido 1.2s cubic-bezier(0.65, 0, 0.35, 1) 120ms both;
   }
   .home-hero__word:nth-child(1),
-  .altea-hero-unidad__texto > *:nth-child(1) { animation-delay: 80ms; }
+  .altea-hero-unidad__texto > *:nth-child(1) {
+    animation-delay: 80ms;
+  }
   .home-hero__word:nth-child(2),
-  .altea-hero-unidad__texto > *:nth-child(2) { animation-delay: 200ms; }
+  .altea-hero-unidad__texto > *:nth-child(2) {
+    animation-delay: 200ms;
+  }
   .home-hero__word:nth-child(3),
-  .altea-hero-unidad__texto > *:nth-child(3) { animation-delay: 320ms; }
-  .home-hero__actions { animation: entrar var(--duration-revelar) var(--ease-standard) 420ms both; }
-
+  .altea-hero-unidad__texto > *:nth-child(3) {
+    animation-delay: 320ms;
+  }
+  .home-hero__actions {
+    animation: entrar var(--duration-revelar) var(--ease-standard) 420ms both;
+  }
 }
 
 /* ===================== Micro-interacciones ===================== */
@@ -190,10 +222,14 @@
   transition: transform var(--duration-fast) var(--ease-standard);
 }
 .altea-navbar__link:hover::after,
-.altea-navbar__link:focus-visible::after { transform: scaleX(1); }
+.altea-navbar__link:focus-visible::after {
+  transform: scaleX(1);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .altea-navbar__link::after { transition: none; }
+  .altea-navbar__link::after {
+    transition: none;
+  }
 }
 
 /* ============ Respaldo con JS ============ */
@@ -210,5 +246,8 @@
       opacity var(--duration-revelar) var(--ease-standard),
       transform var(--duration-revelar) var(--ease-standard);
   }
-  .js-revelar--visible { opacity: 1; transform: none; }
+  .js-revelar--visible {
+    opacity: 1;
+    transform: none;
+  }
 }

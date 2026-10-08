@@ -6,7 +6,6 @@ import { HeroNube } from "../_nosotros/HeroNube";
 import { Huella } from "../_nosotros/Huella";
 import { Origen } from "../_nosotros/Origen";
 import { Pilares } from "../_nosotros/Pilares";
-import { QuienesSomos } from "../_nosotros/QuienesSomos";
 import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
 import "../_nosotros/nosotros.css";
 
@@ -34,7 +33,6 @@ export default function Nosotros() {
         <GrupoFirma />
         <Huella />
         <Pilares />
-        <QuienesSomos />
         <ResponsabilidadSocial />
       </main>
       <CierreContacto {...CONTACT_CTA} />

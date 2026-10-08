@@ -501,12 +501,20 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(16 19 22 / 0) 40%, rgb(16 19 22 / 0.82) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0) 40%,
+    rgb(16 19 22 / 0.82) 100%
+  );
   transition: background var(--duration-base) var(--ease-standard);
 }
 .home-carril__py:hover::after,
 .home-carril__py:focus-visible::after {
-  background: linear-gradient(180deg, rgb(16 19 22 / 0.14) 24%, rgb(16 19 22 / 0.88) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0.14) 24%,
+    rgb(16 19 22 / 0.88) 100%
+  );
 }
 .home-carril__py:focus-visible {
   outline: 2px solid var(--altea-coral);
@@ -548,10 +556,48 @@
   padding: 0;
   border: 0;
   border-radius: var(--radius-lg);
+  /* Red de seguridad, no el mecanismo: ver el artículo de abajo. En las alturas
+     de pantalla reales no llega a aparecer barra. */
   overflow: auto;
   background: var(--surface-page);
   color: var(--text-primary);
   margin: auto;
+}
+
+/*
+ * ⚠ LA FICHA ENTRA SIN SCROLL, Y LO QUE CEDE ES LA FOTO.
+ *
+ * El contenido medía 837 px fijos —550 de foto a 16/10 sobre 880 de ancho, más
+ * 287 de cuerpo— contra un tope de 90svh, así que se desbordaba en casi
+ * cualquier portátil. Medido con la descripción más larga de las seis:
+ *
+ *   ventana 913 px   desbordaba  15 px      ventana 713 px   desbordaba 195 px
+ *   ventana 813 px   desbordaba 105 px      ventana 613 px   desbordaba 285 px
+ *
+ * La estructura NO cambia: foto con el nombre encima, y debajo los datos y la
+ * descripción. Lo que cambia es QUIÉN ABSORBE LA DIFERENCIA. El artículo es una
+ * rejilla de dos filas con la misma cota de alto que el diálogo: el cuerpo pide
+ * lo que mide su texto —`auto`, nunca se recorta— y la foto se queda con lo que
+ * sobre. `minmax(0, 1fr)` y no `1fr` a secas, porque un `1fr` lleva un mínimo
+ * automático que le impediría encoger por debajo de su proporción.
+ *
+ * Donde hay sitio no pasa nada: con el alto del diálogo guiado por el contenido,
+ * la fila flexible se resuelve en su tamaño de contenido y la foto conserva sus
+ * 16/10 exactos. Sólo encoge cuando el tope de 90svh entra en juego, y entonces
+ * se recorta por `object-fit: cover` en vez de empujar el texto fuera.
+ */
+.home-ficha > article {
+  max-height: inherit;
+  display: grid;
+  /*
+   * El suelo de la banda va en LA FILA y no en la foto. Puesto como `min-height`
+   * del elemento, la foto volvía a salirse de una fila más baja que ella y a
+   * taparlo todo; puesto aquí, la fila deja de encoger y lo que cede es el
+   * diálogo, que recupera su barra. Por debajo de este alto el nombre —hasta
+   * 2.7rem apoyado a 28 px del canto— ya no cabe encima de la foto. Son ventanas
+   * de menos de 440 px de alto: no es un caso real, es el suelo.
+   */
+  grid-template-rows: minmax(150px, 1fr) auto;
 }
 .home-ficha::backdrop {
   background: rgb(12 15 18 / 0.66);
@@ -562,6 +608,32 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
+  /*
+   * ⚠ `stretch` EXPLÍCITO EN LOS DOS EJES, Y SIN ESTO LA FOTO SE DESCUADRA.
+   *
+   * Un elemento con `aspect-ratio` y alineación `normal` se comporta como
+   * `start` en lugar de como `stretch` —la regla existe justamente para
+   * conservarle la proporción—, y al pasar el artículo a rejilla eso muerde en
+   * los dos ejes:
+   *
+   *   · en vertical, la foto se quedaba en sus 550 px, se salía de una fila más
+   *     baja y TAPABA EL CUERPO. El texto quedaba debajo de la imagen y no había
+   *     barra de scroll que lo delatara.
+   *   · en horizontal, una vez acotada la fila, la proporción resolvía el ANCHO
+   *     a partir del alto: la foto se encogía a 200 px y dejaba el resto del
+   *     diálogo en blanco.
+   *
+   * Declarado a mano, `stretch` gana en los dos. La proporción sigue decidiendo
+   * cuánto mide la fila mientras hay sitio, y deja de mandar en cuanto no lo hay.
+   */
+  place-self: stretch;
+  /*
+   * El suelo de la banda. Por debajo de esto el nombre —hasta 2.7rem, apoyado a
+   * 28 px del canto— ya no cabría encima de la foto, así que a partir de aquí se
+   * deja de ceder y vuelve a mandar el `overflow: auto` del diálogo. Son
+   * ventanas por debajo de unos 440 px de alto: no es un caso real, es el suelo.
+   */
+  min-height: 150px;
 }
 .home-ficha__img {
   object-fit: cover;
@@ -570,7 +642,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgb(14 17 20 / 0) 46%, rgb(14 17 20 / 0.8) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(14 17 20 / 0) 46%,
+    rgb(14 17 20 / 0.8) 100%
+  );
 }
 /* El nombre va sobre la foto, no en una cabecera aparte: la ficha se abre
    mostrando el proyecto y no una etiqueta. */
@@ -711,7 +787,10 @@
   .home-carril__py {
     /* En móvil manda el ancho: una tarjeta de 74vw es lo que cabe, y su alto sale
        de la proporción como antes. El alto calculado sólo acota si es menor. */
-    height: min(var(--alto-py, 100svh), calc(clamp(220px, 74vw, 320px) * 4 / 3));
+    height: min(
+      var(--alto-py, 100svh),
+      calc(clamp(220px, 74vw, 320px) * 4 / 3)
+    );
   }
   .home-ficha__cuerpo {
     grid-template-columns: 1fr;

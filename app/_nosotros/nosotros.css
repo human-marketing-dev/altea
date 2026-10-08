@@ -34,7 +34,9 @@
   min-height: 100svh;
   overflow: hidden;
   display: grid;
-  grid-template-rows: 1fr auto;
+  /* Una sola fila desde que se fue el pie. Eran dos: el texto en el 1fr y el
+     rótulo de la figura con su rayita en la `auto`. */
+  grid-template-rows: 1fr;
   background: var(--surface-page);
 }
 
@@ -58,8 +60,8 @@
   position: relative;
   z-index: 3;
   align-self: center;
-  padding: clamp(100px, 16vh, 190px) clamp(16px, 3vw, 40px) clamp(20px, 3vh, 44px)
-    var(--container-pad);
+  padding: clamp(100px, 16vh, 190px) clamp(16px, 3vw, 40px)
+    clamp(20px, 3vh, 44px) var(--container-pad);
   width: min(100%, 54vw);
 }
 
@@ -100,44 +102,11 @@
   color: color-mix(in srgb, var(--altea-ink) 72%, transparent);
 }
 
-.nos-hero__pie {
-  position: relative;
-  z-index: 4;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: var(--space-5);
-  padding: 0 var(--container-pad) clamp(20px, 3.4vh, 42px);
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* 4.98. El prototipo lo dejaba en una opacidad del 42 % sobre el elemento, que
-     daba 2.52: el color se escribe y no se hereda de un `opacity`, justamente
-     para poder medirlo. */
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
-}
-.nos-hero__raya {
-  display: block;
-  width: 48px;
-  height: 1px;
-  background: currentColor;
-  transform-origin: left;
-  animation: nos-corre 2.4s var(--ease-standard) infinite;
-}
-@keyframes nos-corre {
-  0%,
-  100% {
-    transform: scaleX(0.3);
-  }
-  50% {
-    transform: scaleX(1);
-  }
-}
-
 /* ═══ 2 · origen ══════════════════════════════════════════════════════════ */
 
 .nos-origen {
-  padding: clamp(80px, 15vh, 200px) var(--container-pad) clamp(60px, 11vh, 140px);
+  padding: clamp(80px, 15vh, 200px) var(--container-pad)
+    clamp(60px, 11vh, 140px);
 }
 .nos-origen__rotulo {
   margin: 0 0 clamp(18px, 3vh, 32px);
@@ -184,7 +153,8 @@
 /* ═══ 3 · Grupo Firma ═════════════════════════════════════════════════════ */
 
 .nos-firma {
-  padding: clamp(66px, 12vh, 150px) var(--container-pad) clamp(56px, 10vh, 120px);
+  padding: clamp(66px, 12vh, 150px) var(--container-pad)
+    clamp(56px, 10vh, 120px);
 }
 .nos-firma__cab {
   display: grid;
@@ -452,7 +422,6 @@
 .nos-firma__raiz:hover .nos-firma__logo-aparte {
   opacity: 0.72;
 }
-
 
 /*
  * --ALTO-CAJA ES EL ALTO REAL DE .nos-firma__marca, RECONSTRUIDO EN vw.
@@ -888,7 +857,8 @@
   border-top: 1px solid color-mix(in srgb, var(--altea-cream) 16%, transparent);
 }
 .nos-rp:last-child {
-  border-bottom: 1px solid color-mix(in srgb, var(--altea-cream) 16%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--altea-cream) 16%, transparent);
 }
 .nos-rp__t {
   display: grid;
@@ -1280,7 +1250,11 @@
   inset: 0;
   opacity: 0;
   transition: opacity 0.4s var(--ease-standard);
-  background: linear-gradient(180deg, rgb(14 17 20 / 0) 40%, rgb(14 17 20 / 0.86) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(14 17 20 / 0) 40%,
+    rgb(14 17 20 / 0.86) 100%
+  );
 }
 .nos-fz figcaption {
   position: absolute;
@@ -1538,12 +1512,8 @@
 /* ═══ movimiento reducido ═════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  /* La nube va directa a su sitio y no alterna: lo hace el componente. Aquí sólo
-     lo que vive en CSS. */
-  .nos-hero__raya {
-    animation: none;
-    transform: scaleX(1);
-  }
+  /* La nube va directa a su sitio y no alterna: lo hace el componente, y ya no
+     queda nada del hero que se anime desde el CSS. */
   .nos-fz__img,
   .nos-ac__cuerpo,
   .nos-ac__mas::before,

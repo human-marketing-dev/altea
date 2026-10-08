@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { CONTORNO, CONTRAFORMA, dentroDe, SEMI_ALTO } from "@/lib/isotipo";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { HERO } from "./content";
@@ -73,8 +73,6 @@ type Punto = {
 export function HeroNube() {
   const lienzo = useRef<HTMLCanvasElement>(null);
   const reducido = useMovimientoReducido();
-  /** Qué figura se está mostrando, sólo para el rótulo del pie. */
-  const [figura, setFigura] = useState<"isotipo" | "piramide">("isotipo");
 
   useEffect(() => {
     const canvas = lienzo.current;
@@ -116,7 +114,11 @@ export function HeroNube() {
           if (hueco && dentroDe(px, py, hueco)) continue;
           /* El tono sube con la altura: la punta es lo más vivo. */
           const base = 0.24 + ((py + 1) / 2.05) * 0.74;
-          salida.push({ x: cx + px * s, y: cy - py * s, i: cara === 0 && caras.length > 1 ? base * 0.5 : base });
+          salida.push({
+            x: cx + px * s,
+            y: cy - py * s,
+            i: cara === 0 && caras.length > 1 ? base * 0.5 : base,
+          });
         }
       }
       return salida;
@@ -128,7 +130,11 @@ export function HeroNube() {
          densidad se mantiene al cambiar de pantalla en vez de espesarse. */
       const paso = Math.max(5, H * 0.0115);
       let isotipo = rasterizar([CONTORNO], SEMI_ALTO * 2, paso, CONTRAFORMA);
-      let piramide = rasterizar([PIRAMIDE_IZQ, PIRAMIDE_DER], ALTO_PIRAMIDE, paso);
+      let piramide = rasterizar(
+        [PIRAMIDE_IZQ, PIRAMIDE_DER],
+        ALTO_PIRAMIDE,
+        paso,
+      );
 
       /*
        * IGUALAR LAS DENSIDADES ANTES DE IGUALAR LAS CUENTAS.
@@ -144,8 +150,14 @@ export function HeroNube() {
        * la raíz es exactamente el factor que las iguala: medido a 900px de alto,
        * las dos quedan en 1 380 y `igualar` no descarta ni un punto.
        */
-      const ajustar = (a: Destino[], b: Destino[], rehacer: (p: number) => Destino[]) =>
-        a.length > b.length ? rehacer(paso * Math.sqrt(a.length / b.length)) : a;
+      const ajustar = (
+        a: Destino[],
+        b: Destino[],
+        rehacer: (p: number) => Destino[],
+      ) =>
+        a.length > b.length
+          ? rehacer(paso * Math.sqrt(a.length / b.length))
+          : a;
 
       if (isotipo.length > piramide.length) {
         isotipo = ajustar(isotipo, piramide, (q) =>
@@ -191,11 +203,7 @@ export function HeroNube() {
 
       if (!reducido) {
         reloj += 1 / 60;
-        const toca = Math.floor(reloj / SEGUNDOS) % 2 ? "piramide" : "isotipo";
-        if (toca !== actual) {
-          actual = toca;
-          setFigura(toca);
-        }
+        actual = Math.floor(reloj / SEGUNDOS) % 2 ? "piramide" : "isotipo";
       }
 
       ctx.clearRect(0, 0, W, H);
@@ -214,7 +222,9 @@ export function HeroNube() {
         const a = (0.16 + d.i * 0.52) * (1 - lejos * 0.55);
         const r = (0.95 + d.i * 1.35) * (1 - lejos * 0.35);
         ctx.fillStyle =
-          d.i > 0.15 ? `rgba(241,93,77,${(a * 0.92).toFixed(3)})` : `rgba(33,34,34,${(a * 0.5).toFixed(3)})`;
+          d.i > 0.15
+            ? `rgba(241,93,77,${(a * 0.92).toFixed(3)})`
+            : `rgba(33,34,34,${(a * 0.5).toFixed(3)})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx.fill();
@@ -243,10 +253,17 @@ export function HeroNube() {
             partida en cajas recortadas, un lector anunciaría tres fragmentos. */}
         <h1 className="nos-hero__titulo" aria-label={etiqueta}>
           {HERO.lineas.map((trozos, i) => (
-            <span className="nos-hero__linea js-linea" aria-hidden="true" key={i}>
+            <span
+              className="nos-hero__linea js-linea"
+              aria-hidden="true"
+              key={i}
+            >
               <span>
                 {trozos.map((t, j) => (
-                  <span key={j} className={t.acento ? "nos-hero__acento" : undefined}>
+                  <span
+                    key={j}
+                    className={t.acento ? "nos-hero__acento" : undefined}
+                  >
                     {t.texto}
                   </span>
                 ))}
@@ -255,13 +272,6 @@ export function HeroNube() {
           ))}
         </h1>
         <p className="nos-hero__bajada js-entra">{HERO.bajada}</p>
-      </div>
-
-      <div className="nos-hero__pie js-entra">
-        {/* aria-live off: el rótulo cambia cada nueve segundos por su cuenta, y
-            anunciarlo sería una interrupción sin motivo. */}
-        <span>{HERO.pie[figura]}</span>
-        <span className="nos-hero__raya" aria-hidden="true" />
       </div>
     </section>
   );

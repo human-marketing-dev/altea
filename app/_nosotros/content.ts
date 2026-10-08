@@ -1,4 +1,7 @@
-import { ESTADOS_CON_PRESENCIA, PRESENCIA_INTERNACIONAL } from "@/lib/proyectos";
+import {
+  ESTADOS_CON_PRESENCIA,
+  PRESENCIA_INTERNACIONAL,
+} from "@/lib/proyectos";
 
 /**
  * Página NOSOTROS, rediseñada.
@@ -16,7 +19,6 @@ import { ESTADOS_CON_PRESENCIA, PRESENCIA_INTERNACIONAL } from "@/lib/proyectos"
  * interfaz BloqueQuienesSomos y la fotografía de ORIGEN.
  */
 
-
 /* ─── 1 · Hero: la nube de puntos ──────────────────────────────────────── */
 
 export const HERO = {
@@ -33,8 +35,14 @@ export const HERO = {
   bajada:
     "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial. Desarrollamos, ejecutamos y operamos proyectos comerciales, industriales, de vivienda, salud, educación y turismo bajo una misma visión.",
   /**
-   * El rótulo del pie cambia con la forma que está mostrando la nube. Son dos
-   * lecturas del mismo dato: la A habla de territorio, la pirámide de tiempo.
+   * ⚠ SIN CONSUMIDOR. El pie del hero se quitó entero: el rótulo que cambiaba
+   * con la forma de la nube y la rayita que latía debajo. La nube SIGUE
+   * alternando entre el isotipo y la pirámide —eso es el hero—; lo que ya no
+   * hay es un texto que lo vaya nombrando.
+   *
+   * Se conserva porque las dos lecturas son buen copy y porque la primera no
+   * está escrita a mano: sale de ESTADOS_CON_PRESENCIA y PRESENCIA_INTERNACIONAL,
+   * así que si vuelve, vuelve con la cuenta al día.
    */
   pie: {
     isotipo: `${ESTADOS_CON_PRESENCIA.length} estados · ${PRESENCIA_INTERNACIONAL.length + 1} países`,
@@ -70,7 +78,6 @@ export const ORIGEN = {
    * relato ni había otra cosa en el repositorio.
    */
 };
-
 
 /**
  * Interruptor del bloque de captación en /nosotros.
@@ -237,7 +244,11 @@ const SECTORES: SectorFirma[] = [
     categoria: "Alimentos y diversiones",
     marca: "Foodplay",
     subs: [
-      { nombre: "KFC", logo: `${GF}/logo-kfc-grupo-firma-globales.webp`, logoRatio: 1.058 },
+      {
+        nombre: "KFC",
+        logo: `${GF}/logo-kfc-grupo-firma-globales.webp`,
+        logoRatio: 1.058,
+      },
       {
         nombre: "Tim Hortons",
         logo: `${GF}/logo-tim-hortons-grupo-firma-globales.webp`,
@@ -328,7 +339,9 @@ export const GRUPO_FIRMA = {
  * escrita a mano: sale de PRESENCIA_INTERNACIONAL, que es la fuente.
  */
 const enumerar = (xs: readonly string[]) =>
-  xs.length < 2 ? (xs[0] ?? "") : `${xs.slice(0, -1).join(", ")} y ${xs.at(-1)}`;
+  xs.length < 2
+    ? (xs[0] ?? "")
+    : `${xs.slice(0, -1).join(", ")} y ${xs.at(-1)}`;
 
 export const HUELLA = {
   title: "Nuestra Huella",
@@ -401,7 +414,12 @@ export const PILARES = {
       description:
         "Construimos un patrimonio. La calidad es nuestro estándar. Entregamos desarrollos con una estética atemporal y una solidez perdurable que añaden valor a la ciudad y a la vida de sus propietarios por generaciones.",
     },
-  ] satisfies { id: string; icono: IconoPilar; title: string; description: string }[],
+  ] satisfies {
+    id: string;
+    icono: IconoPilar;
+    title: string;
+    description: string;
+  }[],
 };
 
 /**
@@ -411,7 +429,6 @@ export const PILARES = {
  * "Quiénes somos", que va justo debajo. El componente y sus datos siguen en su
  * sitio y volver a mostrarla es cambiar este `false` por `true`.
  */
-
 
 /** Sección 5 del sitemap — "Quiénes somos". */
 
@@ -462,8 +479,6 @@ export const QUIENES_SOMOS = {
     },
   ] satisfies BloqueQuienes[],
 };
-
-
 
 /** Sección 7 del sitemap — Responsabilidad social. */
 export interface FotoGaleria {

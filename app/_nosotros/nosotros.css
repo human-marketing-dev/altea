@@ -202,21 +202,28 @@
   text-align: center;
 }
 /*
- * La raíz del grupo va EN TEXTO a propósito, aunque su logotipo exista.
+ * LA RAÍZ VA CON SU LOGOTIPO, Y ES EL ÚNICO QUE NO SE GRISA.
  *
- * logo-grupo-firmas-globales.webp es el único archivo en color de la carpeta:
- * turquesa #60E0D0 sobre verde oscuro #103030. Al grisarlo, el turquesa cae en un
- * gris 196 que sobre el fondo de página da 1.60 — por debajo del 3:1 de un
- * gráfico a CUALQUIER opacidad, porque el problema no es la opacidad sino que el
- * color de partida es claro. Y a todo color rompe la regla de la sección.
+ * Antes era la sigla "GFG" compuesta en texto, por una razón que sigue siendo
+ * cierta y que conviene dejar escrita para que nadie "arregle" esto grisándolo:
+ * logo-grupo-firmas-globales.webp es el único archivo en color de la carpeta
+ * —turquesa #6EE5D1 sobre un azul casi negro #1D3039— y el turquesa, grisado,
+ * cae en un gris 202 que sobre el fondo de página da 1.50. La esfera
+ * DESAPARECERÍA y quedaría media marca.
  *
- * Así que se queda como sigla compuesta. Si Altea entrega una versión monocroma,
- * entra como los demás.
+ * A todo color la esfera mide esos mismos 1.39 de contraste, y eso NO es un
+ * incumplimiento: la WCAG 1.4.11 exceptúa expresamente los logotipos del mínimo
+ * de 3:1. Además la parte que se lee —las letras GFG— va en el azul, que da
+ * 12.54. Lo que sí rompe es la regla de la sección, y se rompe a propósito: la
+ * raíz es la marca que la sección entera está nombrando, está fuera de la fila, y
+ * ALTEA no pierde nada porque no se distingue por color sino por material.
  */
-.nos-firma__gfg b {
-  font-size: clamp(1.5rem, 3vw, 2.3rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: 0.1em;
+.nos-firma__gfg img {
+  display: block;
+  width: auto;
+  /* Del mismo orden que la sigla que sustituye: aquélla iba a 1.5-2.3rem de
+     cuerpo, y esto es el alto de la mancha del archivo. */
+  height: clamp(30px, 4.4vw, 52px);
 }
 .nos-firma__gfg span,
 .nos-firma__aparte {
@@ -350,7 +357,6 @@
   background: var(--linea-arbol);
 }
 
-/* La bajada corta de la caja del sector a sus sub-marcas. */
 /* El sector sin logotipo: icono encima y nombre debajo. El alto del icono sale
    del mismo --alto-caja que los logotipos, así que crece y encoge con ellos. */
 .nos-firma__sinlogo {
@@ -364,21 +370,6 @@
   height: calc(var(--alto-caja, 70px) * 0.3);
   /* Más apagado que el texto: es un marcador de categoría, no la marca. */
   color: color-mix(in srgb, var(--altea-ink) 48%, transparent);
-}
-
-.nos-firma__colgante {
-  position: relative;
-  margin-top: clamp(16px, 2.4vh, 26px);
-  padding-top: clamp(16px, 2.4vh, 26px);
-}
-.nos-firma__colgante::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 1px;
-  height: clamp(16px, 2.4vh, 26px);
-  background: var(--linea-arbol);
 }
 
 .nos-firma__aparte .nos-firma__cat {
@@ -469,24 +460,8 @@
 .nos-firma__rama .nos-firma__cat {
   min-height: 2.6em;
 }
-.nos-firma__rama .nos-firma__cat,
-.nos-firma__colgante .subs,
-.nos-firma__rama .nos-firma__subs {
+.nos-firma__rama .nos-firma__cat {
   text-align: center;
-}
-/*
- * ⚠ SE CENTRA LA LISTA, NO CADA FILA. Es lo que alinea los iconos en una vertical.
- *
- * Con `justify-items: center` en la lista, cada fila se centra POR SU CUENTA: como
- * "Prensa" y "Exteriores" no miden lo mismo, sus iconos caen en equis distintas y
- * la columna se lee como un zigzag. Centrando el bloque entero —`fit-content` más
- * `margin-inline: auto`— las filas comparten borde izquierdo y los seis iconos
- * forman una sola columna.
- */
-.nos-firma__rama .nos-firma__subs {
-  justify-items: start;
-  width: fit-content;
-  margin-inline: auto;
 }
 .nos-firma__cat {
   font-size: var(--text-eyebrow);
@@ -562,111 +537,27 @@
 }
 
 /*
- * LAS SUB-MARCAS QUE SÍ SON MARCAS, AL 65 % DEL ALTO COMÚN DEL SECTOR.
- *
- * El 0.6 es --objetivo, el mismo alto común al que aspira un logotipo de sector,
- * y el 0.65 es la proporción que pedía el organigrama: por encima del 50 % que
- * tenían —se leían como notas al pie— y claramente por debajo del sector, que es
- * lo que las mantiene en el segundo nivel. Escrito como el producto de los dos y
- * no como el 0.39 resultante, para que al mover el alto común se muevan con él.
- *
- * Llevan la MISMA corrección óptica que los de sector, así que KFC (1.06:1) y Tim
- * Hortons (3.74:1) acaban pareciendo del mismo tamaño aunque uno sea cuadrado y
- * el otro un wordmark.
- *
- * ⚠ EL 65 % ES SOBRE EL ALTO COMÚN, NO SOBRE LA TINTA. Medido tinta contra tinta
- * —descontando el aire interno de cada archivo— los porcentajes salen muy
- * distintos y engañan: Firehouse llega al 116 % de Foodplay sin ser más grande,
- * sólo porque el archivo de Foodplay trae un 37 % de aire vertical y el de
- * Firehouse un 8 %. La referencia buena es el alto común, que es igual para todos.
- */
-.nos-firma__sublogo {
-  --alto-sub: calc(var(--alto-caja, 70px) * 0.6 * 0.65);
-  display: block;
-  height: calc(var(--alto-sub) * var(--factor, 1));
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-}
-
-/*
  * TODOS EN GRIS SALVO ALTEA.
  *
- * El gris sale de la OPACIDAD, no del grayscale: los doce archivos del grupo son
+ * El gris sale de la OPACIDAD, no del grayscale: los doce archivos de la fila son
  * negro puro sobre transparente —comprobado píxel a píxel— y grayscale sobre
  * negro no hace nada. Se deja puesto igual, como seguro para un archivo futuro en
  * color; lo que no cubre es un color CLARO, que al grisarse puede quedar por
- * debajo del umbral — ver la nota de .nos-firma__gfg.
+ * debajo del umbral — ver la nota de .nos-firma__gfg, que es justamente ese caso
+ * y por eso va a todo color.
  *
  * Negro al 55 % sobre el gris de página da rgb(110,110,109) y 4.68 de contraste,
  * por encima del 3:1 que pide un gráfico y un punto más claro que el texto de la
  * sección (ink 66 %, 7.05): los logotipos ajenos ceden el paso al texto.
  */
-.nos-firma__rama:not([data-nuestra]) .nos-firma__logo,
-.nos-firma__sublogo {
+.nos-firma__rama:not([data-nuestra]) .nos-firma__logo {
   filter: grayscale(1);
   opacity: 0.55;
   transition: opacity var(--duration-base) var(--ease-standard);
 }
-/* Al pasar el cursor por la sección suben a 0.72, que da 8.79: también cumple.
-   Las sub-marcas van con el mismo valor que su sector, no con uno propio. */
-.nos-firma__ramas:hover .nos-firma__rama:not([data-nuestra]) .nos-firma__logo,
-.nos-firma__ramas:hover .nos-firma__sublogo {
+/* Al pasar el cursor por la sección suben a 0.72, que da 8.79: también cumple. */
+.nos-firma__ramas:hover .nos-firma__rama:not([data-nuestra]) .nos-firma__logo {
   opacity: 0.72;
-}
-
-.nos-firma__subs {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: var(--space-2);
-}
-/*
- * La fila de cada sub-elemento. `justify-items: start` para que un logotipo con
- * `width: auto` no se estire a la columna: la rejilla, por defecto, estira a sus
- * hijos a lo ancho de la celda, y eso le ganaría al `auto`.
- *
- * El `min-height` iguala la altura de una fila de texto con la de una de
- * logotipo, que es lo que evita que las columnas con sub-logotipo y las de
- * sub-texto queden descuadradas entre sí.
- */
-.nos-firma__subs li {
-  display: grid;
-  gap: 3px;
-  line-height: 1.3;
-  justify-items: start;
-  align-content: center;
-  min-height: clamp(16px, 1.5vw, 22px);
-}
-/* Icono a la izquierda del nombre, en la misma línea de base. El alto va en `em`
-   —no en px ni en vw— para que siga al cuerpo del texto sin un clamp aparte. */
-.nos-firma__subnombre {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5em;
-}
-.nos-firma__subicono {
-  flex: none;
-  width: auto;
-  height: 1.25em;
-  /* Un punto por debajo del nombre: acompaña, no compite. */
-  color: color-mix(in srgb, var(--altea-ink) 46%, transparent);
-}
-.nos-firma__subs b {
-  font-size: var(--text-eyebrow);
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.02em;
-  /* 6.45. */
-  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
-}
-.nos-firma__subs em {
-  font-style: normal;
-  font-size: 0.6875rem;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  /* 4.98. */
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
 
 /*
@@ -682,8 +573,7 @@
  * los logotipos reales y los otros cinco sean grises. Un simple cambio de color
  * del nombre habría dejado de funcionar justo entonces.
  */
-.nos-firma__rama[data-nuestra]::after,
-.nos-firma__rama[data-nuestra] .nos-firma__colgante::before {
+.nos-firma__rama[data-nuestra]::after {
   background: var(--altea-coral);
   width: 2px;
 }
@@ -700,10 +590,6 @@
   font-weight: var(--weight-bold);
   letter-spacing: 0.16em;
 }
-.nos-firma__rama[data-nuestra] .nos-firma__subs b {
-  color: var(--text-primary);
-}
-
 .nos-firma__pie {
   margin: clamp(40px, 7vh, 86px) 0 0;
   padding-top: clamp(18px, 2.6vh, 30px);
@@ -1360,8 +1246,7 @@
   .nos-firma__rama::before,
   .nos-firma__rama::after,
   .nos-firma__nudo::before,
-  .nos-firma__codo,
-  .nos-firma__colgante::before {
+  .nos-firma__codo {
     display: none !important;
   }
 
@@ -1459,25 +1344,6 @@
   .nos-firma__rama .nos-firma__cat {
     min-height: 0;
     text-align: left;
-  }
-  /* Las sub-marcas pasan a línea continua: en columna, a este ancho, cada rama se
-     estiraría media pantalla. */
-  .nos-firma__colgante {
-    grid-column: 1 / -1;
-    margin-top: var(--space-3);
-    padding-top: 0;
-  }
-  .nos-firma__rama .nos-firma__subs {
-    display: flex;
-    flex-wrap: wrap;
-    /* En vertical la lista fluye a todo el ancho: ni se centra ni se acota. */
-    width: auto;
-    margin-inline: 0;
-    gap: var(--space-2) clamp(12px, 4vw, 24px);
-    text-align: left;
-  }
-  .nos-firma__rama .nos-firma__subs li {
-    justify-items: start;
   }
 }
 @media (max-width: 900px) {

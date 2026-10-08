@@ -1,31 +1,17 @@
-import {
-  BedDouble,
-  Factory,
-  Globe,
-  GraduationCap,
-  House,
-  type LucideIcon,
-  Megaphone,
-  Music,
-  Newspaper,
-  Radio,
-  Stethoscope,
-  Store,
-  Trees,
-  Trophy,
-  Tv,
-} from "lucide-react";
+import { Trophy } from "lucide-react";
 import Image from "next/image";
-import { GRUPO_FIRMA, type IconoSub } from "./content";
+import { GRUPO_FIRMA } from "./content";
 
 /**
  * Grupo Firma: los seis sectores, en fila.
  *
- * SIN LÍNEAS CONECTORAS. Es un organigrama y la tentación es trazarlo, pero con
- * sub-marcas en casi todas las ramas cualquier trazado acaba cruzándose con el
- * texto. Aquí la jerarquía la hace la ALINEACIÓN: lo que está debajo de un
- * logotipo le pertenece. Y la separación entre columnas es una línea fina, no un
- * hueco, para que se lea como tabla y no como seis tarjetas.
+ * UN SOLO NIVEL BAJO LA RAÍZ. Cuatro de los seis colgaban un tercer nivel de
+ * sub-marcas y se quitó entero: ver la nota de SECTORES en content.ts, que
+ * enumera lo que se fue y lo que se fue con ello.
+ *
+ * La jerarquía la hace la ALINEACIÓN —lo que está debajo de un logotipo le
+ * pertenece— y la separación entre columnas es una línea fina, no un hueco, para
+ * que se lea como tabla y no como seis tarjetas.
  *
  * ALTEA NO CAMBIA DE SITIO, CAMBIA DE MATERIAL: fondo propio, regla coral arriba
  * y caja de logotipo rellena en ink con el texto en cream. Se distingue sin
@@ -37,9 +23,13 @@ import { GRUPO_FIRMA, type IconoSub } from "./content";
  * LOS LOGOTIPOS
  *
  * Cinco de los seis sectores tienen archivo; DEPORTES no, y su caja se queda con
- * el nombre en texto antes que improvisar. Van todos en gris salvo Altea:
- * logotipos ajenos a todo color convierten la sección en un muro de marcas de
- * otros, y ésta es la página de Altea.
+ * el nombre en texto antes que improvisar. Los seis van en gris: logotipos ajenos
+ * a todo color convierten la sección en un muro de marcas de otros, y ésta es la
+ * página de Altea.
+ *
+ * Las dos excepciones están fuera de la fila y por motivos distintos: ALTEA, que
+ * se distingue por material —caja en ink, trazo coral— y no por color, y la RAÍZ,
+ * cuyo logotipo va a todo color porque grisarlo lo rompe. Ver .nos-firma__gfg.
  *
  * El gris sale de la OPACIDAD y no del grayscale, porque los doce archivos del
  * grupo son negro puro sobre transparente — el grayscale sobre negro no hace
@@ -119,8 +109,8 @@ const factorOptico = (ratio: number) => Math.min(1, BASE + ratio * PENDIENTE);
  * El valor SUSTITUYE al factor, no lo multiplica: va en las mismas unidades que
  * `factorOptico`, donde 1.00 es "a su alto objetivo completo".
  *
- * La clave es el nombre del archivo y no el id del sector, para que sirva igual a
- * un logotipo de sector y a uno de sub-marca.
+ * La clave es el nombre del archivo y no el id del sector: así el ajuste viaja
+ * con el archivo aunque cambie de sitio en el organigrama.
  */
 const AJUSTES: Record<string, number> = {
   /*
@@ -137,27 +127,6 @@ const AJUSTES: Record<string, number> = {
    */
   "logo-delta-electric-grupo-firma-globales.webp": 0.62,
   "altea-logo-light.svg": 0.58,
-
-  /*
-   * ── Sub-marcas compactas ──
-   *
-   * ⚠ POR ENCIMA DE 1, Y NO ES UN ERROR. La fórmula tope en 1 porque está pensada
-   * para repartir un alto común; estas tres lo rebasan a propósito.
-   *
-   * El motivo es el mismo que en el muro de /comercial y vale la pena no volver a
-   * tropezar: en una marca compacta el problema NO es el alto. Medido, KFC daba
-   * 17.6 px de tinta, MÁS que Tim Hortons (16.3) y que Bolerama (15.3) — y aun así
-   * se veía diminuto, porque su elemento mide 20 px de ancho contra los 94 de Tim
-   * Hortons. En masa estaba a una quinta parte.
-   *
-   * Lo que se iguala aquí es la presencia, no la altura. Con 1.10 pasan de 19-20 px
-   * de alto a 30, y de ~400 de masa a ~950 contra los ~2 100 de los wordmarks: no
-   * llegan a la par —no pueden, son cuadradas en una fila de marcas alargadas— pero
-   * dejan de desaparecer.
-   */
-  "logo-kfc-grupo-firma-globales.webp": 1.1,
-  "logo-sultanes-grupo-firma-globales.webp": 1.1,
-  "logo-fuerza-regia-grupo-firma-globales.webp": 1.1,
 };
 
 /*
@@ -187,61 +156,11 @@ const AJUSTES: Record<string, number> = {
  * ocurre.
  */
 
-/*
- * LOS ICONOS DE LAS SUB-MARCAS QUE NO SON MARCAS.
- *
- * Medios e Inmobiliaria no cuelgan marcas sino CATEGORÍAS —Prensa, Radio,
- * Vivienda, Forestal— y nunca van a tener logotipo, porque no son marcas. En una
- * lista de texto suelto, bajo una columna donde las vecinas sí traen logotipo, se
- * leían como una nota al pie. El icono les devuelve el peso.
- *
- * Todos de lucide-react (ISC) y a 1.6 de trazo, como el de Deportes: ninguno es un
- * dibujo propio y ninguno pretende ser un logotipo.
- *
- * El mapa vive aquí y no en content.ts porque content.ts es contenido y no debe
- * importar JSX: allá va la clave, aquí el componente.
- *
- * Las elecciones que no son obvias, por si hay que revisarlas:
- *   · Exteriores → Megaphone. Es publicidad exterior, no "el campo": el megáfono
- *     dice difusión, que es de lo que vive esa rama.
- *   · Sector salud → Stethoscope y no una cruz. La cruz roja es un emblema
- *     protegido por los Convenios de Ginebra; el estetoscopio no arrastra nada.
- *   · Digital → Globe. Lo abstracto gana aquí: un monitor o un móvil elegirían un
- *     soporte, y "Digital" los cubre todos.
- */
-const ICONOS_SUB: Record<IconoSub, LucideIcon> = {
-  prensa: Newspaper,
-  digital: Globe,
-  televisión: Tv,
-  exteriores: Megaphone,
-  radio: Radio,
-  educación: GraduationCap,
-  comercial: Store,
-  industrial: Factory,
-  vivienda: House,
-  hoteles: BedDouble,
-  salud: Stethoscope,
-  forestal: Trees,
-  conciertos: Music,
-};
-
 /** El factor de un logotipo: su excepción si la tiene, y si no la fórmula. */
 function factorDe(logo: string | undefined, ratio: number) {
   const archivo = logo?.slice(logo.lastIndexOf("/") + 1);
   return (archivo && AJUSTES[archivo]) ?? factorOptico(ratio);
 }
-/** Resuelve la clave a su componente. Aparte para no meter un IIFE en el JSX. */
-function SubIcono({ clave }: { clave: IconoSub }) {
-  const Icono = ICONOS_SUB[clave];
-  return (
-    <Icono
-      className="nos-firma__subicono"
-      strokeWidth={1.6}
-      aria-hidden="true"
-    />
-  );
-}
-
 export function GrupoFirma() {
   return (
     <section className="nos-firma" aria-labelledby="firma-titulo">
@@ -265,7 +184,20 @@ export function GrupoFirma() {
       */}
       <div className="nos-firma__raiz">
         <p className="nos-firma__gfg">
-          <b>{GRUPO_FIRMA.raiz.sigla}</b>
+          {/*
+            Decorativa: el nombre va escrito justo debajo, así que ponerle un alt
+            haría que un lector anunciara la marca dos veces seguidas. Es el único
+            logotipo de la sección que no es información por sí mismo —los de la
+            fila sí, porque ahí el nombre no se repite en texto.
+          */}
+          <Image
+            src={GRUPO_FIRMA.raiz.logo}
+            alt=""
+            aria-hidden="true"
+            width={537}
+            height={Math.round(537 / GRUPO_FIRMA.raiz.logoRatio)}
+            unoptimized
+          />
           <span>{GRUPO_FIRMA.raiz.nombre}</span>
         </p>
       </div>
@@ -328,50 +260,6 @@ export function GrupoFirma() {
                 </span>
               )}
             </span>
-
-            {sector.subs.length > 0 && (
-              /* El envoltorio es el que dibuja la bajada corta desde la caja del
-                 sector hasta las sub-marcas; sin él la lista colgaría sin trazo. */
-              <div className="nos-firma__colgante">
-                <ul className="nos-firma__subs">
-                  {sector.subs.map((sub) => (
-                    <li key={sub.nombre}>
-                      {/* Sólo Deportes trae categoría por sub-marca, y la lleva igual
-                        tenga logotipo o no: Béisbol encima de Sultanes, Básquetbol
-                        encima de Fuerza Regia. En las demás ramas la columna ya
-                        dice de qué sector son. */}
-                      {sub.categoria && <em>{sub.categoria}</em>}
-                      {sub.logo ? (
-                        <Image
-                          className="nos-firma__sublogo"
-                          src={sub.logo}
-                          alt={sub.nombre}
-                          width={200}
-                          height={Math.round(200 / (sub.logoRatio ?? 2.5))}
-                          /* Misma corrección óptica que los de sector: los compactos
-                           como KFC bajan y los alargados como Tim Hortons no. */
-                          style={{
-                            ["--factor" as string]: factorDe(
-                              sub.logo,
-                              sub.logoRatio ?? 2.5,
-                            ),
-                          }}
-                          unoptimized
-                        />
-                      ) : (
-                        /* Icono a la izquierda y nombre a la derecha, en la misma
-                           línea: apilados ocuparían el doble de alto y la lista de
-                           seis se iría a doce renglones. */
-                        <b className="nos-firma__subnombre">
-                          {sub.icono ? <SubIcono clave={sub.icono} /> : null}
-                          {sub.nombre}
-                        </b>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </li>
         ))}
       </ul>

@@ -97,64 +97,12 @@ export const ORIGEN = {
  * falta; el componente no cambia.
  */
 /** Una sub-marca. Con `categoria`, la lleva encima; sin ella, va suelta. */
-export interface SubMarca {
-  nombre: string;
-  /** Sólo Deportes la necesita: Béisbol sobre Sultanes, Básquetbol sobre Fuerza
-   *  Regia. En las demás ramas la columna ya dice de qué sector son. */
-  categoria?: string;
-  /**
-   * El logotipo, SÓLO donde la sub-marca es una marca de verdad.
-   *
-   * No todas las columnas tienen el mismo tipo de sub-elemento, y eso es lo que
-   * decide qué lleva logotipo y qué sigue en texto:
-   *
-   *   Alimentos y Deportes  →  marcas reales (KFC, Sultanes…). Logotipo.
-   *   Medios                →  categorías (Prensa, Radio…). No son marcas: texto.
-   *   Inmobiliaria          →  las divisiones de Altea. Tampoco: texto.
-   *
-   * Conciertos, dentro de Deportes, es el único de su columna sin marca propia y
-   * se queda en texto junto a dos que sí la tienen.
-   */
-  logo?: string;
-  /** Proporción ancho/alto del archivo. La consume la corrección óptica. */
-  logoRatio?: number;
-  /**
-   * El icono, SÓLO donde la sub-marca NO es una marca.
-   *
-   * Es el complemento exacto de `logo`: las de Medios e Inmobiliaria son
-   * categorías —Prensa, Vivienda— y nunca van a tener logotipo porque no son
-   * marcas. Un icono les da el peso que les falta en una lista de texto suelto.
-   *
-   * Es una CLAVE, no un componente: content.ts es contenido y no debe importar
-   * JSX. El mapa de clave a icono vive en GrupoFirma.tsx, junto al resto del
-   * dibujo.
-   */
-  icono?: IconoSub;
-}
-
-/** Las claves de icono admitidas. El mapa está en GrupoFirma.tsx. */
-export type IconoSub =
-  | "prensa"
-  | "digital"
-  | "televisión"
-  | "exteriores"
-  | "radio"
-  | "educación"
-  | "comercial"
-  | "industrial"
-  | "vivienda"
-  | "hoteles"
-  | "salud"
-  | "forestal"
-  | "conciertos";
-
 export interface SectorFirma {
   id: string;
   /** La categoría de la columna, arriba en versalitas. */
   categoria: string;
   /** El nombre que va en la caja del logotipo. */
   marca: string;
-  subs: SubMarca[];
   /** Altea. Cambia de material, no de sitio: ver [data-nuestra] en nosotros.css. */
   nuestra?: boolean;
   /**
@@ -178,25 +126,35 @@ export interface SectorFirma {
  * opacidad y no del grayscale, que sobre negro no hace nada.
  *
  * El decimotercero, logo-grupo-firmas-globales.webp, es el único en color
- * (turquesa #60E0D0 sobre verde oscuro #103030) y NO se usa: ver la nota de
- * .nos-firma__gfg en nosotros.css.
+ * —turquesa #6EE5D1 sobre un azul casi negro #1D3039— y es el de la RAÍZ. Va a
+ * todo color y es el único que no se grisa: ver la nota de .nos-firma__gfg en
+ * nosotros.css.
+ *
+ * De los doce restantes, OCHO SE QUEDARON SIN CONSUMIDOR al quitarse el tercer
+ * nivel del organigrama: KFC, Tim Hortons, Firehouse Subs, Bolerama, Helados
+ * Dreambox, Sultanes y Fuerza Regia. No se borran: el nivel puede volver.
  */
 const GF = "/images/logo/logos-grupo-firmas-globales";
 
 /**
  * Los seis sectores, en el orden en que se leen.
  *
- * SIN LÍNEAS CONECTORAS. Con sub-marcas en casi todas las ramas, cualquier
- * trazado acaba cruzándose con el texto: aquí la jerarquía la hace la
- * alineación —lo que está debajo de un logotipo le pertenece— y la separación
- * entre columnas es una línea fina, no un hueco, para que se lea como tabla y
- * no como seis tarjetas.
+ * ⚠ EL ORGANIGRAMA LLEGA HASTA AQUÍ: UN SOLO NIVEL BAJO LA RAÍZ.
+ *
+ * Cuatro de los seis colgaban un tercer nivel y se quitó entero —no se ocultó—:
+ * las seis categorías de Multimedios (Prensa, Digital, Televisión, Exteriores,
+ * Radio, Educación), las seis divisiones de Altea (Comercial, Industrial,
+ * Vivienda, Hoteles, Sector salud, Forestal), las cinco marcas de Foodplay (KFC,
+ * Tim Hortons, Firehouse Subs, Bolerama, Helados Dreambox) y las tres de
+ * Deportes (Sultanes, Fuerza Regia y Conciertos).
+ *
+ * Con ellas se fueron la interfaz SubMarca, el tipo IconoSub y su mapa de iconos
+ * en GrupoFirma.tsx, el colgante y toda la rejilla de sub-marcas de la hoja. Los
+ * ARCHIVOS siguen en el repositorio —ocho logotipos de sub-marca sin consumidor—
+ * por si el nivel vuelve.
  */
-/*
- * Va como const TIPADA y no con `satisfies`: `satisfies` conserva el tipo
- * literal de cada entrada, así que en las sub-marcas que no traen `categoria`
- * el campo no existiría y el componente no podría consultarlo.
- */
+/* Va como const TIPADA y no con `satisfies`, para que las entradas sin `logo`
+   —Deportes— sigan admitiendo el campo cuando el componente lo consulta. */
 const SECTORES: SectorFirma[] = [
   {
     id: "medios",
@@ -204,14 +162,6 @@ const SECTORES: SectorFirma[] = [
     logoRatio: 7.065,
     categoria: "Medios",
     marca: "Multimedios",
-    subs: [
-      { nombre: "Prensa", icono: "prensa" },
-      { nombre: "Digital", icono: "digital" },
-      { nombre: "Televisión", icono: "televisión" },
-      { nombre: "Exteriores", icono: "exteriores" },
-      { nombre: "Radio", icono: "radio" },
-      { nombre: "Educación", icono: "educación" },
-    ],
   },
   {
     id: "inmobiliaria",
@@ -220,14 +170,6 @@ const SECTORES: SectorFirma[] = [
     categoria: "Inmobiliaria",
     marca: "ALTEA",
     nuestra: true,
-    subs: [
-      { nombre: "Comercial", icono: "comercial" },
-      { nombre: "Industrial", icono: "industrial" },
-      { nombre: "Vivienda", icono: "vivienda" },
-      { nombre: "Hoteles", icono: "hoteles" },
-      { nombre: "Sector salud", icono: "salud" },
-      { nombre: "Forestal", icono: "forestal" },
-    ],
   },
   {
     id: "vinos",
@@ -235,7 +177,6 @@ const SECTORES: SectorFirma[] = [
     marca: "Bornos",
     logo: `${GF}/logo-bornos-grupo-firma-globales.webp`,
     logoRatio: 2.755,
-    subs: [],
   },
   {
     id: "alimentos",
@@ -243,33 +184,6 @@ const SECTORES: SectorFirma[] = [
     logoRatio: 2.692,
     categoria: "Alimentos y diversiones",
     marca: "Foodplay",
-    subs: [
-      {
-        nombre: "KFC",
-        logo: `${GF}/logo-kfc-grupo-firma-globales.webp`,
-        logoRatio: 1.058,
-      },
-      {
-        nombre: "Tim Hortons",
-        logo: `${GF}/logo-tim-hortons-grupo-firma-globales.webp`,
-        logoRatio: 3.744,
-      },
-      {
-        nombre: "Firehouse Subs",
-        logo: `${GF}/logo-firehouse-subs-grupo-firma-globales.webp`,
-        logoRatio: 3.356,
-      },
-      {
-        nombre: "Bolerama",
-        logo: `${GF}/logo-bolerama-grupo-firma-globales.webp`,
-        logoRatio: 3.523,
-      },
-      {
-        nombre: "Helados Dreambox",
-        logo: `${GF}/logo-helados-dreambox-grupo-firma-globales.webp`,
-        logoRatio: 3.425,
-      },
-    ],
   },
   {
     id: "deportes",
@@ -278,25 +192,6 @@ const SECTORES: SectorFirma[] = [
        paraguas. La caja se queda con el nombre en texto antes que improvisar. */
     categoria: "Deportes",
     marca: "Deportes",
-    /* La única rama que se abre dos veces: cada equipo necesita decir de qué
-       deporte es, y Conciertos no es un deporte, así que va suelto. */
-    subs: [
-      {
-        nombre: "Sultanes",
-        categoria: "Béisbol",
-        logo: `${GF}/logo-sultanes-grupo-firma-globales.webp`,
-        logoRatio: 1.183,
-      },
-      {
-        nombre: "Fuerza Regia",
-        categoria: "Básquetbol",
-        logo: `${GF}/logo-fuerza-regia-grupo-firma-globales.webp`,
-        logoRatio: 1.084,
-      },
-      /* Conciertos no es una marca y no tiene archivo: se queda en texto, junto a
-         dos que sí lo tienen. */
-      { nombre: "Conciertos", icono: "conciertos" },
-    ],
   },
   {
     id: "energia",
@@ -311,7 +206,6 @@ const SECTORES: SectorFirma[] = [
      * vuelve a 1.538.
      */
     logoRatio: 2.44,
-    subs: [],
   },
 ];
 
@@ -319,8 +213,20 @@ export const GRUPO_FIRMA = {
   title: "Formamos parte de Grupo Firma",
   intro:
     "Altea es la división inmobiliaria de un grupo con presencia en medios, alimentos, energía, deportes y vinos. Esa estructura nos da músculo financiero y una visión de largo plazo que pocos desarrolladores tienen.",
-  /** La raíz del grupo, encima de la fila de sectores. */
-  raiz: { sigla: "GFG", nombre: "Grupo Firma" },
+  /**
+   * La raíz del grupo, encima de la fila de sectores.
+   *
+   * Era la sigla "GFG" compuesta en texto; ahora es el logotipo. El nombre se
+   * queda debajo porque el logotipo sólo dice la sigla, y es además el que lee un
+   * lector de pantalla: la imagen va decorativa para no anunciar la marca dos
+   * veces seguidas.
+   */
+  raiz: {
+    nombre: "Grupo Firma",
+    logo: `${GF}/logo-grupo-firmas-globales.webp`,
+    /* 537x206. */
+    logoRatio: 2.607,
+  },
   /** Goal Capital va aparte: es el family office, no un sector operativo. */
   aparte: {
     nombre: "Goal Capital",

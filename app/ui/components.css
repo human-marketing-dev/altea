@@ -23,18 +23,43 @@
     color var(--duration-fast) var(--ease-standard),
     opacity var(--duration-fast) var(--ease-standard);
 }
-.altea-btn:disabled { opacity: .4; cursor: not-allowed; }
-.altea-btn:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+.altea-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.altea-btn:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
 
-.altea-btn--sm { font-size: 13px; padding: 8px 18px; }
-.altea-btn--md { font-size: 15px; padding: 12px 26px; }
-.altea-btn--lg { font-size: 16px; padding: 16px 34px; }
+.altea-btn--sm {
+  font-size: 13px;
+  padding: 8px 18px;
+}
+.altea-btn--md {
+  font-size: 15px;
+  padding: 12px 26px;
+}
+.altea-btn--lg {
+  font-size: 16px;
+  padding: 16px 34px;
+}
 
-.altea-btn--primary { background: var(--altea-coral); color: #fff; }
-.altea-btn--primary:hover:not(:disabled) { background: var(--altea-coral-dark); }
+.altea-btn--primary {
+  background: var(--altea-coral);
+  color: #fff;
+}
+.altea-btn--primary:hover:not(:disabled) {
+  background: var(--altea-coral-dark);
+}
 
-.altea-btn--dark { background: var(--altea-ink); color: var(--altea-cream); }
-.altea-btn--dark:hover:not(:disabled) { background: #000; }
+.altea-btn--dark {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+}
+.altea-btn--dark:hover:not(:disabled) {
+  background: #000;
+}
 
 /*
   El borde va al 56% de ink y no a --border-subtle (15%).
@@ -54,7 +79,9 @@
 }
 /* --surface-sunken y no el beige de marca: es un relleno de hover sobre
    superficie clara, así que tiene que seguir al fondo de página. */
-.altea-btn--outline:hover:not(:disabled) { background: var(--surface-sunken); }
+.altea-btn--outline:hover:not(:disabled) {
+  background: var(--surface-sunken);
+}
 
 /* ghost ignores size — it is an inline text link with an animated arrow */
 .altea-btn--ghost {
@@ -64,9 +91,15 @@
   border-radius: 0;
   font-size: 15px;
 }
-.altea-btn--ghost:hover:not(:disabled) { color: var(--altea-coral); }
-.altea-btn__arrow { transition: transform var(--duration-fast) var(--ease-standard); }
-.altea-btn--ghost:hover:not(:disabled) .altea-btn__arrow { transform: translateX(3px); }
+.altea-btn--ghost:hover:not(:disabled) {
+  color: var(--altea-coral);
+}
+.altea-btn__arrow {
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.altea-btn--ghost:hover:not(:disabled) .altea-btn__arrow {
+  transform: translateX(3px);
+}
 
 /* ============================= Input ============================= */
 .altea-field {
@@ -92,8 +125,12 @@
   resize: vertical;
   transition: border-color var(--duration-fast) var(--ease-standard);
 }
-.altea-field__control:focus { border-color: var(--altea-ink); }
-.altea-field__control::placeholder { color: var(--altea-ink-40); }
+.altea-field__control:focus {
+  border-color: var(--altea-ink);
+}
+.altea-field__control::placeholder {
+  color: var(--altea-ink-40);
+}
 
 /*
   Los mismos campos sobre fondo oscuro. Va desde el contenedor y no como
@@ -105,7 +142,9 @@
   tarjeta—, que es lo que lo mantiene legible como campo contra ese fondo. Dos
   tokens que ya existen, sin inventar un tercer gris.
 */
-.altea-form--on-dark .altea-field__label { color: var(--text-on-dark-secondary); }
+.altea-form--on-dark .altea-field__label {
+  color: var(--text-on-dark-secondary);
+}
 .altea-form--on-dark .altea-field__control {
   color: var(--text-on-dark);
   background: var(--altea-ink);
@@ -116,10 +155,14 @@
 .altea-form--on-dark .altea-field__control[aria-invalid="true"] {
   border-color: var(--altea-coral);
 }
-.altea-form--on-dark .altea-field__control::placeholder { color: var(--altea-cream-60); }
+.altea-form--on-dark .altea-field__control::placeholder {
+  color: var(--altea-cream-60);
+}
 /* El cambio de borde solo es demasiado tenue contra el oscuro: se le suma el
    anillo coral que ya usan botones y enlaces en todo el sitio. */
-.altea-form--on-dark .altea-field__control:focus { border-color: var(--altea-cream); }
+.altea-form--on-dark .altea-field__control:focus {
+  border-color: var(--altea-cream);
+}
 .altea-form--on-dark .altea-field__control:focus-visible {
   outline: 2px solid var(--altea-coral);
   outline-offset: 2px;
@@ -137,9 +180,18 @@
   padding: 6px 14px;
   border-radius: var(--radius-pill);
 }
-.altea-tag--ink { background: var(--altea-ink); color: var(--altea-cream); }
-.altea-tag--cream { background: var(--altea-cream); color: var(--altea-ink); }
-.altea-tag--coral { background: var(--altea-coral); color: #fff; }
+.altea-tag--ink {
+  background: var(--altea-ink);
+  color: var(--altea-cream);
+}
+.altea-tag--cream {
+  background: var(--altea-cream);
+  color: var(--altea-ink);
+}
+.altea-tag--coral {
+  background: var(--altea-coral);
+  color: #fff;
+}
 .altea-tag--outline {
   background: transparent;
   color: var(--altea-ink);
@@ -168,8 +220,12 @@
   text-transform: uppercase;
   color: var(--text-secondary);
 }
-.altea-stat--light .altea-stat__value { color: var(--altea-cream); }
-.altea-stat--light .altea-stat__label { color: var(--text-on-dark-secondary); }
+.altea-stat--light .altea-stat__value {
+  color: var(--altea-cream);
+}
+.altea-stat--light .altea-stat__label {
+  color: var(--text-on-dark-secondary);
+}
 
 /* ========================== ProjectCard ========================== */
 .altea-project-card {
@@ -185,19 +241,26 @@
     box-shadow var(--duration-base) var(--ease-standard),
     transform var(--duration-base) var(--ease-standard);
 }
-a.altea-project-card { cursor: pointer; }
+a.altea-project-card {
+  cursor: pointer;
+}
 .altea-project-card:hover {
   box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
 }
-a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+a.altea-project-card:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
 .altea-project-card__media {
   aspect-ratio: 4 / 3;
   position: relative;
   overflow: hidden;
   background: var(--surface-sunken);
 }
-.altea-project-card__media img { object-fit: cover; }
+.altea-project-card__media img {
+  object-fit: cover;
+}
 .altea-project-card__placeholder {
   position: absolute;
   inset: 0;
@@ -209,7 +272,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   font-size: var(--text-small);
   color: var(--text-secondary);
 }
-.altea-project-card__body { padding: 20px; }
+.altea-project-card__body {
+  padding: 20px;
+}
 .altea-project-card__unit {
   font-size: var(--text-eyebrow);
   font-weight: 600;
@@ -224,7 +289,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   margin: 6px 0 2px;
   color: var(--altea-ink);
 }
-.altea-project-card__location { font-size: var(--text-small); color: var(--text-secondary); }
+.altea-project-card__location {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+}
 .altea-project-card__stat {
   margin-top: 12px;
   padding-top: 12px;
@@ -242,7 +310,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   align-items: flex-start;
   max-width: 640px;
 }
-.altea-section-heading--center { text-align: center; align-items: center; }
+.altea-section-heading--center {
+  text-align: center;
+  align-items: center;
+}
 .altea-section-heading__eyebrow {
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
@@ -275,9 +346,15 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   con el <LeadCTA> anterior, que usaba el mismo par sobre el mismo gris. Se deja
   para resolver con el resto del asunto del coral, que está congelado.
 */
-.altea-section-heading--light .altea-section-heading__eyebrow { color: var(--accent-on-ink); }
-.altea-section-heading--light .altea-section-heading__title { color: var(--altea-cream); }
-.altea-section-heading--light .altea-section-heading__description { color: var(--text-on-dark-secondary); }
+.altea-section-heading--light .altea-section-heading__eyebrow {
+  color: var(--accent-on-ink);
+}
+.altea-section-heading--light .altea-section-heading__title {
+  color: var(--altea-cream);
+}
+.altea-section-heading--light .altea-section-heading__description {
+  color: var(--text-on-dark-secondary);
+}
 
 /* ============================= NavBar ============================= */
 .altea-navbar {
@@ -346,8 +423,12 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 /* Sin desenfoque, un velo al 55% deja el fondo leyéndose a través, así que se
    devuelve el gris sólido. Cuelga de --pegada y no de la barra: arriba del todo
    tiene que seguir sin fondo también aquí. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .altea-navbar--pegada { background: var(--surface-page); }
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .altea-navbar--pegada {
+    background: var(--surface-page);
+  }
 }
 
 /*
@@ -370,10 +451,19 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 /* También atado a --pegada, por lo mismo: arriba del todo ninguna variante
    pinta fondo. (Sin consumidores hoy; ver el prop `tone` de NavBar.) */
-.altea-navbar--dark.altea-navbar--pegada { background: var(--altea-ink); }
-.altea-navbar--dark.altea-navbar--pegada { border-color: var(--border-subtle-on-dark); }
-.altea-navbar__marca { display: inline-flex; }
-.altea-navbar__logo { height: 22px; width: auto; }
+.altea-navbar--dark.altea-navbar--pegada {
+  background: var(--altea-ink);
+}
+.altea-navbar--dark.altea-navbar--pegada {
+  border-color: var(--border-subtle-on-dark);
+}
+.altea-navbar__marca {
+  display: inline-flex;
+}
+.altea-navbar__logo {
+  height: 22px;
+  width: auto;
+}
 
 /*
  * Modo intro (hoy sólo el home).
@@ -409,7 +499,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   margin-top: 0;
 }
 
-.altea-navbar__links { display: flex; align-items: center; gap: var(--space-6); }
+.altea-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
 .altea-navbar__link {
   color: var(--altea-ink);
   text-decoration: none;
@@ -419,10 +513,19 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   text-transform: uppercase;
   transition: color var(--duration-fast) var(--ease-standard);
 }
-.altea-navbar--dark .altea-navbar__link { color: var(--altea-cream); }
-.altea-navbar__link:hover { color: var(--altea-coral); }
-.altea-navbar__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
-.altea-navbar__link[aria-current="page"] { color: var(--altea-coral); }
+.altea-navbar--dark .altea-navbar__link {
+  color: var(--altea-cream);
+}
+.altea-navbar__link:hover {
+  color: var(--altea-coral);
+}
+.altea-navbar__link:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 4px;
+}
+.altea-navbar__link[aria-current="page"] {
+  color: var(--altea-coral);
+}
 
 /* Contacto va como botón, no como enlace. */
 .altea-navbar__link--destacado,
@@ -438,7 +541,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   background: var(--altea-coral-dark);
   color: #fff;
 }
-.altea-navbar__link--destacado[aria-current="page"] { color: #fff; }
+.altea-navbar__link--destacado[aria-current="page"] {
+  color: #fff;
+}
 
 /* Botón de menú: sólo existe en pantallas chicas. */
 .altea-navbar__toggle {
@@ -459,11 +564,17 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   width: 24px;
   margin: 0 auto;
   background: var(--altea-ink);
-  transition: transform var(--duration-fast) var(--ease-standard),
-              opacity var(--duration-fast) var(--ease-standard);
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard);
 }
-.altea-navbar--dark .altea-navbar__toggle-barra { background: var(--altea-cream); }
-.altea-navbar__toggle:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+.altea-navbar--dark .altea-navbar__toggle-barra {
+  background: var(--altea-cream);
+}
+.altea-navbar__toggle:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
 
 @media (max-width: 900px) {
   .altea-navbar {
@@ -471,7 +582,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     top: var(--space-3);
     margin: var(--space-3) var(--space-3) 0;
   }
-  .altea-navbar__toggle { display: flex; }
+  .altea-navbar__toggle {
+    display: flex;
+  }
   .altea-navbar__links {
     display: none;
     flex-basis: 100%;
@@ -480,13 +593,23 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     gap: var(--space-4);
     padding: var(--space-5) 0 var(--space-2);
   }
-  .altea-navbar--abierto .altea-navbar__links { display: flex; }
-  .altea-navbar__link--destacado { align-self: flex-start; }
+  .altea-navbar--abierto .altea-navbar__links {
+    display: flex;
+  }
+  .altea-navbar__link--destacado {
+    align-self: flex-start;
+  }
 
   /* Aspa cuando está abierto. */
-  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(2) { opacity: 0; }
-  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(2) {
+    opacity: 0;
+  }
+  .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
 }
 
 /* ============================= Footer ============================= */
@@ -520,7 +643,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   gap: var(--space-4);
   align-items: flex-start;
 }
-.altea-footer__logo { height: 26px; width: auto; }
+.altea-footer__logo {
+  height: 26px;
+  width: auto;
+}
 .altea-footer__descripcion {
   margin: 0;
   max-width: 42ch;
@@ -550,9 +676,18 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   color: inherit;
   transition: color var(--duration-fast) var(--ease-standard);
 }
-.altea-footer__red svg { width: 24px; height: 24px; display: block; }
-.altea-footer__red:hover { color: var(--altea-coral); }
-.altea-footer__red:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
+.altea-footer__red svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+.altea-footer__red:hover {
+  color: var(--altea-coral);
+}
+.altea-footer__red:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
 
 .altea-footer__columns {
   display: grid;
@@ -560,13 +695,23 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   gap: var(--space-6);
 }
 @media (max-width: 900px) {
-  .altea-footer__top { grid-template-columns: minmax(0, 1fr); }
-  .altea-footer { --aire-footer: clamp(var(--space-8), 9vh, 112px); }
+  .altea-footer__top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .altea-footer {
+    --aire-footer: clamp(var(--space-8), 9vh, 112px);
+  }
 }
 @media (max-width: 560px) {
-  .altea-footer__columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .altea-footer__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
-.altea-footer__column { display: flex; flex-direction: column; gap: 8px; }
+.altea-footer__column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 .altea-footer__column-title {
   margin-bottom: var(--space-1);
   font-size: var(--text-small);
@@ -599,9 +744,18 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   margin-top: calc((1lh - 16px) / 2);
   color: var(--altea-coral);
 }
-.altea-footer__icono svg { width: 100%; height: 100%; display: block; }
-.altea-footer__link:hover { color: var(--altea-cream); }
-.altea-footer__link:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 4px; }
+.altea-footer__icono svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.altea-footer__link:hover {
+  color: var(--altea-cream);
+}
+.altea-footer__link:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 4px;
+}
 .altea-footer__legal {
   border-top: 1px solid var(--border-subtle-on-dark);
   padding-top: 20px;
@@ -611,7 +765,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   flex-wrap: wrap;
   gap: 12px;
 }
-.altea-footer__legal-links { display: flex; gap: 20px; }
+.altea-footer__legal-links {
+  display: flex;
+  gap: 20px;
+}
 
 /* =========================== MediaSlot =========================== */
 .altea-media {
@@ -625,7 +782,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   background: var(--surface-card-dark);
   color: var(--text-on-dark-secondary);
 }
-.altea-media__img { object-fit: cover; }
+.altea-media__img {
+  object-fit: cover;
+}
 .altea-media__label {
   position: absolute;
   inset: 0;
@@ -640,7 +799,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   font-size: var(--text-small);
   line-height: var(--leading-body);
 }
-.altea-media__icon { width: 28px; height: 28px; opacity: .7; }
+.altea-media__icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.7;
+}
 
 /* ========================= WhatsApp flotante ========================= */
 /*
@@ -674,12 +837,25 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     background var(--duration-fast) var(--ease-standard),
     transform var(--duration-base) var(--ease-standard);
 }
-.altea-wa__boton:hover { background: var(--altea-coral-dark); }
-.altea-wa__boton:focus-visible { outline: 2px solid var(--altea-cream); outline-offset: 3px; }
-.altea-wa__icono { width: 28px; height: 28px; }
-.altea-wa__aspa { font-size: 30px; line-height: 1; }
+.altea-wa__boton:hover {
+  background: var(--altea-coral-dark);
+}
+.altea-wa__boton:focus-visible {
+  outline: 2px solid var(--altea-cream);
+  outline-offset: 3px;
+}
+.altea-wa__icono {
+  width: 28px;
+  height: 28px;
+}
+.altea-wa__aspa {
+  font-size: 30px;
+  line-height: 1;
+}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .altea-wa__boton:hover { transform: translateY(-2px); }
+  .altea-wa__boton:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* --- Panel de chat --- */
@@ -692,7 +868,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   font-family: var(--font-body);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .altea-wa__panel { animation: aparecer 180ms var(--ease-standard) both; }
+  .altea-wa__panel {
+    animation: aparecer 180ms var(--ease-standard) both;
+  }
 }
 .altea-wa__cabecera {
   display: flex;
@@ -711,8 +889,16 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   background: var(--altea-coral);
   color: #fff;
 }
-.altea-wa__nombre { margin: 0; font-weight: 600; font-size: var(--text-body); }
-.altea-wa__estado { margin: 0; font-size: 12px; color: var(--text-on-dark-secondary); }
+.altea-wa__nombre {
+  margin: 0;
+  font-weight: 600;
+  font-size: var(--text-body);
+}
+.altea-wa__estado {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-on-dark-secondary);
+}
 .altea-wa__cerrar {
   margin-left: auto;
   border: none;
@@ -723,7 +909,10 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   cursor: pointer;
   padding: 0 4px;
 }
-.altea-wa__cuerpo { padding: var(--space-4); background: var(--surface-sunken); }
+.altea-wa__cuerpo {
+  padding: var(--space-4);
+  background: var(--surface-sunken);
+}
 .altea-wa__burbuja {
   margin: 0;
   padding: var(--space-3) var(--space-4);
@@ -733,7 +922,12 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   line-height: var(--leading-body);
   color: var(--text-secondary);
 }
-.altea-wa__form { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); }
+.altea-wa__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
 .altea-wa__input {
   width: 100%;
   font: inherit;
@@ -745,7 +939,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   padding: 10px 12px;
   outline: none;
 }
-.altea-wa__input:focus { border-color: var(--altea-ink); }
+.altea-wa__input:focus {
+  border-color: var(--altea-ink);
+}
 .altea-wa__enviar {
   display: inline-flex;
   align-items: center;
@@ -762,8 +958,13 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   padding: 11px 18px;
   transition: background var(--duration-fast) var(--ease-standard);
 }
-.altea-wa__enviar:hover { background: var(--altea-coral-dark); }
-.altea-wa__enviar-icono { width: 18px; height: 18px; }
+.altea-wa__enviar:hover {
+  background: var(--altea-coral-dark);
+}
+.altea-wa__enviar-icono {
+  width: 18px;
+  height: 18px;
+}
 .altea-wa__pie {
   margin: 0;
   padding: 0 var(--space-4) var(--space-4);
@@ -796,8 +997,20 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   overflow: hidden;
   /* Se desvanece en los extremos para que los logos no aparezcan y
      desaparezcan de golpe contra el borde. */
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 6%,
+    #000 94%,
+    transparent
+  );
 }
 .altea-marcas__cinta {
   display: flex;
@@ -821,22 +1034,32 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 .altea-marcas__logo {
   object-fit: contain;
-  opacity: .65;
+  opacity: 0.65;
   transition: opacity var(--duration-fast) var(--ease-standard);
 }
-.altea-marcas__item:hover .altea-marcas__logo { opacity: 1; }
+.altea-marcas__item:hover .altea-marcas__logo {
+  opacity: 1;
+}
 
 @keyframes marquesina {
-  to { transform: translateX(-50%); }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* Al pasar el mouse se detiene, para poder leer un logo concreto. */
 @media (hover: hover) {
-  .altea-marcas__viewport:hover .altea-marcas__cinta { animation-play-state: paused; }
+  .altea-marcas__viewport:hover .altea-marcas__cinta {
+    animation-play-state: paused;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .altea-marcas__cinta { animation: none; }
-  .altea-marcas__viewport { overflow-x: auto; }
+  .altea-marcas__cinta {
+    animation: none;
+  }
+  .altea-marcas__viewport {
+    overflow-x: auto;
+  }
 }
 
 /* ==================== Hero de unidad de negocio ==================== */
@@ -1020,7 +1243,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     las dos cosas: están en el historial de git.
   */
 }
-.altea-hero-unidad__tarjeta .altea-media { background: transparent; }
+.altea-hero-unidad__tarjeta .altea-media {
+  background: transparent;
+}
 
 /* --- La foto de la tarjeta --- */
 /*
@@ -1034,7 +1259,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 
 /* --- Móvil: se apilan, primero el texto --- */
 @media (max-width: 900px) {
-  .altea-hero-unidad__texto { padding-block: var(--space-8); }
+  .altea-hero-unidad__texto {
+    padding-block: var(--space-8);
+  }
   /* Apilada, la foto va primera y sangra por los dos costados. */
   .altea-hero-unidad__tarjeta {
     margin-inline: calc(var(--container-pad) * -1);
@@ -1101,7 +1328,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
    `overflow: hidden` en el título — con el interlineado de 0.98 recortaba el
    descendente de la última línea ("distingue"), y como la entrada lleva fundido
    de opacidad no hace falta enmascarar nada. */
-.altea-bloques__palabra { display: inline-block; }
+.altea-bloques__palabra {
+  display: inline-block;
+}
 
 .altea-bloques__indice {
   margin: 0;
@@ -1168,7 +1397,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   inset: 0 -5%;
   background: var(--surface-sunken);
 }
-.altea-bloques__foto img { object-fit: cover; }
+.altea-bloques__foto img {
+  object-fit: cover;
+}
 
 @media (max-width: 900px) {
   .altea-bloques {
@@ -1182,10 +1413,14 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     height: auto;
     gap: var(--space-4);
   }
-  .altea-bloques__titulo { max-width: none; font-size: var(--text-h1); }
-  .altea-bloques__bloques { gap: var(--space-9); }
+  .altea-bloques__titulo {
+    max-width: none;
+    font-size: var(--text-h1);
+  }
+  .altea-bloques__bloques {
+    gap: var(--space-9);
+  }
 }
-
 
 /* ==================== Paneles de proyectos ======================== */
 /*
@@ -1237,7 +1472,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 
 /* El titular suelto sólo existe en móvil; aquí lo lleva la celda de la banda 1. */
-.altea-proyectos__titulo-suelto { display: none; }
+.altea-proyectos__titulo-suelto {
+  display: none;
+}
 
 .altea-proyectos__celda {
   position: relative;
@@ -1250,8 +1487,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 /* El crecimiento se limita a los paneles navegables: la celda del título cede
    como cualquier hermana, pero no crece — no hay nada que apuntar en ella. */
-.altea-proyectos__celda--enlace:hover { flex-grow: 1.32; }
-.altea-proyectos__banda:has(.altea-proyectos__celda--enlace:hover) .altea-proyectos__celda:not(:hover) {
+.altea-proyectos__celda--enlace:hover {
+  flex-grow: 1.32;
+}
+.altea-proyectos__banda:has(.altea-proyectos__celda--enlace:hover)
+  .altea-proyectos__celda:not(:hover) {
   flex-grow: 0.86;
 }
 
@@ -1334,7 +1574,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   */
   background: var(--altea-coral);
 }
-.altea-proyectos__panel:focus-visible { outline: none; }
+.altea-proyectos__panel:focus-visible {
+  outline: none;
+}
 .altea-proyectos__lienzo {
   position: absolute;
   inset: 0;
@@ -1355,8 +1597,12 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   transform: scale(1.02);
   transition: transform 900ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.altea-proyectos__celda:hover .altea-proyectos__foto { transform: scale(1.09); }
-.altea-proyectos__foto img { object-fit: cover; }
+.altea-proyectos__celda:hover .altea-proyectos__foto {
+  transform: scale(1.09);
+}
+.altea-proyectos__foto img {
+  object-fit: cover;
+}
 
 /* Para que el nombre se lea sobre cualquier foto. */
 .altea-proyectos__degradado {
@@ -1378,7 +1624,12 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   padding: 11px calc(18px + var(--chip, 0px)) 12px;
   background: #171818e0;
   backdrop-filter: blur(3px);
-  clip-path: polygon(var(--chip, 0px) 0, 100% 0, calc(100% - var(--chip, 0px)) 100%, 0 100%);
+  clip-path: polygon(
+    var(--chip, 0px) 0,
+    100% 0,
+    calc(100% - var(--chip, 0px)) 100%,
+    0 100%
+  );
   white-space: nowrap;
   display: flex;
   flex-direction: column;
@@ -1420,7 +1671,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     gap: 0;
   }
 
-  .altea-proyectos__titulo { display: none; }
+  .altea-proyectos__titulo {
+    display: none;
+  }
   .altea-proyectos__titulo-suelto {
     display: block;
     margin: 0;
@@ -1436,7 +1689,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 
   /* Las bandas desaparecen de la caja y las seis celdas quedan como hijas
      directas de la sección: una sola columna con costuras continuas. */
-  .altea-proyectos__banda { display: contents; }
+  .altea-proyectos__banda {
+    display: contents;
+  }
 
   .altea-proyectos__celda {
     /*
@@ -1449,12 +1704,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   }
   /* Sin cursor no hay hover que valga; que no cambien de tamaño al tocarlas. */
   .altea-proyectos__celda--enlace:hover,
-  .altea-proyectos__banda:has(.altea-proyectos__celda--enlace:hover) .altea-proyectos__celda:not(:hover) {
+  .altea-proyectos__banda:has(.altea-proyectos__celda--enlace:hover)
+    .altea-proyectos__celda:not(:hover) {
     flex-grow: 0;
   }
 }
-
-
 
 /* --- La ficha --- */
 /*
@@ -1529,9 +1783,13 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
     overlay 0.28s allow-discrete,
     display 0.28s allow-discrete;
 }
-.altea-proyectos__dialogo[open]::backdrop { background: rgb(33 34 34 / 0.62); }
+.altea-proyectos__dialogo[open]::backdrop {
+  background: rgb(33 34 34 / 0.62);
+}
 @starting-style {
-  .altea-proyectos__dialogo[open]::backdrop { background: rgb(33 34 34 / 0); }
+  .altea-proyectos__dialogo[open]::backdrop {
+    background: rgb(33 34 34 / 0);
+  }
 }
 
 /* Sin desplazamiento ni escala: sólo un fundido corto. */
@@ -1547,7 +1805,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
       display 0.12s allow-discrete;
   }
   @starting-style {
-    .altea-proyectos__dialogo[open] { transform: none; }
+    .altea-proyectos__dialogo[open] {
+      transform: none;
+    }
   }
   .altea-proyectos__dialogo::backdrop {
     transition:
@@ -1558,7 +1818,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 
 /* Apilada siempre: foto arriba, información abajo. */
-.altea-proyectos__ficha { position: relative; }
+.altea-proyectos__ficha {
+  position: relative;
+}
 /*
   LA FOTO NO PUEDE CRECER LIBRE, o la ficha obliga a desplazarse para leer la
   descripción. Dos frenos, y los dos salen de medir:
@@ -1597,8 +1859,12 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 
 /* Va DESPUÉS de las dos reglas que pisa: misma especificidad, gana el último. */
 @media (min-width: 720px) {
-  .altea-proyectos__ficha-foto { aspect-ratio: 16 / 9; }
-  .altea-proyectos__ficha-cuerpo { padding: var(--space-6); }
+  .altea-proyectos__ficha-foto {
+    aspect-ratio: 16 / 9;
+  }
+  .altea-proyectos__ficha-cuerpo {
+    padding: var(--space-6);
+  }
 }
 .altea-proyectos__ficha-nombre {
   margin: 0;
@@ -1638,9 +1904,13 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-standard);
 }
-.altea-proyectos__cerrar:hover { background: var(--altea-coral); }
-.altea-proyectos__cerrar:focus-visible { outline: 2px solid var(--altea-coral); outline-offset: 2px; }
-
+.altea-proyectos__cerrar:hover {
+  background: var(--altea-coral);
+}
+.altea-proyectos__cerrar:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
 
 /* ===================== Sección de relato ========================= */
 /*
@@ -1758,7 +2028,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   NO reutilizar este color en el cuerpo de abajo ni en ningún texto pequeño:
   ahí el mínimo es 4.5 y 3.29 no llega.
 */
-.altea-relato__acento { color: var(--text-accent); }
+.altea-relato__acento {
+  color: var(--text-accent);
+}
 
 /*
   Regla fina y RECTA, sin el corte diagonal del sitio.
@@ -1834,16 +2106,19 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   color: var(--text-primary);
 }
 
-
 @media (max-width: 900px) {
-  .altea-relato { padding-block: var(--space-8); }
+  .altea-relato {
+    padding-block: var(--space-8);
+  }
   /*
     Fuera la marca de agua. El clamp tiene su suelo en 280px, así que en un
     teléfono de 390 NO son los ~130px que daría el 34vw: son 280, el 72% del
     ancho de pantalla, justo detrás de la columna de texto. Aquí no aporta
     fondo, sólo se come un poco del 4.91 de contraste del cuerpo.
   */
-  .altea-relato__agua { display: none; }
+  .altea-relato__agua {
+    display: none;
+  }
   /* Lo que se apila aquí es el CUERPO, no la sección: ésta no es rejilla. */
   .altea-relato__cuerpo {
     grid-template-columns: minmax(0, 1fr);
@@ -1911,7 +2186,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 /* La imagen es un recorte con alfa, no una foto que llene la caja: el fondo de
    la ranura (--surface-card-dark) asomaría como un rectángulo más claro sobre el
    ink de la sección. Transparente, el recorte flota. */
-.altea-cierre__media .altea-media { background: transparent; }
+.altea-cierre__media .altea-media {
+  background: transparent;
+}
 .altea-cierre__acciones {
   display: flex;
   flex-wrap: wrap;
@@ -1923,7 +2200,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   esta era la razón por la que no se podía usar. Se conserva el hover de la
   flecha, que el botón del sistema no trae.
 */
-.altea-cierre__secundario:hover .altea-btn__arrow { transform: translateX(3px); }
+.altea-cierre__secundario:hover .altea-btn__arrow {
+  transform: translateX(3px);
+}
 /* Tercera vía sin botón. --text-secondary sobre el hundido da 5.35, y esto es
    texto de 14px. */
 .altea-cierre__correo {
@@ -1934,7 +2213,9 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   text-underline-offset: 4px;
   transition: color var(--duration-fast) var(--ease-standard);
 }
-.altea-cierre__correo:hover { color: var(--altea-cream); }
+.altea-cierre__correo:hover {
+  color: var(--altea-cream);
+}
 
 .altea-cierre__body {
   grid-column: 2;
@@ -1947,10 +2228,11 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
   padding: var(--space-9) var(--container-pad) var(--space-9) var(--space-8);
 }
 
-
 @media (max-width: 1100px) {
   /* Daba 4fr al texto y 6fr a la foto; en tablet el texto se ahogaba. */
-  .altea-cierre { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .altea-cierre {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
   /*
     Y los botones pasan a columna. En fila piden 506px y la columna de texto se
     queda entre 293 y 383 en esta banda: envolvían, y el de WhatsApp llegaba a
@@ -1963,11 +2245,247 @@ a.altea-project-card:focus-visible { outline: 2px solid var(--altea-coral); outl
 }
 @media (max-width: 900px) {
   /* Apilada: la foto arriba a sangre, el texto debajo. */
-  .altea-cierre { grid-template-columns: minmax(0, 1fr); }
-  .altea-cierre__media { grid-row: 1; }
+  .altea-cierre {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .altea-cierre__media {
+    grid-row: 1;
+  }
   .altea-cierre__body {
     grid-column: 1;
     grid-row: 2;
     padding: var(--space-8) var(--container-pad);
+  }
+}
+
+/* ============== Carril de tarjetas (CarrilTarjetas) ============== */
+
+/*
+ * El recorrido horizontal de tarjetas. Lo usan los proyectos del home y las
+ * plazas de /comercial: ver la cabecera de app/ui/CarrilTarjetas.tsx.
+ */
+
+/* El alto lo escribe el componente a partir de lo que mide el carril. Sin JS se
+   queda en auto y la sección es una fila con desplazamiento normal. */
+.altea-carril {
+  position: relative;
+}
+
+/*
+ * SEPARACIÓN GARANTIZADA entre la cabecera y el carril.
+ *
+ * Sin ella, la rejilla repartía el alto entre `auto` y `1fr` sin nada en medio: en
+ * una ventana alta sobraba sitio y no se notaba, pero en un portátil el título
+ * quedaba tocando las tarjetas. Y no era sólo apretado — a 1440x768 la tarjeta ya
+ * SE SALÍA 10px por abajo, y a 1440x700 se salía 71px.
+ *
+ * El row-gap es la separación; lo que la hace posible sin que las tarjetas
+ * desborden es --alto-tarjeta, que las acota al hueco que de verdad queda. Medido a
+ * 1440 de ancho, con la cabecera en dos líneas (87px):
+ *
+ *   alto vent.   padding   cabecera   separación   hueco   alto de tarjeta
+ *        700        70         87          24       520         520  (recortada)
+ *        768        77         87          26       579         579  (recortada)
+ *        800        80         87          27       606         606  (recortada)
+ *        900        90         87          31       693         614  (completa)
+ *       1080       108        87          37       849         614  (completa)
+ *
+ * De 900 para arriba la tarjeta conserva su alto natural —el que sale de su ancho
+ * y la proporción 3/4, 614px— y el hueco de sobra se reparte. Por debajo, la que
+ * cede es la tarjeta y no la separación, que es lo correcto: el aire entre el
+ * título y el carril es lo que se estaba perdiendo.
+ */
+.altea-carril__fijo {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  /*
+   * ⚠ LA COLUMNA SE ACOTA, O LA CABECERA SE VA CON EL CARRIL.
+   *
+   * La columna implícita es `auto`, y `auto` crece hasta el max-content de lo que
+   * contiene: la pista mide 2 674 px con seis tarjetas a 1440 de ancho. La
+   * cabecera, que comparte columna, se estiraba a esos 2 674 — y como está en
+   * `space-between`, el contador "01 — 06" acababa en la x 2 547, fuera de
+   * pantalla y recortado por el `overflow: hidden`. Nunca se vio.
+   *
+   * Con `minmax(0, 1fr)` la columna se queda en el ancho de la ventana y es la
+   * pista la que desborda, que es lo que tiene que hacer.
+   */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  row-gap: clamp(20px, 3.4vh, 44px);
+  padding: clamp(30px, 5vh, 64px) 0;
+}
+
+.altea-carril__cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  padding: 0 var(--container-pad);
+}
+.altea-carril__titulo {
+  margin: 0;
+  max-width: 18ch;
+  font-size: clamp(1.65rem, 3.4vw, 2.6rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-tight);
+}
+.altea-carril__n {
+  margin: 0;
+  flex: none;
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  /* --text-secondary y no el ink 45% del prototipo, que da 2.71. */
+  color: var(--text-secondary);
+}
+
+.altea-carril__pista {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 26px);
+  padding: 0 var(--container-pad);
+  margin: 0;
+  list-style: none;
+  will-change: transform;
+}
+
+/* Las celdas no se encogen: el ancho de la tarjeta lo decide su alto y la
+   proporción, no el reparto del flex. */
+.altea-carril__pista > li {
+  flex: none;
+}
+
+/*
+ * El alto manda y el ancho se deriva.
+ *
+ * Es al revés que antes, y es el cambio que evita el desborde: con el ancho fijo
+ * (`clamp(260px, 32vw, 480px)`) el alto salía de la proporción y podía pasarse del
+ * hueco. Ahora `--alto-tarjeta` —que publica el componente tras medir la cabecera— lo
+ * acota, y `aspect-ratio` con `width: auto` calcula el ancho a partir de ahí.
+ *
+ * El respaldo cubre el primer pintado y el caso sin JS: es el alto que saldría del
+ * ancho de antes, acotado a 66svh para que no desborde en ventanas bajas.
+ */
+.altea-carril__tj {
+  position: relative;
+  display: block;
+  height: var(
+    --alto-tarjeta,
+    min(66svh, calc(clamp(260px, 32vw, 480px) * 4 / 3))
+  );
+  width: auto;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: #fff;
+  background: var(--surface-card-dark);
+  will-change: transform;
+}
+/* La foto es más ancha que su caja para poder correr dentro de ella: así cada
+   tarjeta tiene su propio recorrido sin que la tarjeta se mueva. */
+.altea-carril__tj-foto {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12%;
+  width: 124%;
+  display: block;
+  will-change: transform;
+}
+.altea-carril__img {
+  object-fit: cover;
+}
+/*
+ * El degradado no es decorativo: es lo que garantiza el contraste del nombre.
+ * Sobre una foto cualquiera el blanco no tiene contraste asegurado; al 82% de
+ * #101316 en la zona del texto, el fondo efectivo es casi negro y el blanco pasa
+ * de 15:1 sea cual sea la fotografía.
+ */
+.altea-carril__tj::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0) 40%,
+    rgb(16 19 22 / 0.82) 100%
+  );
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.altea-carril__tj:hover::after,
+.altea-carril__tj:focus-visible::after {
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0.14) 24%,
+    rgb(16 19 22 / 0.88) 100%
+  );
+}
+.altea-carril__tj:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 3px;
+}
+
+.altea-carril__tj-txt {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(16px, 2vw, 28px);
+}
+.altea-carril__tj-txt b {
+  display: block;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+}
+.altea-carril__tj-txt span {
+  display: block;
+  margin-top: 5px;
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ── móvil ── */
+@media (max-width: 900px) {
+  .altea-carril__tj {
+    /* En móvil manda el ancho: una tarjeta de 74vw es lo que cabe, y su alto sale
+       de la proporción como antes. El alto calculado sólo acota si es menor. */
+    height: min(
+      var(--alto-tarjeta, 100svh),
+      calc(clamp(220px, 74vw, 320px) * 4 / 3)
+    );
+  }
+}
+
+/* ── movimiento reducido ── */
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * El recorrido horizontal pasa a ser una fila que se desplaza a mano. El
+   * componente no le escribe alto a la sección, así que vuelve a medir lo que
+   * ocupa su contenido.
+   */
+  .altea-carril__fijo {
+    position: static;
+    height: auto;
+  }
+  .altea-carril__pista {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--space-4);
+  }
+  .altea-carril__pista > li {
+    scroll-snap-align: center;
   }
 }

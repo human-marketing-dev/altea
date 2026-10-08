@@ -521,12 +521,17 @@
   letter-spacing: var(--tracking-tight);
 }
 
-/* ═══ 3 · las plazas, como índice ═════════════════════════════════════════ */
+/* ═══ 3 · las plazas, en carril ═══════════════════════════════════════════ */
 
-.com-plazas {
-  padding: clamp(70px, 13vh, 170px) var(--container-pad);
-}
-.com-plazas__titulo,
+/*
+ * La sección es <CarrilTarjetas>, el mismo recorrido horizontal que los
+ * proyectos del home: su hoja vive en app/ui/components.css y aquí sólo queda la
+ * ficha que abren las tarjetas.
+ *
+ * Se fueron con el índice su contenedor y su título propios —el carril trae los
+ * suyos—, las nueve reglas de las filas y las del visor que perseguía al cursor.
+ */
+
 .com-giros__titulo,
 .com-marcas__titulo,
 .com-prox__titulo {
@@ -536,140 +541,6 @@
   line-height: 1.02;
   letter-spacing: var(--tracking-tight);
   max-width: 16ch;
-}
-
-.com-ix {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--border-subtle);
-}
-/*
- * La fila. Al señalar se desplaza a la derecha, y ese desplazamiento es lo que
- * dice "esto se abre" sin tener que escribirlo. Sólo con puntero: en táctil no
- * hay estado intermedio entre no tocar y tocar.
- */
-/*
- * LAS PISTAS NO PUEDEN SER `auto`, Y AHÍ ESTABA LA DESALINEACIÓN.
- *
- * Cada fila es su propio contenedor de grid —la lista es <ul><li><button>, y el
- * `display: grid` está en el botón—, así que una pista `auto` se mide contra el
- * contenido DE SU FILA y no contra la columna entera. Con eso, "Fashion Mall ·
- * 1 millón al mes" y "Street Mall · —" empezaban en equis distintas y la tabla
- * se leía torcida.
- *
- * La solución es que ninguna pista dependa del contenido. Medidos los textos en
- * Gotham-Medium: el formato más largo ("Fashion Mall") pide 101.5 px y el dato de
- * visitantes más largo ("+650 mil al mes") 117.5, que a 16 px de base son 8.8 y
- * 10.1 ch. Con 10ch y 11ch sobra un poco para un valor algo más largo, y si
- * alguno creciera de más parte línea dentro de su columna sin arrastrar a las
- * vecinas, porque `align-items: baseline` alinea la PRIMERA línea.
- *
- * El número y la flecha se dejan en `auto` a propósito: son el mismo contenido en
- * las ocho filas —dos dígitos con `tabular-nums` y el mismo glifo—, así que `auto`
- * ya da la misma medida. No son el problema.
- *
- * Y la ubicación lleva un suelo de 17ch: el 20 % a secas se queda en 173.8 px a
- * 1100 y "San Nicolás, Nuevo León" necesita 183.4, con lo que partía en dos
- * líneas justo en la banda de 900 a 1160. Cuando el 20 % es menor que el suelo,
- * manda el suelo.
- */
-.com-ix__f {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(17ch, 20%) 10ch 11ch auto;
-  gap: clamp(12px, 2.2vw, 36px);
-  align-items: baseline;
-  width: 100%;
-  padding: clamp(16px, 2.8vh, 30px) 0;
-  border: 0;
-  border-bottom: 1px solid var(--border-subtle);
-  background: none;
-  font: inherit;
-  color: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: padding-left 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-@media (hover: hover) {
-  .com-ix__f:hover {
-    padding-left: clamp(10px, 1.6vw, 26px);
-  }
-}
-.com-ix__f:focus-visible {
-  outline: 2px solid var(--altea-coral);
-  outline-offset: 4px;
-}
-.com-ix__n {
-  font-size: var(--text-eyebrow);
-  font-variant-numeric: tabular-nums;
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
-}
-.com-ix__t {
-  font-size: clamp(1.1rem, 2.2vw, 1.8rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.035em;
-  line-height: 1.06;
-}
-.com-ix__l,
-.com-ix__d {
-  font-size: var(--text-small);
-  /* 5.67: el prototipo los dejaba al 58 %, que da 3.89 y esto es texto de 14px. */
-  color: var(--text-secondary);
-}
-.com-ix__d--num {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.com-ix__ver {
-  font-size: 0.9rem;
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
-  transition:
-    color var(--duration-base) var(--ease-standard),
-    transform 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
-}
-.com-ix__f:hover .com-ix__ver,
-.com-ix__f:focus-visible .com-ix__ver {
-  color: var(--text-accent);
-  transform: translate(3px, -3px);
-}
-
-/*
- * EL VISOR QUE SIGUE AL CURSOR.
- *
- * `position: fixed` en 0,0 y todo el movimiento por `transform`: así el navegador
- * no recalcula layout en cada fotograma, sólo compone. El `translate(-50%,-50%)`
- * va DESPUÉS del translate3d para que el centro del visor caiga en el cursor.
- *
- * `pointer-events: none` o se robaría el hover de las filas que está mostrando.
- *
- * En táctil no existe: no hay puntero que seguir.
- */
-.com-visor {
-  position: fixed;
-  z-index: 40;
-  top: 0;
-  left: 0;
-  width: clamp(180px, 18vw, 280px);
-  aspect-ratio: 4 / 3;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
-  transform: translate3d(-50%, -50%, 0);
-  transition: opacity 0.35s var(--ease-standard);
-  box-shadow: 0 30px 60px -28px rgb(0 0 0 / 0.5);
-  will-change: transform;
-}
-.com-visor[data-on="si"] {
-  opacity: 1;
-}
-.com-visor__img {
-  object-fit: cover;
-}
-@media (hover: none) {
-  .com-visor {
-    display: none;
-  }
 }
 
 /* ── la ficha ── */
@@ -1312,15 +1183,6 @@
   }
 }
 @media (max-width: 900px) {
-  /* La fila pierde la ubicación y los dos datos: con el nombre a este cuerpo no
-     caben seis columnas, y los tres están en la ficha. */
-  .com-ix__f {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-  }
-  .com-ix__l,
-  .com-ix__d {
-    display: none;
-  }
   .com-modelo__cols,
   .com-fx__cuerpo,
   .com-prox__grid {
@@ -1378,8 +1240,6 @@
   .com-gr__img,
   .com-gr__caja,
   .com-px__img,
-  .com-ix__f,
-  .com-ix__ver,
   .com-mc,
   .com-mc__logo,
   .com-fx,

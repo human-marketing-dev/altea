@@ -47,6 +47,9 @@ export type {
 
 export { MediaSlot } from "./MediaSlot";
 
+export { CarrilTarjetas } from "./CarrilTarjetas";
+export type { CarrilTarjetasProps, TarjetaCarril } from "./CarrilTarjetas";
+
 export { ProyectosPaneles } from "./ProyectosPaneles";
 export type { ProyectoPanel, ProyectosPanelesProps } from "./ProyectosPaneles";
 export type { MediaSlotProps } from "./MediaSlot";

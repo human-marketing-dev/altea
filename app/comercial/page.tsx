@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CONTACT_CTA } from "@/app/_home/content";
 import { CierreContacto, Footer, NavBar } from "@/app/ui";
 import { HeroCalado } from "../_comercial/HeroCalado";
-import { IndicePlazas } from "../_comercial/IndicePlazas";
+import { CarrilPlazas } from "../_comercial/CarrilPlazas";
 import { Modelo } from "../_comercial/Modelo";
 import { MuroMarcas } from "../_comercial/MuroMarcas";
 import { OtrosGiros } from "../_comercial/OtrosGiros";
@@ -25,7 +25,7 @@ export default function Comercial() {
       <main>
         <HeroCalado />
         <Modelo />
-        <IndicePlazas />
+        <CarrilPlazas />
         <OtrosGiros />
         {MOSTRAR_MARCAS_COMERCIAL && <MuroMarcas />}
         <ProximosComercial />

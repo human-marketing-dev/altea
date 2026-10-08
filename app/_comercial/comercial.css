@@ -11,162 +11,461 @@
 
 /* ═══ 1 · hero calado ═════════════════════════════════════════════════════ */
 
+/*
+ * EL AMARILLO DE COMERCIAL.
+ *
+ * ⚠ NO SALE DE NINGÚN ARCHIVO DE MARCA DEL REPO. Los tres logotipos de unidad
+ * —public/brand/business-units/altea-{comercial,industrial,vivienda}-color.svg—
+ * pintan la banderola con el coral #F15D4D y el ink, y #F7CC47 no aparece en
+ * ninguno. Viene del encargo, no del repositorio, y por eso vive aquí y no en
+ * app/ui/tokens.css: meterlo entre los colores de marca afirmaría que lo es.
+ * Si resulta que la banderola de Comercial es coral, se cambia esta línea.
+ *
+ * ⚠ Y DEJA CONSTANCIA DE LO QUE CUESTA. Sobre --surface-page mide 1.41:1, y el
+ * mínimo para texto grande son 3.00: el «+», la «M» y el «%» de las cifras
+ * quedan por debajo del umbral y a plena luz o en una pantalla mala pueden no
+ * verse. Se acepta a propósito —es el color de la unidad y los signos son
+ * acento, no el dato— pero NO extiendas este amarillo a texto que haya que leer
+ * sobre fondo claro. Una etiqueta, un enlace o una cifra entera necesitarían la
+ * variante oscura: #B18708, que da 3.04 conservando tono y saturación.
+ *
+ * Sobre la foto oscurecida del cierre rinde 10.39, así que ahí no hay nada que
+ * vigilar y va el amarillo de marca.
+ *
+ * Esto es la misma pareja que el sistema ya tiene para el coral —--text-accent
+ * sobre claro y --accent-on-ink sobre oscuro—. Comercial no la tiene definida, y
+ * hará falta en cuanto el amarillo salga de un logotipo.
+ */
+
+/*
+ * ⚠ LAS PISTAS VAN EN minmax(0,…) Y NO EN `1fr` O `auto` A SECAS.
+ *
+ * Aquí estaba el desvío hacia la "Co". Una pista `auto` —y un `1fr`, que lleva
+ * un mínimo automático— se mide contra el CONTENIDO, y el contenido es una
+ * palabra que al crecer pasa de 1 000 px a 7 000. La rejilla se ensanchaba con
+ * ella, el desbordamiento se iba todo hacia la derecha y lo que quedaba a la
+ * vista era el principio de la palabra en vez de su centro.
+ *
+ * Con minmax(0,…) la pista no puede crecer por contenido: la caja se queda del
+ * tamaño de la ventana y el texto se sale por los dos lados a partes iguales.
+ */
 .com-hero {
+  --com-amarillo: #f7cc47;
   position: relative;
   min-height: 100svh;
   overflow: hidden;
   display: grid;
-  /* Dos filas desde que salió el pie que decía qué plaza se veía: la palabra
-     calada, centrada en el 1fr, y el pie de página. Eran tres. */
-  grid-template-rows: 1fr auto;
-  padding: clamp(92px, 13vh, 140px) var(--container-pad) clamp(26px, 4.4vh, 50px);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  padding: clamp(92px, 13vh, 140px) var(--container-pad)
+    clamp(26px, 4.4vh, 50px);
   background: var(--surface-page);
 }
 
+/*
+ * LA FOTO A SANGRE, DEBAJO DE TODO.
+ *
+ * Es la MISMA imagen que se ve dentro de las letras y EN EL MISMO SITIO: las dos
+ * reciben su encuadre de la misma función, así que los píxeles coinciden.
+ *
+ * NO APARECE CON UN FUNDIDO: la foto está siempre al 100 % y lo que crece es la
+ * zona donde se ve. Un fundido sube la opacidad de toda la capa a la vez y se
+ * lee como una disolvencia ENCIMA de la palabra; esto rellena los huecos de
+ * página que quedan entre los trazos.
+ *
+ * LA MÁSCARA SON DOS CAPAS CRUZADAS CON `intersect`, y la trama es la misma de
+ * puntos del resto del sitio:
+ *
+ *   · el FRENTE, un círculo que se abre desde el centro. Dice hasta dónde ha
+ *     llegado la foto.
+ *   · la TRAMA, un punto por celda cuyo radio crece. Dice cuánto se ha cerrado.
+ *
+ * Al intersecarlas, la foto entra como una retícula de puntos que nace en el
+ * centro y se va cerrando hasta ser superficie continua. El frente no necesita
+ * difuminarse: lo que rompe su borde son los propios puntos, así que no queda el
+ * disco que se veía con un degradado.
+ *
+ * El `clamp` de --rej es el valor de ARRANQUE, para el fotograma que va antes de
+ * que corra el JS. A partir de ahí lo reescribe el componente. ⚠ Y no se puede
+ * LEER de vuelta: ver la nota en HeroCalado.
+ */
+.com-hero__lleno {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  --rej: clamp(13px, 1.35vw, 21px);
+  -webkit-mask-image:
+    radial-gradient(
+      circle at 50% 50%,
+      #000 var(--d, 0px),
+      transparent calc(var(--d, 0px) + 0.7px)
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #000 var(--r0, 0px),
+      transparent var(--r1, 0px)
+    );
+  mask-image:
+    radial-gradient(
+      circle at 50% 50%,
+      #000 var(--d, 0px),
+      transparent calc(var(--d, 0px) + 0.7px)
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #000 var(--r0, 0px),
+      transparent var(--r1, 0px)
+    );
+  -webkit-mask-size:
+    var(--rej) var(--rej),
+    100% 100%;
+  mask-size:
+    var(--rej) var(--rej),
+    100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat;
+  mask-repeat: repeat, no-repeat;
+  -webkit-mask-position: center, center;
+  mask-position: center, center;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
 .com-hero__calado {
+  position: relative;
+  z-index: 1;
   align-self: center;
+  justify-self: center;
+  width: 100%;
+  min-width: 0;
   display: grid;
-  gap: clamp(10px, 1.8vh, 20px);
+  gap: clamp(34px, 6.4vh, 88px);
   justify-items: center;
 }
 
-/* El contorno y el relleno, apilados en la misma celda. */
+/*
+ * El contorno y el relleno, apilados en la misma celda.
+ *
+ * La MISMA trampa de arriba un nivel más abajo: esta rejilla también tendría una
+ * columna implícita `auto` que se mide contra la palabra. Sin acotarla, la caja
+ * del <h1> arranca en el borde izquierdo y se extiende hacia la derecha, así que
+ * centrar dentro de ella es centrar dentro de una caja descentrada.
+ */
 .com-hero__capas {
   position: relative;
   display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
 }
 .com-hero__capas > * {
   grid-area: 1/1;
 }
 
 /*
- * EL CALADO.
+ * ⚠ EL CENTRADO ES FLEX Y NO `text-align: center`, y no es una preferencia de
+ * estilo: es lo que hacía que la palabra se fuera hacia la "Co".
  *
- * `background-clip: text` con `color: transparent` deja el texto EN EL DOM: un
- * lector de pantalla lee el <h1> como cualquier otro. No es una imagen con texto
- * dentro, es texto con imagen dentro.
+ * `text-align: center` NO centra una línea más ancha que su caja. Medido en
+ * Chromium con la palabra a 742 px: la caja iba de 72 a 1368 —centrada— y el
+ * texto arrancaba en 72 y se salía entero por la derecha, con su centro en 1866
+ * en vez de en 720. Todo el sobrante se iba a un lado, así que lo que quedaba en
+ * pantalla era el principio de la palabra.
  *
- * El cuerpo es el de una palabra a pantalla completa. Con la frase larga del hero
- * anterior las letras serían tan chicas que la foto dejaría de distinguirse y el
- * recorte no significaría nada.
+ * Un contenedor flex con `justify-content: center` sí lo reparte por los dos
+ * lados: mismo caso, centro del texto en 720 clavado. De ahí que la palabra viva
+ * en un <span> dentro del <h1> y que el <h1> sea el contenedor.
  *
- * El `background-image` lo escribe el componente, porque la ruta cambia con la
- * plaza, y lleva un velo negro al 25 % como primera capa: dos de las ocho fotos no
- * llegan a 3:1 contra este fondo sin él. Ver la nota de HeroCalado.
+ * ⚠ Y NO, LA PALABRA SOLA NO QUEDA EN 720 EXACTOS, Y ESO NO ES EL FALLO DE
+ * ARRIBA VOLVIENDO. Lo que el flex centra es el BLOQUEO ENTERO —palabra más
+ * banderola—, así que el centro de la palabra queda a la izquierda del centro de
+ * la ventana por media banderola: 0.3194 em de ancho con su margen, o sea
+ * 0.1597 em. Medido en 1440x900: a cuerpo de apertura el centro del texto cae en
+ * 684.6 y a 7x en 472.1, que son exactamente esos 0.1597 em en cada caso. Es el
+ * centrado correcto de un logotipo con banderola; el fallo de verdad dejaba el
+ * centro en 1866 y enseñaba el principio de la palabra.
  */
 .com-hero__t {
   margin: 0;
-  font-weight: var(--weight-bold);
-  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  /*
+   * ⚠ EL CUERPO VIVE AQUÍ Y NO EN EL <span>. La banderola se mide en em, y un em
+   * se resuelve contra el font-size del propio elemento, no contra el de su
+   * hermano: puesto en el span, la banderola se habría quedado del tamaño
+   * heredado del body mientras la palabra crecía.
+   */
   font-size: clamp(3rem, 15.4vw, 15rem);
+}
+
+/*
+ * EL CALADO. `background-clip: text` con `color: transparent`: el <h1> sigue en
+ * el DOM y un lector de pantalla lo lee como cualquier otro. No es una imagen
+ * con texto dentro, es texto con imagen dentro.
+ *
+ * ⚠ `background-size` y `background-position` LOS ESCRIBE EL COMPONENTE, no el
+ * CSS. Con `cover` la foto se mide contra la caja del texto, y esa caja crece
+ * con el scroll: la imagen crecería con las letras y por dentro se vería siempre
+ * el mismo trozo, cada vez más ampliado. Anclada a la ventana, las letras se
+ * abren SOBRE una foto quieta, y eso es lo que se lee como desborde.
+ *
+ * ⚠ EL RELLENO ES LO QUE SALVA EL PUNTO DE LA «i», y tampoco es cosmético.
+ * `background-clip: text` recorta el fondo a las letras, pero el fondo sólo se
+ * pinta DENTRO DE LA CAJA DE RELLENO del elemento. Con `line-height: .84` esa
+ * caja es más baja que los propios glifos —la línea mide 0.84 em y la caja de
+ * texto de Gotham pide ~1.22— así que el punto de la «i», que sobresale por
+ * arriba, quedaba fuera: sin fondo que enseñar y con `color: transparent`, se
+ * cortaba en plano, y el contorno del eco sí lo dibujaba entero, de ahí la
+ * rayita clara que lo cruzaba.
+ *
+ * El relleno agranda la caja del fondo y el margen negativo devuelve la
+ * maquetación a donde estaba, así que no se mueve nada. Va en em para que
+ * acompañe a la palabra mientras crece.
+ */
+.com-hero__tx {
+  padding: 0.26em 0 0.14em;
+  margin: -0.26em 0 -0.14em;
+  display: block;
+  white-space: nowrap;
+  font-weight: var(--weight-bold);
+  font-size: inherit;
   line-height: 0.84;
   letter-spacing: -0.062em;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  will-change: background-position;
 }
 
 /*
- * El contorno detrás. HACE FALTA: sobre las zonas claras de una foto la palabra se
- * pierde justo donde la imagen es más brillante, y éste mantiene la silueta.
+ * El contorno detrás. HACE FALTA: sobre las zonas claras de una foto la palabra
+ * se pierde justo donde la imagen es más brillante, y éste mantiene la silueta.
  * Decorativo — la palabra ya la dice el <h1> de encima.
  */
 .com-hero__eco {
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in srgb, var(--altea-ink) 16%, transparent);
   pointer-events: none;
 }
-
-.com-hero__desc {
-  margin: 0;
-  max-width: 46ch;
-  text-align: center;
-  line-height: 1.68;
-  font-size: clamp(0.95rem, 1.1vw, 1.08rem);
-  /* 6.05 sobre el gris de página. */
-  color: color-mix(in srgb, var(--altea-ink) 72%, transparent);
+.com-hero__eco .com-hero__tx {
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--altea-ink) 16%, transparent);
 }
 
-.com-hero__bajo {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: clamp(20px, 3vw, 44px);
-}
-.com-hero__desliza {
-  margin: 0;
-  display: grid;
-  gap: 7px;
-  justify-items: start;
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
-}
-.com-hero__raya {
+/*
+ * LA BANDEROLA DE COMERCIAL, colgada del vértice superior derecho de la palabra.
+ *
+ * Son los dos triángulos del logotipo de unidad, con el margen negativo
+ * subiéndola por encima de la línea de mayúsculas para que se apoye en la
+ * esquina.
+ *
+ * ⚠ VA DUPLICADA, UNA INVISIBLE. El relleno y el contorno son dos capas
+ * apiladas y las dos se centran con flex: si una llevara un hijo más que la
+ * otra, el reparto del flex sería distinto y el eco se desalinearía. La visible
+ * está en la capa del contorno; en la del relleno queda una copia que sólo ocupa
+ * sitio.
+ */
+.com-hero__gal {
+  position: relative;
+  flex: none;
   display: block;
-  width: 46px;
-  height: 1px;
-  background: currentColor;
-  transform-origin: left;
-  animation: com-corre 2.4s var(--ease-standard) infinite;
+  height: 0.27em;
+  aspect-ratio: 48.72/49.75;
+  margin: -0.085em 0 0 0.055em;
 }
-@keyframes com-corre {
-  0%,
-  100% {
-    transform: scaleX(0.3);
-  }
-  50% {
-    transform: scaleX(1);
-  }
+.com-hero__t:not(.com-hero__eco) .com-hero__gal {
+  visibility: hidden;
 }
+
+/*
+ * LAS DOS MITADES, CADA UNA RECORTADA POR SU PROPIO TROZO DEL LOGOTIPO.
+ *
+ * El recorte es una MÁSCARA SVG EN LÍNEA, no un clip-path: una máscara con
+ * viewBox se estira sola al tamaño de la caja, así que la banderola crece con la
+ * palabra sin tocar un solo número del trazado. Con clip-path habría que
+ * reescribir todas las coordenadas a fracciones de la caja.
+ *
+ * Los dos trazados salen tal cual de altea-comercial-color.svg, con su viewBox
+ * recortado al grupo de la banderola.
+ *
+ * LA MITAD IZQUIERDA NO LLEVA COLOR: lleva la misma foto que las letras y con el
+ * mismo encuadre —se lo pasa `encuadre()` junto a la palabra—, así que es otra
+ * ventana al fondo y cambia con las ocho plazas. La derecha es amarillo macizo.
+ */
+.com-hero__gal i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.gal__izq {
+  -webkit-mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'%20fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'%20fill='black'/></svg>");
+  background-repeat: no-repeat;
+}
+.gal__der {
+  -webkit-mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'%20fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'%20fill='black'/></svg>");
+  background: var(--com-amarillo);
+}
+
+/* ── las cifras, debajo de la palabra y centradas ── */
 
 .com-hero__datos {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2.6vw, 44px);
-  min-width: min(100%, 50vw);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(22px, 4.4vw, 72px);
   margin: 0;
 }
 /*
- * El <dl> pide dt y luego dd; la cifra se ve arriba porque la columna va invertida.
- * Es lo mismo que en el home y en /nosotros: el orden visual lo resuelve el
- * contenedor, no reordenando el marcado — poner el dd antes para que "se vea
- * primero" es lo que deja un árbol de accesibilidad con la definición antes del
- * término.
+ * El <dl> pide dt y luego dd; la cifra se ve arriba porque la columna va
+ * invertida. Es lo mismo que en el home y en /nosotros: el orden visual lo
+ * resuelve el contenedor, no reordenando el marcado — poner el dd antes para que
+ * "se vea primero" es lo que deja un árbol de accesibilidad con la definición
+ * antes del término.
  */
 .com-hd {
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;
+  text-align: center;
+  min-width: clamp(142px, 17vw, 246px);
   padding-top: clamp(12px, 1.8vh, 18px);
   border-top: 1px solid color-mix(in srgb, var(--altea-ink) 24%, transparent);
 }
 .com-hd__cifra {
   margin: 0;
   display: block;
-  font-size: clamp(1.3rem, 2.8vw, 2.3rem);
+  font-size: clamp(2.1rem, 4.3vw, 3.6rem);
   font-weight: var(--weight-bold);
   letter-spacing: -0.05em;
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
-/* coral-dark (3.99) y no el coral vivo, que sobre el gris de página da 2.9998. */
+/* El amarillo de la unidad. Ver la nota del principio: 1.41 sobre el fondo de
+   página, aceptado a propósito porque son acento y no el dato. */
 .com-hd__cifra .altea-count__prefijo,
 .com-hd__cifra .altea-count__sufijo {
-  color: var(--text-accent);
+  color: var(--com-amarillo);
 }
 .com-hd__etiqueta {
   display: block;
-  margin-top: 8px;
-  font-size: var(--text-eyebrow);
+  margin-top: 9px;
+  font-size: clamp(0.78rem, 1vw, 0.96rem);
   line-height: 1.4;
   color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
+
+/* ── el cierre: el velo y la composición de vuelta ── */
+
+.com-hero__velo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(18 20 20 / 0.28) 0%,
+    rgb(18 20 20 / 0.5) 44%,
+    rgb(18 20 20 / 0.86) 100%
+  );
+}
+
+/*
+ * LA MISMA COMPOSICIÓN DE LA APERTURA, INVERTIDA.
+ *
+ * Palabra arriba y las tres cifras debajo, igual que al cargar — pero al entrar
+ * la palabra era una ventana a la foto sobre fondo claro, y al salir es blanca
+ * maciza sobre la foto. El hero no termina, desemboca, y se nota que ha pasado
+ * algo.
+ *
+ * Ni una palabra nueva: es material ya confirmado por Altea, así que no hay nada
+ * que el cliente pueda querer reescribir.
+ */
+.com-hero__entrada {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  padding: 0 var(--container-pad);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(26px, 5vh, 66px);
+  text-align: center;
+  color: var(--text-on-dark);
+}
+
+/* La palabra que vuelve va algo más corta que la de apertura, y las cifras algo
+   más cortas que las de allí: a igual cuerpo las dos se peleaban por la misma
+   atención. */
+.com-hero__lockup {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: clamp(2.6rem, 12vw, 11rem);
+}
+/* En el cierre no hay ventana que abrir —la foto ya está a sangre detrás—, así
+   que esa mitad es blanca maciza, el mismo blanco de la palabra. */
+.com-hero__lockup .gal__izq {
+  background: var(--altea-white);
+}
+.com-hero__vuelve {
+  margin: 0;
+  white-space: nowrap;
+  color: var(--altea-white);
+  font-size: inherit;
+  font-weight: var(--weight-bold);
+  line-height: 0.84;
+  letter-spacing: -0.062em;
+}
+.com-hero__cierre {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(24px, 4.8vw, 84px);
+  margin: 0;
+}
+.com-hc {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  text-align: center;
+  min-width: clamp(142px, 17vw, 250px);
+  padding-top: clamp(14px, 2vh, 22px);
+  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 32%, transparent);
+}
+.com-hc__cifra {
+  margin: 0;
+  display: block;
+  font-size: clamp(2.1rem, 4.6vw, 3.8rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+/* Sobre la foto oscurecida el amarillo de marca rinde 10.39: aquí no hay nada
+   que vigilar. */
+.com-hc__cifra .altea-count__prefijo,
+.com-hc__cifra .altea-count__sufijo {
+  color: var(--com-amarillo);
+}
+.com-hc__etiqueta {
+  display: block;
+  margin-top: 11px;
+  font-size: clamp(0.82rem, 1.05vw, 1rem);
+  line-height: 1.4;
+  color: var(--text-on-dark-secondary);
+}
+
 /* ═══ 2 · nuestro modelo ══════════════════════════════════════════════════ */
 
 .com-modelo {
@@ -443,7 +742,11 @@
   content: "";
   position: absolute;
   inset: 34% 0 0;
-  background: linear-gradient(to bottom, rgb(12 15 18 / 0), rgb(12 15 18 / 0.78));
+  background: linear-gradient(
+    to bottom,
+    rgb(12 15 18 / 0),
+    rgb(12 15 18 / 0.78)
+  );
 }
 .com-fx__nombre {
   position: absolute;
@@ -659,7 +962,11 @@
   position: absolute;
   inset: 0;
   display: block;
-  background: linear-gradient(180deg, rgb(16 19 22 / 0.1) 32%, rgb(16 19 22 / 0.88) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0.1) 32%,
+    rgb(16 19 22 / 0.88) 100%
+  );
 }
 .com-gr__n {
   position: absolute;
@@ -894,7 +1201,8 @@
      así que un logotipo con escala rebasa el tope a propósito; ver `escala` en
      content.ts. Los 29 restantes la reciben en 1 y no cambian nada. */
   height: calc(
-    min(var(--alto-comun), var(--tope-banda)) * var(--escala, 1) / var(--tinta, 1)
+    min(var(--alto-comun), var(--tope-banda)) * var(--escala, 1) /
+      var(--tinta, 1)
   );
   width: auto;
   max-width: 100%;
@@ -961,7 +1269,11 @@
   position: absolute;
   inset: 0;
   display: block;
-  background: linear-gradient(180deg, rgb(16 19 22 / 0) 42%, rgb(16 19 22 / 0.84) 100%);
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0) 42%,
+    rgb(16 19 22 / 0.84) 100%
+  );
 }
 .com-px__t {
   position: absolute;
@@ -1000,14 +1312,6 @@
   }
 }
 @media (max-width: 900px) {
-  .com-hero__bajo {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-6);
-  }
-  .com-hero__datos {
-    min-width: 100%;
-  }
   /* La fila pierde la ubicación y los dos datos: con el nombre a este cuerpo no
      caben seis columnas, y los tres están en la ficha. */
   .com-ix__f {
@@ -1051,12 +1355,8 @@
 /* ═══ movimiento reducido ═════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  /* La alternancia y el parallax del hero no se enganchan: lo decide el
-     componente. Aquí sólo lo que vive en CSS. */
-  .com-hero__raya {
-    animation: none;
-    transform: scaleX(1);
-  }
+  /* El fijado, el crecimiento, la trama y la alternancia de fotos no se
+     enganchan siquiera: lo decide el componente. Aquí sólo lo que vive en CSS. */
   /*
    * SIN CRECIMIENTO: las tres del mismo tamaño y la descripción visible. Un
    * reacomodo instantáneo —el mismo salto sin la transición que lo explica— es

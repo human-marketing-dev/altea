@@ -26,8 +26,8 @@ import {
  *
  * Las paradas de este panorama llegaron a subirse enteras —cielo más claro y
  * suelo de 28 a 132 en el primer canal, 1.79x de irradiancia— porque las caras
- * que no ven ninguna fuente directa se quedaban casi negras contra el cream de
- * la página. El síntoma era real; la causa no era ésta.
+ * que no ven ninguna fuente directa se quedaban casi negras contra el gris claro
+ * de la página. El síntoma era real; la causa no era ésta.
  *
  * La causa era que las luces entraban sin el factor π que les falta al traducir
  * el prototipo de three r128 a la versión actual. Ver LEGADO en Escena3D: la luz

@@ -310,8 +310,8 @@ export default function Escena3D({
     /* Un plano detrás que SOLO recoge sombra: invisible salvo por lo que se
        proyecta en él. */
     /* 0.18 y no el 0.32 del prototipo: ShadowMaterial pinta negro, y sobre el
-       cream de la página una sombra al 32 % se leía como suciedad en vez de como
-       apoyo. */
+       gris claro de --surface-page una sombra al 32 % se leía como suciedad en
+       vez de como apoyo. */
     const telon = new Mesh(new PlaneGeometry(26, 26), new ShadowMaterial({ opacity: 0.18 }));
     telon.position.z = -1.35;
     telon.receiveShadow = true;

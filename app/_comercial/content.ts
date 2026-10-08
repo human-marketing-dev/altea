@@ -96,11 +96,24 @@ export const HERO_DIAPOSITIVAS: DiapositivaHero[] = [
  */
 export const HERO_CALADO = {
   palabra: "Comercial",
-  /* Confirmado por Altea, el mismo texto que llevaba el hero anterior. */
+  /*
+   * ⚠ SIN CONSUMIDOR desde que el hero se fija y la foto se desborda. La
+   * composición pasó a ser la palabra y las tres cifras, sin párrafo: a los
+   * cuerpos que alcanza la palabra —hasta siete veces el de apertura— un texto
+   * de 46ch debajo no se lee como bajada, se lee como un pie suelto. Se conserva
+   * porque el copy está confirmado por Altea y vuelve en cuanto haga falta una
+   * bajada en la página.
+   */
   descripcion:
     "Espacios que conectan personas, marcas y experiencias. Nuestros desarrollos reúnen marcas, servicios y entretenimiento en entornos diseñados para conectar con las comunidades.",
   /** Segundos en cada foto. */
   segundos: 4.2,
+  /*
+   * ⚠ SIN CONSUMIDOR, por lo mismo. El rótulo de "Desliza" con su rayita vivía
+   * en el pie del hero, y el pie entero se fue: ahora quien dice que hay que
+   * seguir bajando es el propio fijado, que retiene la sección mientras la foto
+   * se abre.
+   */
   pieDesliza: "Desliza",
 };
 
@@ -198,7 +211,6 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
   },
 ];
 
-
 /* ====================== 4 · Descripción de la unidad =============== */
 
 /**
@@ -214,9 +226,27 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
  * son 7 y 5—. Por encima devuelve el dígito, que se lee peor pero nunca miente.
  */
 const EN_LETRAS = [
-  "cero", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho",
-  "nueve", "diez", "once", "doce", "trece", "catorce", "quince", "dieciséis",
-  "diecisiete", "dieciocho", "diecinueve", "veinte",
+  "cero",
+  "una",
+  "dos",
+  "tres",
+  "cuatro",
+  "cinco",
+  "seis",
+  "siete",
+  "ocho",
+  "nueve",
+  "diez",
+  "once",
+  "doce",
+  "trece",
+  "catorce",
+  "quince",
+  "dieciséis",
+  "diecisiete",
+  "dieciocho",
+  "diecinueve",
+  "veinte",
 ];
 const enLetras = (n: number) => EN_LETRAS[n] ?? String(n);
 
@@ -267,6 +297,32 @@ export interface Plaza {
    * resuelve.
    */
   fotoRatio?: number;
+  /**
+   * Qué punto del ALTO de la foto se alinea con el centro de la ventana en el
+   * hero calado. 0 es el borde de arriba, 1 el de abajo, 0.5 la foto centrada.
+   *
+   * ⚠ ES UNA CORRECCIÓN POR ARCHIVO Y NO PUEDE SER UNA CONSTANTE, igual que
+   * `tinta` y `alza` en los logotipos del muro de marcas.
+   *
+   * La palabra calada no está en el centro vertical —las cifras la empujan hacia
+   * arriba—, así que su banda cae en el tercio alto de la ventana. Con la foto
+   * centrada, ese tercio es CIELO o LONA en casi todas: son tomas de
+   * arquitectura con el edificio por debajo de la mitad. En Paseo Durango la
+   * palabra quedaba ilegible, y el velo del 25 % no podía salvarla porque el
+   * problema no era de contraste sino que ahí no había nada que enseñar.
+   *
+   * No hay un valor único posible: con 0.58 para todas, Durango quedaba bien y
+   * Juárez se iba al estacionamiento. En una el edificio está abajo y en la otra
+   * a media altura.
+   *
+   * EL SÍNTOMA DE UN ANCLA MAL PUESTA es que dentro de las letras se vea cielo o
+   * asfalto en vez del edificio. Se mira renderizado, no se calcula.
+   *
+   * El margen donde moverse lo da SOBRE_CUBRE en HeroCalado: un `cover` a secas
+   * deja unos 60 px de holgura vertical en una foto 3:2 sobre una ventana de
+   * 900, y con eso no se desplaza nada.
+   */
+  ancla?: number;
   alt: string;
   label: string;
   descripcion: string;
@@ -303,6 +359,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-la-fe-altea.webp`,
     /* 2000x1332 */
     fotoRatio: 1.5015,
+    ancla: 0.5,
     alt: "",
     label: "Paseo La Fe",
     descripcion:
@@ -319,6 +376,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paso-tec-altea.webp`,
     /* 2000x1332 */
     fotoRatio: 1.5015,
+    ancla: 0.56,
     alt: "",
     label: "Paseo Tec",
     descripcion:
@@ -335,6 +393,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-juarez-altea.webp`,
     /* 2000x1332 */
     fotoRatio: 1.5015,
+    ancla: 0.44,
     alt: "",
     label: "Paseo Juárez",
     descripcion:
@@ -351,6 +410,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-durango-altea.webp`,
     /* 2000x1333 */
     fotoRatio: 1.5004,
+    ancla: 0.54,
     alt: "",
     label: "Paseo Durango",
     descripcion:
@@ -367,6 +427,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-los-mochis-altea.webp`,
     /* 2000x1042 */
     fotoRatio: 1.9194,
+    ancla: 0.44,
     alt: "",
     label: "Paseo Los Mochis",
     descripcion:
@@ -383,6 +444,7 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/paseo-gomez-palacio-altea.webp`,
     /* 2000x1116 */
     fotoRatio: 1.7921,
+    ancla: 0.5,
     alt: "",
     label: "Paseo Gómez Palacio",
     descripcion:
@@ -399,6 +461,11 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/punto-huinala-altea.webp`,
     /* 2000x1146 */
     fotoRatio: 1.7452,
+    /* Medida sobre el render, no heredada: es una toma a pie de calle con la lona
+       del paso cubierto arriba, así que por debajo de 0.50 las letras se llenan
+       de sombra marrón y por encima de 0.56 entran la jardinera y el pavimento.
+       En 0.54 cae dentro la banda de locales, que es la que tiene el color. */
+    ancla: 0.54,
     alt: "",
     label: "Punto Huinalá",
     descripcion:
@@ -415,6 +482,11 @@ export const PLAZAS: Plaza[] = [
     foto: `${CENTROS}/punto-rio-nilo.webp`,
     /* 2000x1333 */
     fotoRatio: 1.5004,
+    /* Medida sobre el render. También a pie de calle, con cielo y palmeras hasta
+       un tercio del alto: por debajo de 0.52 la palabra se llena del beige plano
+       del toldo y se queda sin información. En 0.56 entran los locales, la
+       vegetación y la gente, que es lo que le da profundidad. */
+    ancla: 0.56,
     alt: "",
     label: "Punto Río Nilo",
     descripcion:
@@ -483,33 +555,33 @@ export interface Giro {
  * inventado sería peor que no tenerlos.
  */
 const GIROS: Giro[] = [
-    {
-      id: "hoteles",
-      numero: "01",
-      title: "Hoteles",
-      description:
-        "Desarrollamos hoteles de marcas reconocidas integrados en nuestros centros comerciales, para convertirlos en destinos más completos y funcionales. Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, en distintos puntos de la República Mexicana.",
-      image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
-      alt: "Fiesta Inn dentro de un desarrollo de Altea",
-    },
-    {
-      id: "hospital",
-      numero: "02",
-      title: "Hospital",
-      description:
-        "En el Sierra Madre integramos infraestructura nueva con las instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno para entregarlo listo para operar desde el primer día. Espacios especializados que exigen los más altos estándares de planeación y tecnología.",
-      image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
-      alt: "Hospital dentro de un desarrollo de Altea",
-    },
-    {
-      id: "educacion",
-      numero: "03",
-      title: "Educación",
-      description:
-        "Tálisis es infraestructura educativa en el centro de Monterrey, para la creciente demanda de espacios académicos del entorno urbano: coworking académico, laboratorios especializados y espacios modulares adaptables a distintas necesidades pedagógicas.",
-      image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
-      alt: "Centro educativo dentro de un desarrollo de Altea",
-    },
+  {
+    id: "hoteles",
+    numero: "01",
+    title: "Hoteles",
+    description:
+      "Desarrollamos hoteles de marcas reconocidas integrados en nuestros centros comerciales, para convertirlos en destinos más completos y funcionales. Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, en distintos puntos de la República Mexicana.",
+    image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
+    alt: "Fiesta Inn dentro de un desarrollo de Altea",
+  },
+  {
+    id: "hospital",
+    numero: "02",
+    title: "Hospital",
+    description:
+      "En el Sierra Madre integramos infraestructura nueva con las instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno para entregarlo listo para operar desde el primer día. Espacios especializados que exigen los más altos estándares de planeación y tecnología.",
+    image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
+    alt: "Hospital dentro de un desarrollo de Altea",
+  },
+  {
+    id: "educacion",
+    numero: "03",
+    title: "Educación",
+    description:
+      "Tálisis es infraestructura educativa en el centro de Monterrey, para la creciente demanda de espacios académicos del entorno urbano: coworking académico, laboratorios especializados y espacios modulares adaptables a distintas necesidades pedagógicas.",
+    image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
+    alt: "Centro educativo dentro de un desarrollo de Altea",
+  },
 ];
 
 export const OTROS_GIROS = {
@@ -642,38 +714,237 @@ export interface MarcaComercial {
  * de la opacidad y no del grayscale — lo mismo que en Grupo Firma.
  */
 export const MARCAS_COMERCIAL: MarcaComercial[] = [
-  { nombre: "Banorte", src: `${MARCAS_DIR}/banorte-logo-black.webp`, ratio: 5.14, tinta: 0.577, rTinta: 8.11 },
-  { nombre: "Bershka", src: `${MARCAS_DIR}/bershka-logo-black.webp`, ratio: 3.40, tinta: 0.557, rTinta: 4.53 },
-  { nombre: "Bodega Aurrera", src: `${MARCAS_DIR}/bodega-aurrera-logo-black.webp`, ratio: 5.62, tinta: 0.831, rTinta: 6.07 },
-  { nombre: "Bolerama", src: `${MARCAS_DIR}/bolerama-logo-black.webp`, ratio: 1.29, tinta: 0.799, rTinta: 1.01, alza: -0.06, escala: 1.3 },
-  { nombre: "Boston Pizza", src: `${MARCAS_DIR}/boston-pizza-logo-black.webp`, ratio: 2.90, tinta: 0.714, rTinta: 3.63 },
-  { nombre: "C&A", src: `${MARCAS_DIR}/c-and-a-logo-black.webp`, ratio: 1.21, tinta: 0.821, rTinta: 1.3, escala: 1.3 },
-  { nombre: "Calvin Klein", src: `${MARCAS_DIR}/calvin-klein-logo-black.webp`, ratio: 4.00, tinta: 0.549, rTinta: 6.18 },
-  { nombre: "Carl's Jr.", src: `${MARCAS_DIR}/carlos-jr-logo-black.webp`, ratio: 3.21, tinta: 0.893, rTinta: 3.28 },
-  { nombre: "Chuck E. Cheese", src: `${MARCAS_DIR}/chuck-e-cheese-logo-black.webp`, ratio: 4.50, tinta: 0.854, rTinta: 4.88 },
-  { nombre: "Cinemex", src: `${MARCAS_DIR}/cinemex-logo-black.webp`, ratio: 3.75, tinta: 0.714, rTinta: 4.57 },
-  { nombre: "Cinépolis", src: `${MARCAS_DIR}/cinepolis-logo-black.webp`, ratio: 4.09, tinta: 0.861, rTinta: 4.44 },
-  { nombre: "Fiesta Inn", src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`, ratio: 3.33, tinta: 0.889, rTinta: 3.12 },
-  { nombre: "Firehouse Subs", src: `${MARCAS_DIR}/firehouse-subs-logo-black.webp`, ratio: 2.77, tinta: 0.717, rTinta: 3.36 },
-  { nombre: "H&M", src: `${MARCAS_DIR}/h-and-m-logo-black.webp`, ratio: 1.36, tinta: 0.73, rTinta: 1.51 },
-  { nombre: "Happyland", src: `${MARCAS_DIR}/happyland-logo-black.webp`, ratio: 4.62, tinta: 0.595, rTinta: 7.14 },
-  { nombre: "Helados Dreambox", src: `${MARCAS_DIR}/helados-dreambox-logo-black.webp`, ratio: 3.53, tinta: 0.67, rTinta: 4.36 },
-  { nombre: "IHOP", src: `${MARCAS_DIR}/ihop-logo-black.webp`, ratio: 2.14, tinta: 0.834, rTinta: 1.89 },
-  { nombre: "IMSS", src: `${MARCAS_DIR}/imss-logo-black.webp`, ratio: 0.94, tinta: 0.784, rTinta: 0.81, alza: -0.05, escala: 1.3 },
-  { nombre: "INE", src: `${MARCAS_DIR}/ine-logo-black.webp`, ratio: 3.05, tinta: 0.739, rTinta: 3.25 },
-  { nombre: "Innova Sport", src: `${MARCAS_DIR}/innova-sport-logo-black.webp`, ratio: 1.54, tinta: 0.812, rTinta: 1.62 },
-  { nombre: "KFC", src: `${MARCAS_DIR}/kfc-logo-black.webp`, ratio: 1.29, tinta: 0.837, rTinta: 1, alza: -0.06, escala: 1.3 },
-  { nombre: "Liverpool", src: `${MARCAS_DIR}/liverpool-logo-black.webp`, ratio: 2.77, tinta: 0.754, rTinta: 3.39 },
-  { nombre: "Miniso", src: `${MARCAS_DIR}/miniso-logo-black.webp`, ratio: 3.75, tinta: 0.698, rTinta: 4.78 },
-  { nombre: "Office Depot", src: `${MARCAS_DIR}/office-depot-logo-black.webp`, ratio: 2.34, tinta: 0.81, rTinta: 2.21 },
-  { nombre: "Old Navy", src: `${MARCAS_DIR}/old-navy-logo-black.webp`, ratio: 3.40, tinta: 0.975, rTinta: 3.06 },
-  { nombre: "Pandora", src: `${MARCAS_DIR}/pandora-logo-black.webp`, ratio: 4.39, tinta: 0.731, rTinta: 4.74 },
-  { nombre: "Pull&Bear", src: `${MARCAS_DIR}/pull-and-bear-logo-black.webp`, ratio: 3.75, tinta: 0.528, rTinta: 6.42 },
-  { nombre: "Sephora", src: `${MARCAS_DIR}/sephora-logo-black.webp`, ratio: 3.40, tinta: 0.401, rTinta: 7.57 },
-  { nombre: "Suburbia", src: `${MARCAS_DIR}/suburbia-logo-black.webp`, ratio: 3.33, tinta: 0.774, rTinta: 3.89 },
-  { nombre: "Tim Hortons", src: `${MARCAS_DIR}/tim-hortons-logo-black.webp`, ratio: 3.67, tinta: 0.605, rTinta: 5.07 },
-  { nombre: "Ulta Beauty", src: `${MARCAS_DIR}/ulta-beauty-logo-black.webp`, ratio: 2.19, tinta: 0.771, rTinta: 2.47 },
-  { nombre: "Walmart", src: `${MARCAS_DIR}/walmart-logo-black.webp`, ratio: 2.95, tinta: 0.86, rTinta: 3.02 },
+  {
+    nombre: "Banorte",
+    src: `${MARCAS_DIR}/banorte-logo-black.webp`,
+    ratio: 5.14,
+    tinta: 0.577,
+    rTinta: 8.11,
+  },
+  {
+    nombre: "Bershka",
+    src: `${MARCAS_DIR}/bershka-logo-black.webp`,
+    ratio: 3.4,
+    tinta: 0.557,
+    rTinta: 4.53,
+  },
+  {
+    nombre: "Bodega Aurrera",
+    src: `${MARCAS_DIR}/bodega-aurrera-logo-black.webp`,
+    ratio: 5.62,
+    tinta: 0.831,
+    rTinta: 6.07,
+  },
+  {
+    nombre: "Bolerama",
+    src: `${MARCAS_DIR}/bolerama-logo-black.webp`,
+    ratio: 1.29,
+    tinta: 0.799,
+    rTinta: 1.01,
+    alza: -0.06,
+    escala: 1.3,
+  },
+  {
+    nombre: "Boston Pizza",
+    src: `${MARCAS_DIR}/boston-pizza-logo-black.webp`,
+    ratio: 2.9,
+    tinta: 0.714,
+    rTinta: 3.63,
+  },
+  {
+    nombre: "C&A",
+    src: `${MARCAS_DIR}/c-and-a-logo-black.webp`,
+    ratio: 1.21,
+    tinta: 0.821,
+    rTinta: 1.3,
+    escala: 1.3,
+  },
+  {
+    nombre: "Calvin Klein",
+    src: `${MARCAS_DIR}/calvin-klein-logo-black.webp`,
+    ratio: 4.0,
+    tinta: 0.549,
+    rTinta: 6.18,
+  },
+  {
+    nombre: "Carl's Jr.",
+    src: `${MARCAS_DIR}/carlos-jr-logo-black.webp`,
+    ratio: 3.21,
+    tinta: 0.893,
+    rTinta: 3.28,
+  },
+  {
+    nombre: "Chuck E. Cheese",
+    src: `${MARCAS_DIR}/chuck-e-cheese-logo-black.webp`,
+    ratio: 4.5,
+    tinta: 0.854,
+    rTinta: 4.88,
+  },
+  {
+    nombre: "Cinemex",
+    src: `${MARCAS_DIR}/cinemex-logo-black.webp`,
+    ratio: 3.75,
+    tinta: 0.714,
+    rTinta: 4.57,
+  },
+  {
+    nombre: "Cinépolis",
+    src: `${MARCAS_DIR}/cinepolis-logo-black.webp`,
+    ratio: 4.09,
+    tinta: 0.861,
+    rTinta: 4.44,
+  },
+  {
+    nombre: "Fiesta Inn",
+    src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`,
+    ratio: 3.33,
+    tinta: 0.889,
+    rTinta: 3.12,
+  },
+  {
+    nombre: "Firehouse Subs",
+    src: `${MARCAS_DIR}/firehouse-subs-logo-black.webp`,
+    ratio: 2.77,
+    tinta: 0.717,
+    rTinta: 3.36,
+  },
+  {
+    nombre: "H&M",
+    src: `${MARCAS_DIR}/h-and-m-logo-black.webp`,
+    ratio: 1.36,
+    tinta: 0.73,
+    rTinta: 1.51,
+  },
+  {
+    nombre: "Happyland",
+    src: `${MARCAS_DIR}/happyland-logo-black.webp`,
+    ratio: 4.62,
+    tinta: 0.595,
+    rTinta: 7.14,
+  },
+  {
+    nombre: "Helados Dreambox",
+    src: `${MARCAS_DIR}/helados-dreambox-logo-black.webp`,
+    ratio: 3.53,
+    tinta: 0.67,
+    rTinta: 4.36,
+  },
+  {
+    nombre: "IHOP",
+    src: `${MARCAS_DIR}/ihop-logo-black.webp`,
+    ratio: 2.14,
+    tinta: 0.834,
+    rTinta: 1.89,
+  },
+  {
+    nombre: "IMSS",
+    src: `${MARCAS_DIR}/imss-logo-black.webp`,
+    ratio: 0.94,
+    tinta: 0.784,
+    rTinta: 0.81,
+    alza: -0.05,
+    escala: 1.3,
+  },
+  {
+    nombre: "INE",
+    src: `${MARCAS_DIR}/ine-logo-black.webp`,
+    ratio: 3.05,
+    tinta: 0.739,
+    rTinta: 3.25,
+  },
+  {
+    nombre: "Innova Sport",
+    src: `${MARCAS_DIR}/innova-sport-logo-black.webp`,
+    ratio: 1.54,
+    tinta: 0.812,
+    rTinta: 1.62,
+  },
+  {
+    nombre: "KFC",
+    src: `${MARCAS_DIR}/kfc-logo-black.webp`,
+    ratio: 1.29,
+    tinta: 0.837,
+    rTinta: 1,
+    alza: -0.06,
+    escala: 1.3,
+  },
+  {
+    nombre: "Liverpool",
+    src: `${MARCAS_DIR}/liverpool-logo-black.webp`,
+    ratio: 2.77,
+    tinta: 0.754,
+    rTinta: 3.39,
+  },
+  {
+    nombre: "Miniso",
+    src: `${MARCAS_DIR}/miniso-logo-black.webp`,
+    ratio: 3.75,
+    tinta: 0.698,
+    rTinta: 4.78,
+  },
+  {
+    nombre: "Office Depot",
+    src: `${MARCAS_DIR}/office-depot-logo-black.webp`,
+    ratio: 2.34,
+    tinta: 0.81,
+    rTinta: 2.21,
+  },
+  {
+    nombre: "Old Navy",
+    src: `${MARCAS_DIR}/old-navy-logo-black.webp`,
+    ratio: 3.4,
+    tinta: 0.975,
+    rTinta: 3.06,
+  },
+  {
+    nombre: "Pandora",
+    src: `${MARCAS_DIR}/pandora-logo-black.webp`,
+    ratio: 4.39,
+    tinta: 0.731,
+    rTinta: 4.74,
+  },
+  {
+    nombre: "Pull&Bear",
+    src: `${MARCAS_DIR}/pull-and-bear-logo-black.webp`,
+    ratio: 3.75,
+    tinta: 0.528,
+    rTinta: 6.42,
+  },
+  {
+    nombre: "Sephora",
+    src: `${MARCAS_DIR}/sephora-logo-black.webp`,
+    ratio: 3.4,
+    tinta: 0.401,
+    rTinta: 7.57,
+  },
+  {
+    nombre: "Suburbia",
+    src: `${MARCAS_DIR}/suburbia-logo-black.webp`,
+    ratio: 3.33,
+    tinta: 0.774,
+    rTinta: 3.89,
+  },
+  {
+    nombre: "Tim Hortons",
+    src: `${MARCAS_DIR}/tim-hortons-logo-black.webp`,
+    ratio: 3.67,
+    tinta: 0.605,
+    rTinta: 5.07,
+  },
+  {
+    nombre: "Ulta Beauty",
+    src: `${MARCAS_DIR}/ulta-beauty-logo-black.webp`,
+    ratio: 2.19,
+    tinta: 0.771,
+    rTinta: 2.47,
+  },
+  {
+    nombre: "Walmart",
+    src: `${MARCAS_DIR}/walmart-logo-black.webp`,
+    ratio: 2.95,
+    tinta: 0.86,
+    rTinta: 3.02,
+  },
 ];
 
 /*
@@ -686,7 +957,6 @@ export const MARCAS_COMERCIAL: MarcaComercial[] = [
  * industriales que trae la lista —Mazda, CEVA, Viakable, Güntner— siguen
  * teniendo sentido en una página de centros comerciales.
  */
-
 
 /* ====================== 8 · Próximos proyectos ===================== */
 

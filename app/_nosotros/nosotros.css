@@ -204,33 +204,35 @@
 /* ═══ 3 · pilares de identidad ════════════════════════════════════════════ */
 
 /*
- * DE INK A CREAM, y no es un intercambio de tokens.
+ * DE INK AL FONDO DE PÁGINA, y no es un intercambio de tokens.
  *
- * CREAM Y NO EL GRIS porque los vecinos ya son gris de página: Origen arriba y
- * Grupo Firmas abajo. Con el gris, Pilares se fundiría con los dos y perdería la
- * identidad de sección que le daba el ink. No queda sin punto oscuro la página:
- * Huella, dos más abajo, sigue en ink.
+ * El mismo gris que Origen arriba y Grupo Firmas abajo, por decisión de diseño:
+ * la sección deja de tener fondo propio y se lee como parte del tramo claro. Lo
+ * que la separa de sus vecinas es su padding y las reglas de cada pilar. Estuvo
+ * un commit en cream, para que conservara identidad frente a los dos grises; se
+ * descartó. Huella, dos más abajo, sigue siendo el punto oscuro de la página.
  *
  * Lo que cambia además del fondo, y por qué:
  *
- *   · el texto pasa a ink. Mide 12.06, lo mismo que medía cream sobre ink.
+ *   · el texto pasa a ink. Mide 14.61, más que los 12.06 de cream sobre ink.
  *   · la regla de cada pilar NO va al mismo porcentaje invertido. Era cream al
- *     20 % sobre ink, 1.738; ink al 20 % sobre cream da 1.471 y la sección se ve
- *     deslavada sin que se sepa por qué. Al 28 % da 1.744, el mismo peso.
+ *     20 % sobre ink, 1.738; ink al 20 % sobre el gris se queda corto y la
+ *     sección se ve deslavada sin que se sepa por qué. Al 27 % da 1.742, el
+ *     mismo peso.
  *   · el `color` del icono se va: era el coral que los SVG dibujados tomaban por
  *     currentColor, y los archivos de ahora traen el suyo.
  *
- * ⚠ LOS ICONOS QUEDAN CORTOS DE CONTRASTE. Su coral #FF5C4A da 2.31 sobre cream
- * —2.80 sobre el gris— y el 3.0 de objeto gráfico no se alcanza en ningún claro.
- * No incumple, porque son decorativos y el título dice lo mismo, pero se ven más
- * pálidos que sobre ink, donde daban 5.23. El CSS no lo arregla sin recolorear el
- * archivo de Altea; la salida limpia es pedirlos en coral-dark #D6473A.
+ * ⚠ LOS ICONOS QUEDAN CORTOS DE CONTRASTE. Su coral #FF5C4A da 2.80 sobre el
+ * gris —sobre ink daba 5.23— y no llega al 3.0 de objeto gráfico. No incumple,
+ * porque son decorativos y el título dice lo mismo, pero se ven más pálidos. El
+ * CSS no lo arregla sin recolorear el archivo de Altea; la salida limpia es
+ * pedirlos en coral-dark #D6473A, que da 3.99 aquí.
  *
  * No hay tema oscuro que romper: la sección estaba en ink porque se pintaba a
  * propósito, no porque lo heredara. Ver globals.css.
  */
 .nos-pilares {
-  background: var(--altea-cream);
+  background: var(--surface-page);
   color: var(--text-primary);
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
@@ -255,7 +257,7 @@
   gap: clamp(16px, 2.6vh, 26px);
   align-content: start;
   padding-top: clamp(20px, 3vh, 32px);
-  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 28%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 27%, transparent);
 }
 .nos-pilar__icono {
   display: block;

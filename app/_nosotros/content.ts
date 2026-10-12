@@ -35,7 +35,7 @@ export const HERO = {
     [{ texto: "oportunidades", acento: true }],
   ] as { texto: string; acento?: boolean }[][],
   bajada:
-    "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial. Desarrollamos, ejecutamos y operamos proyectos comerciales, industriales, de vivienda, salud, educación y turismo bajo una misma visión.",
+    "Somos una desarrolladora inmobiliaria integral ubicada en Monterrey, Nuevo León, con sólida experiencia y una vasta reserva territorial.",
   /**
    * ⚠ SIN CONSUMIDOR. El pie del hero se quitó entero: el rótulo que cambiaba
    * con la forma de la nube y la rayita que latía debajo. La nube SIGUE
@@ -97,8 +97,21 @@ export const ORIGEN = {
 
 /* ─── 3 · Pilares de identidad ─────────────────────────────────────────── */
 
-/** Los tres iconos de los pilares. Ver ICONOS_PILAR en Pilares.tsx. */
-export type IconoPilar = "retícula" | "red" | "triángulo";
+/**
+ * La carpeta de los iconos de los pilares, entregados por Altea.
+ *
+ * Son WebP de 314x315 con transparencia y el trazo en coral #FF5C4A —el de los
+ * SVG de marca, un punto más claro que el --altea-coral #F15D4D del sistema—.
+ *
+ * El mapeo se comprobó MIRANDO cada archivo, no fiándose del nombre: cada uno es
+ * además el mismo concepto que tenía su pilar cuando los iconos eran dibujos
+ * propios, así que no hay forma de confundirlos —
+ *
+ *   innovación      la retícula de puntos que una diagonal rompe
+ *   comunidades     los nodos en círculo, todos unidos con todos
+ *   trascendencia   el triángulo subdividido, la figura del isotipo
+ */
+const PIL = "/images/pilares";
 
 export const PILARES = {
   title: "Los pilares de nuestra identidad",
@@ -117,20 +130,20 @@ export const PILARES = {
   bloques: [
     {
       id: "innovacion",
-      icono: "retícula",
+      icono: `${PIL}/pilar-innovacion.webp`,
       title: "Innovación disruptiva",
     },
     {
       id: "comunidades",
-      icono: "red",
+      icono: `${PIL}/pilar-comunidades-vibrantes.webp`,
       title: "Comunidades vibrantes",
     },
     {
       id: "trascendencia",
-      icono: "triángulo",
+      icono: `${PIL}/pilar-trascendencia.webp`,
       title: "Trascendencia",
     },
-  ] satisfies { id: string; icono: IconoPilar; title: string }[],
+  ] satisfies { id: string; icono: string; title: string }[],
 };
 
 /**
@@ -307,6 +320,22 @@ export const HUELLA = {
   body: `Nuestra presencia abarca ${ESTADOS_CON_PRESENCIA.length} estados de México, ${enumerar(
     PRESENCIA_INTERNACIONAL,
   )}, reflejando la capacidad de Altea para llevar nuestra visión de desarrollo a distintos territorios.`,
+  /**
+   * El botón del final de la sección.
+   *
+   * ⚠ PENDIENTE: el destino todavía no existe. Mientras `href` sea `undefined`
+   * el componente pinta un <button> que no navega — y se ve igual que uno que
+   * sí, porque es un botón que va a funcionar, no un control deshabilitado.
+   *
+   * No va `href: "#"`, que es lo que parecería neutro y no lo es: un ancla a #
+   * salta al principio de la página, y eso se lee como sitio roto. Cuando llegue
+   * la URL, ESTA línea es lo único que cambia: con href, el componente pinta un
+   * enlace con las mismas clases.
+   */
+  cta: {
+    texto: "Conoce nuestra escala",
+    href: undefined as string | undefined,
+  },
   stats: [
     { prefix: "+", to: 400, label: "Propiedades" },
     { prefix: "+", to: 44_000_000, suffix: " m²", label: "Superficie" },

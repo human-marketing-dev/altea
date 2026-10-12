@@ -1,4 +1,4 @@
-import { CountUp } from "@/app/ui";
+import { Button, CountUp } from "@/app/ui";
 import { HUELLA } from "./content";
 import { MapaPuntos } from "./MapaPuntos";
 import { Reparto } from "./Reparto";
@@ -47,6 +47,33 @@ export function Huella() {
         </dl>
 
         <Reparto />
+
+        {/*
+          El CTA. <Button> cuando no hay destino —un <button type="button"> que no
+          navega—, y un enlace con las MISMAS clases en cuanto lo haya: el
+          proyecto ya pinta así sus botones-enlace, ver <CierreContacto>.
+
+          `primary` porque la sección es ink: `dark` es ink sobre claro y no se
+          vería, y el contorno está pensado para superficies claras.
+        */}
+        {HUELLA.cta.href ? (
+          <a
+            className="altea-btn altea-btn--primary altea-btn--lg nos-huella__cta"
+            href={HUELLA.cta.href}
+          >
+            {HUELLA.cta.texto}
+            <span className="altea-btn__arrow" aria-hidden="true">
+              →
+            </span>
+          </a>
+        ) : (
+          <Button variant="primary" size="lg" className="nos-huella__cta">
+            {HUELLA.cta.texto}
+            <span className="altea-btn__arrow" aria-hidden="true">
+              →
+            </span>
+          </Button>
+        )}
       </div>
 
       <MapaPuntos />

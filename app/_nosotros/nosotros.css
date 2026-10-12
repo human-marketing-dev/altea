@@ -203,9 +203,35 @@
 
 /* ═══ 3 · pilares de identidad ════════════════════════════════════════════ */
 
+/*
+ * DE INK A CREAM, y no es un intercambio de tokens.
+ *
+ * CREAM Y NO EL GRIS porque los vecinos ya son gris de página: Origen arriba y
+ * Grupo Firmas abajo. Con el gris, Pilares se fundiría con los dos y perdería la
+ * identidad de sección que le daba el ink. No queda sin punto oscuro la página:
+ * Huella, dos más abajo, sigue en ink.
+ *
+ * Lo que cambia además del fondo, y por qué:
+ *
+ *   · el texto pasa a ink. Mide 12.06, lo mismo que medía cream sobre ink.
+ *   · la regla de cada pilar NO va al mismo porcentaje invertido. Era cream al
+ *     20 % sobre ink, 1.738; ink al 20 % sobre cream da 1.471 y la sección se ve
+ *     deslavada sin que se sepa por qué. Al 28 % da 1.744, el mismo peso.
+ *   · el `color` del icono se va: era el coral que los SVG dibujados tomaban por
+ *     currentColor, y los archivos de ahora traen el suyo.
+ *
+ * ⚠ LOS ICONOS QUEDAN CORTOS DE CONTRASTE. Su coral #FF5C4A da 2.31 sobre cream
+ * —2.80 sobre el gris— y el 3.0 de objeto gráfico no se alcanza en ningún claro.
+ * No incumple, porque son decorativos y el título dice lo mismo, pero se ven más
+ * pálidos que sobre ink, donde daban 5.23. El CSS no lo arregla sin recolorear el
+ * archivo de Altea; la salida limpia es pedirlos en coral-dark #D6473A.
+ *
+ * No hay tema oscuro que romper: la sección estaba en ink porque se pintaba a
+ * propósito, no porque lo heredara. Ver globals.css.
+ */
 .nos-pilares {
-  background: var(--altea-ink);
-  color: var(--altea-cream);
+  background: var(--altea-cream);
+  color: var(--text-primary);
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
 .nos-pilares__titulo {
@@ -229,15 +255,13 @@
   gap: clamp(16px, 2.6vh, 26px);
   align-content: start;
   padding-top: clamp(20px, 3vh, 32px);
-  border-top: 1px solid color-mix(in srgb, var(--altea-cream) 20%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 28%, transparent);
 }
 .nos-pilar__icono {
   display: block;
   width: clamp(64px, 6.4vw, 92px);
-  /* Coral sobre ink: 4.87, de sobra para un gráfico. */
-  color: var(--accent-on-ink);
 }
-.nos-pilar__icono svg {
+.nos-pilar__icono img {
   width: 100%;
   height: auto;
   display: block;
@@ -733,6 +757,10 @@
   display: grid;
   gap: clamp(36px, 6vh, 76px);
   align-content: center;
+}
+/* La rejilla estira a sus hijos a todo el ancho de la celda; un botón no. */
+.nos-huella__cta {
+  justify-self: start;
 }
 /* Apilado: el titular y el cuerpo ya no caben uno al lado del otro en el 36 %. */
 .nos-huella__intro {

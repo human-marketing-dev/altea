@@ -10,7 +10,7 @@ import { MARCAS_COMERCIAL, TITULO_MARCAS } from "./content";
  * y dos tarjetas sueltas.
  *
  * Los logotipos en gris, subiendo de contraste al señalar. Mismo criterio que en
- * Grupo Firma: el tratamiento va en CSS y no editando los archivos — y el gris
+ * Grupo Firmas: el tratamiento va en CSS y no editando los archivos — y el gris
  * sale de la OPACIDAD, porque los archivos ya son negro sobre transparente y
  * grayscale sobre negro no hace nada.
  */

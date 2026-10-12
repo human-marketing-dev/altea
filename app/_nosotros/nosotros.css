@@ -250,7 +250,7 @@
   letter-spacing: -0.02em;
   max-width: 12ch;
 }
-/* ═══ 4 · Grupo Firma ═════════════════════════════════════════════════════ */
+/* ═══ 4 · Grupo Firmas ════════════════════════════════════════════════════ */
 
 .nos-firma {
   padding: clamp(66px, 12vh, 150px) var(--container-pad)

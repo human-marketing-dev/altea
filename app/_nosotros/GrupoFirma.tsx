@@ -3,7 +3,7 @@ import Image from "next/image";
 import { GRUPO_FIRMA } from "./content";
 
 /**
- * Grupo Firma: los seis sectores, en fila.
+ * Grupo Firmas: los seis sectores, en fila.
  *
  * UN SOLO NIVEL BAJO LA RAÍZ. Cuatro de los seis colgaban un tercer nivel de
  * sub-marcas y se quitó entero: ver la nota de SECTORES en content.ts, que

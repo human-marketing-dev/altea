@@ -6,7 +6,7 @@ import {
 /**
  * Página NOSOTROS, rediseñada.
  *
- *   1. hero — la nube de puntos      4. Grupo Firma
+ *   1. hero — la nube de puntos      4. Grupo Firmas
  *   2. origen                        5. nuestra huella
  *   3. pilares de identidad          6. responsabilidad social
  *
@@ -134,7 +134,7 @@ export const PILARES = {
 };
 
 /**
- * Altea forma parte de Grupo Firma.
+ * Altea forma parte de Grupo Firmas.
  *
  * ⚠ PENDIENTE DE CONTENIDO — TODO. Altea no ha entregado título, texto ni
  * imagen. La estructura ya está montada, así que rellenar esto es lo único que
@@ -254,7 +254,7 @@ const SECTORES: SectorFirma[] = [
 ];
 
 export const GRUPO_FIRMA = {
-  title: "Formamos parte de Grupo Firma",
+  title: "Formamos parte de Grupo Firmas",
   intro:
     "Altea es la división inmobiliaria de un grupo con presencia en medios, alimentos, energía, deportes y vinos. Esa estructura nos da músculo financiero y una visión de largo plazo que pocos desarrolladores tienen.",
   /**
@@ -266,7 +266,7 @@ export const GRUPO_FIRMA = {
    * veces seguidas.
    */
   raiz: {
-    nombre: "Grupo Firma",
+    nombre: "Grupo Firmas",
     logo: `${GF}/logo-grupo-firmas-globales.webp`,
     /* 537x206. */
     logoRatio: 2.607,

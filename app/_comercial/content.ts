@@ -711,7 +711,7 @@ export interface MarcaComercial {
  * confirmarlo antes de publicar.
  *
  * Los archivos son negro sobre transparente, así que el gris de la rejilla sale
- * de la opacidad y no del grayscale — lo mismo que en Grupo Firma.
+ * de la opacidad y no del grayscale — lo mismo que en Grupo Firmas.
  */
 export const MARCAS_COMERCIAL: MarcaComercial[] = [
   {

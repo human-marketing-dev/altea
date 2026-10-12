@@ -124,17 +124,26 @@ export function CarrilPlazas() {
             </div>
 
             <div className="com-fx__cuerpo">
+              {/*
+                Formato · Ubicación · Visitantes, en ese orden: el formato es lo
+                que clasifica la plaza y por eso abre. Los dos pares de `datos`
+                son Formato y Visitantes, así que la ubicación se intercala.
+                Donde el copy no da visitantes va un guion, no un número
+                inventado — hoy sólo los tienen Paseo La Fe y Paseo Juárez.
+              */}
               <dl className="com-fx__datos">
+                <div className="com-fx__d">
+                  <dt>{activa.datos[0].etiqueta}</dt>
+                  <dd>{activa.datos[0].valor ?? "—"}</dd>
+                </div>
                 <div className="com-fx__d">
                   <dt>Ubicación</dt>
                   <dd>{activa.ubicacion}</dd>
                 </div>
-                {activa.datos.map((dato) => (
-                  <div className="com-fx__d" key={dato.etiqueta}>
-                    <dt>{dato.etiqueta}</dt>
-                    <dd>{dato.valor ?? "—"}</dd>
-                  </div>
-                ))}
+                <div className="com-fx__d">
+                  <dt>{activa.datos[1].etiqueta}</dt>
+                  <dd>{activa.datos[1].valor ?? "—"}</dd>
+                </div>
               </dl>
               <p>{activa.descripcion}</p>
             </div>

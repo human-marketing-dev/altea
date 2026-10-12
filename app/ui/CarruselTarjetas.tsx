@@ -157,15 +157,41 @@ export function CarruselTarjetas({
     let agarre: { x: number; inicio: number; movido: boolean } | null = null;
 
     const alBajar = (e: PointerEvent) => {
+      /*
+       * ⚠ LA MARCA SE LIMPIA AQUÍ, al empezar cada interacción, y no sólo al
+       * consumirla en el clic. Si se deja puesta esperando al clic que la
+       * consuma, basta con que un arrastre NO acabe en clic sobre una tarjeta
+       * para que sobreviva y se coma el SIGUIENTE clic bueno. El síntoma es
+       * desconcertante: la ficha deja de abrirse una vez y a la siguiente
+       * vuelve a funcionar.
+       */
+      arrastrado.current = false;
       if (e.pointerType !== "mouse") return;
       agarre = { x: e.clientX, inicio: carril.scrollLeft, movido: false };
-      carril.setPointerCapture(e.pointerId);
+      /* ⚠ La captura NO se pide aquí: ver alMover. */
     };
     const alMover = (e: PointerEvent) => {
       if (!agarre) return;
       const d = e.clientX - agarre.x;
       if (!agarre.movido && Math.abs(d) > 4) {
         agarre.movido = true;
+        /*
+         * ⚠ LA CAPTURA SE PIDE AL EMPEZAR EL ARRASTRE, NO EN `pointerdown`, Y
+         * ESTO ES LO QUE IMPEDÍA ABRIR LA FICHA.
+         *
+         * Con la captura tomada en `pointerdown`, el `pointerup` de un CLIC
+         * NORMAL se redirige al carril, y entonces el navegador calcula el
+         * `click` sobre el ancestro común de los dos destinos —el carril— en vez
+         * de sobre el botón. Comprobado con clics reales por CDP: `pointerdown`
+         * llegaba a .altea-tj y `pointerup` y `click` a
+         * .altea-carrusel__pista, así que el onClick del botón no corría NUNCA y
+         * la ficha no se abría ni una vez.
+         *
+         * Pedida aquí, un clic sin arrastre no la toca y llega al botón; y el
+         * arrastre sigue teniéndola, que es lo que mantiene el scroll si el
+         * puntero se sale del carril.
+         */
+        carril.setPointerCapture(e.pointerId);
         /*
          * ⚠ EL IMÁN SE APAGA MIENTRAS SE ARRASTRA. Con `scroll-snap` activo,
          * cada movimiento del puntero pelea contra el imán: el arrastre se

@@ -92,26 +92,6 @@ export function CarpetasUnidades() {
 
       pila.style.setProperty("--hueco", `${alto}px`);
       pila.style.setProperty("--tope", `${tope}px`);
-
-      /*
-       * ⚠ EL ALTO REAL DE LA CARPETA, QUE NO SIEMPRE ES --hueco.
-       *
-       * En escritorio sí: la carpeta mide exactamente lo que acaba de escribirse
-       * arriba. Por debajo de 900 px no — ahí la hoja le pone `height: auto` con
-       * `min-height: 66svh`, así que mide lo que pida su contenido. La cola se
-       * calcula del alto de la carpeta, y con --hueco a secas se quedaba corta:
-       * medido a 390x844, 402 px contra los 557 reales, o sea 155 de pausa que
-       * la última perdía respecto de las otras tres.
-       *
-       * Se lee DESPUÉS de escribir --hueco, porque es lo que acaba de decidirlo.
-       */
-      const carpeta = cartas[0];
-      if (carpeta) {
-        pila.style.setProperty(
-          "--alto-carpeta",
-          `${Math.round(carpeta.getBoundingClientRect().height)}px`,
-        );
-      }
     };
     medir();
     window.addEventListener("resize", medir);

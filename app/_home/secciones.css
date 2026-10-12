@@ -172,7 +172,14 @@
  * y lo que sigue necesita una franja de respiro antes del texto.
  */
 .home-carpetas {
+  /* La pausa entre carpetas. Una sola variable porque la consumen tres cosas que
+     tienen que valer lo mismo: el margen de cada carpeta, la cola y el margen
+     negativo de la pila. Si se separan, vuelve a aparecer el hueco muerto. */
+  --pausa: 42svh;
   padding: clamp(76px, 13vh, 160px) var(--container-pad) 0;
+  /* Contexto de bloque propio, para que el margen negativo de la pila acorte
+     ESTA caja en vez de colapsar hacia fuera. Ver .home-carpetas__pila. */
+  display: flow-root;
 }
 
 /*
@@ -214,8 +221,32 @@
   letter-spacing: var(--tracking-tight);
 }
 
+/*
+ * ⚠ EL MARGEN NEGATIVO QUITA EL HUECO MUERTO, Y CON ÉL EL TÍTULO HUÉRFANO.
+ *
+ * Una pegajosa se suelta cuando el fondo de su contenedor MENOS SU PROPIO MARGEN
+ * la alcanza. Como las cuatro llevan la pausa de margen, al soltarse quedaba
+ * siempre una pausa entera de pila vacía por debajo: medido a 1440x900, 378 px
+ * entre el fondo de las carpetas y la sección siguiente, sin nada que mirar.
+ *
+ * Y el título se pega a la SECCIÓN, así que se quedaba clavado hasta el final de
+ * ese hueco: 498 px a la vista, solo, con las cuatro carpetas ya idas.
+ *
+ * El margen negativo saca esa última pausa del flujo sin tocar la caja de la
+ * pila, que es contra la que se miden las carpetas — así que el orden de salida
+ * y las pausas no se mueven. Lo que cambia es que la sección termina justo donde
+ * termina la pila de carpetas: la siguiente entra pegada a su fondo, y el título
+ * se suelta en el instante en que la última carpeta lo termina de cruzar. Sale
+ * tapado, no solo.
+ *
+ * `pointer-events: none` porque la pila desborda la sección esa misma pausa y,
+ * siendo `position: relative`, se pintaría encima del arranque de la sección
+ * siguiente comiéndose sus clics. Las carpetas lo recuperan abajo.
+ */
 .home-carpetas__pila {
   position: relative;
+  margin-bottom: calc(-1 * var(--pausa));
+  pointer-events: none;
 }
 
 /*
@@ -237,8 +268,9 @@
    * recorrido y la segunda entraba antes de que diera tiempo a leer la primera.
    * Con 42svh cada una dura 806. Ese es todo el arreglo del ritmo.
    */
-  margin-bottom: 42svh;
+  margin-bottom: var(--pausa);
   will-change: transform;
+  pointer-events: auto;
 }
 /*
  * ⚠ LAS CUATRO LLEVAN EL MISMO MARGEN, Y LA ÚLTIMA TAMBIÉN. No lo quites.
@@ -265,9 +297,21 @@
  *   recorrido disponible = fondo del contenedor − margen propio − base estática
  *
  * Así que el margen de la última no le da ni un píxel de pausa a sí misma: se la
- * da esta cola. Y mide ALTO MÁS PAUSA, no sólo la pausa — con 42svh a secas la
- * cuarta quedaba quieta 360 px contra los ~790 de las otras tres, porque a ellas
- * la siguiente les llega un alto de tarjeta más tarde.
+ * da esta cola, y LO QUE DURA LA COLA ES EXACTAMENTE LO QUE LA CUARTA SE QUEDA
+ * QUIETA.
+ *
+ * ⚠ MIDE LA PAUSA, NO ALTO MÁS PAUSA, y aquí hubo un error de medida que
+ * conviene dejar escrito. Estuvo en `alto + pausa` porque se comparó lo que cada
+ * carpeta pasa PEGADA, y a las tres primeras eso incluye el rato en que la
+ * siguiente ya les va subiendo encima. Lo que importa es lo que pasan pegadas Y
+ * SIN NADIE ENCIMA, que es cuando se leen:
+ *
+ *                  t1    t2    t3    t4
+ *   alto + pausa   366   366   366   798   la cuarta, más del doble
+ *   pausa          366   366   366   ~370
+ *
+ * Con `alto + pausa` la última se hacía larguísima y había que bajar mucho para
+ * llegar a la sección siguiente. Con la pausa a secas dura lo que las otras.
  *
  * Dos arreglos que NO sirven, para no perder el tiempo en ellos:
  *
@@ -281,9 +325,7 @@
  * Un hermano con alto propio sí extiende el contenedor sin restarse de nada.
  */
 .home-carpetas__cola {
-  /* --alto-carpeta es el alto REAL de la carpeta, que en móvil no es --hueco.
-     Ver la nota de `medir` en CarpetasUnidades.tsx. */
-  height: calc(var(--alto-carpeta, var(--hueco, 58svh)) + 42svh);
+  height: var(--pausa);
 }
 
 .home-carpetas__caja {
@@ -671,16 +713,14 @@
     grid-template-columns: 1fr;
     grid-template-rows: auto 38%;
   }
+  /* La pila deja de competir por altura, así que la pausa también baja. Basta
+     con la variable: margen, cola y margen negativo la siguen solos. */
+  .home-carpetas {
+    --pausa: 30svh;
+  }
   .home-carpetas__item {
     height: auto;
     min-height: 66svh;
-    /* La pila deja de competir por altura, así que la pausa también baja. */
-    margin-bottom: 30svh;
-  }
-  /* La misma fórmula con la pausa de móvil: si se queda en 30svh a secas, la
-     última vuelve a durar menos que las otras tres. */
-  .home-carpetas__cola {
-    height: calc(var(--alto-carpeta, 66svh) + 30svh);
   }
   .home-ficha__cuerpo {
     grid-template-columns: 1fr;
@@ -705,9 +745,13 @@
        entre tarjetas: vuelve a ser la separación que se ve. */
     margin-bottom: clamp(16px, 2.4vh, 30px);
   }
-  /* Y la cola no separa nada de nada: aquí no hay recorrido que extender. */
+  /* Y ni la cola ni el margen negativo: en estático no hay recorrido que
+     extender ni pausa que sacar del flujo. */
   .home-carpetas__cola {
     height: 0;
+  }
+  .home-carpetas__pila {
+    margin-bottom: 0;
   }
   .home-carpetas__cab {
     position: static;

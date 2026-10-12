@@ -466,62 +466,7 @@
   color: var(--text-on-dark-secondary);
 }
 
-/* ═══ 2 · nuestro modelo ══════════════════════════════════════════════════ */
-
-.com-modelo {
-  padding: clamp(76px, 14vh, 180px) var(--container-pad);
-}
-.com-modelo__rotulo {
-  margin: 0 0 clamp(16px, 2.6vh, 28px);
-  font-size: var(--text-small);
-  font-weight: var(--weight-medium);
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
-}
-.com-modelo__frase {
-  margin: 0 0 clamp(30px, 5vh, 62px);
-  max-width: 19ch;
-  font-size: clamp(1.8rem, 4.8vw, 3.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
-}
-/* inline-block y no inline: la opacidad se anima por palabra, y un inline partido
-   entre dos líneas no puede animarse como una sola unidad. */
-.com-modelo__palabra {
-  display: inline-block;
-}
-.com-modelo__palabra--acento {
-  color: var(--text-accent);
-}
-.com-modelo__regla {
-  height: 1px;
-  background: var(--border-subtle);
-  margin: 0 0 clamp(26px, 4.4vh, 50px);
-}
-.com-modelo__cols {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(22px, 4vw, 72px);
-  max-width: 104ch;
-}
-.com-modelo__cols p {
-  margin: 0;
-  line-height: 1.74;
-  font-size: clamp(1rem, 1.15vw, 1.14rem);
-  /* 6.45. */
-  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
-}
-/* El remate con el dato: aparte y en cuerpo mayor, porque no es un párrafo más. */
-.com-modelo__cierre {
-  margin: clamp(24px, 4vh, 44px) 0 0;
-  max-width: 60ch;
-  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-  font-weight: var(--weight-medium);
-  line-height: 1.5;
-  letter-spacing: var(--tracking-tight);
-}
-
-/* ═══ 3 · las plazas, en carril ═══════════════════════════════════════════ */
+/* ═══ 2 · las plazas, en carril ═══════════════════════════════════════════ */
 
 /*
  * La sección es <CarrilTarjetas>, el mismo recorrido horizontal que los
@@ -797,7 +742,7 @@
   }
 }
 
-/* ═══ 4 · otros giros ═════════════════════════════════════════════════════ */
+/* ═══ 3 · otros giros ═════════════════════════════════════════════════════ */
 
 .com-giros {
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
@@ -952,7 +897,7 @@
   }
 }
 
-/* ═══ 5 · el muro de marcas ═══════════════════════════════════════════════ */
+/* ═══ 4 · el muro de marcas ═══════════════════════════════════════════════ */
 
 .com-marcas {
   background: var(--surface-sunken);
@@ -1151,7 +1096,7 @@
   opacity: 0.78;
 }
 
-/* ═══ 6 · próximos proyectos ══════════════════════════════════════════════ */
+/* ═══ 5 · próximos proyectos ══════════════════════════════════════════════ */
 
 .com-prox {
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
@@ -1232,7 +1177,6 @@
   }
 }
 @media (max-width: 900px) {
-  .com-modelo__cols,
   .com-fx__cuerpo,
   .com-prox__grid {
     grid-template-columns: 1fr;

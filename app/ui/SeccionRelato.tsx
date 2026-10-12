@@ -1,7 +1,12 @@
 /*
- * ⚠ SIN CONSUMIDORES. Era el relato de /comercial y lo sustituyó <Modelo>, que
- * compone igual que Origen en /nosotros para que las dos secciones que cuentan
- * de dónde viene algo se lean como familia.
+ * ⚠ SIN CONSUMIDORES, y ya por partida doble. Era el relato de /comercial; lo
+ * sustituyó <Modelo>, que componía como Origen en /nosotros para que las dos
+ * secciones que cuentan de dónde viene algo se leyeran como familia. Y <Modelo>
+ * se quitó después de la página, así que ese sitio no lo ocupa nada: /comercial
+ * va del hero calado directo a las plazas.
+ *
+ * Se conserva por el tratamiento de la marca de agua y la composición del
+ * relato, que están calibrados y documentados dentro.
  */
 import Image from "next/image";
 

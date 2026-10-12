@@ -250,6 +250,15 @@ const EN_LETRAS = [
 ];
 const enLetras = (n: number) => EN_LETRAS[n] ?? String(n);
 
+/**
+ * ⚠ SIN CONSUMIDOR. La sección de "Nuestro modelo" se quitó de la página entera,
+ * y con ella <Modelo> y sus estilos.
+ *
+ * Se conserva por el `cierre`, que es la única frase del archivo con las dos
+ * cifras DERIVADAS de lib/proyectos.ts en vez de escritas a mano: si vuelve,
+ * vuelve con la cuenta al día. El resto estaba marcado PENDIENTE y nunca llegó a
+ * confirmarse, así que tampoco hay nada que perder por el otro lado.
+ */
 export const DESCRIPCION_COMERCIAL = {
   /**
    * PENDIENTE: el texto sigue sin confirmar por Altea, y la partición en

@@ -3,7 +3,6 @@ import { CONTACT_CTA } from "@/app/_home/content";
 import { CierreContacto, Footer, NavBar } from "@/app/ui";
 import { HeroCalado } from "../_comercial/HeroCalado";
 import { CarrilPlazas } from "../_comercial/CarrilPlazas";
-import { Modelo } from "../_comercial/Modelo";
 import { MuroMarcas } from "../_comercial/MuroMarcas";
 import { OtrosGiros } from "../_comercial/OtrosGiros";
 import { ProximosComercial } from "../_comercial/ProximosComercial";
@@ -24,7 +23,6 @@ export default function Comercial() {
       <NavBar tone="light" />
       <main>
         <HeroCalado />
-        <Modelo />
         <CarrilPlazas />
         <OtrosGiros />
         {MOSTRAR_MARCAS_COMERCIAL && <MuroMarcas />}

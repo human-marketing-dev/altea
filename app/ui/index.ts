@@ -40,14 +40,15 @@ export { HeroUnidad } from "./HeroUnidad";
 export type { HeroUnidadFoto, HeroUnidadProps } from "./HeroUnidad";
 
 export { SeccionRelato } from "./SeccionRelato";
-export type {
-  RelatoApertura,
-  SeccionRelatoProps,
-} from "./SeccionRelato";
+export type { RelatoApertura, SeccionRelatoProps } from "./SeccionRelato";
 
 export { MediaSlot } from "./MediaSlot";
 
 export { CarrilTarjetas } from "./CarrilTarjetas";
+export { CarruselTarjetas } from "./CarruselTarjetas";
+export type { CarruselTarjetasProps } from "./CarruselTarjetas";
+export { TarjetaProyecto } from "./TarjetaProyecto";
+export type { TarjetaProyectoProps } from "./TarjetaProyecto";
 export type { CarrilTarjetasProps, TarjetaCarril } from "./CarrilTarjetas";
 
 export { ProyectosPaneles } from "./ProyectosPaneles";

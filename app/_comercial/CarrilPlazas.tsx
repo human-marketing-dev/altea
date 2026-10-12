@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { CarrilTarjetas } from "@/app/ui";
+import { CarruselTarjetas } from "@/app/ui";
 import type { Plaza } from "./content";
 import { GALERIA_PLAZAS, PLAZAS } from "./content";
 
 /**
  * Las ocho plazas, en el mismo recorrido horizontal que los proyectos del home.
  *
- * El carril y la tarjeta son <CarrilTarjetas> en ui/: aquí sólo está lo propio
+ * El carril y la tarjeta son <CarruselTarjetas> en ui/: aquí sólo está lo propio
  * de comercial —qué dice cada tarjeta y qué ficha abre—.
  *
  * ────────────────────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ export function CarrilPlazas() {
   }, [activa]);
 
   return (
-    <CarrilTarjetas
+    <CarruselTarjetas
       titulo={GALERIA_PLAZAS.titulo}
       tituloId="plazas-titulo"
       items={PLAZAS.map((plaza) => ({
@@ -53,6 +53,13 @@ export function CarrilPlazas() {
          * verdad separa una plaza de otra es dónde está.
          */
         pie: plaza.ubicacion,
+        /*
+         * El formato va de chapa arriba a la izquierda, con su propio velo: es
+         * el dato que la tarjeta no puede dar de otra forma, y en el home esa
+         * chapa no existe porque allá la unidad ya va de pie. Sale del primer
+         * par del <dl> de la ficha, que es el mismo "Formato".
+         */
+        etiqueta: plaza.datos[0].valor,
         foto: plaza.foto,
       }))}
       onAbrir={(k, boton) => {
@@ -126,6 +133,6 @@ export function CarrilPlazas() {
           </article>
         )}
       </dialog>
-    </CarrilTarjetas>
+    </CarruselTarjetas>
   );
 }

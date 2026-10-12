@@ -3,8 +3,8 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
 import { useRef } from "react";
+import { TarjetaProyecto } from "./TarjetaProyecto";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -17,6 +17,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * encargo era literalmente que las tarjetas fueran las mismas. Duplicarlo es
  * como se acaban separando: la primera vez que alguien afine el degradado o el
  * `sizes` en un sitio, el otro deja de ser "el mismo diseño".
+ *
+ * La TARJETA no vive aquí: es <TarjetaProyecto>, que comparte con el carrusel de
+ * /comercial. Lo de aquí es sólo el movimiento.
  *
  * El alto del contenedor NO es un número: sale de lo que mide el carril, así que
  * el ritmo no cambia el día que haya ocho tarjetas en vez de seis.
@@ -37,23 +40,6 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 /** Cuánto más largo es el recorrido que el desborde, para que no vaya justo. */
 const HOLGURA = 1.15;
 
-/**
- * El `sizes` por defecto de las fotos, y NO es el ancho de la caja.
- *
- * ⚠ Esto era la pixelación en el home, y no la resolución de los archivos. La
- * caja es VERTICAL (3/4) y las fotos son HORIZONTALES —de 1.50 a 1.92 de
- * proporción en los dos juegos—. Con `object-fit: cover` la imagen se escala
- * hasta que su ALTO cubre la caja, y entonces su ancho RENDERIZADO es mucho
- * mayor que el de la caja: a 1440 la tarjeta mide 461 px de ancho pero la imagen
- * se pinta a 923-1114 y se recorta a los lados.
- *
- * `sizes` describe el ancho al que se PINTA la imagen, no el de su caja. Con 480
- * px, Next servía w=640 a 1x —que se estiraba hasta 1114, o sea 1.74x— y w=1080
- * a 2x. 1160 cubre el peor caso a 1920, y en móvil la tarjeta manda por ancho:
- * 74vw de caja son 178vw de imagen renderizada con esa misma cuenta.
- */
-const SIZES = "(max-width: 900px) 178vw, 1160px";
-
 export interface TarjetaCarril {
   /** Clave de lista. El slug del proyecto o el id de la plaza. */
   id: string;
@@ -61,6 +47,8 @@ export interface TarjetaCarril {
   /** La línea pequeña bajo el nombre: la unidad en el home, la ciudad en plazas. */
   pie: string;
   foto?: string;
+  /** La chapa de arriba a la izquierda. Sólo la usa el carrusel de plazas. */
+  etiqueta?: string;
 }
 
 export interface CarrilTarjetasProps {
@@ -230,27 +218,13 @@ export function CarrilTarjetas({
         <ul className="altea-carril__pista js-carril">
           {items.map((item, k) => (
             <li key={item.id}>
-              <button
-                type="button"
-                className="altea-carril__tj js-tarjeta"
-                onClick={(evento) => onAbrir(k, evento.currentTarget)}
-              >
-                <span className="altea-carril__tj-foto js-tarjeta-foto">
-                  {item.foto && (
-                    <Image
-                      src={item.foto}
-                      alt=""
-                      fill
-                      sizes={SIZES}
-                      className="altea-carril__img"
-                    />
-                  )}
-                </span>
-                <span className="altea-carril__tj-txt">
-                  <b>{item.nombre}</b>
-                  <span>{item.pie}</span>
-                </span>
-              </button>
+              <TarjetaProyecto
+                nombre={item.nombre}
+                pie={item.pie}
+                foto={item.foto}
+                etiqueta={item.etiqueta}
+                onClick={(boton) => onAbrir(k, boton)}
+              />
             </li>
           ))}
         </ul>

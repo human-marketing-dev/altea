@@ -2360,101 +2360,22 @@ a.altea-project-card:focus-visible {
 }
 
 /*
- * El alto manda y el ancho se deriva.
+ * EN EL CARRIL, EL ALTO MANDA Y EL ANCHO SE DERIVA.
  *
- * Es al revés que antes, y es el cambio que evita el desborde: con el ancho fijo
- * (`clamp(260px, 32vw, 480px)`) el alto salía de la proporción y podía pasarse del
- * hueco. Ahora `--alto-tarjeta` —que publica el componente tras medir la cabecera— lo
- * acota, y `aspect-ratio` con `width: auto` calcula el ancho a partir de ahí.
+ * Es al revés que en el carrusel, y es lo que evita el desborde: con el ancho
+ * fijo el alto salía de la proporción y podía pasarse del hueco. Aquí
+ * --alto-tarjeta —que publica el componente tras medir la cabecera— lo acota, y
+ * la proporción 3/4 de .altea-tj calcula el ancho a partir de ahí.
  *
- * El respaldo cubre el primer pintado y el caso sin JS: es el alto que saldría del
- * ancho de antes, acotado a 66svh para que no desborde en ventanas bajas.
+ * El respaldo cubre el primer pintado y el caso sin JS: es el alto que saldría
+ * del ancho de diseño, acotado a 66svh para que no desborde en ventanas bajas.
  */
-.altea-carril__tj {
-  position: relative;
-  display: block;
+.altea-carril__pista .altea-tj {
   height: var(
     --alto-tarjeta,
     min(66svh, calc(clamp(260px, 32vw, 480px) * 4 / 3))
   );
   width: auto;
-  aspect-ratio: 3 / 4;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-  color: #fff;
-  background: var(--surface-card-dark);
-  will-change: transform;
-}
-/* La foto es más ancha que su caja para poder correr dentro de ella: así cada
-   tarjeta tiene su propio recorrido sin que la tarjeta se mueva. */
-.altea-carril__tj-foto {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -12%;
-  width: 124%;
-  display: block;
-  will-change: transform;
-}
-.altea-carril__img {
-  object-fit: cover;
-}
-/*
- * El degradado no es decorativo: es lo que garantiza el contraste del nombre.
- * Sobre una foto cualquiera el blanco no tiene contraste asegurado; al 82% de
- * #101316 en la zona del texto, el fondo efectivo es casi negro y el blanco pasa
- * de 15:1 sea cual sea la fotografía.
- */
-.altea-carril__tj::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgb(16 19 22 / 0) 40%,
-    rgb(16 19 22 / 0.82) 100%
-  );
-  transition: background var(--duration-base) var(--ease-standard);
-}
-.altea-carril__tj:hover::after,
-.altea-carril__tj:focus-visible::after {
-  background: linear-gradient(
-    180deg,
-    rgb(16 19 22 / 0.14) 24%,
-    rgb(16 19 22 / 0.88) 100%
-  );
-}
-.altea-carril__tj:focus-visible {
-  outline: 2px solid var(--altea-coral);
-  outline-offset: 3px;
-}
-
-.altea-carril__tj-txt {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: clamp(16px, 2vw, 28px);
-}
-.altea-carril__tj-txt b {
-  display: block;
-  font-size: clamp(1rem, 1.5vw, 1.35rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.025em;
-}
-.altea-carril__tj-txt span {
-  display: block;
-  margin-top: 5px;
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: rgb(255 255 255 / 0.72);
 }
 
 /* ── móvil ── */
@@ -2487,5 +2408,274 @@ a.altea-project-card:focus-visible {
   }
   .altea-carril__pista > li {
     scroll-snap-align: center;
+  }
+}
+
+/* ============== La tarjeta de proyecto (TarjetaProyecto) ============== */
+
+/*
+ * La tarjeta vertical: foto, chapa opcional, nombre y pie. Es la misma en el
+ * carril del home y en el carrusel de /comercial — ver TarjetaProyecto.tsx.
+ *
+ * NO DECIDE SU TAMAÑO: declara la proporción y deja que el contenedor fije el
+ * alto (el carril, que lo mide contra el hueco libre) o el ancho (el carrusel,
+ * con un clamp). Las dos reglas están en sus bloques.
+ */
+.altea-tj {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  color: #fff;
+  background: var(--surface-card-dark);
+  will-change: transform;
+}
+/* La foto es más ancha que su caja para poder correr dentro de ella: así cada
+   tarjeta tiene su propio recorrido sin que la tarjeta se mueva. */
+.altea-tj__foto {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12%;
+  width: 124%;
+  display: block;
+  will-change: transform;
+}
+.altea-tj__img {
+  object-fit: cover;
+}
+/*
+ * El degradado no es decorativo: es lo que garantiza el contraste del nombre.
+ * Sobre una foto cualquiera el blanco no tiene contraste asegurado; al 82% de
+ * #101316 en la zona del texto, el fondo efectivo es casi negro y el blanco pasa
+ * de 15:1 sea cual sea la fotografía.
+ */
+.altea-tj::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0) 40%,
+    rgb(16 19 22 / 0.82) 100%
+  );
+  transition: background var(--duration-base) var(--ease-standard);
+}
+.altea-tj:hover::after,
+.altea-tj:focus-visible::after {
+  background: linear-gradient(
+    180deg,
+    rgb(16 19 22 / 0.14) 24%,
+    rgb(16 19 22 / 0.88) 100%
+  );
+}
+.altea-tj:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 3px;
+}
+
+/*
+ * ⚠ LA CHAPA LLEVA FONDO PROPIO, y en el home no hace falta.
+ *
+ * Allá la línea pequeña cae siempre sobre la zona oscura del degradado. Aquí la
+ * chapa va ARRIBA A LA IZQUIERDA, y seis de las ocho plazas están fotografiadas
+ * al atardecer: esa esquina es cielo claro y un blanco al 46 % desaparecía. El
+ * velo con desenfoque la hace legible pase lo que pase en la foto, sin tocar el
+ * degradado de abajo, y el blanco sube al 82 %.
+ */
+.altea-tj__marca {
+  position: absolute;
+  z-index: 3;
+  top: 13px;
+  left: 13px;
+  padding: 3px 8px;
+  /* --radius-sm (4px) y no los 6 del prototipo: el sistema tiene token. */
+  border-radius: var(--radius-sm);
+  background: rgb(16 19 22 / 0.42);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgb(255 255 255 / 0.2);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.82);
+}
+
+.altea-tj__txt {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: clamp(16px, 2vw, 28px);
+}
+.altea-tj__txt b {
+  display: block;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+}
+.altea-tj__txt span {
+  display: block;
+  margin-top: 5px;
+  font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ============== Carrusel de tarjetas (CarruselTarjetas) ============== */
+
+/*
+ * Las mismas tarjetas, movidas a mano. Ver la cabecera de CarruselTarjetas.tsx
+ * para por qué /comercial no puede usar el carril fijado del home.
+ */
+.altea-carrusel {
+  padding: clamp(70px, 13vh, 170px) 0;
+}
+.altea-carrusel__cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  padding: 0 var(--container-pad);
+  margin: 0 0 clamp(28px, 5vh, 56px);
+}
+.altea-carrusel__titulo {
+  margin: 0;
+  max-width: 16ch;
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+}
+.altea-carrusel__mando {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 26px);
+  flex: none;
+}
+.altea-carrusel__n {
+  margin: 0;
+  font-size: var(--text-small);
+  font-variant-numeric: tabular-nums;
+  /* --text-secondary y no el ink 45% del prototipo, que da 2.71. */
+  color: var(--text-secondary);
+}
+.altea-carrusel__fl {
+  display: flex;
+  gap: 8px;
+}
+.altea-carrusel__bt {
+  width: 42px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+}
+.altea-carrusel__bt:hover:not([disabled]) {
+  background: color-mix(in srgb, var(--altea-ink) 7%, transparent);
+}
+.altea-carrusel__bt:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 3px;
+}
+.altea-carrusel__bt[disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/*
+ * EL CARRIL. Desplazamiento NATIVO: así el dedo, el trackpad y la rueda
+ * horizontal funcionan sin programar nada, y las flechas, el teclado y el
+ * arrastre sólo empujan ese mismo scroll.
+ *
+ * `scroll-padding-left` iguala al relleno de página para que la tarjeta imantada
+ * no quede pegada al canto, y la barra del navegador se esconde SIN perder el
+ * desplazamiento: `scrollbar-width` y el pseudo de WebKit, no `overflow: hidden`.
+ */
+.altea-carrusel__pista {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 26px);
+  padding: 0 var(--container-pad);
+  margin: 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--container-pad);
+  scrollbar-width: none;
+}
+.altea-carrusel__pista::-webkit-scrollbar {
+  display: none;
+}
+.altea-carrusel__pista:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 4px;
+}
+/* ⚠ El imán se apaga mientras se arrastra: ver la nota en CarruselTarjetas.tsx. */
+.altea-carrusel--arrastrando {
+  scroll-snap-type: none;
+  cursor: grabbing;
+}
+.altea-carrusel__pista > li {
+  flex: none;
+  scroll-snap-align: start;
+}
+
+/* EN EL CARRUSEL MANDA EL ANCHO: no hay hueco fijo contra el que medir, así que
+   la tarjeta se dimensiona por su lado largo y el alto sale de la proporción. */
+.altea-carrusel__pista .altea-tj {
+  width: clamp(260px, 32vw, 480px);
+  height: auto;
+}
+
+/* La barra de avance sustituye a lo que en el carril del home cuenta el propio
+   scroll de la página. */
+.altea-carrusel__barra {
+  margin: clamp(22px, 3.4vh, 38px) var(--container-pad) 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--altea-ink) 12%, transparent);
+}
+.altea-carrusel__barra span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--altea-ink);
+}
+
+@media (max-width: 820px) {
+  .altea-carrusel__pista .altea-tj {
+    width: clamp(220px, 74vw, 320px);
+  }
+  /* Donde se arrastra con el dedo, las flechas sobran. */
+  .altea-carrusel__fl {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin parallax y sin desplazamiento suave: el carrusel sigue funcionando, sólo
+     que salta en vez de deslizarse. */
+  .altea-tj__foto {
+    transform: none !important;
+  }
+  .altea-carrusel__pista {
+    scroll-behavior: auto;
   }
 }

@@ -73,12 +73,26 @@ export const ORIGEN = {
     "Gracias a nuestra constante evolución y adaptación, en Altea seguimos construyendo el futuro con el mismo compromiso de nuestros inicios: generar valor, calidad y oportunidades en cada metro cuadrado que transformamos.",
   ],
 
-  /*
-   * Sin fotografía: el rediseño de Origen es puramente tipográfico —rótulo,
-   * frase grande, regla y dos columnas—, así que el hueco desapareció. Antes
-   * llevaba Paseo La Fe prestado de /comercial, que ni era de los cines del
-   * relato ni había otra cosa en el repositorio.
+  /**
+   * ⚠ PENDIENTE: NO HAY ARCHIVO. La sección vuelve a dos columnas —texto a la
+   * izquierda, foto a la derecha— y mientras la foto no llegue, <MediaSlot>
+   * compone el hueco etiquetado en vez de inventar una imagen.
+   *
+   * Y no se rellena con lo que haya: el rediseño anterior quitó precisamente
+   * esta foto porque llevaba Paseo La Fe prestado de /comercial, que ni es de
+   * los cines del relato ni tenía nada que ver con el origen. Un hueco honesto
+   * es mejor que una foto que cuenta otra cosa.
+   *
+   * Cuando llegue, hay que mirar su proporción: la caja es 4/5 y con `cover` una
+   * foto horizontal se recorta bastante, que en arquitectura suele comerse justo
+   * la parte alta del edificio.
    */
+  foto: {
+    label: "Foto del origen de Altea — PENDIENTE",
+    alt: "Los primeros cines de Altea, donde empezó el grupo",
+    /** La ruta, en cuanto exista el archivo. */
+    src: undefined as string | undefined,
+  },
 };
 
 /* ─── 3 · Pilares de identidad ─────────────────────────────────────────── */

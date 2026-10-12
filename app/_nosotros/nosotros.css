@@ -108,6 +108,44 @@
   padding: clamp(80px, 15vh, 200px) var(--container-pad)
     clamp(60px, 11vh, 140px);
 }
+/*
+ * TEXTO A LA IZQUIERDA, FOTO A LA DERECHA, centrados entre sí.
+ *
+ * La columna de la foto va algo más estrecha que la del texto —0.92 contra 1—
+ * porque una caja vertical pesa más que un bloque de texto del mismo ancho: con
+ * las dos iguales, la foto tira de la sección y la descentra.
+ */
+.nos-origen__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: clamp(30px, 5vw, 88px);
+  /*
+   * ⚠ `start` Y NO `center`, y la diferencia se ve.
+   *
+   * Centrar sólo funciona mientras las dos columnas midan parecido, y aquí no lo
+   * hacen en casi todo el rango. Medido el alto del texto contra el de la caja
+   * 4/5, con el copy de hoy:
+   *
+   *   1440   texto 679   foto 733   la foto gana por 54
+   *   1200   texto 672   foto 611   el texto gana por 61
+   *   1024   texto 699   foto 521   el texto gana por 178
+   *    940   texto 685   foto 479   el texto gana por 207
+   *
+   * De 1200 para abajo —que es la mayor parte del rango de dos columnas— el
+   * texto saca entre 60 y 210 px, y centrada la foto flotaba a media altura con
+   * un hueco arriba y otro abajo: el rótulo y la frase se quedaban sin nada al
+   * lado. Alineados por arriba, los dos bloques comparten canto y la sección se
+   * lee como una composición en vez de como dos piezas sueltas.
+   *
+   * ⚠ Si cambia el copy o llega una foto que no sea 4/5, hay que volver a mirar
+   * esta tabla: con el texto y la foto parejos, `center` sería lo correcto.
+   */
+  align-items: start;
+}
+.nos-origen__foto {
+  /* La proporción la pone <MediaSlot> por su prop `ratio`; aquí sólo el acabado. */
+  border-radius: var(--radius-lg);
+}
 .nos-origen__rotulo {
   margin: 0 0 clamp(18px, 3vh, 32px);
   font-size: var(--text-small);
@@ -115,10 +153,17 @@
   /* 4.98, contra el 48 % del prototipo que daba 2.94. */
   color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
+/*
+ * El cuerpo BAJA con el acomodo a dos columnas, y es el precio asumido.
+ *
+ * A 4.4rem y 20ch la frase vivía a todo lo ancho de la página; en media, rompe
+ * en demasiadas líneas y se come la sección entera. El titular pierde algo de
+ * golpe a cambio de la foto.
+ */
 .nos-origen__frase {
   margin: 0 0 clamp(34px, 6vh, 72px);
-  max-width: 20ch;
-  font-size: clamp(1.9rem, 5.4vw, 4.4rem);
+  max-width: 16ch;
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
   font-weight: var(--weight-bold);
   line-height: 1.02;
   letter-spacing: -0.05em;
@@ -136,11 +181,17 @@
   background: var(--border-subtle);
   margin: 0 0 clamp(28px, 5vh, 56px);
 }
+/*
+ * Los dos párrafos APILADOS, no en columnas.
+ *
+ * Iban en `repeat(2, minmax(0, 1fr))` cuando la sección ocupaba el ancho entero.
+ * En media página eso daría columnas de unos treinta caracteres, que no se leen.
+ * El hueco pasa a ser vertical y se mide como tal: los 4vw de antes eran una
+ * separación ENTRE columnas y como separación entre párrafos son un agujero.
+ */
 .nos-origen__cols {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(22px, 4vw, 72px);
-  max-width: 104ch;
+  gap: clamp(18px, 2.4vh, 30px);
 }
 .nos-origen__cols p {
   margin: 0;
@@ -1230,7 +1281,12 @@
   .nos-hero__titulo {
     font-size: clamp(2rem, 7.6vw, 3.6rem);
   }
-  .nos-origen__cols,
+  /* Una sola columna y la foto DESPUÉS del texto, que es el orden del marcado:
+     no hace falta reordenar nada, sólo deshacer la rejilla. */
+  .nos-origen__grid {
+    grid-template-columns: 1fr;
+    gap: clamp(26px, 5vh, 44px);
+  }
   .nos-rs__cab,
   .nos-firma__cab {
     grid-template-columns: 1fr;

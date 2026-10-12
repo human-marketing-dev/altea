@@ -193,9 +193,21 @@
   padding-bottom: clamp(20px, 3.4vh, 40px);
   background: var(--surface-page);
 }
+/*
+ * 38ch y no 17ch, y no es un ajuste tipográfico: ES DE DONDE SALE EL ESPACIO.
+ *
+ * El titular tiene 65 caracteres, así que a 17ch rompía en cuatro líneas —unos
+ * 150 px de cabecera pegada— y se comía justo el sitio donde tienen que caber
+ * las carpetas. A 38ch entra en dos y la cabecera baja a 120 px, que es más de
+ * media carpeta de altura liberada.
+ *
+ * No lleva excepción para móvil: por debajo de unos 950 px el ancho del
+ * contenedor es menor que los 38ch a ese cuerpo, así que manda él y la medida no
+ * llega a aplicar.
+ */
 .home-carpetas__titulo {
   margin: 0;
-  max-width: 17ch;
+  max-width: 38ch;
   font-size: clamp(1.65rem, 3.4vw, 2.6rem);
   font-weight: var(--weight-bold);
   line-height: 1.04;
@@ -216,8 +228,46 @@
   top: calc(var(--tope, 104px) + var(--i) * 14px);
   z-index: calc(10 + var(--i));
   height: var(--hueco, 58svh);
-  margin-bottom: clamp(16px, 2.4vh, 30px);
+  /*
+   * ⚠ ESTE MARGEN ES LA PAUSA, no una separación visual: las carpetas se
+   * solapan. En una pila de pegajosas, el margen inferior es la distancia entre
+   * la llegada de una y la de la siguiente.
+   *
+   * Con carpetas de 428 px y los 24 de antes, cada una duraba 452 px de
+   * recorrido y la segunda entraba antes de que diera tiempo a leer la primera.
+   * Con 42svh cada una dura 806. Ese es todo el arreglo del ritmo.
+   */
+  margin-bottom: 42svh;
   will-change: transform;
+}
+/* La última no lo lleva: el suyo no se lo daría a ella sino a una siguiente que
+   no existe. Su pausa la pone .home-carpetas__cola. */
+.home-carpetas__item:last-of-type {
+  margin-bottom: 0;
+}
+
+/*
+ * LA COLA, que es la pausa de la última y tiene que ser un ELEMENTO.
+ *
+ * Una pegajosa se para mientras quepa en su contenedor, y el rectángulo contra
+ * el que se mide es el contenedor MENOS SUS PROPIOS MÁRGENES:
+ *
+ *   recorrido disponible = fondo del contenedor − margen propio − base estática
+ *
+ * Dos arreglos que NO sirven, para no perder el tiempo en ellos:
+ *
+ *   · `display: flow-root` en la pila, para que el margen del último hijo no se
+ *     colapse fuera. Arregla el alto del contenedor —de 2846 a 3224 px— y no el
+ *     síntoma: ese margen se vuelve a restar al medir, y las cuatro seguían
+ *     soltándose juntas en y=2700.
+ *   · `padding-bottom` en la pila. Peor: no extiende el rectángulo y además
+ *     adelanta la salida de las tres primeras. La primera se soltaba en y=2350,
+ *     antes de que llegara la cuarta, dejando un hueco.
+ *
+ * Un hermano con alto propio sí extiende el contenedor sin restarse de nada.
+ */
+.home-carpetas__cola {
+  height: 42svh;
 }
 
 .home-carpetas__caja {
@@ -608,6 +658,11 @@
   .home-carpetas__item {
     height: auto;
     min-height: 66svh;
+    /* La pila deja de competir por altura, así que la pausa también baja. */
+    margin-bottom: 30svh;
+  }
+  .home-carpetas__cola {
+    height: 30svh;
   }
   .home-ficha__cuerpo {
     grid-template-columns: 1fr;
@@ -628,6 +683,13 @@
     position: static;
     height: auto;
     min-height: 56svh;
+    /* En estático, la pausa de una pegajosa es un agujero de media pantalla
+       entre tarjetas: vuelve a ser la separación que se ve. */
+    margin-bottom: clamp(16px, 2.4vh, 30px);
+  }
+  /* Y la cola no separa nada de nada: aquí no hay recorrido que extender. */
+  .home-carpetas__cola {
+    height: 0;
   }
   .home-carpetas__cab {
     position: static;

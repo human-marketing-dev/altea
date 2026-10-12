@@ -1,15 +1,10 @@
 "use client";
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ruta } from "@/lib/rutas";
 import { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } from "./content";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
  * Las cuatro unidades de negocio, en carpetas que se apilan.
@@ -19,18 +14,20 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * de debajo se encoge y se apaga cuando le llega la siguiente encima.
  *
  * ────────────────────────────────────────────────────────────────────────────
- * UN SOLO ScrollTrigger PARA TODA LA PILA
+ * EL OSCURECIDO SALE DE LA GEOMETRÍA, NO DEL AVANCE DE LA SECCIÓN
  *
- * Y es lo que no se puede hacer de otra manera. La versión evidente —atar cada
- * carpeta al ScrollTrigger de la SIGUIENTE— no funciona con elementos `sticky`,
- * porque ScrollTrigger mide la posición de FLUJO del elemento, no la posición en
- * la que está pegado. Los tiempos salían desfasados respecto de lo que se veía:
- * la primera carpeta aparecía ya oscura y las cuatro se apagaban de golpe al
- * entrar la siguiente.
+ * Aquí había un solo ScrollTrigger para toda la pila que repartía su avance
+ * entre las cuatro: `k = avance * total − (i + 1)`. Eso funciona mientras las
+ * pausas sean cortas, y deja de funcionar en cuanto se alargan — que es
+ * justamente lo que hace el margen de 42svh de abajo. Con el reparto, cada
+ * carpeta se pasaba medio recorrido apagándose antes de que nadie la tapara.
  *
- * Aquí hay un disparador para el contenedor entero y de su avance se deriva
- * cuánto le toca a cada una. Es aritmética, no medición, así que no puede
- * desfasarse.
+ * Midiendo cuánto ha subido la siguiente sobre ésta, el oscurecido ocurre
+ * exactamente mientras la cubre, dure lo que dure la pausa. Y de paso desaparece
+ * el motivo por el que hacía falta ScrollTrigger: lo que se mide es la posición
+ * REAL en pantalla de dos elementos pegados, que es lo que ScrollTrigger no
+ * sabía dar —mide la posición de FLUJO— y lo que obligaba a derivarlo por
+ * aritmética.
  *
  * ────────────────────────────────────────────────────────────────────────────
  * EL TÍTULO VA DEBAJO EN EL APILADO
@@ -51,75 +48,96 @@ const APAGA = 0.34;
 export function CarpetasUnidades() {
   const raiz = useRef<HTMLElement>(null);
 
-  useGSAP(
-    () => {
-      const nodo = raiz.current;
-      if (!nodo) return;
-      const cab = nodo.querySelector<HTMLElement>(".js-carpetas-cab");
-      const pila = nodo.querySelector<HTMLElement>(".js-carpetas-pila");
-      if (!cab || !pila) return;
+  useEffect(() => {
+    const nodo = raiz.current;
+    if (!nodo) return;
+    const cab = nodo.querySelector<HTMLElement>(".js-carpetas-cab");
+    const pila = nodo.querySelector<HTMLElement>(".js-carpetas-pila");
+    if (!cab || !pila) return;
 
-      const cajas = gsap.utils.toArray<HTMLElement>(".js-carpeta-caja", nodo);
-      const total = cajas.length;
+    const cartas = Array.from(
+      nodo.querySelectorAll<HTMLElement>(".js-carpeta"),
+    );
+    const cajas = Array.from(
+      nodo.querySelectorAll<HTMLElement>(".js-carpeta-caja"),
+    );
+    const total = cartas.length;
+    if (!total) return;
 
-      /*
-       * Dónde se detienen las carpetas y cuánto miden. Los dos se MIDEN: el tope
-       * sale del alto real del título pegado, no de un número escrito a mano que
-       * se rompería en cuanto el texto envuelva a otro número de líneas.
-       */
-      const medir = () => {
-        const arriba = parseFloat(getComputedStyle(cab).top) || 0;
-        const tope = Math.round(arriba + cab.offsetHeight + ESCALON);
-        /* Lo que queda de pantalla bajo el título, menos el escalonado de las
-           cuatro y un respiro abajo. */
-        const respiro = Math.max(22, window.innerHeight * 0.05);
-        const libre =
-          window.innerHeight - tope - ESCALON * (total - 1) - respiro;
-        pila.style.setProperty("--tope", `${tope}px`);
-        pila.style.setProperty(
-          "--hueco",
-          `${Math.round(Math.max(300, Math.min(560, libre)))}px`,
-        );
-      };
-      medir();
-      window.addEventListener("resize", medir);
+    /*
+     * EL ALTO SE CALCULA Y EL ENCUADRE VA CONTRA LA VENTANA.
+     *
+     * ⚠ Centrar la carpeta en el hueco que queda bajo la cabecera parece lo
+     * correcto y no lo es: EL OJO NO DESCUENTA EL TÍTULO, lee la tarjeta contra
+     * la pantalla entera. Medido a 1440x900, repartir el hueco dejaba el centro
+     * de la carpeta en 549 contra los 450 de la ventana —casi 100 px por debajo,
+     * que es exactamente lo que se notaba—. Contra la ventana queda en 448.
+     *
+     * ⚠ Y EL SUELO DE `abajoCab + 24` NO SOBRA. Con el alto a 0.62 del libre, la
+     * carpeta es lo bastante grande como para que el centro geométrico la metería
+     * por debajo del título en pantallas bajas. Medido, el suelo gana al centro
+     * por 32 px a 1366x768 y por 38 a 1280x720: en portátiles de 13" es lo único
+     * que actúa.
+     */
+    const medir = () => {
+      const arriba = parseFloat(getComputedStyle(cab).top) || 0;
+      const abajoCab = arriba + cab.offsetHeight;
+      const libre = window.innerHeight - abajoCab;
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        return () => window.removeEventListener("resize", medir);
+      const alto = Math.round(Math.max(300, Math.min(560, libre * 0.62)));
+      const bloque = alto + ESCALON * (total - 1);
+      const tope = Math.round(
+        Math.max(abajoCab + 24, (window.innerHeight - bloque) / 2),
+      );
+
+      pila.style.setProperty("--hueco", `${alto}px`);
+      pila.style.setProperty("--tope", `${tope}px`);
+    };
+    medir();
+    window.addEventListener("resize", medir);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return () => window.removeEventListener("resize", medir);
+    }
+
+    /** Cuánto ha subido la siguiente sobre ésta, de 0 a 1. Ver la cabecera. */
+    const pintar = () => {
+      for (let i = 0; i < total; i++) {
+        let k = 0;
+        if (i < total - 1) {
+          const a = cartas[i].getBoundingClientRect();
+          const b = cartas[i + 1].getBoundingClientRect();
+          k = Math.max(
+            0,
+            Math.min(1, (a.bottom - b.top) / Math.max(1, a.height - ESCALON)),
+          );
+        }
+        cajas[i].style.transform = `scale(${(1 - ENCOGE * k).toFixed(4)})`;
+        cajas[i].style.filter = `brightness(${(1 - APAGA * k).toFixed(4)})`;
       }
+    };
+    pintar();
 
-      /** Del avance global sale cuánto le toca a cada carpeta. */
-      const cubrir = (avance: number) => {
-        const t = avance * total;
-        cajas.forEach((caja, i) => {
-          /* La carpeta i empieza a taparse cuando llega la i+1, y termina un
-             paso más allá. */
-          const k = Math.max(0, Math.min(1, t - (i + 1)));
-          caja.style.transform = `scale(${(1 - ENCOGE * k).toFixed(4)})`;
-          caja.style.filter = `brightness(${(1 - APAGA * k).toFixed(4)})`;
-        });
-      };
-      cubrir(0);
-
-      const disparador = ScrollTrigger.create({
-        trigger: pila,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.4,
-        invalidateOnRefresh: true,
-        onUpdate: (s) => cubrir(s.progress),
-        /* También en onRefresh: tras un resize el avance ya no es el mismo y sin
-           esto las carpetas se quedarían con el brillo del encuadre anterior. */
-        onRefresh: (s) => cubrir(s.progress),
+    /* Un fotograma por scroll como mucho: `pintar` lee ocho rectángulos y el
+       evento llega muchas más veces que eso. */
+    let pedido = false;
+    const alScroll = () => {
+      if (pedido) return;
+      pedido = true;
+      requestAnimationFrame(() => {
+        pedido = false;
+        pintar();
       });
+    };
+    window.addEventListener("scroll", alScroll, { passive: true });
+    window.addEventListener("resize", alScroll);
 
-      return () => {
-        window.removeEventListener("resize", medir);
-        disparador.kill();
-      };
-    },
-    { scope: raiz },
-  );
+    return () => {
+      window.removeEventListener("resize", medir);
+      window.removeEventListener("scroll", alScroll);
+      window.removeEventListener("resize", alScroll);
+    };
+  }, []);
 
   return (
     <section
@@ -136,7 +154,7 @@ export function CarpetasUnidades() {
       <div className="home-carpetas__pila js-carpetas-pila">
         {BUSINESS_UNITS.map((unidad, i) => (
           <article
-            className="home-carpetas__item"
+            className="home-carpetas__item js-carpeta"
             key={unidad.slug}
             /* El escalón y el apilado salen del índice, en CSS: así el orden lo
                lleva una sola declaración y sin JS la pila sigue funcionando. */
@@ -192,6 +210,21 @@ export function CarpetasUnidades() {
             </div>
           </article>
         ))}
+
+        {/*
+          EL ESPACIADOR DE COLA, y es un elemento y no un margen.
+
+          Una pegajosa se queda quieta mientras quepa en su contenedor, pero el
+          rectángulo contra el que se mide es EL CONTENEDOR MENOS SUS PROPIOS
+          MÁRGENES. O sea que el margen inferior de una pegajosa no le da ni un
+          píxel de pausa a sí misma: sólo empuja la posición estática de la
+          siguiente. La cuarta no tiene siguiente, así que llegaba a su sitio y
+          ahí mismo se le acababa el recorrido — y al acabarse, las cuatro se
+          soltaban de golpe. Eso es lo que se veía como atasco y salto.
+
+          Va fuera del map, como hermano de las cuatro. Ver .home-carpetas__cola.
+        */}
+        <div className="home-carpetas__cola" aria-hidden="true" />
       </div>
     </section>
   );

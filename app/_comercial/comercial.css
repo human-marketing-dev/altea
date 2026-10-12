@@ -645,6 +645,19 @@
   align-items: start;
   padding: clamp(24px, 3.4vw, 46px);
 }
+
+/*
+ * SIN DESCRIPCIÓN, UNA SOLA COLUMNA.
+ *
+ * Punto La Pastora todavía no tiene texto —el copy de Altea no lo trajo— y la
+ * ficha se compone sin él. Con las dos columnas puestas, el 66 % de la derecha
+ * quedaba vacío y la ficha se leía rota en vez de escueta. El `:has()` lo
+ * resuelve sin que el componente tenga que avisar de nada, que es lo mismo que
+ * hace la banda de giros unas líneas más arriba.
+ */
+.com-fx__cuerpo:not(:has(p)) {
+  grid-template-columns: minmax(0, 1fr);
+}
 .com-fx__datos {
   display: grid;
   gap: 14px;
@@ -1114,14 +1127,34 @@
   padding: 0;
   list-style: none;
 }
+/*
+ * LA TARJETA ES UN <button>, y antes era el propio <li>.
+ *
+ * Pasó a botón cuando los tres proyectos tuvieron ficha que abrir. Lo que se
+ * añade aquí es sólo el reseteo —un botón trae borde, relleno, tipografía y
+ * centrado propios— y el anillo de foco; el aspecto no cambia ni un píxel.
+ */
 .com-px {
   position: relative;
+  display: block;
+  width: 100%;
   /* 4/3 y no 3/4: tres tarjetas verticales en fila dejaban la sección en 572 px
      de alto por tarjeta a 1440. En 4/3 bajan a 322. */
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-lg);
   color: #fff;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.com-px:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 3px;
 }
 .com-px__img {
   object-fit: cover;

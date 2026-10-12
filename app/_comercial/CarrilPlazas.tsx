@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CarruselTarjetas } from "@/app/ui";
+import { FichaComercial } from "./FichaComercial";
 import type { Plaza } from "./content";
 import { GALERIA_PLAZAS, PLAZAS } from "./content";
 
@@ -34,18 +34,8 @@ import { GALERIA_PLAZAS, PLAZAS } from "./content";
  * pide un formato de tarjetas.
  */
 export function CarrilPlazas() {
-  const dialogo = useRef<HTMLDialogElement>(null);
   const [activa, setActiva] = useState<Plaza | null>(null);
   const origen = useRef<HTMLButtonElement | null>(null);
-
-  useEffect(() => {
-    const nodo = dialogo.current;
-    if (!nodo) return;
-    /* showModal y no `open`: es lo que atrapa el foco, habilita Escape y pinta el
-       ::backdrop sin escribir una línea para ello. */
-    if (activa && !nodo.open) nodo.showModal();
-    if (!activa && nodo.open) nodo.close();
-  }, [activa]);
 
   return (
     <CarruselTarjetas
@@ -75,81 +65,30 @@ export function CarrilPlazas() {
         setActiva(PLAZAS[k] ?? null);
       }}
     >
-      <dialog
-        ref={dialogo}
-        className="com-fx"
-        aria-label={activa ? `Ficha de ${activa.nombre}` : "Ficha de la plaza"}
-        onClose={() => {
+      <FichaComercial
+        contenido={
+          activa && {
+            nombre: activa.nombre,
+            foto: activa.foto,
+            fotoRatio: activa.fotoRatio,
+            alt: activa.alt,
+            /* Formato · Ubicación · Visitantes, en ese orden: el formato es lo
+               que clasifica la plaza y por eso abre. Los dos pares de `datos`
+               son Formato y Visitantes, así que la ubicación se intercala. */
+            datos: [
+              activa.datos[0],
+              { etiqueta: "Ubicación", valor: activa.ubicacion },
+              activa.datos[1],
+            ],
+            descripcion: activa.descripcion,
+          }
+        }
+        onCerrar={() => {
           setActiva(null);
           origen.current?.focus();
         }}
-        onClick={(evento) => {
-          // El backdrop es el propio <dialog>: un clic fuera cierra.
-          if (evento.target === dialogo.current) setActiva(null);
-        }}
-      >
-        {activa && (
-          <article>
-            <button
-              type="button"
-              className="com-fx__x"
-              onClick={() => setActiva(null)}
-              aria-label="Cerrar ficha"
-            >
-              ×
-            </button>
-
-            {/*
-              La foto arriba, a todo el ancho y con el nombre encima; los datos y
-              la descripción debajo. Lo que hace que entre sin barra no es la
-              estructura sino el tope de alto de la foto, en comercial.css.
-            */}
-            <div
-              className="com-fx__foto"
-              /* La proporción del archivo. Sin el dato, 3/2: es la de cinco de
-                 las ocho, así que un valor que falte falla por poco. */
-              style={{ ["--proporcion" as string]: activa.fotoRatio ?? 1.5 }}
-            >
-              {activa.foto && (
-                <Image
-                  src={activa.foto}
-                  alt={activa.alt}
-                  fill
-                  /* La caja ocupa el ancho entero del diálogo. */
-                  sizes="(max-width: 900px) 94vw, 1040px"
-                  className="com-fx__img"
-                />
-              )}
-              <h3 className="com-fx__nombre">{activa.nombre}</h3>
-            </div>
-
-            <div className="com-fx__cuerpo">
-              {/*
-                Formato · Ubicación · Visitantes, en ese orden: el formato es lo
-                que clasifica la plaza y por eso abre. Los dos pares de `datos`
-                son Formato y Visitantes, así que la ubicación se intercala.
-                Donde el copy no da visitantes va un guion, no un número
-                inventado — hoy sólo los tienen Paseo La Fe y Paseo Juárez.
-              */}
-              <dl className="com-fx__datos">
-                <div className="com-fx__d">
-                  <dt>{activa.datos[0].etiqueta}</dt>
-                  <dd>{activa.datos[0].valor ?? "—"}</dd>
-                </div>
-                <div className="com-fx__d">
-                  <dt>Ubicación</dt>
-                  <dd>{activa.ubicacion}</dd>
-                </div>
-                <div className="com-fx__d">
-                  <dt>{activa.datos[1].etiqueta}</dt>
-                  <dd>{activa.datos[1].valor ?? "—"}</dd>
-                </div>
-              </dl>
-              <p>{activa.descripcion}</p>
-            </div>
-          </article>
-        )}
-      </dialog>
+        etiquetaVacia="Ficha de la plaza"
+      />
     </CarruselTarjetas>
   );
 }

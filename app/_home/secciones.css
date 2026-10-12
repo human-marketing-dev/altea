@@ -240,11 +240,21 @@
   margin-bottom: 42svh;
   will-change: transform;
 }
-/* La última no lo lleva: el suyo no se lo daría a ella sino a una siguiente que
-   no existe. Su pausa la pone .home-carpetas__cola. */
-.home-carpetas__item:last-of-type {
-  margin-bottom: 0;
-}
+/*
+ * ⚠ LAS CUATRO LLEVAN EL MISMO MARGEN, Y LA ÚLTIMA TAMBIÉN. No lo quites.
+ *
+ * Hubo un `:last-of-type { margin-bottom: 0 }` aquí, con el razonamiento de que
+ * el margen de la última no se lo da a ella sino a una siguiente que no existe.
+ * Es cierto, pero deja a la última midiéndose contra un rectángulo distinto que
+ * las otras tres, y EL ORDEN DE SALIDA SE VUELVE ARBITRARIO: medido a 1440x900,
+ * las tres primeras se soltaban a y≈3300 y la cuarta 360 px después. O sea al
+ * revés de lo que toca — durante esos 360 px las de atrás subían con la cuarta
+ * clavada, y la que se veía irse era la tercera.
+ *
+ * El orden correcto es DE ARRIBA HACIA ABAJO, la de encima primero, separadas
+ * por el mismo escalón que las separa en pantalla: así la de encima nunca
+ * descubre a las de atrás. Y para eso las cuatro tienen que medirse igual.
+ */
 
 /*
  * LA COLA, que es la pausa de la última y tiene que ser un ELEMENTO.
@@ -254,20 +264,26 @@
  *
  *   recorrido disponible = fondo del contenedor − margen propio − base estática
  *
+ * Así que el margen de la última no le da ni un píxel de pausa a sí misma: se la
+ * da esta cola. Y mide ALTO MÁS PAUSA, no sólo la pausa — con 42svh a secas la
+ * cuarta quedaba quieta 360 px contra los ~790 de las otras tres, porque a ellas
+ * la siguiente les llega un alto de tarjeta más tarde.
+ *
  * Dos arreglos que NO sirven, para no perder el tiempo en ellos:
  *
  *   · `display: flow-root` en la pila, para que el margen del último hijo no se
  *     colapse fuera. Arregla el alto del contenedor —de 2846 a 3224 px— y no el
- *     síntoma: ese margen se vuelve a restar al medir, y las cuatro seguían
- *     soltándose juntas en y=2700.
+ *     síntoma: ese margen se vuelve a restar al medir.
  *   · `padding-bottom` en la pila. Peor: no extiende el rectángulo y además
- *     adelanta la salida de las tres primeras. La primera se soltaba en y=2350,
- *     antes de que llegara la cuarta, dejando un hueco.
+ *     adelanta la salida de las tres primeras, dejando un hueco antes de que
+ *     llegue la cuarta.
  *
  * Un hermano con alto propio sí extiende el contenedor sin restarse de nada.
  */
 .home-carpetas__cola {
-  height: 42svh;
+  /* --alto-carpeta es el alto REAL de la carpeta, que en móvil no es --hueco.
+     Ver la nota de `medir` en CarpetasUnidades.tsx. */
+  height: calc(var(--alto-carpeta, var(--hueco, 58svh)) + 42svh);
 }
 
 .home-carpetas__caja {
@@ -661,8 +677,10 @@
     /* La pila deja de competir por altura, así que la pausa también baja. */
     margin-bottom: 30svh;
   }
+  /* La misma fórmula con la pausa de móvil: si se queda en 30svh a secas, la
+     última vuelve a durar menos que las otras tres. */
   .home-carpetas__cola {
-    height: 30svh;
+    height: calc(var(--alto-carpeta, 66svh) + 30svh);
   }
   .home-ficha__cuerpo {
     grid-template-columns: 1fr;

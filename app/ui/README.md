@@ -65,9 +65,10 @@ Same visual output, different mechanics — worth knowing before you diff:
    the home wireframe asks for; SSRs the final value and honours
    `prefers-reduced-motion`).
 9. **Forestal is a fourth business unit.** The home wireframe lists it in the
-   nav and in the unit grid, but the design system has no lockup, no colour and
-   no copy for it — `assets/business-units/` only covers Comercial, Industrial
-   and Vivienda. It currently renders as a text label. Needs upstream work.
+   nav and in the unit grid. It now has a colour (`#d5b39b`, supplied by the
+   brand owner and recorded in `BUSINESS_UNITS`), but the design system still
+   has no lockup and no copy for it — `assets/business-units/` only covers
+   Comercial, Industrial and Vivienda. The lockup still needs upstream work.
 
 ## Pending from the brand owner
 

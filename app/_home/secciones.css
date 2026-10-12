@@ -306,16 +306,18 @@
 /*
  * ═══ LAS TARJETAS CON COLOR DE UNIDAD ═══════════════════════════════════
  *
- * Comercial #FDCE5B, Industrial #5697D0 y Vivienda #9CD5AA. Forestal no tiene
- * color y se queda con el ink de arriba, texto cream y acento coral.
+ * Comercial #FDCE5B, Industrial #5697D0, Vivienda #9CD5AA y Forestal #d5b39b.
+ * Las cuatro, ya no tres: Forestal se quedaba en ink con texto cream y acento
+ * coral porque no tenía color, y ahora lo tiene.
  *
  * TODO el texto pasa a ink, y no es una preferencia: es la única tinta que
- * funciona en las tres. Medido contra cada color —ink / cream / coral /
+ * funciona en las cuatro. Medido contra cada color —ink / cream / coral /
  * coral-dark / blanco—:
  *
  *   Comercial   10.75   1.12   2.21   2.94   1.48
  *   Industrial   5.11   2.36   1.05   1.40   3.12
  *   Vivienda     9.50   1.27   1.95   2.59   1.68
+ *   Forestal     8.17   1.48   1.68   2.23   1.95
  *
  * El coral no llega ni al 3.0 de texto grande en ninguna, así que desaparece de
  * estas tarjetas: la frase de apertura y la raya del enlace pasan a ink. La
@@ -323,12 +325,13 @@
  * opacidad —ink puro contra ink al 80%—, que al mezclarse con el fondo se queda
  * dentro de la paleta de la unidad.
  *
- * Industrial es el que manda en la rampa: ink al 100% da 5.11, al 80% 3.79 y al
- * 70% 3.18. De ahí el 80% y no el 70.
+ * Industrial sigue mandando en la rampa: ink al 100% da 5.11, al 80% 3.79 y al
+ * 70% 3.18. De ahí el 80% y no el 70. Forestal entra holgado —8.17, 5.31 y
+ * 4.16— y no mueve el cálculo.
  *
  * ⚠ Ese 3.79 de Industrial pasa el 3.0 de gráfico pero NO el 4.5 de texto de
- * cuerpo; en Comercial y Vivienda el mismo 80% da 6.49 y 5.89. Es el único punto
- * de las cuatro tarjetas que se queda corto, y sólo en una. Ver el reporte.
+ * cuerpo; en las otras tres el mismo 80% da 6.49, 5.89 y 5.31. Sigue siendo el
+ * único punto de las cuatro tarjetas que se queda corto, y sólo en una.
  */
 .home-carpetas__caja[data-tono="color"] {
   color: var(--altea-ink);

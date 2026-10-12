@@ -62,12 +62,13 @@ export interface BusinessUnitCard {
    * Color de la unidad, para el fondo de su carpeta.
    *
    * Sin color, la carpeta se queda en ink con el texto en cream, que es el
-   * tratamiento original. Es el caso de Forestal: Altea no le ha dado color, y no
-   * tiene ni lockup propio en el sistema de diseño.
+   * tratamiento original. Hoy no es el caso de ninguna: las cuatro lo tienen.
+   * Forestal fue la última en recibirlo y sigue sin lockup propio en el sistema
+   * de diseño.
    *
-   * Los tres colores son claros, así que en esas tarjetas TODO el texto va en ink
-   * —medido, es la única tinta que funciona en las tres— y el coral desaparece.
-   * Ver el bloque [data-tono="color"] en secciones.css.
+   * Los cuatro colores son claros, así que en estas tarjetas TODO el texto va en
+   * ink —medido, es la única tinta que funciona en las cuatro— y el coral
+   * desaparece. Ver el bloque [data-tono="color"] en secciones.css.
    */
   color?: string;
   /**
@@ -86,7 +87,8 @@ export interface BusinessUnitCard {
 export const BUSINESS_UNITS_INTRO = {
   /** Va entero en coral; ver .home-units__titulo. */
   titulo: "Unidades de Negocio",
-  descripcion: "Una visión integral, múltiples formas de transformar el territorio.",
+  descripcion:
+    "Una visión integral, múltiples formas de transformar el territorio.",
 };
 
 /** Fotografía de /images/home/unidades-de-negocio/, la carpeta que Altea armó
@@ -123,14 +125,14 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
     alt: "Desarrollo de vivienda de Altea",
   },
-  // Cuarta unidad del wireframe. El design system aún no tiene lockup ni color
-  // para Forestal — ver app/ui/README.md.
+  // Cuarta unidad del wireframe. Ya tiene color; lockup propio sigue sin tener
+  // — ver app/ui/README.md.
   {
     name: "Forestal",
     slug: "forestal",
+    color: "#d5b39b",
     apertura: "Plantación y manejo forestal a largo plazo.",
-    descripcion:
-      "Servicios que sostienen el compromiso ambiental.",
+    descripcion: "Servicios que sostienen el compromiso ambiental.",
     image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
     alt: "Plantación de teca, división forestal de Altea",
   },
@@ -172,8 +174,22 @@ export const EMBLEM = {
      `gap: 0 0.26em`: ese hueco es el espaciado entre palabras, no un espacio
      de texto. */
   palabras: [
-    "Nuestra", "verdadera", "escala", "no", "se", "mide", "en", "el",
-    "concreto", "que", "levantamos,", "sino", "en", "la", "vida", "que",
+    "Nuestra",
+    "verdadera",
+    "escala",
+    "no",
+    "se",
+    "mide",
+    "en",
+    "el",
+    "concreto",
+    "que",
+    "levantamos,",
+    "sino",
+    "en",
+    "la",
+    "vida",
+    "que",
     "detonamos.",
   ],
   /**
@@ -262,7 +278,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "San Nicolás, Nuevo León",
     image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
     descripcion:
-      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales, de entretenimiento y experiencias de la zona metropolitana de Monterrey."
+      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales, de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
   },
   {
     estado: "En operación",
@@ -273,7 +289,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea.webp",
     descripcion:
-      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad."
+      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
   },
   {
     estado: "En operación",
@@ -285,7 +301,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Saltillo, Coahuila",
     image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp",
     descripcion:
-      "Proyecto de remodelación desarrollado en colaboración con el Aeropuerto Internacional Plan de Guadalupe, en Saltillo, Coahuila; enfocado en la reactivación del aeropuerto y en la generación de nuevas oportunidades de negocio para la región."
+      "Proyecto de remodelación desarrollado en colaboración con el Aeropuerto Internacional Plan de Guadalupe, en Saltillo, Coahuila; enfocado en la reactivación del aeropuerto y en la generación de nuevas oportunidades de negocio para la región.",
   },
   {
     estado: "En operación",
@@ -298,9 +314,10 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     // proyectos lo zanja en Salamanca, Guanajuato.
     location: "Salamanca, Guanajuato",
     // El nombre del archivo trae una errata de origen ("undustrial").
-    image: "/images/industrial/naves-industriales/bajio-undustrial-park-altea.webp",
+    image:
+      "/images/industrial/naves-industriales/bajio-undustrial-park-altea.webp",
     descripcion:
-      "Parque industrial estratégicamente ubicado en la entrada de la planta Mazda, con acceso directo a la carretera libre (45) Salamanca-Irapuato y lateral a la carretera de cuota a León. Su conectividad facilita las operaciones industriales, logísticas y el acceso a los principales corredores productivos de la región."
+      "Parque industrial estratégicamente ubicado en la entrada de la planta Mazda, con acceso directo a la carretera libre (45) Salamanca-Irapuato y lateral a la carretera de cuota a León. Su conectividad facilita las operaciones industriales, logísticas y el acceso a los principales corredores productivos de la región.",
   },
   {
     estado: "En desarrollo",
@@ -312,9 +329,10 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Apodaca, Nuevo León",
     /* Resuelto: decía "Center" y el archivo decía "Park". Es el mismo desarrollo
        y el nombre que vale es Park, el del archivo. El slug se movió con él. */
-    image: "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
+    image:
+      "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
     descripcion:
-      "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque industrial que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey."
+      "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque industrial que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.",
   },
   {
     estado: "En desarrollo",
@@ -327,7 +345,6 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Zona Sur de Monterrey, Nuevo León",
     image: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
     descripcion:
-      "Próximo desarrollo de lotes residenciales ubicado en la Zona Sur de Monterrey, sobre Carretera Nacional. Un proyecto que integra ubicación estratégica y amenidades de alto nivel, creando un entorno pensado para vivir, crecer y construir patrimonio."
+      "Próximo desarrollo de lotes residenciales ubicado en la Zona Sur de Monterrey, sobre Carretera Nacional. Un proyecto que integra ubicación estratégica y amenidades de alto nivel, creando un entorno pensado para vivir, crecer y construir patrimonio.",
   },
 ];
-

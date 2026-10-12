@@ -73,9 +73,13 @@ export function CarpetasUnidades() {
         /* Lo que queda de pantalla bajo el título, menos el escalonado de las
            cuatro y un respiro abajo. */
         const respiro = Math.max(22, window.innerHeight * 0.05);
-        const libre = window.innerHeight - tope - ESCALON * (total - 1) - respiro;
+        const libre =
+          window.innerHeight - tope - ESCALON * (total - 1) - respiro;
         pila.style.setProperty("--tope", `${tope}px`);
-        pila.style.setProperty("--hueco", `${Math.round(Math.max(300, Math.min(560, libre)))}px`);
+        pila.style.setProperty(
+          "--hueco",
+          `${Math.round(Math.max(300, Math.min(560, libre)))}px`,
+        );
       };
       medir();
       window.addEventListener("resize", medir);
@@ -118,7 +122,11 @@ export function CarpetasUnidades() {
   );
 
   return (
-    <section className="home-carpetas" ref={raiz} aria-labelledby="carpetas-titulo">
+    <section
+      className="home-carpetas"
+      ref={raiz}
+      aria-labelledby="carpetas-titulo"
+    >
       <div className="home-carpetas__cab js-carpetas-cab">
         <h2 className="home-carpetas__titulo" id="carpetas-titulo">
           {BUSINESS_UNITS_INTRO.descripcion}
@@ -137,23 +145,32 @@ export function CarpetasUnidades() {
             {/*
               data-tono en vez de una clase por unidad: el CSS sólo necesita saber
               si el fondo es claro o ink, y el color concreto entra como variable.
-              Así añadir el color de Forestal el día que Altea lo dé es una línea en
-              el archivo de contenido y ni una en la hoja.
+              Añadir el color de Forestal fue exactamente eso: una línea en el
+              archivo de contenido y ni una en la hoja. La rama `ink` se queda
+              para la unidad que llegue sin color.
             */}
             <div
               className="home-carpetas__caja js-carpeta-caja"
               data-tono={unidad.color ? "color" : "ink"}
-              style={unidad.color ? ({ ["--u-color" as string]: unidad.color }) : undefined}
+              style={
+                unidad.color
+                  ? { ["--u-color" as string]: unidad.color }
+                  : undefined
+              }
             >
               <div className="home-carpetas__txt">
                 <span className="home-carpetas__num" aria-hidden="true">
-                  {String(i + 1).padStart(2, "0")} / {String(BUSINESS_UNITS.length).padStart(2, "0")}
+                  {String(i + 1).padStart(2, "0")} /{" "}
+                  {String(BUSINESS_UNITS.length).padStart(2, "0")}
                 </span>
                 <div>
                   <h3 className="home-carpetas__nombre">{unidad.name}</h3>
                   <p className="home-carpetas__frase">{unidad.apertura}</p>
                   <p className="home-carpetas__desc">{unidad.descripcion}</p>
-                  <Link className="home-carpetas__ir" href={ruta(`/${unidad.slug}`)}>
+                  <Link
+                    className="home-carpetas__ir"
+                    href={ruta(`/${unidad.slug}`)}
+                  >
                     Explorar
                     <span className="home-carpetas__raya" aria-hidden="true" />
                     <span className="sr-only"> {unidad.name}</span>

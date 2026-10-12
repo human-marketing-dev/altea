@@ -590,22 +590,71 @@
  * ⚠ A TODO EL ANCHO, LA FICHA SE DESPLAZA EN VENTANAS BAJAS, y es una decisión
  * tomada, no un descuido. Sobre 1040 px de diálogo, una foto de 3/2 mide 693 de
  * alto; con los 267 del cuerpo, la ficha pide 960 px y en una ventana de 700 hay
- * 602. Entra sin barra desde unos 1120 px de alto de ventana.
+ * 602.
  *
  * Las dos únicas salidas para que entrara en 700 eran recortar —lo que esto
  * resuelve— o sacar la foto del ancho del diálogo y centrarla más angosta. Entre
  * desplazar y recortar, se desplaza: el diálogo ya tiene `overflow: auto` y la
  * barra es reversible, el recorte no.
+ *
+ * ──────────────────────────────────────────────────────────────────────────
+ * Y UNA EXCEPCIÓN POR ALTO DE VENTANA, que no contradice lo anterior
+ *
+ * La regla de arriba compara "la foto entera" contra "la foto recortada". Por
+ * debajo de cierto alto de ventana esa no es la comparación: lo que hay enfrente
+ * es "la foto entera FUERA DE PANTALLA", con el cuerpo —los tres datos y la
+ * descripción— por debajo de la línea de flotación y una barra que hay que
+ * descubrir. Ahí recortar gana, porque lo que se pierde es una franja de foto y
+ * lo que se gana es que se vea de qué va la ficha.
+ *
+ * ⚠ Y NO ES UNA MEDIA QUERY DE ALTO, AUNQUE ASÍ EMPEZÓ. Un escalón no puede
+ * cumplir las dos cosas a la vez, y se ve midiendo. Con el corte en 820 px y la
+ * foto a 42svh —Paseo La Fe, que es 3:2 y la foto más alta de las ocho—:
+ *
+ *   ventana 1200   desborda   0      ventana  860   desborda 225
+ *   ventana 1000   desborda 105      ventana  820   desborda   0   (entra el tope)
+ *   ventana  900   desborda 191      ventana  700   desborda   0
+ *
+ * O sea que arregla por debajo de 821 y deja sin arreglar de 830 a 1150, que es
+ * justo donde está la mayoría de los portátiles. Y subir el corte tampoco vale:
+ * a 1150 un 42svh son 483 px contra los 693 de su proporción, así que recortaría
+ * un 30 % en una ventana donde cabía entera.
+ *
+ * Lo que sí cumple las dos es que CEDA LA FOTO Y SÓLO LO QUE HAGA FALTA. El
+ * artículo es una rejilla de dos filas con la misma cota de alto que el diálogo:
+ * el cuerpo pide lo que mide su texto —`auto`, nunca se recorta— y la foto se
+ * queda con el resto. Donde hay sitio, la fila se resuelve en su tamaño de
+ * contenido y la proporción del archivo se respeta EXACTA, que es lo que defiende
+ * la nota de arriba; donde no lo hay, encoge lo justo y ni un píxel más.
+ *
+ * Es el mismo mecanismo que la ficha de proyectos del home, y arrastra sus dos
+ * trampas: `place-self: stretch` explícito —un elemento con `aspect-ratio` y
+ * alineación `normal` se comporta como `start`, así que sin esto la foto se sale
+ * de su fila y tapa el cuerpo— y el suelo en la FILA y no en la foto.
+ *
+ * El `object-position` al 30 % decide QUÉ se pierde cuando toca recortar: estas
+ * ocho son tomas de arquitectura con cielo arriba, así que subiendo el encuadre
+ * lo que se va es cielo y no la parte alta del edificio. Donde no hay recorte no
+ * hace nada, así que no necesita condición.
  */
+.com-fx > article {
+  max-height: inherit;
+  display: grid;
+  grid-template-rows: minmax(150px, 1fr) auto;
+}
 .com-fx__foto {
   position: relative;
   --proporcion: 1.5;
   width: 100%;
   aspect-ratio: var(--proporcion);
   overflow: hidden;
+  /* Ver la nota de arriba: sin esto la proporción gana y la foto tapa el cuerpo. */
+  place-self: stretch;
 }
 .com-fx__img {
   object-fit: cover;
+  /* Lo que se pierde cuando la foto cede es cielo, no el edificio. */
+  object-position: center 30%;
 }
 /* El velo que sostiene el nombre. Sólo en el tercio de abajo: un velo entero
    apagaría la foto, y lo único que hay que garantizar es el contraste del nombre. */

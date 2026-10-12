@@ -7,23 +7,31 @@ import type { Plaza } from "./content";
 import { GALERIA_PLAZAS, PLAZAS } from "./content";
 
 /**
- * Las ocho plazas, en el mismo recorrido horizontal que los proyectos del home.
+ * Las ocho plazas, en carrusel, con la misma tarjeta que los proyectos del home.
  *
- * El carril y la tarjeta son <CarruselTarjetas> en ui/: aquí sólo está lo propio
- * de comercial —qué dice cada tarjeta y qué ficha abre—.
+ * La tarjeta es <TarjetaProyecto> y el movimiento <CarruselTarjetas>, las dos en
+ * ui/. Aquí sólo está lo propio de comercial: qué dice cada tarjeta y qué ficha
+ * abre.
+ *
+ * ⚠ EL MOVIMIENTO NO ES EL DEL HOME, Y ES DELIBERADO. Allá el carril se fija y
+ * lo arrastra el scroll de la página; aquí no cabe, porque EL HERO DE
+ * /comercial YA ESTÁ FIJADO y dos bloques seguidos que secuestran el scroll
+ * marean —bajas y no avanzas—. El carrusel se mueve a mano: entra quien quiera
+ * ver las ocho y el resto sigue bajando.
  *
  * ────────────────────────────────────────────────────────────────────────────
  * ANTES ERA UN ÍNDICE, Y SE FUE ENTERO
  *
  * Eran filas de texto —nombre, ubicación, formato y visitantes— separadas por
  * línea fina, con una foto que perseguía al cursor con retraso y se inclinaba
- * según la velocidad. Con el carril no hay dónde ponerla: la foto ya está en la
- * tarjeta, a tamaño grande y quieta, así que un visor flotante repetiría la
+ * según la velocidad. Con las tarjetas no hay dónde ponerla: la foto ya está en
+ * la tarjeta, a tamaño grande y quieta, así que un visor flotante repetiría la
  * misma imagen dos veces. Se fueron con él .com-ix y .com-visor de la hoja.
  *
  * Lo que sí se pierde y conviene saberlo: el índice enseñaba los cuatro datos de
- * las ocho plazas DE UNA VEZ, y el carril enseña dos por tarjeta y obliga a
- * abrir la ficha para el resto. Es el trato que pide un formato de tarjetas.
+ * las ocho plazas DE UNA VEZ, y la tarjeta enseña tres —nombre, ciudad y
+ * formato— y manda los visitantes y la descripción a la ficha. Es el trato que
+ * pide un formato de tarjetas.
  */
 export function CarrilPlazas() {
   const dialogo = useRef<HTMLDialogElement>(null);

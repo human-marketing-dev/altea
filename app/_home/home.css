@@ -156,7 +156,8 @@
 /* ============================== Video ============================= */
 /* A sangre: sin padding lateral ni inferior. La separación con la sección
    siguiente la pone el padding superior de la que venga detrás —hoy
-   .home-carpetas, en secciones.css—, no esta. */
+   .home-carpetas, en secciones.css—, no esta. En móvil deja de ir a sangre y
+   arranca en el margen de página, --container-pad, como todo lo demás. */
 .home-video { background: var(--surface-page); padding: 0; }
 /* Despegado como el hero, con el mismo margen y radio. */
 /*
@@ -690,7 +691,8 @@
 
 /* --- Móvil --- */
 @media (max-width: 900px) {
-  .home-video__frame { margin: var(--space-3); }
+  /* El lateral es el margen de página; el vertical se queda como estaba. */
+  .home-video__frame { margin: var(--space-3) var(--container-pad); }
   .home-hero {
     margin: var(--space-3);
     min-height: 72vh;

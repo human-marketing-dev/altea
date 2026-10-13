@@ -60,7 +60,9 @@
   position: relative;
   z-index: 3;
   align-self: center;
-  padding: clamp(100px, 16vh, 190px) clamp(16px, 3vw, 40px)
+  /* El margen de página a los dos lados: en móvil el derecho ES el borde de la
+     ventana; en escritorio es el hueco hasta la nube, con el mismo valor. */
+  padding: clamp(100px, 16vh, 190px) var(--container-pad)
     clamp(20px, 3vh, 44px) var(--container-pad);
   width: min(100%, 54vw);
 }
@@ -195,6 +197,16 @@
 }
 .nos-origen__cols p {
   margin: 0;
+  /*
+   * Tope de medida propio: la columna mide menos de 1280, así que
+   * --container-max no la alcanza, y a 1920 llegaba a 92 caracteres por línea.
+   *
+   * ⚠ EN GOTHAM 1ch NO ES UN CARÁCTER. Es el ancho del «0», 0.724 em, y el
+   * carácter medio de este texto mide 0.518 em: 62ch son unos 87 caracteres
+   * reales. Con este valor la línea queda en 74 a 1440 (la columna es más
+   * estrecha que el tope) y en 87 a 1920.
+   */
+  max-width: 62ch;
   line-height: 1.74;
   font-size: clamp(1rem, 1.15vw, 1.14rem);
   /* 6.45. */
@@ -283,6 +295,9 @@
     clamp(56px, 10vh, 120px);
 }
 .nos-firma__cab {
+  /* La medida máxima del texto, alineada a la izquierda: arranca en el margen y
+     deja de estirarse a los 1280. Ver --container-max. */
+  max-width: var(--container-max);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 44%);
   gap: clamp(24px, 5vw, 86px);

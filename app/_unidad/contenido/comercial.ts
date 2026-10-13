@@ -1,4 +1,19 @@
 import { PROYECTOS } from "@/lib/proyectos";
+import type {
+  Cifra,
+  ContenidoUnidad,
+  Giro,
+  Marca,
+  Proyecto,
+} from "../tipos";
+import { ANCLA_POR_DEFECTO, RATIO_POR_DEFECTO } from "../tipos";
+import { colorDeUnidad } from "@/lib/color-unidad";
+import { BANDERA_ALTEA } from "./marca";
+
+/** Los nombres de siempre en este archivo; la forma vive en ../tipos. */
+export type Plaza = Proyecto;
+export type MarcaComercial = Marca;
+export type { Cifra, Giro };
 
 /**
  * Contenido de la página de Comercial.
@@ -166,17 +181,6 @@ const CENTROS_COMERCIALES = PROYECTOS.filter((p) =>
 );
 const ESTADOS_COMERCIAL = new Set(CENTROS_COMERCIALES.map((p) => p.estado));
 
-export interface Cifra {
-  /** Signo que va ANTES del número, en coral. */
-  prefijo?: string;
-  /** El número, sin unidad ni signo, y sin formatear: lo cuenta <CountUp>. */
-  valor: number;
-  /** La unidad o el signo que va DESPUÉS, en coral: "M", "%"… */
-  signo?: string;
-  etiqueta: string;
-  /** Lo que lee el lector de pantalla: la cifra entera, sin partir. */
-  lectura: string;
-}
 
 /*
  * Las tres, confirmadas por Altea.
@@ -196,18 +200,15 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
     valor: 3,
     signo: "M",
     etiqueta: "de visitantes al mes",
-    lectura: "Más de 3 millones de visitantes al mes",
   },
   {
     valor: 34,
     etiqueta: "inmuebles comerciales",
-    lectura: "34 inmuebles comerciales",
   },
   {
     valor: 94,
     signo: "%",
     etiqueta: "Tasa de ocupación",
-    lectura: "94 por ciento de tasa de ocupación",
   },
 ];
 
@@ -288,62 +289,7 @@ export const DESCRIPCION_COMERCIAL = {
 
 /* ====================== 5 · Galería de plazas ====================== */
 
-export interface Plaza {
-  id: string;
-  nombre: string;
-  ubicacion: string;
-  foto?: string;
-  /**
-   * La proporción REAL del archivo, ancho/alto, medida del contenedor WebP.
-   *
-   * La caja de la ficha la adopta tal cual, así que `cover` no recorta nada. Va
-   * en el contenido y no calculada porque el recorte se decide al pintar, antes
-   * de que el navegador sepa cuánto mide la imagen: sin el dato de antemano la
-   * caja tendría que esperar a la carga y la ficha daría un salto de alto.
-   *
-   * ⚠ SI SE CAMBIA UNA FOTO, HAY QUE MEDIRLA Y ACTUALIZAR ESTE NÚMERO. Un valor
-   * que no corresponda al archivo devuelve el recorte, que es justo lo que esto
-   * resuelve.
-   */
-  fotoRatio?: number;
-  /**
-   * Qué punto del ALTO de la foto se alinea con el centro de la ventana en el
-   * hero calado. 0 es el borde de arriba, 1 el de abajo, 0.5 la foto centrada.
-   *
-   * ⚠ ES UNA CORRECCIÓN POR ARCHIVO Y NO PUEDE SER UNA CONSTANTE, igual que
-   * `tinta` y `alza` en los logotipos del muro de marcas.
-   *
-   * La palabra calada no está en el centro vertical —las cifras la empujan hacia
-   * arriba—, así que su banda cae en el tercio alto de la ventana. Con la foto
-   * centrada, ese tercio es CIELO o LONA en casi todas: son tomas de
-   * arquitectura con el edificio por debajo de la mitad. En Paseo Durango la
-   * palabra quedaba ilegible, y el velo del 25 % no podía salvarla porque el
-   * problema no era de contraste sino que ahí no había nada que enseñar.
-   *
-   * No hay un valor único posible: con 0.58 para todas, Durango quedaba bien y
-   * Juárez se iba al estacionamiento. En una el edificio está abajo y en la otra
-   * a media altura.
-   *
-   * EL SÍNTOMA DE UN ANCLA MAL PUESTA es que dentro de las letras se vea cielo o
-   * asfalto en vez del edificio. Se mira renderizado, no se calcula.
-   *
-   * El margen donde moverse lo da SOBRE_CUBRE en HeroCalado: un `cover` a secas
-   * deja unos 60 px de holgura vertical en una foto 3:2 sobre una ventana de
-   * 900, y con eso no se desplaza nada.
-   */
-  ancla?: number;
-  alt: string;
-  label: string;
-  descripcion: string;
-  /** Exactamente dos pares para el <dl> de la ficha. */
-  datos: [ParDato, ParDato];
-}
 
-export interface ParDato {
-  etiqueta: string;
-  /** `undefined` = dato que el copy no da; la ficha pinta un guion. */
-  valor?: string;
-}
 
 /**
  * Las ocho plazas, con el copy confirmado por Altea.
@@ -536,27 +482,6 @@ export const GALERIA_PLAZAS = {
 
 const OTROS = "/images/comercial";
 
-export interface Giro {
-  id: string;
-  /** Ordinal grande al lado del texto, p. ej. "01". */
-  numero: string;
-  title: string;
-  description: string;
-  image: string;
-  alt: string;
-  /**
-   * PENDIENTE — NO EXISTE TODAVÍA en ninguno de los tres. Versalitas cortas
-   * bajo el título; algo como "Cuatro operaciones" o "Tránsito diario". Sin
-   * valor, la fila no lo pinta y se compone igual.
-   */
-  subtitulo?: string;
-  /**
-   * PENDIENTE — NO EXISTE TODAVÍA en ninguno de los tres. Caja de remate al pie
-   * del texto: una etiqueta corta y una frase con el dato. Sin valor, no se
-   * pinta.
-   */
-  remate?: { etiqueta: string; frase: string };
-}
 
 /*
  * Los tres tienen número, título, descripción y foto. Les faltan `subtitulo` y
@@ -633,78 +558,6 @@ export const TITULO_MARCAS = "Marcas que operan en nuestros centros";
 
 const MARCAS_DIR = "/images/comercial/logos-marcas";
 
-export interface MarcaComercial {
-  nombre: string;
-  src: string;
-  /**
-   * Proporción ancho/alto DEL LIENZO. Es la que tiene el elemento <img>, así que
-   * de ella salen los atributos width/height y el ancho que ocupa en la celda.
-   *
-   * Medida de los 32 archivos, no estimada: van de 0.94 (IMSS, más alto que
-   * ancho) a 5.60 (Bodega Aurrera), con la celda en 1.67.
-   */
-  ratio: number;
-  /**
-   * Fracción del ALTO del lienzo que es tinta: 1 menos el margen transparente de
-   * arriba y abajo. Va de 0.42 a 0.90 en los 32.
-   *
-   * El alto que se le pide al <img> se divide entre esto, porque lo que tiene que
-   * medir lo mismo entre logotipos es la MANCHA, no el recuadro que la contiene.
-   */
-  tinta: number;
-  /**
-   * Proporción de la MANCHA, que no es la del lienzo. La diferencia llega a ser
-   * grande: Banorte declara 5.14:1 y su tinta es 8.11:1; KFC declara 1.29 y su
-   * tinta es 1.00 exacto.
-   *
-   * Es la que entra en la corrección óptica. Alimentarla con la del lienzo era el
-   * error: corregía por la forma del archivo en vez de por la de la marca.
-   */
-  rTinta: number;
-  /**
-   * Subida vertical, en fracción del alto del propio logotipo. Negativo sube.
-   *
-   * ⚠ SÓLO LA LLEVAN LOS LOCKUPS APILADOS, y es una corrección de ALINEACIÓN, no
-   * de tamaño. Son dos cosas distintas y conviene no confundirlas.
-   *
-   * En los 29 logotipos restantes el nombre de la marca ES el logotipo entero, así
-   * que centrar el recuadro deja las letras sobre la línea media de la fila y todo
-   * el muro se lee como un renglón. En tres —Bolerama, IMSS y KFC— el símbolo va
-   * ENCIMA y el nombre debajo: centrar el recuadro deja el símbolo sobre la línea
-   * y el nombre colgando por abajo, fuera del renglón.
-   *
-   * La prueba de que es alineación y no tamaño está en Boston Pizza: es igual de
-   * alto y también es insignia más texto, pero ahí el símbolo va AL LADO, el nombre
-   * cruza la línea, y nunca se vio mal.
-   *
-   * Los valores son la MITAD de lo que haría falta para poner el nombre justo sobre
-   * la línea. Con la corrección entera el símbolo se va al borde superior de la
-   * celda y la marca se ve despegada; con la mitad, el nombre llega al renglón y el
-   * conjunto sigue dentro de su hueco. Comprobado renderizando el muro.
-   */
-  alza?: number;
-  /**
-   * Multiplicador de tamaño sobre el alto que le tocaría por fórmula. 1 = sin tocar.
-   *
-   * ⚠ ES UNA EXCEPCIÓN DELIBERADA AL TOPE DE BANDA, no un parche. Lo llevan los
-   * tres logotipos que, ya con la geometría correcta, se seguían leyendo pequeños
-   * en el muro: Bolerama, C&A, IMSS y KFC. Son marcas de mancha compacta y
-   * encerrada —una insignia, un marco, una cubeta— y a igual alto pesan menos que
-   * un wordmark que cruza la celda de lado a lado.
-   *
-   * El tope de banda los deja a todos clavados en el mismo alto, que es lo correcto
-   * por defecto; estos cuatro lo rebasan un 30 %, afinado mirando el muro
-   * renderizado y comprobando en el navegador que ninguno se sale de su hueco.
-   *
-   * ⚠ VA AQUÍ Y NO SUBIENDO --tope-banda. Subir el tope agrandaría CATORCE
-   * logotipos —todos los que topan contra él— y sólo estos cuatro lo necesitan.
-   *
-   * Y OJO AL CRECER: subir la escala empuja el borde SUPERIOR hacia arriba aunque
-   * el centro baje, así que cada vez que se mueve `escala` en un logotipo con
-   * `alza` hay que revisar las dos juntas. Pasó con IMSS y KFC.
-   */
-  escala?: number;
-}
 
 /**
  * EL MURO DE MARCAS: 32, en ocho columnas de cuatro filas.
@@ -1043,3 +896,57 @@ export const CANALES_COMERCIAL = [
   { nombre: "Renta de espacios publicitarios" },
   { nombre: "Venta de inmuebles" },
 ];
+
+/* ======================= La página, ensamblada ===================== */
+
+/*
+ * EL AMARILLO DE COMERCIAL es el de Altea, --unidad-comercial en
+ * app/ui/tokens.css: el mismo de su carpeta en el home.
+ *
+ * Hasta octubre de 2026 la banderola y las cifras llevaban #F7CC47, que entró
+ * con el encargo del hero sin respaldo en ningún archivo de marca. Se cambió por
+ * el de Altea para que los cuatro colores tengan la misma procedencia.
+ *
+ * ⚠ Sobre --surface-page mide 1.36:1, por debajo del 3.00 de texto grande: el
+ * «+», la «M» y el «%» de las cifras de apertura son acento, no el dato, y se
+ * acepta así. NO lo extiendas a texto que haya que leer sobre fondo claro. Sobre
+ * ink da 10.75.
+ */
+
+export const COMERCIAL: ContenidoUnidad = {
+  unidad: "Comercial",
+  metadata: {
+    title: "Comercial — Altea",
+    description:
+      "Centros comerciales de Altea: ocho plazas en operación en cinco estados, con hoteles, hospital y educación dentro de los mismos desarrollos.",
+  },
+  hero: {
+    palabra: HERO_CALADO.palabra,
+    descripcion: HERO_CALADO.descripcion,
+    segundos: HERO_CALADO.segundos,
+    /* Las plazas con foto, con su `ancla` medida a mano: ver Plaza.ancla. */
+    fotos: PLAZAS.filter((p) => p.foto).map((p) => ({
+      foto: p.foto as string,
+      ratio: p.fotoRatio ?? RATIO_POR_DEFECTO,
+      ancla: p.ancla ?? ANCLA_POR_DEFECTO,
+    })),
+    color: colorDeUnidad("Comercial"),
+    bandera: BANDERA_ALTEA,
+  },
+  cifras: CIFRAS_COMERCIAL,
+  proyectos: { titulo: GALERIA_PLAZAS.titulo, lista: PLAZAS },
+  giros: OTROS_GIROS,
+  marcas: {
+    mostrar: MOSTRAR_MARCAS_COMERCIAL,
+    titulo: TITULO_MARCAS,
+    lista: MARCAS_COMERCIAL,
+  },
+  proximos: {
+    titulo: PROXIMOS_PROYECTOS.titulo,
+    /* Los tres archivos miden 1980x1105. Antes iba escrito en el componente. */
+    proyectos: PROXIMOS_PROYECTOS.proyectos.map((p) => ({
+      ...p,
+      fotoRatio: 1.792,
+    })),
+  },
+};

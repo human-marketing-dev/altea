@@ -162,17 +162,17 @@ export function CarpetasUnidades() {
           >
             {/*
               data-tono en vez de una clase por unidad: el CSS sólo necesita saber
-              si el fondo es claro o ink, y el color concreto entra como variable.
-              Añadir el color de Forestal fue exactamente eso: una línea en el
-              archivo de contenido y ni una en la hoja. La rama `ink` se queda
-              para la unidad que llegue sin color.
+              si el fondo es claro o ink, y el color concreto entra como variable
+              —--color-unidad, la misma que lee el hero de cada unidad—. El valor
+              está sólo en app/ui/tokens.css. La rama `ink` se queda para la
+              unidad que llegue sin color.
             */}
             <div
               className="home-carpetas__caja js-carpeta-caja"
               data-tono={unidad.color ? "color" : "ink"}
               style={
                 unidad.color
-                  ? { ["--u-color" as string]: unidad.color }
+                  ? { ["--color-unidad" as string]: unidad.color }
                   : undefined
               }
             >

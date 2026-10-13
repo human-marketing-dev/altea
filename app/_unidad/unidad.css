@@ -1,5 +1,12 @@
 /*
- * Página COMERCIAL.
+ * Páginas de UNIDAD: /comercial, /industrial, /vivienda y /forestal.
+ *
+ * Era comercial.css, con prefijo com-. Es la misma hoja con el prefijo uni-:
+ * las cuatro páginas son el mismo componente (<PaginaUnidad>) con distinto
+ * contenido, y lo único que cambia por unidad entra como dato —el color como
+ * --color-unidad y la banderola como --gal-izq / --gal-der / --gal-ratio—.
+ *
+ * Lo que sigue es la historia de la hoja de Comercial, que sigue valiendo:
  *
  * Rediseño completo: de la hoja anterior no sobrevive ni un selector. Lo que había
  * —el hero de tarjeta, el showcase de plazas a pantalla completa, la banda de
@@ -12,29 +19,12 @@
 /* ═══ 1 · hero calado ═════════════════════════════════════════════════════ */
 
 /*
- * EL AMARILLO DE COMERCIAL.
- *
- * ⚠ NO SALE DE NINGÚN ARCHIVO DE MARCA DEL REPO. Los tres logotipos de unidad
- * —public/brand/business-units/altea-{comercial,industrial,vivienda}-color.svg—
- * pintan la banderola con el coral #F15D4D y el ink, y #F7CC47 no aparece en
- * ninguno. Viene del encargo, no del repositorio, y por eso vive aquí y no en
- * app/ui/tokens.css: meterlo entre los colores de marca afirmaría que lo es.
- * Si resulta que la banderola de Comercial es coral, se cambia esta línea.
- *
- * ⚠ Y DEJA CONSTANCIA DE LO QUE CUESTA. Sobre --surface-page mide 1.41:1, y el
- * mínimo para texto grande son 3.00: el «+», la «M» y el «%» de las cifras
- * quedan por debajo del umbral y a plena luz o en una pantalla mala pueden no
- * verse. Se acepta a propósito —es el color de la unidad y los signos son
- * acento, no el dato— pero NO extiendas este amarillo a texto que haya que leer
- * sobre fondo claro. Una etiqueta, un enlace o una cifra entera necesitarían la
- * variante oscura: #B18708, que da 3.04 conservando tono y saturación.
- *
- * Sobre la foto oscurecida del cierre rinde 10.39, así que ahí no hay nada que
- * vigilar y va el amarillo de marca.
- *
- * Esto es la misma pareja que el sistema ya tiene para el coral —--text-accent
- * sobre claro y --accent-on-ink sobre oscuro—. Comercial no la tiene definida, y
- * hará falta en cuanto el amarillo salga de un logotipo.
+ * EL COLOR DE LA UNIDAD llega como --color-unidad, puesto en línea por
+ * <HeroCalado> desde el contenido, que a su vez lo toma del token de
+ * app/ui/tokens.css (--unidad-*). Es el mismo nombre que lee la carpeta de la
+ * unidad en el home: un solo dato, un solo nombre. Una unidad sin color no
+ * define la variable: los signos de las cifras heredan el color de la cifra y la
+ * banderola no se pinta.
  */
 
 /*
@@ -49,8 +39,7 @@
  * Con minmax(0,…) la pista no puede crecer por contenido: la caja se queda del
  * tamaño de la ventana y el texto se sale por los dos lados a partes iguales.
  */
-.com-hero {
-  --com-amarillo: #f7cc47;
+.uni-hero {
   position: relative;
   min-height: 100svh;
   overflow: hidden;
@@ -89,7 +78,7 @@
  * que corra el JS. A partir de ahí lo reescribe el componente. ⚠ Y no se puede
  * LEER de vuelta: ver la nota en HeroCalado.
  */
-.com-hero__lleno {
+.uni-hero__lleno {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -132,7 +121,7 @@
   mask-composite: intersect;
 }
 
-.com-hero__calado {
+.uni-hero__calado {
   position: relative;
   z-index: 1;
   align-self: center;
@@ -152,14 +141,14 @@
  * del <h1> arranca en el borde izquierdo y se extiende hacia la derecha, así que
  * centrar dentro de ella es centrar dentro de una caja descentrada.
  */
-.com-hero__capas {
+.uni-hero__capas {
   position: relative;
   display: grid;
   width: 100%;
   min-width: 0;
   grid-template-columns: minmax(0, 1fr);
 }
-.com-hero__capas > * {
+.uni-hero__capas > * {
   grid-area: 1/1;
 }
 
@@ -186,7 +175,42 @@
  * centrado correcto de un logotipo con banderola; el fallo de verdad dejaba el
  * centro en 1866 y enseñaba el principio de la palabra.
  */
-.com-hero__t {
+/*
+ * ⚠ EL CUERPO DE LA PALABRA ES EL MISMO EN LAS CUATRO UNIDADES. ES UNA DECISIÓN.
+ *
+ * clamp(3rem, 15.4vw, 15rem) y el mismo peso para Comercial, Industrial,
+ * Vivienda y Forestal, sin excepción por unidad. El ancho de la palabra queda
+ * donde caiga, y caen distinto: contar letras no predice nada, lo que manda es
+ * el ancho de los glifos. "Industrial" tiene una letra más que "Comercial" y es
+ * más angosta.
+ *
+ * Ancho a 1440 px de ventana (15.4vw = 221.76 px, letter-spacing -0.062em):
+ *
+ *                 Montserrat 700        Gotham Bold
+ *                 (medida del encargo)  (calculada con las métricas del
+ *                                       archivo, sin kerning)
+ *   Comercial     949 px  65.9 %        1018 px  70.7 %
+ *   Industrial    861 px  59.8 %         924 px  64.2 %
+ *   Vivienda      798 px  55.4 %         878 px  61.0 %
+ *   Forestal      753 px  52.3 %         813 px  56.5 %
+ *
+ * Gotham es la fuente del sitio cuando están sus archivos (app/layout.tsx);
+ * Montserrat es el respaldo, que es lo que se ve donde faltan. En las dos,
+ * Forestal queda un 20 % más corta que Comercial.
+ *
+ * SI ALGUNA PALABRA PARECE CHICA, NO SE TOCA ESTE font-size: se habla antes.
+ * Subírselo a una sola convierte el título del hero en cuatro valores sueltos
+ * fuera de la escala tipográfica. La longitud de la palabra es un dato del
+ * contenido, no un defecto de la tipografía.
+ *
+ * Y si cambia la fuente, el peso o el letter-spacing de .uni-hero__tx, esta
+ * tabla deja de valer: hay que volver a medirla.
+ *
+ * Consecuencia que sí hay que vigilar: con la palabra más corta la ventana a la
+ * foto es más chica, así que en Vivienda y Forestal un `ancla` mal puesta se
+ * nota más que en Comercial.
+ */
+.uni-hero__t {
   margin: 0;
   width: 100%;
   display: flex;
@@ -225,7 +249,7 @@
  * maquetación a donde estaba, así que no se mueve nada. Va en em para que
  * acompañe a la palabra mientras crece.
  */
-.com-hero__tx {
+.uni-hero__tx {
   padding: 0.26em 0 0.14em;
   margin: -0.26em 0 -0.14em;
   display: block;
@@ -245,10 +269,10 @@
  * se pierde justo donde la imagen es más brillante, y éste mantiene la silueta.
  * Decorativo — la palabra ya la dice el <h1> de encima.
  */
-.com-hero__eco {
+.uni-hero__eco {
   pointer-events: none;
 }
-.com-hero__eco .com-hero__tx {
+.uni-hero__eco .uni-hero__tx {
   -webkit-text-stroke: 1px color-mix(in srgb, var(--altea-ink) 16%, transparent);
 }
 
@@ -265,15 +289,16 @@
  * está en la capa del contorno; en la del relleno queda una copia que sólo ocupa
  * sitio.
  */
-.com-hero__gal {
+.uni-hero__gal {
   position: relative;
   flex: none;
   display: block;
   height: 0.27em;
-  aspect-ratio: 48.72/49.75;
+  /* La proporción del viewBox de la banderola, desde el contenido. */
+  aspect-ratio: var(--gal-ratio);
   margin: -0.085em 0 0 0.055em;
 }
-.com-hero__t:not(.com-hero__eco) .com-hero__gal {
+.uni-hero__t:not(.uni-hero__eco) .uni-hero__gal {
   visibility: hidden;
 }
 
@@ -292,7 +317,7 @@
  * mismo encuadre —se lo pasa `encuadre()` junto a la palabra—, así que es otra
  * ventana al fondo y cambia con las ocho plazas. La derecha es amarillo macizo.
  */
-.com-hero__gal i {
+.uni-hero__gal i {
   position: absolute;
   inset: 0;
   display: block;
@@ -302,19 +327,19 @@
   mask-repeat: no-repeat;
 }
 .gal__izq {
-  -webkit-mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'%20fill='black'/></svg>");
-  mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'%20fill='black'/></svg>");
+  -webkit-mask-image: var(--gal-izq);
+  mask-image: var(--gal-izq);
   background-repeat: no-repeat;
 }
 .gal__der {
-  -webkit-mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'%20fill='black'/></svg>");
-  mask-image: url("data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='747.9%2033.56%2048.72%2049.75'%20preserveAspectRatio='none'><path%20d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'%20fill='black'/></svg>");
-  background: var(--com-amarillo);
+  -webkit-mask-image: var(--gal-der);
+  mask-image: var(--gal-der);
+  background: var(--color-unidad);
 }
 
 /* ── las cifras, debajo de la palabra y centradas ── */
 
-.com-hero__datos {
+.uni-hero__datos {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -329,7 +354,7 @@
  * "se vea primero" es lo que deja un árbol de accesibilidad con la definición
  * antes del término.
  */
-.com-hd {
+.uni-hd {
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;
@@ -338,7 +363,7 @@
   padding-top: clamp(12px, 1.8vh, 18px);
   border-top: 1px solid color-mix(in srgb, var(--altea-ink) 24%, transparent);
 }
-.com-hd__cifra {
+.uni-hd__cifra {
   margin: 0;
   display: block;
   font-size: clamp(2.1rem, 4.3vw, 3.6rem);
@@ -347,13 +372,27 @@
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
-/* El amarillo de la unidad. Ver la nota del principio: 1.41 sobre el fondo de
-   página, aceptado a propósito porque son acento y no el dato. */
-.com-hd__cifra .altea-count__prefijo,
-.com-hd__cifra .altea-count__sufijo {
-  color: var(--com-amarillo);
+/*
+ * ⚠ LOS SIGNOS VAN EN EL COLOR DE LA UNIDAD, A PLENA INTENSIDAD, Y ESTÁ DECIDIDO.
+ *
+ * Medido sobre el fondo claro de la apertura: Comercial 1.36:1, Vivienda 1.54,
+ * Forestal 1.79, Industrial 2.86. Ninguno llega al 3.0 de texto grande, y se
+ * aceptó a propósito (octubre de 2026), con los números delante:
+ *
+ *   · el dígito va en tinta y se lee siempre, a 14.6:1;
+ *   · la debilidad del signo sobre el claro es el efecto buscado: el número
+ *     domina y la unidad susurra;
+ *   · la magnitud no depende del glifo para quien no lo ve: <CountUp> expone el
+ *     valor entero en palabras ("más de 18.8 millones") y oculta el número
+ *     animado al lector de pantalla.
+ *
+ * NO lo "arregles" oscureciendo el color ni pasándolo a tinta: ya se discutió.
+ */
+.uni-hd__cifra .altea-count__prefijo,
+.uni-hd__cifra .altea-count__sufijo {
+  color: var(--color-unidad);
 }
-.com-hd__etiqueta {
+.uni-hd__etiqueta {
   display: block;
   margin-top: 9px;
   font-size: clamp(0.78rem, 1vw, 0.96rem);
@@ -363,7 +402,7 @@
 
 /* ── el cierre: el velo y la composición de vuelta ── */
 
-.com-hero__velo {
+.uni-hero__velo {
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -388,7 +427,7 @@
  * Ni una palabra nueva: es material ya confirmado por Altea, así que no hay nada
  * que el cliente pueda querer reescribir.
  */
-.com-hero__entrada {
+.uni-hero__entrada {
   position: absolute;
   inset: 0;
   z-index: 3;
@@ -406,18 +445,28 @@
 /* La palabra que vuelve va algo más corta que la de apertura, y las cifras algo
    más cortas que las de allí: a igual cuerpo las dos se peleaban por la misma
    atención. */
-.com-hero__lockup {
+.uni-hero__lockup {
   display: flex;
   align-items: flex-start;
   justify-content: center;
   font-size: clamp(2.6rem, 12vw, 11rem);
 }
-/* En el cierre no hay ventana que abrir —la foto ya está a sangre detrás—, así
-   que esa mitad es blanca maciza, el mismo blanco de la palabra. */
-.com-hero__lockup .gal__izq {
+/*
+ * ⚠ LA EXCEPCIÓN DEL CIERRE: ESTA MITAD VA EN BLANCO, NO EN EL COLOR DE UNIDAD.
+ *
+ * En la apertura la mitad izquierda no tiene color: es una ventana a la foto,
+ * como las letras. En el cierre no hay ventana que abrir —la foto ya está a
+ * sangre detrás— y la palabra es blanca maciza, así que esta mitad es ese mismo
+ * blanco: la palabra y su trazo izquierdo se leen como una sola pieza, y sólo
+ * la mitad derecha lleva el color de la unidad.
+ *
+ * No la "unifiques" con --color-unidad en una limpieza: la banderola del cierre
+ * quedaría con las dos mitades en color, despegada de la palabra.
+ */
+.uni-hero__lockup .gal__izq {
   background: var(--altea-white);
 }
-.com-hero__vuelve {
+.uni-hero__vuelve {
   margin: 0;
   white-space: nowrap;
   color: var(--altea-white);
@@ -426,7 +475,7 @@
   line-height: 0.84;
   letter-spacing: -0.062em;
 }
-.com-hero__cierre {
+.uni-hero__cierre {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -434,7 +483,7 @@
   gap: clamp(24px, 4.8vw, 84px);
   margin: 0;
 }
-.com-hc {
+.uni-hc {
   display: flex;
   flex-direction: column-reverse;
   justify-content: flex-end;
@@ -443,7 +492,7 @@
   padding-top: clamp(14px, 2vh, 22px);
   border-top: 1px solid color-mix(in srgb, var(--altea-cream) 32%, transparent);
 }
-.com-hc__cifra {
+.uni-hc__cifra {
   margin: 0;
   display: block;
   font-size: clamp(2.1rem, 4.6vw, 3.8rem);
@@ -452,13 +501,13 @@
   line-height: 0.9;
   font-variant-numeric: tabular-nums;
 }
-/* Sobre la foto oscurecida el amarillo de marca rinde 10.39: aquí no hay nada
-   que vigilar. */
-.com-hc__cifra .altea-count__prefijo,
-.com-hc__cifra .altea-count__sufijo {
-  color: var(--com-amarillo);
+/* Lo mismo en el cierre, sobre la foto oscurecida, donde además los cuatro
+   colores pasan de sobra. Ver la nota de .uni-hd__cifra. */
+.uni-hc__cifra .altea-count__prefijo,
+.uni-hc__cifra .altea-count__sufijo {
+  color: var(--color-unidad);
 }
-.com-hc__etiqueta {
+.uni-hc__etiqueta {
   display: block;
   margin-top: 11px;
   font-size: clamp(0.82rem, 1.05vw, 1rem);
@@ -477,9 +526,9 @@
  * suyos—, las nueve reglas de las filas y las del visor que perseguía al cursor.
  */
 
-.com-giros__titulo,
-.com-marcas__titulo,
-.com-prox__titulo {
+.uni-giros__titulo,
+.uni-marcas__titulo,
+.uni-prox__titulo {
   margin: 0 0 clamp(30px, 5vh, 62px);
   font-size: clamp(1.8rem, 3.8vw, 2.9rem);
   font-weight: var(--weight-bold);
@@ -502,13 +551,14 @@
  * columna de texto: sobre la foto obligaba a que la foto fuera lo bastante alta
  * para alojarlo.
  */
-.com-fx {
+.uni-fx {
   /*
    * 1040 y no 880. Con más ancho la descripción más larga (418 caracteres) baja de
    * ocho líneas a seis, y el bloque de datos y el texto caben uno al lado del otro
    * debajo de la foto en vez de apilarse.
    */
-  width: min(1040px, 94vw);
+  /* Fuera de su tope, la ficha deja a cada lado el margen de página. */
+  width: min(1040px, calc(100vw - 2 * var(--container-pad)));
   max-height: 86svh;
   padding: 0;
   border: 0;
@@ -518,7 +568,7 @@
   color: var(--text-primary);
   margin: auto;
 }
-.com-fx::backdrop {
+.uni-fx::backdrop {
   background: rgb(12 15 18 / 0.66);
   backdrop-filter: blur(4px);
 }
@@ -582,12 +632,12 @@
  * lo que se va es cielo y no la parte alta del edificio. Donde no hay recorte no
  * hace nada, así que no necesita condición.
  */
-.com-fx > article {
+.uni-fx > article {
   max-height: inherit;
   display: grid;
   grid-template-rows: minmax(150px, 1fr) auto;
 }
-.com-fx__foto {
+.uni-fx__foto {
   position: relative;
   --proporcion: 1.5;
   width: 100%;
@@ -596,14 +646,14 @@
   /* Ver la nota de arriba: sin esto la proporción gana y la foto tapa el cuerpo. */
   place-self: stretch;
 }
-.com-fx__img {
+.uni-fx__img {
   object-fit: cover;
   /* Lo que se pierde cuando la foto cede es cielo, no el edificio. */
   object-position: center 30%;
 }
 /* El velo que sostiene el nombre. Sólo en el tercio de abajo: un velo entero
    apagaría la foto, y lo único que hay que garantizar es el contraste del nombre. */
-.com-fx__foto::after {
+.uni-fx__foto::after {
   content: "";
   position: absolute;
   inset: 34% 0 0;
@@ -613,7 +663,7 @@
     rgb(12 15 18 / 0.78)
   );
 }
-.com-fx__nombre {
+.uni-fx__nombre {
   position: absolute;
   z-index: 2;
   /* Alineado con el relleno del cuerpo: el nombre y los datos de abajo cuelgan
@@ -638,7 +688,7 @@
  * otro el cuerpo mide lo que el más alto en vez de la suma: 267 px en vez de 434.
  */
 /* El cuerpo, debajo de la foto, los dos al ancho del diálogo. */
-.com-fx__cuerpo {
+.uni-fx__cuerpo {
   display: grid;
   grid-template-columns: minmax(0, 34%) minmax(0, 66%);
   gap: clamp(20px, 3vw, 40px);
@@ -655,39 +705,42 @@
  * resuelve sin que el componente tenga que avisar de nada, que es lo mismo que
  * hace la banda de giros unas líneas más arriba.
  */
-.com-fx__cuerpo:not(:has(p)) {
+.uni-fx__cuerpo:not(:has(p)) {
   grid-template-columns: minmax(0, 1fr);
 }
-.com-fx__datos {
+.uni-fx__datos {
   display: grid;
   gap: 14px;
   align-content: start;
   margin: 0;
 }
-.com-fx__d {
+.uni-fx__d {
   display: grid;
   gap: 4px;
   padding-top: 11px;
   border-top: 1px solid var(--border-subtle);
 }
-.com-fx__d dt {
+.uni-fx__d dt {
   font-size: var(--text-eyebrow);
   /* 5.67: el prototipo los dejaba al 50 %, que da 3.16. */
   color: var(--text-secondary);
 }
-.com-fx__d dd {
+.uni-fx__d dd {
   margin: 0;
   font-size: 0.92rem;
   font-weight: var(--weight-medium);
   line-height: 1.35;
 }
-.com-fx__cuerpo > p {
+.uni-fx__cuerpo > p {
   margin: 0;
+  /* Una descripción de dos párrafos (Teca) llega con una línea en blanco en
+     medio; así se respeta sin partir la ficha en dos elementos. */
+  white-space: pre-line;
   line-height: 1.74;
   font-size: var(--text-body);
   color: color-mix(in srgb, var(--altea-ink) 76%, transparent);
 }
-.com-fx__x {
+.uni-fx__x {
   position: absolute;
   z-index: 4;
   top: 14px;
@@ -706,10 +759,10 @@
   backdrop-filter: blur(8px);
   color: #fff;
 }
-.com-fx__x:hover {
+.uni-fx__x:hover {
   background: rgb(255 255 255 / 0.4);
 }
-.com-fx__x:focus-visible {
+.uni-fx__x:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
@@ -720,7 +773,7 @@
  * porque las dos son propiedades discretas. @starting-style define desde dónde
  * entra; sin él no hay estado inicial que animar.
  */
-.com-fx {
+.uni-fx {
   opacity: 0;
   transform: translateY(16px) scale(0.985);
   transition:
@@ -729,48 +782,48 @@
     overlay 0.4s allow-discrete,
     display 0.4s allow-discrete;
 }
-.com-fx[open] {
+.uni-fx[open] {
   opacity: 1;
   transform: none;
 }
 @starting-style {
-  .com-fx[open] {
+  .uni-fx[open] {
     opacity: 0;
     transform: translateY(16px) scale(0.985);
   }
 }
-.com-fx::backdrop {
+.uni-fx::backdrop {
   opacity: 0;
   transition:
     opacity 0.35s var(--ease-standard),
     overlay 0.4s allow-discrete,
     display 0.4s allow-discrete;
 }
-.com-fx[open]::backdrop {
+.uni-fx[open]::backdrop {
   opacity: 1;
 }
 @starting-style {
-  .com-fx[open]::backdrop {
+  .uni-fx[open]::backdrop {
     opacity: 0;
   }
 }
 
 /* ═══ 3 · otros giros ═════════════════════════════════════════════════════ */
 
-.com-giros {
+.uni-giros {
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
-.com-giros__rotulo {
+.uni-giros__rotulo {
   margin: 0 0 clamp(14px, 2.4vh, 24px);
   font-size: var(--text-small);
   font-weight: var(--weight-medium);
   color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
-.com-giros__titulo {
+.uni-giros__titulo {
   max-width: 18ch;
   margin-bottom: clamp(34px, 6vh, 70px);
 }
-.com-giros__fila {
+.uni-giros__fila {
   display: flex;
   gap: 5px;
   height: clamp(340px, 56svh, 500px);
@@ -779,7 +832,7 @@
 /*
  * LA LÁMINA SEÑALADA SE ABRE Y LAS OTRAS CEDEN, y es todo CSS.
  *
- * `:has(.com-gr:hover)` en el contenedor permite encoger a las hermanas que NO
+ * `:has(.uni-gr:hover)` en el contenedor permite encoger a las hermanas que NO
  * están bajo el cursor, que es justo lo que antes obligaba a llevar estado en
  * JavaScript. Se anima `flex-grow`, no el ancho: el reparto lo sigue haciendo el
  * flex y no hay que calcular nada.
@@ -802,21 +855,24 @@
  * se sienta instantáneo—, y eso se consigue poniendo el `transition-delay` en la
  * regla del hover y no en la base.
  */
-.com-gr {
+.uni-gr {
   position: relative;
   flex: 1 1 0;
   min-width: 0;
   overflow: hidden;
   border-radius: var(--radius-lg);
+  /* El fondo sólo se ve en una lámina SIN foto —los servicios de Forestal,
+     mientras no lleguen sus iconos—; con foto, la imagen lo tapa entero. */
+  background: var(--altea-ink);
   color: #fff;
   transition: flex-grow 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 @media (hover: hover) {
-  .com-giros__fila:has(.com-gr:hover) .com-gr:not(:hover) {
+  .uni-giros__fila:has(.uni-gr:hover) .uni-gr:not(:hover) {
     flex-grow: 0.85;
     transition-delay: 80ms;
   }
-  .com-gr:hover {
+  .uni-gr:hover {
     flex-grow: 1.5;
     transition-delay: 80ms;
   }
@@ -826,17 +882,17 @@
  * zoom sumaba un segundo movimiento en la misma dirección y era parte de lo que
  * marea. A 1.02 queda como un apunte, no como un gesto.
  */
-.com-gr__img {
+.uni-gr__img {
   object-fit: cover;
   transition: transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.com-gr:hover .com-gr__img {
+.uni-gr:hover .uni-gr__img {
   transform: scale(1.02);
 }
 /* El velo garantiza el contraste del título y la descripción: sobre una foto
    cualquiera el blanco no lo tiene asegurado. Al 88 % en la zona del texto, el
    fondo efectivo es casi negro y el blanco pasa de 16:1. */
-.com-gr__velo {
+.uni-gr__velo {
   position: absolute;
   inset: 0;
   display: block;
@@ -846,7 +902,7 @@
     rgb(16 19 22 / 0.88) 100%
   );
 }
-.com-gr__n {
+.uni-gr__n {
   position: absolute;
   z-index: 2;
   top: clamp(14px, 1.8vw, 24px);
@@ -858,7 +914,7 @@
   /* Coral sobre el velo oscuro: el par documentado para superficie oscura. */
   color: var(--accent-on-ink);
 }
-.com-gr__t {
+.uni-gr__t {
   position: absolute;
   z-index: 2;
   left: 0;
@@ -866,7 +922,7 @@
   bottom: 0;
   padding: clamp(18px, 2.4vw, 32px);
 }
-.com-gr__t h3 {
+.uni-gr__t h3 {
   margin: 0;
   font-size: clamp(1.2rem, 2.2vw, 1.8rem);
   font-weight: var(--weight-bold);
@@ -877,7 +933,7 @@
  * con max-height habría que adivinar un alto más grande que el texto más largo y
  * se rompería al cambiar el copy. El hijo único con overflow oculto es obligatorio.
  */
-.com-gr__caja {
+.uni-gr__caja {
   display: grid;
   grid-template-rows: 0fr;
   opacity: 0;
@@ -885,7 +941,7 @@
     grid-template-rows 0.55s cubic-bezier(0.2, 0.7, 0.3, 1),
     opacity 0.4s var(--ease-standard);
 }
-.com-gr__caja > p {
+.uni-gr__caja > p {
   overflow: hidden;
   min-height: 0;
   margin: 12px 0 0;
@@ -895,8 +951,8 @@
   color: rgb(255 255 255 / 0.84);
 }
 @media (hover: hover) {
-  .com-gr:hover .com-gr__caja,
-  .com-gr:focus-within .com-gr__caja {
+  .uni-gr:hover .uni-gr__caja,
+  .uni-gr:focus-within .uni-gr__caja {
     grid-template-rows: 1fr;
     opacity: 1;
   }
@@ -904,7 +960,7 @@
 /* EN TÁCTIL SIEMPRE VISIBLE: si sólo existiera en el hover, en un teléfono no
    existiría, y tres láminas con un título y nada más no dicen de qué va esto. */
 @media (hover: none) {
-  .com-gr__caja {
+  .uni-gr__caja {
     grid-template-rows: 1fr;
     opacity: 1;
   }
@@ -912,11 +968,11 @@
 
 /* ═══ 4 · el muro de marcas ═══════════════════════════════════════════════ */
 
-.com-marcas {
+.uni-marcas {
   background: var(--surface-sunken);
   padding: clamp(66px, 12vh, 150px) var(--container-pad);
 }
-.com-marcas__titulo {
+.uni-marcas__titulo {
   max-width: 18ch;
   font-size: clamp(1.5rem, 3vw, 2.3rem);
   margin-bottom: clamp(30px, 5vh, 58px);
@@ -936,7 +992,7 @@
  * por el hueco como una banda. Con las filas fijadas aquí ya no hay nada que
  * empujar.
  */
-.com-marcas__rejilla {
+.uni-marcas__rejilla {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   /*
@@ -978,7 +1034,7 @@
  * baja de 16 % a 14 %. Con 18 % el wordmark más ancho (Bodega Aurrera, 5.62:1)
  * topa de ancho y se queda en 12.0 px de tinta a 1440; con 14 %, en 13.5 px.
  */
-.com-mc {
+.uni-mc {
   display: grid;
   place-items: center;
   /* Ya no hay proporción: la fila manda y la celda la llena entera. Sin esto la
@@ -988,12 +1044,12 @@
   /* El mismo fondo que la sección: la celda tapa la rejilla salvo en el gap. */
   background: var(--surface-sunken);
   /* ⚠ El 0.2 de arriba y abajo deja el hueco útil en 0.6 del alto de fila, y ese
-     0.6 está escrito también en --hueco, en .com-mc__logo. Si se cambia uno hay
+     0.6 está escrito también en --hueco, en .uni-mc__logo. Si se cambia uno hay
      que cambiar el otro. */
   padding: calc(var(--alto-fila, 100px) * 0.2) 14%;
   transition: background var(--duration-base) var(--ease-standard);
 }
-.com-mc:hover {
+.uni-mc:hover {
   background: var(--surface-page);
 }
 /*
@@ -1052,7 +1108,7 @@
  * después, el tope limitaría el ELEMENTO y volvería a depender del margen
  * transparente que traiga cada archivo, que es justo lo que esto quita de en medio.
  */
-.com-mc__logo {
+.uni-mc__logo {
   /*
    * ⚠ TODO EN LONGITUDES, NUNCA EN PORCENTAJES. Esto no es estilo: es el arreglo
    * de un error que estuvo rompiendo el muro entero y costó encontrar.
@@ -1077,7 +1133,7 @@
   --tope-banda: calc(var(--hueco) * 0.53);
   /* --escala es la excepción por logotipo al tope de banda. Va fuera del `min`,
      así que un logotipo con escala rebasa el tope a propósito; ver `escala` en
-     content.ts. Los 29 restantes la reciben en 1 y no cambian nada. */
+     contenido/comercial.ts. Los 29 restantes la reciben en 1 y no cambian nada. */
   height: calc(
     min(var(--alto-comun), var(--tope-banda)) * var(--escala, 1) /
       var(--tinta, 1)
@@ -1097,7 +1153,7 @@
    *
    * --alza lo sube. El porcentaje de `translateY` se mide contra el alto del
    * propio elemento, que es justo la unidad en la que está medido el dato. Ver
-   * `alza` en content.ts, con los valores y por qué son la mitad de la corrección
+   * `alza` en tipos.ts, con los valores y por qué son la mitad de la corrección
    * teórica.
    */
   transform: translateY(calc(var(--alza, 0) * 100%));
@@ -1105,21 +1161,21 @@
   opacity: 0.55;
   transition: opacity var(--duration-base) var(--ease-standard);
 }
-.com-mc:hover .com-mc__logo {
+.uni-mc:hover .uni-mc__logo {
   opacity: 0.78;
 }
 
 /* ═══ 5 · próximos proyectos ══════════════════════════════════════════════ */
 
-.com-prox {
+.uni-prox {
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
-.com-prox__titulo {
+.uni-prox__titulo {
   max-width: 12ch;
   font-size: clamp(1.8rem, 4vw, 3.1rem);
   margin-bottom: clamp(30px, 5vh, 60px);
 }
-.com-prox__grid {
+.uni-prox__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 5px;
@@ -1134,7 +1190,7 @@
  * añade aquí es sólo el reseteo —un botón trae borde, relleno, tipografía y
  * centrado propios— y el anillo de foco; el aspecto no cambia ni un píxel.
  */
-.com-px {
+.uni-px {
   position: relative;
   display: block;
   width: 100%;
@@ -1152,18 +1208,18 @@
   text-align: left;
   cursor: pointer;
 }
-.com-px:focus-visible {
+.uni-px:focus-visible {
   outline: 2px solid var(--altea-coral);
   outline-offset: 3px;
 }
-.com-px__img {
+.uni-px__img {
   object-fit: cover;
   transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.com-px:hover .com-px__img {
+.uni-px:hover .uni-px__img {
   transform: scale(1.05);
 }
-.com-px__velo {
+.uni-px__velo {
   position: absolute;
   inset: 0;
   display: block;
@@ -1173,7 +1229,7 @@
     rgb(16 19 22 / 0.84) 100%
   );
 }
-.com-px__t {
+.uni-px__t {
   position: absolute;
   z-index: 2;
   left: 0;
@@ -1181,14 +1237,14 @@
   bottom: 0;
   padding: clamp(16px, 2vw, 28px);
 }
-.com-px__t b {
+.uni-px__t b {
   display: block;
   font-size: clamp(1rem, 1.5vw, 1.35rem);
   font-weight: var(--weight-bold);
   letter-spacing: -0.025em;
   line-height: 1.14;
 }
-.com-px__t span {
+.uni-px__t span {
   display: block;
   margin-top: 6px;
   font-size: var(--text-eyebrow);
@@ -1203,28 +1259,28 @@
  * esto las filas se quedarían cortas y la celda pasaría de 5/3 a 2:1.
  */
 @media (max-width: 1100px) {
-  .com-marcas__rejilla {
+  .uni-marcas__rejilla {
     grid-template-columns: repeat(6, minmax(0, 1fr));
     /* celda 0.15 del ancho → 9vw */
     --alto-fila: clamp(84px, 9vw, 180px);
   }
 }
 @media (max-width: 900px) {
-  .com-fx__cuerpo,
-  .com-prox__grid {
+  .uni-fx__cuerpo,
+  .uni-prox__grid {
     grid-template-columns: 1fr;
   }
-  .com-marcas__rejilla {
+  .uni-marcas__rejilla {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     /* celda 0.225 del ancho → 13.5vw */
     --alto-fila: clamp(84px, 13.5vw, 180px);
   }
   /* La banda se apila: tres láminas a lo alto, sin el reparto del flex. */
-  .com-giros__fila {
+  .uni-giros__fila {
     flex-direction: column;
     height: auto;
   }
-  .com-gr {
+  .uni-gr {
     flex: none;
     height: 230px;
   }
@@ -1232,7 +1288,7 @@
      archivo, y en vertical eso es justo lo que toca. */
 }
 @media (max-width: 560px) {
-  .com-marcas__rejilla {
+  .uni-marcas__rejilla {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     /* celda 0.3 del ancho → 18vw. Abajo de 400 el relleno deja de ser 5vw y se
        queda en 20 px, así que la celda se ensancha un poco: 70 px a 390. */
@@ -1251,25 +1307,25 @@
    * peor que no tenerlo, y es justo lo que queda si sólo se quitan las
    * transiciones.
    */
-  .com-giros__fila:has(.com-gr:hover) .com-gr:not(:hover),
-  .com-gr:hover {
+  .uni-giros__fila:has(.uni-gr:hover) .uni-gr:not(:hover),
+  .uni-gr:hover {
     flex-grow: 1;
   }
-  .com-gr:hover .com-gr__img {
+  .uni-gr:hover .uni-gr__img {
     transform: none;
   }
-  .com-gr__caja {
+  .uni-gr__caja {
     grid-template-rows: 1fr;
     opacity: 1;
   }
-  .com-gr,
-  .com-gr__img,
-  .com-gr__caja,
-  .com-px__img,
-  .com-mc,
-  .com-mc__logo,
-  .com-fx,
-  .com-fx::backdrop {
+  .uni-gr,
+  .uni-gr__img,
+  .uni-gr__caja,
+  .uni-px__img,
+  .uni-mc,
+  .uni-mc__logo,
+  .uni-fx,
+  .uni-fx::backdrop {
     transition: none;
   }
 }

@@ -364,13 +364,23 @@ a.altea-project-card:focus-visible {
   top: var(--space-4);
   z-index: 50;
   /* Sin margen inferior: el aire que la separa de lo que sigue lo pone el
-     margen superior del hero. Si no, quedaban 32px. */
-  margin: var(--space-4) var(--space-4) 0;
+     margen superior del hero. Si no, quedaban 32px.
+
+     ⚠ LO QUE CAE EN EL MARGEN DE PÁGINA ES EL LOGO, NO LA PÍLDORA. El logo y
+     el menú arrancan exactamente en --container-pad, la misma línea que todo el
+     contenido de debajo; la píldora sobresale por fuera de esa línea lo que
+     mide su margen (16 px, 12 en móvil). Para eso el relleno lateral es el
+     margen de página MENOS el margen de la píldora y su borde de 1 px —ver
+     --nav-relleno-x—. Por debajo de 640 ese relleno no llega a 16 px y la
+     píldora pasa a barra a ancho completo: ver el bloque de 639px. */
+  --nav-margen-x: var(--space-4);
+  --nav-relleno-x: calc(var(--container-pad) - var(--nav-margen-x) - 1px);
+  margin: var(--space-4) var(--nav-margen-x) 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
-  padding: var(--nav-padding-y) var(--container-pad);
+  padding: var(--nav-padding-y) var(--nav-relleno-x);
   /*
     Arriba del todo va LIMPIA: sin velo, sin borde y sin sombra. Sobre el hero,
     una cápsula recortada sobre el propio hero se ve peor que nada; los tres
@@ -580,7 +590,8 @@ a.altea-project-card:focus-visible {
   .altea-navbar {
     flex-wrap: wrap;
     top: var(--space-3);
-    margin: var(--space-3) var(--space-3) 0;
+    --nav-margen-x: var(--space-3);
+    margin: var(--space-3) var(--nav-margen-x) 0;
   }
   .altea-navbar__toggle {
     display: flex;
@@ -609,6 +620,32 @@ a.altea-project-card:focus-visible {
   }
   .altea-navbar--abierto .altea-navbar__toggle-barra:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/*
+ * POR DEBAJO DE 640, BARRA A ANCHO COMPLETO, SIN BORDE NI RADIO.
+ *
+ * Con la píldora, el relleno que deja el logo en --container-pad es el margen
+ * de página menos el de la píldora: a 640 son 19 px, a 390 se quedarían en 7 y
+ * el logo iría apretado contra el borde de la cápsula. Antes que apretarlo, se
+ * quita la cápsula: sin margen lateral, el relleno es el margen de página
+ * entero (menos el borde, que sigue ahí en transparente para no mover nada al
+ * cambiar de estado) y el logo cae en la misma línea.
+ *
+ * Lo vertical no cambia: sigue a --space-3 de arriba, como en el resto del
+ * móvil.
+ */
+@media (max-width: 639px) {
+  .altea-navbar {
+    --nav-margen-x: 0px;
+  }
+  .altea-navbar,
+  .altea-navbar--pegada,
+  .altea-navbar--abierto,
+  .altea-navbar--dark.altea-navbar--pegada {
+    border-color: transparent;
+    border-radius: 0;
   }
 }
 

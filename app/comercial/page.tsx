@@ -1,35 +1,7 @@
-import type { Metadata } from "next";
-import { CONTACT_CTA } from "@/app/_home/content";
-import { CierreContacto, Footer, NavBar } from "@/app/ui";
-import { HeroCalado } from "../_comercial/HeroCalado";
-import { CarrilPlazas } from "../_comercial/CarrilPlazas";
-import { MuroMarcas } from "../_comercial/MuroMarcas";
-import { OtrosGiros } from "../_comercial/OtrosGiros";
-import { ProximosComercial } from "../_comercial/ProximosComercial";
-import { MOSTRAR_MARCAS_COMERCIAL } from "../_comercial/content";
-import "../_comercial/comercial.css";
+import { metadataDe, PaginaUnidad } from "../_unidad/PaginaUnidad";
+import { COMERCIAL } from "../_unidad/contenido/comercial";
 
-export const metadata: Metadata = {
-  title: "Comercial — Altea",
-  description:
-    "Centros comerciales de Altea: ocho plazas en operación en cinco estados, con hoteles, hospital y educación dentro de los mismos desarrollos.",
-};
-
+export const metadata = metadataDe(COMERCIAL);
 export default function Comercial() {
-  return (
-    <>
-      {/* El `aria-current` de Comercial lo pone <NavBar> comparando el enlace con
-          usePathname: no hay que pasarlo. */}
-      <NavBar tone="light" />
-      <main>
-        <HeroCalado />
-        <CarrilPlazas />
-        <OtrosGiros />
-        {MOSTRAR_MARCAS_COMERCIAL && <MuroMarcas />}
-        <ProximosComercial />
-      </main>
-      <CierreContacto {...CONTACT_CTA} unidad="Comercial" />
-      <Footer />
-    </>
-  );
+  return <PaginaUnidad contenido={COMERCIAL} />;
 }

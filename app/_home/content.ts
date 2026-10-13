@@ -6,6 +6,7 @@
  * de publicar.
  */
 
+import { colorDeUnidad } from "@/lib/color-unidad";
 import { ruta } from "@/lib/rutas";
 
 /** Las tres cifras y sus etiquetas, confirmadas por Altea. */
@@ -59,7 +60,8 @@ export interface BusinessUnitCard {
   name: string;
   slug: string;
   /**
-   * Color de la unidad, para el fondo de su carpeta.
+   * Color de la unidad, para el fondo de su carpeta: la referencia al token
+   * (`var(--unidad-…)`), no el valor. El valor está en app/ui/tokens.css.
    *
    * Sin color, la carpeta se queda en ink con el texto en cream, que es el
    * tratamiento original. Hoy no es el caso de ninguna: las cuatro lo tienen.
@@ -97,7 +99,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Comercial",
     slug: "comercial",
-    color: "#FDCE5B",
+    color: colorDeUnidad("Comercial"),
     apertura: "Activamos la energía de la ciudad.",
     descripcion:
       "Creamos espacios comerciales que conectan personas, marcas y experiencias, integrando entretenimiento, servicios, hoteles, salud y educación para dar vida a entornos urbanos.",
@@ -107,7 +109,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Industrial",
     slug: "industrial",
-    color: "#5697D0",
+    color: colorDeUnidad("Industrial"),
     apertura: "Infraestructura que impulsa el futuro.",
     descripcion:
       "Desarrollamos proyectos industriales, logísticos y de conectividad que facilitan nuevas operaciones y fortalecen los vínculos entre empresas, ciudades y regiones.",
@@ -118,7 +120,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Vivienda",
     slug: "vivienda",
-    color: "#9CD5AA",
+    color: colorDeUnidad("Vivienda"),
     apertura: "Creamos espacios donde comienza una nueva forma de vivir.",
     descripcion:
       "Desarrollamos proyectos habitacionales, integramos planeación y alianzas estratégicas para transformar oportunidades en comunidades.",
@@ -130,7 +132,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   {
     name: "Forestal",
     slug: "forestal",
-    color: "#d5b39b",
+    color: colorDeUnidad("Forestal"),
     apertura: "Plantación y manejo forestal a largo plazo.",
     descripcion: "Servicios que sostienen el compromiso ambiental.",
     image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",

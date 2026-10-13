@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { FichaComercial } from "./FichaComercial";
-import { PROXIMOS_PROYECTOS } from "./content";
+import { FichaUnidad } from "./FichaUnidad";
+import type { ContenidoUnidad, ProximoProyecto } from "./tipos";
 
 /**
  * Próximos proyectos: tres tarjetas verticales que abren ficha.
@@ -16,35 +16,36 @@ import { PROXIMOS_PROYECTOS } from "./content";
  * AHORA SÍ SON BOTONES, y antes no. El comentario que había decía que un
  * <button> prometería algo que no pasa, porque los tres son proyectos en
  * desarrollo sin ficha ni página a la que llevar. Lo que cambió es que ya hay
- * ficha: la MISMA de las plazas, <FichaComercial>, con la ubicación y el giro
+ * ficha: la MISMA de las plazas, <FichaUnidad>, con la ubicación y el giro
  * que el contenido ya traía y nadie leía.
  *
  * ⚠ PUNTO LA PASTORA ABRE UNA FICHA SIN DESCRIPCIÓN, y es lo correcto hasta que
- * llegue el copy. El campo está marcado PENDIENTE en content.ts y la ficha se
+ * llegue el copy. El campo está marcado PENDIENTE en contenido/comercial.ts y la ficha se
  * compone sin él —no pinta un párrafo vacío—, así que lo que se ve son la foto,
  * el nombre, el giro y la ubicación. La alternativa era dejar esa tarjeta sin
  * abrir, y tres tarjetas iguales de las que una no responde se lee como un
  * fallo, no como una ausencia de contenido.
  */
-export function ProximosComercial() {
-  const [activo, setActivo] = useState<
-    (typeof PROXIMOS_PROYECTOS.proyectos)[number] | null
-  >(null);
+export function ProximosProyectos({
+  proximos,
+}: Pick<ContenidoUnidad, "proximos">) {
+  const PROXIMOS_PROYECTOS = proximos;
+  const [activo, setActivo] = useState<ProximoProyecto | null>(null);
   /* Quién abrió la ficha, para devolverle el foco al cerrar. */
   const origen = useRef<HTMLButtonElement | null>(null);
 
   return (
-    <section className="com-prox" aria-labelledby="prox-titulo">
-      <h2 className="com-prox__titulo" id="prox-titulo">
+    <section className="uni-prox" aria-labelledby="prox-titulo">
+      <h2 className="uni-prox__titulo" id="prox-titulo">
         {PROXIMOS_PROYECTOS.titulo}
       </h2>
 
-      <ul className="com-prox__grid">
+      <ul className="uni-prox__grid">
         {PROXIMOS_PROYECTOS.proyectos.map((proyecto) => (
           <li key={proyecto.slug}>
             <button
               type="button"
-              className="com-px"
+              className="uni-px"
               onClick={(evento) => {
                 origen.current = evento.currentTarget;
                 setActivo(proyecto);
@@ -71,11 +72,11 @@ export function ProximosComercial() {
                     archivos no hay que tocarlos: 1980 de ancho es de sobra.
                   */
                   sizes="(max-width: 900px) 135vw, 800px"
-                  className="com-px__img"
+                  className="uni-px__img"
                 />
               )}
-              <span className="com-px__velo" aria-hidden="true" />
-              <span className="com-px__t">
+              <span className="uni-px__velo" aria-hidden="true" />
+              <span className="uni-px__t">
                 <b>{proyecto.name}</b>
                 <span>{proyecto.unit}</span>
               </span>
@@ -84,19 +85,20 @@ export function ProximosComercial() {
         ))}
       </ul>
 
-      <FichaComercial
+      <FichaUnidad
         contenido={
           activo && {
             nombre: activo.name,
             foto: activo.image,
-            /* Los tres archivos son 1980x1105. */
-            fotoRatio: 1.792,
+            /* Del contenido: en Comercial los tres archivos son 1980x1105. */
+            fotoRatio: activo.fotoRatio,
             alt: activo.name,
             /* Unidad · Ubicación: el giro clasifica y la ciudad sitúa, el mismo
                orden que la ficha de plazas. */
             datos: [
               { etiqueta: "Unidad", valor: activo.unit },
               { etiqueta: "Ubicación", valor: activo.location },
+              ...(activo.datos ?? []),
             ],
             descripcion: activo.descripcion,
           }

@@ -6,13 +6,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
 import { CountUp } from "@/app/ui";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
-import { CIFRAS_COMERCIAL, HERO_CALADO, PLAZAS } from "./content";
+import type { ContenidoUnidad, FormaBandera } from "./tipos";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /**
- * Hero de /comercial: la palabra "Comercial" con la fotografía dentro, que se
- * desborda de las letras con el scroll.
+ * Hero de las páginas de unidad: la palabra de la unidad con la fotografía
+ * dentro, que se desborda de las letras con el scroll.
+ *
+ * Nació para /comercial y es la misma mecánica en las cuatro. Lo que cambia por
+ * unidad —la palabra, las fotos con su `ancla`, el color, la banderola y las
+ * cifras— entra por props desde el contenido. Sin banderola la palabra va sola;
+ * sin cifras el hero se compone sin ellas, en la apertura y en el cierre.
  *
  * ────────────────────────────────────────────────────────────────────────────
  * EL CALADO
@@ -77,25 +82,26 @@ const BASE_MAX = 7;
  *
  * SOBRE_CUBRE existe además para que `ancla` tenga margen donde moverse: un
  * `cover` a secas deja apenas 60 px de holgura vertical en una foto 3:2 sobre
- * una ventana de 900, y con eso no se desplaza nada. Ver `ancla` en content.ts.
+ * una ventana de 900, y con eso no se desplaza nada. Ver `ancla` en tipos.ts.
  */
 const ZOOM = 0.24;
 const SOBRE_CUBRE = 1.16;
 
-/** Para una foto sin `ancla` medida. Ver el campo en content.ts. */
-const ANCLA_POR_DEFECTO = 0.52;
+/**
+ * La banderola como máscara: el `path` del logotipo dentro de un SVG mínimo con
+ * su viewBox, estirado a la caja (`preserveAspectRatio='none'`).
+ */
+const mascara = (viewBox: string, d: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='${viewBox}' preserveAspectRatio='none'><path d='${d}' fill='black'/></svg>`,
+  )}")`;
 
-/** Proporción de respaldo si una plaza no declara `fotoRatio`. */
-const RATIO_POR_DEFECTO = 1.5;
-
-/** Las plazas que tienen foto, que son las que alimentan el hero. */
-const FOTOS = PLAZAS.filter((p) => p.foto).map((p) => ({
-  foto: p.foto as string,
-  ratio: p.fotoRatio ?? RATIO_POR_DEFECTO,
-  ancla: p.ancla ?? ANCLA_POR_DEFECTO,
-}));
-
-export function HeroCalado() {
+export function HeroCalado({
+  hero,
+  cifras,
+}: Pick<ContenidoUnidad, "hero" | "cifras">) {
+  const FOTOS = hero.fotos;
+  const bandera = hero.color ? hero.bandera : undefined;
   const raiz = useRef<HTMLElement>(null);
   const reducido = useMovimientoReducido();
 
@@ -113,12 +119,16 @@ export function HeroCalado() {
       const velo = q(".js-velo");
       const entrada = q(".js-entrada");
       const datos = q(".js-datos");
-      const cajas = gsap.utils.toArray<HTMLElement>(".com-hero__t", nodo);
-      if (!palabra || !lleno || !galIzq || !eco || !velo || !entrada || !datos)
+      const cajas = gsap.utils.toArray<HTMLElement>(".uni-hero__t", nodo);
+      /* La banderola y las cifras son opcionales por unidad: sin ellas `galIzq` y
+         `datos` llegan nulos y el resto funciona igual. */
+      if (!palabra || !lleno || !eco || !velo || !entrada || !FOTOS.length)
         return;
 
       /* Las tres capas que son ventana a la misma foto, en el mismo sitio. */
-      const ventanas = [palabra, lleno, galIzq];
+      const ventanas = [palabra, lleno, galIzq].filter(
+        (el): el is HTMLElement => el !== null,
+      );
 
       let actual = 0;
       let base = 0;
@@ -251,8 +261,10 @@ export function HeroCalado() {
 
         /* Las cifras de apertura se van en el primer 22 %. */
         const s = Math.max(0, Math.min(1, p / 0.22));
-        datos.style.opacity = (1 - s).toFixed(3);
-        datos.style.transform = `translateY(${(s * 14).toFixed(1)}px)`;
+        if (datos) {
+          datos.style.opacity = (1 - s).toFixed(3);
+          datos.style.transform = `translateY(${(s * 14).toFixed(1)}px)`;
+        }
 
         encuadre(p);
       };
@@ -273,14 +285,14 @@ export function HeroCalado() {
         return () => window.removeEventListener("resize", alMedir);
       }
 
-      gsap.from(datos, {
+      if (datos) gsap.from(datos, {
         opacity: 0,
         y: 18,
         duration: 0.85,
         ease: "power2.out",
         delay: 0.35,
       });
-      gsap.from(".com-hero__capas", {
+      gsap.from(".uni-hero__capas", {
         opacity: 0,
         scale: 0.985,
         duration: 1.1,
@@ -307,7 +319,9 @@ export function HeroCalado() {
        * El relevo funde SÓLO el relleno y deja el contorno quieto: fundiendo el
        * bloque entero, la palabra desaparecía cada 4.2 s.
        */
-      const reloj = window.setInterval(() => {
+      /* Con una sola foto no hay relevo: repetirla cada 4.2 s sería un parpadeo
+         sin cambio. */
+      const reloj = FOTOS.length < 2 ? undefined : window.setInterval(() => {
         if (ultimo > 0.05) return;
         const k = (actual + 1) % FOTOS.length;
         gsap.to(palabra, {
@@ -319,7 +333,7 @@ export function HeroCalado() {
             gsap.to(palabra, { opacity: 1, duration: 0.6, ease: "power2.out" });
           },
         });
-      }, HERO_CALADO.segundos * 1000);
+      }, hero.segundos * 1000);
 
       return () => {
         window.clearInterval(reloj);
@@ -330,30 +344,39 @@ export function HeroCalado() {
   );
 
   return (
-    <section className="com-hero" ref={raiz}>
-      <div className="com-hero__lleno js-lleno" aria-hidden="true" />
+    <section
+      className="uni-hero"
+      ref={raiz}
+      /* El color de la unidad entra como variable; sin él, los signos de las
+         cifras van en el color de la cifra (ver .uni-hd__cifra en la hoja). */
+      style={hero.color ? { ["--color-unidad" as string]: hero.color } : undefined}
+    >
+      <div className="uni-hero__lleno js-lleno" aria-hidden="true" />
 
-      <div className="com-hero__calado">
-        <div className="com-hero__capas">
-          <h1 className="com-hero__t">
-            <span className="com-hero__tx js-tx">{HERO_CALADO.palabra}</span>
+      <div className="uni-hero__calado">
+        <div className="uni-hero__capas">
+          <h1 className="uni-hero__t">
+            <span className="uni-hero__tx js-tx">{hero.palabra}</span>
             {/* La copia invisible: sólo ocupa el sitio que ocupa la visible del
                 eco, para que las dos capas repartan igual el flex. */}
-            <Banderola />
+            {bandera && <Banderola forma={bandera} />}
           </h1>
-          <span className="com-hero__t com-hero__eco js-eco" aria-hidden="true">
-            <span className="com-hero__tx">{HERO_CALADO.palabra}</span>
-            <Banderola refIzq />
+          <span className="uni-hero__t uni-hero__eco js-eco" aria-hidden="true">
+            <span className="uni-hero__tx">{hero.palabra}</span>
+            {bandera && <Banderola forma={bandera} refIzq />}
           </span>
         </div>
 
-        <dl className="com-hero__datos js-datos">
-          {CIFRAS_COMERCIAL.map((cifra) => (
-            <div className="com-hd" key={cifra.etiqueta}>
+        {cifras.length > 0 && (
+        <dl className="uni-hero__datos js-datos">
+          {cifras.map((cifra) => (
+            <div className="uni-hd" key={cifra.etiqueta}>
               {/* dt antes que dd, que es lo que pide un <dl>; la cifra se ve
                   primero porque la columna va invertida. */}
-              <dt className="com-hd__etiqueta">{cifra.etiqueta}</dt>
-              <dd className="com-hd__cifra" aria-label={cifra.lectura}>
+              <dt className="uni-hd__etiqueta">{cifra.etiqueta}</dt>
+              {/* Sin aria-label: el valor en palabras lo pone <CountUp>, y la
+                  etiqueta ya está en el <dt>. */}
+              <dd className="uni-hd__cifra">
                 <CountUp
                   to={cifra.valor}
                   prefix={cifra.prefijo}
@@ -363,9 +386,10 @@ export function HeroCalado() {
             </div>
           ))}
         </dl>
+        )}
       </div>
 
-      <div className="com-hero__velo js-velo" aria-hidden="true" />
+      <div className="uni-hero__velo js-velo" aria-hidden="true" />
 
       {/*
         El cierre va aria-hidden: repite EXACTAMENTE la palabra del <h1> y las
@@ -377,16 +401,17 @@ export function HeroCalado() {
         vez el velo, la palabra y las tres cifras; con los números corriendo
         además, serían cuatro cosas moviéndose en segundo y medio.
       */}
-      <div className="com-hero__entrada js-entrada" aria-hidden="true">
-        <div className="com-hero__lockup">
-          <p className="com-hero__vuelve">{HERO_CALADO.palabra}</p>
-          <Banderola />
+      <div className="uni-hero__entrada js-entrada" aria-hidden="true">
+        <div className="uni-hero__lockup">
+          <p className="uni-hero__vuelve">{hero.palabra}</p>
+          {bandera && <Banderola forma={bandera} />}
         </div>
-        <dl className="com-hero__cierre">
-          {CIFRAS_COMERCIAL.map((cifra) => (
-            <div className="com-hc" key={cifra.etiqueta}>
-              <dt className="com-hc__etiqueta">{cifra.etiqueta}</dt>
-              <dd className="com-hc__cifra">
+        {cifras.length > 0 && (
+        <dl className="uni-hero__cierre">
+          {cifras.map((cifra) => (
+            <div className="uni-hc" key={cifra.etiqueta}>
+              <dt className="uni-hc__etiqueta">{cifra.etiqueta}</dt>
+              <dd className="uni-hc__cifra">
                 {cifra.prefijo && (
                   <span className="altea-count__prefijo">{cifra.prefijo}</span>
                 )}
@@ -398,6 +423,7 @@ export function HeroCalado() {
             </div>
           ))}
         </dl>
+        )}
       </div>
     </section>
   );
@@ -407,11 +433,26 @@ export function HeroCalado() {
  * Los dos triángulos del logotipo de unidad, colgados del vértice de la palabra.
  *
  * `refIzq` marca la única mitad izquierda que recibe la foto: la de la capa del
- * contorno, que es la visible. Ver la nota de .com-hero__gal en la hoja.
+ * contorno, que es la visible. Ver la nota de .uni-hero__gal en la hoja.
  */
-function Banderola({ refIzq }: { refIzq?: boolean }) {
+function Banderola({
+  forma,
+  refIzq,
+}: {
+  forma: FormaBandera;
+  refIzq?: boolean;
+}) {
+  const [, , ancho, alto] = forma.viewBox.split(/\s+/).map(Number);
   return (
-    <span className="com-hero__gal" aria-hidden="true">
+    <span
+      className="uni-hero__gal"
+      aria-hidden="true"
+      style={{
+        ["--gal-ratio" as string]: `${ancho} / ${alto}`,
+        ["--gal-izq" as string]: mascara(forma.viewBox, forma.izquierda),
+        ["--gal-der" as string]: mascara(forma.viewBox, forma.derecha),
+      }}
+    >
       <i className={refIzq ? "gal__izq js-gal" : "gal__izq"} />
       <i className="gal__der" />
     </span>

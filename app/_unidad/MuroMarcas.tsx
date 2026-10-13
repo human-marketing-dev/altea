@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MARCAS_COMERCIAL, TITULO_MARCAS } from "./content";
+import type { ContenidoUnidad } from "./tipos";
 
 /**
  * El muro de marcas: 32 en ocho columnas.
@@ -51,7 +51,7 @@ import { MARCAS_COMERCIAL, TITULO_MARCAS } from "./content";
  * continua entre dos extremos: con 0 se igualan los ALTOS de tinta —que es lo que
  * había, y deja los cinco en 0.34x de masa— y con 0.5 se igualan las ÁREAS.
  *
- * ⚠ Y POR SÍ SOLO NO BASTA: HACE FALTA EL TOPE DE BANDA de comercial.css. Esto se
+ * ⚠ Y POR SÍ SOLO NO BASTA: HACE FALTA EL TOPE DE BANDA de unidad.css. Esto se
  * descubrió tarde y por el camino largo, así que conviene dejarlo escrito.
  *
  * Igualar masa sin tope llevaba a los cinco al 62-70 % del alto del hueco, por
@@ -79,16 +79,18 @@ const EXPONENTE = 0.2;
 const factorOptico = (rTinta: number) =>
   Math.pow(REFERENCIA / rTinta, EXPONENTE);
 
-export function MuroMarcas() {
+export function MuroMarcas({ marcas }: Pick<ContenidoUnidad, "marcas">) {
+  const MARCAS_COMERCIAL = marcas.lista;
+  const TITULO_MARCAS = marcas.titulo;
   return (
-    <section className="com-marcas" aria-labelledby="marcas-titulo">
-      <h2 className="com-marcas__titulo" id="marcas-titulo">
+    <section className="uni-marcas" aria-labelledby="marcas-titulo">
+      <h2 className="uni-marcas__titulo" id="marcas-titulo">
         {TITULO_MARCAS}
       </h2>
 
-      <ul className="com-marcas__rejilla">
+      <ul className="uni-marcas__rejilla">
         {MARCAS_COMERCIAL.map((marca) => (
-          <li className="com-mc" key={marca.nombre}>
+          <li className="uni-mc" key={marca.nombre}>
             {/* El alt es el nombre: no son decorativos, son la información de la
                 sección. */}
             <Image
@@ -96,7 +98,7 @@ export function MuroMarcas() {
               alt={marca.nombre}
               width={240}
               height={Math.round(240 / marca.ratio)}
-              className="com-mc__logo"
+              className="uni-mc__logo"
               style={{
                 ["--factor" as string]: factorOptico(marca.rTinta),
                 ["--tinta" as string]: marca.tinta,

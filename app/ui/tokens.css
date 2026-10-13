@@ -26,6 +26,28 @@
   --altea-coral-dark: #D6473A;
   --altea-white: #FFFFFF;
 
+  /* ---- Color: unidades de negocio ---- */
+  /*
+   * EL COLOR DE CADA UNIDAD, Y ÉSTE ES EL ÚNICO SITIO DONDE ESTÁ ESCRITO.
+   *
+   * Los cuatro los dio Altea y NO SE AJUSTAN: no forman familia —sobre ink el
+   * azul de Industrial da 5.11 y el amarillo de Comercial 10.75— y se quedan
+   * así. Si uno pesa demasiado en algún sitio, se resuelve en ese sitio.
+   *
+   * No salen de los logotipos de public/brand/business-units: ahí la banderola
+   * es coral en las tres unidades.
+   *
+   * Los leen, siempre a través de lib/color-unidad.ts y siempre como la variable
+   * local --color-unidad:
+   *   · la carpeta de cada unidad en el home (CarpetasUnidades)
+   *   · la mitad derecha de la banderola y los signos de las cifras del hero de
+   *     cada página de unidad (HeroCalado)
+   */
+  --unidad-comercial: #FDCE5B;
+  --unidad-industrial: #5697D0;
+  --unidad-vivienda: #9CD5AA;
+  --unidad-forestal: #d5b39b;
+
   /* ---- Color: semantic ---- */
   /*
    * EL FONDO DE PÁGINA YA NO ES EL BEIGE DE MARCA, y por eso deja de apuntar a
@@ -95,8 +117,25 @@
   --space-8: 64px;
   --space-9: 96px;
   --space-10: 128px;
-  --container-max: 1280px;
+
+  /*
+   * EL MARGEN DE PÁGINA. Todo lo que arranca en el borde de la página arranca
+   * aquí, o en cero si va a sangre. Lo usan también las fichas (el hueco a cada
+   * lado) y el vídeo en móvil. La barra flotante es la excepción pendiente: ver
+   * .altea-navbar en components.css.
+   * A sangre va la SECCIÓN, no su texto: el texto de una sección a sangre sigue
+   * en este margen, en un contenedor interior.
+   */
   --container-pad: clamp(20px, 5vw, 80px);
+
+  /*
+   * LA MEDIDA MÁXIMA DEL TEXTO, y sólo del texto: fotos, carruseles y heroes
+   * siguen a todo el ancho. Acota cuánto se estira un bloque hacia la derecha,
+   * NO dónde empieza: se aplica sin margin-inline: auto, así que el texto sigue
+   * arrancando en --container-pad, en la misma línea que las fotos. Sólo actúa
+   * con más de 1280 px de ancho útil, o sea a partir de unos 1424 px de ventana.
+   */
+  --container-max: 1280px;
 
   /* ---- Motion ---- */
   --ease-standard: cubic-bezier(.4, 0, .2, 1);

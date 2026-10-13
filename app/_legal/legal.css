@@ -1,0 +1,73 @@
+/*
+ * Páginas LEGALES: aviso de privacidad y términos y condiciones.
+ *
+ * Una columna de lectura y nada más. Todo sale de tokens que el sitio ya usa:
+ * el margen lateral es --container-pad, las secciones van a --text-h3 —el
+ * mismo cuerpo que los h2 de /contacto— y el texto a --text-body con
+ * --leading-body. No hay ningún tamaño nuevo: ver docs/tipografia-y-espaciado.md
+ * antes de añadir uno.
+ */
+.leg {
+  padding: var(--space-8) var(--container-pad) var(--space-9);
+  background: var(--surface-page);
+  color: var(--text-primary);
+}
+
+/* 68ch: la medida de lectura cómoda para texto corrido a este cuerpo. */
+.leg__cuerpo {
+  max-width: 68ch;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+}
+
+.leg__cuerpo p {
+  margin: 0 0 var(--space-4);
+}
+
+.leg__seccion {
+  margin-top: var(--space-7);
+}
+
+.leg__titulo {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+}
+
+.leg__subtitulo {
+  margin: var(--space-6) 0 var(--space-4);
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-heading);
+}
+
+.leg__lista {
+  margin: 0 0 var(--space-4);
+  padding-left: 1.25em;
+}
+.leg__lista li + li {
+  margin-top: var(--space-2);
+}
+
+.leg__cuerpo strong {
+  font-weight: var(--weight-bold);
+}
+
+.leg__cuerpo a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  overflow-wrap: anywhere;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.leg__cuerpo a:hover {
+  color: var(--text-accent);
+}
+
+.leg__cierre {
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+}

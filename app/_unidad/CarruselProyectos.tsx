@@ -2,12 +2,14 @@
 
 import { useRef, useState } from "react";
 import { CarruselTarjetas } from "@/app/ui";
-import { FichaComercial } from "./FichaComercial";
-import type { Plaza } from "./content";
-import { GALERIA_PLAZAS, PLAZAS } from "./content";
+import { FichaUnidad } from "./FichaUnidad";
+import type { ContenidoUnidad, Proyecto } from "./tipos";
 
 /**
- * Las ocho plazas, en carrusel, con la misma tarjeta que los proyectos del home.
+ * Los proyectos de la unidad, en carrusel, con la misma tarjeta que los del home.
+ * En Comercial son las ocho plazas, y de ahí vienen los nombres de abajo.
+ *
+ * Con la lista vacía no se monta: ver la regla en tipos.ts.
  *
  * La tarjeta es <TarjetaProyecto> y el movimiento <CarruselTarjetas>, las dos en
  * ui/. Aquí sólo está lo propio de comercial: qué dice cada tarjeta y qué ficha
@@ -33,13 +35,16 @@ import { GALERIA_PLAZAS, PLAZAS } from "./content";
  * formato— y manda los visitantes y la descripción a la ficha. Es el trato que
  * pide un formato de tarjetas.
  */
-export function CarrilPlazas() {
-  const [activa, setActiva] = useState<Plaza | null>(null);
+export function CarruselProyectos({
+  proyectos,
+}: Pick<ContenidoUnidad, "proyectos">) {
+  const PLAZAS = proyectos.lista;
+  const [activa, setActiva] = useState<Proyecto | null>(null);
   const origen = useRef<HTMLButtonElement | null>(null);
 
   return (
     <CarruselTarjetas
-      titulo={GALERIA_PLAZAS.titulo}
+      titulo={proyectos.titulo}
       tituloId="plazas-titulo"
       items={PLAZAS.map((plaza) => ({
         id: plaza.id,
@@ -65,20 +70,20 @@ export function CarrilPlazas() {
         setActiva(PLAZAS[k] ?? null);
       }}
     >
-      <FichaComercial
+      <FichaUnidad
         contenido={
           activa && {
             nombre: activa.nombre,
             foto: activa.foto,
             fotoRatio: activa.fotoRatio,
             alt: activa.alt,
-            /* Formato · Ubicación · Visitantes, en ese orden: el formato es lo
-               que clasifica la plaza y por eso abre. Los dos pares de `datos`
-               son Formato y Visitantes, así que la ubicación se intercala. */
+            /* Formato · Ubicación · el resto, en ese orden: el formato es lo
+               que clasifica el proyecto y por eso abre. En Comercial el resto
+               es un solo par, Visitantes; en Industrial, las superficies. */
             datos: [
               activa.datos[0],
               { etiqueta: "Ubicación", valor: activa.ubicacion },
-              activa.datos[1],
+              ...activa.datos.slice(1),
             ],
             descripcion: activa.descripcion,
           }

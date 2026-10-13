@@ -27,14 +27,14 @@
    * Medido con la métrica de Gotham Medium y el letter-spacing ya contado, el
    * avance medio de esta frase es 0.4784 em por carácter, así que:
    *
-   *   1280 →  53.7 car/línea      1600 →  64.9
-   *   1440 →  58.4 car/línea      1920 →  79.3
+   *   1280 →  53.7 car/línea      1600 →  57.7
+   *   1440 →  57.7 car/línea      1920 →  57.7
    *
-   * Los cuatro por debajo de 90, o sea que a todo el ancho la frase se lee bien y
-   * no hace falta bajar el cuerpo ni subir el interlineado. A partir de ~1990px de
-   * ancho útil sí se pasaría —2560 daría 108— y ahí es donde el tope corta.
+   * Desde 1440 manda --container-max: el bloque arranca en el margen y deja de
+   * estirarse a los 1280, sin centrarse. Sin él, 1920 daba 79 caracteres por
+   * línea y 2560, 108. El 43em queda de techo para cuerpos menores.
    */
-  max-width: 43em;
+  max-width: min(43em, var(--container-max));
   font-size: clamp(1.5rem, 3.5vw, 2.9rem);
   font-weight: var(--weight-medium);
   line-height: 1.16;
@@ -335,7 +335,7 @@
   border-radius: var(--radius-lg);
   display: grid;
   grid-template-columns: minmax(0, 46%) minmax(0, 54%);
-  background: var(--u-color, var(--altea-ink));
+  background: var(--color-unidad, var(--altea-ink));
   color: var(--altea-cream);
   /* La línea clara de arriba y la sombra hacia arriba son lo que hace que una
      carpeta se lea POR ENCIMA de la anterior y no simplemente al lado. */
@@ -414,8 +414,8 @@
 /*
  * ═══ LAS TARJETAS CON COLOR DE UNIDAD ═══════════════════════════════════
  *
- * Comercial #FDCE5B, Industrial #5697D0, Vivienda #9CD5AA y Forestal #d5b39b.
- * Las cuatro, ya no tres: Forestal se quedaba en ink con texto cream y acento
+ * El color de cada unidad está en app/ui/tokens.css (--unidad-*) y llega aquí
+ * como --color-unidad. Las cuatro, ya no tres: Forestal se quedaba en ink con texto cream y acento
  * coral porque no tenía color, y ahora lo tiene.
  *
  * TODO el texto pasa a ink, y no es una preferencia: es la única tinta que
@@ -484,7 +484,8 @@
  * ::backdrop salen gratis, sin una línea de JavaScript para ello.
  */
 .home-ficha {
-  width: min(880px, 94vw);
+  /* Fuera de su tope, la ficha deja a cada lado el margen de página. */
+  width: min(880px, calc(100vw - 2 * var(--container-pad)));
   max-height: 90svh;
   padding: 0;
   border: 0;

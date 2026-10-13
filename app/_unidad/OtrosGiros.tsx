@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { OTROS_GIROS } from "./content";
+import type { ContenidoUnidad } from "./tipos";
 
 /**
  * Otros giros: hoteles, hospital y educación.
@@ -7,7 +7,7 @@ import { OTROS_GIROS } from "./content";
  * Tres láminas en banda. La señalada se abre y las otras ceden, y eso se resuelve
  * ENTERO EN CSS con `:has()`: `.fila:has(.gr:hover) .gr:not(:hover)` encoge a las
  * que no están bajo el cursor. Sin una línea de JavaScript, sin estado y sin
- * escuchar eventos — ver el bloque en comercial.css.
+ * escuchar eventos — ver el bloque en unidad.css.
  *
  * EN TÁCTIL LA DESCRIPCIÓN VA SIEMPRE VISIBLE. Si sólo existiera en el hover, en
  * un teléfono no existiría, y tres láminas con un título y nada más no dicen de
@@ -16,32 +16,37 @@ import { OTROS_GIROS } from "./content";
  * Son <article> y no <button>: no llevan a ninguna parte ni abren nada. Lo único
  * que hacen es revelar su propio texto, que en táctil ya está revelado.
  */
-export function OtrosGiros() {
+export function OtrosGiros({ giros }: Pick<ContenidoUnidad, "giros">) {
+  const OTROS_GIROS = giros;
   return (
-    <section className="com-giros" aria-labelledby="giros-titulo">
-      <p className="com-giros__rotulo">{OTROS_GIROS.eyebrow}</p>
-      <h2 className="com-giros__titulo" id="giros-titulo">
+    <section className="uni-giros" aria-labelledby="giros-titulo">
+      {OTROS_GIROS.eyebrow && (
+        <p className="uni-giros__rotulo">{OTROS_GIROS.eyebrow}</p>
+      )}
+      <h2 className="uni-giros__titulo" id="giros-titulo">
         {OTROS_GIROS.titulo}
       </h2>
 
-      <div className="com-giros__fila">
+      <div className="uni-giros__fila">
         {OTROS_GIROS.bloques.map((giro) => (
-          <article className="com-gr" key={giro.id}>
-            <Image
-              src={giro.image}
-              alt={giro.alt}
-              fill
-              sizes="(max-width: 900px) 100vw, 60vw"
-              className="com-gr__img"
-            />
+          <article className="uni-gr" key={giro.id}>
+            {giro.image && (
+              <Image
+                src={giro.image}
+                alt={giro.alt ?? ""}
+                fill
+                sizes="(max-width: 900px) 100vw, 60vw"
+                className="uni-gr__img"
+              />
+            )}
             {/* El velo no es decorativo: es lo que garantiza el contraste del
                 título y la descripción sobre una foto cualquiera. */}
-            <span className="com-gr__velo" aria-hidden="true" />
+            <span className="uni-gr__velo" aria-hidden="true" />
 
-            <span className="com-gr__n" aria-hidden="true">
+            <span className="uni-gr__n" aria-hidden="true">
               {giro.numero}
             </span>
-            <div className="com-gr__t">
+            <div className="uni-gr__t">
               <h3>{giro.title}</h3>
               {/*
                 El envoltorio no es decorativo: la caja anima UNA fila de rejilla
@@ -49,9 +54,11 @@ export function OtrosGiros() {
                 max-height habría que adivinar un alto y se rompería al cambiar
                 el texto.
               */}
-              <div className="com-gr__caja">
-                <p>{giro.description}</p>
-              </div>
+              {giro.description && (
+                <div className="uni-gr__caja">
+                  <p>{giro.description}</p>
+                </div>
+              )}
             </div>
           </article>
         ))}

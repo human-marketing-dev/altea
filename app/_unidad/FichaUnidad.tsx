@@ -4,7 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 /**
- * La ficha de /comercial: el <dialog> que abren las tarjetas.
+ * La ficha de las páginas de unidad: el <dialog> que abren las tarjetas. Era
+ * <FichaComercial>.
  *
  * Vive aparte porque la abren DOS secciones —las plazas del carrusel y los
  * próximos proyectos— y es exactamente el mismo diálogo. Duplicar el marcado era
@@ -16,7 +17,7 @@ import { useEffect, useRef } from "react";
  *
  * Lo que NO es: una ficha genérica del sitio. La del home tiene su propio
  * tratamiento —otra proporción de foto, otro tope de alto— y las dos están
- * calibradas por separado; ver .com-fx y .home-ficha en sus hojas.
+ * calibradas por separado; ver .uni-fx y .home-ficha en sus hojas.
  */
 
 export interface DatoFicha {
@@ -30,7 +31,7 @@ export interface ContenidoFicha {
   foto?: string;
   /**
    * Proporción ancho/alto del archivo. La caja la adopta para que `cover` no
-   * recorte nada mientras haya alto; ver .com-fx__foto.
+   * recorte nada mientras haya alto; ver .uni-fx__foto.
    */
   fotoRatio?: number;
   alt?: string;
@@ -39,7 +40,7 @@ export interface ContenidoFicha {
   descripcion?: string;
 }
 
-export function FichaComercial({
+export function FichaUnidad({
   contenido,
   onCerrar,
   etiquetaVacia,
@@ -64,7 +65,7 @@ export function FichaComercial({
   return (
     <dialog
       ref={dialogo}
-      className="com-fx"
+      className="uni-fx"
       aria-label={contenido ? `Ficha de ${contenido.nombre}` : etiquetaVacia}
       onClose={onCerrar}
       onClick={(evento) => {
@@ -76,7 +77,7 @@ export function FichaComercial({
         <article>
           <button
             type="button"
-            className="com-fx__x"
+            className="uni-fx__x"
             onClick={onCerrar}
             aria-label="Cerrar ficha"
           >
@@ -86,10 +87,10 @@ export function FichaComercial({
           {/*
             La foto arriba, a todo el ancho y con el nombre encima; los datos y la
             descripción debajo. Lo que hace que entre sin barra es que la foto
-            cede el alto que le sobra al cuerpo, en comercial.css.
+            cede el alto que le sobra al cuerpo, en unidad.css.
           */}
           <div
-            className="com-fx__foto"
+            className="uni-fx__foto"
             /* La proporción del archivo. Sin el dato, 3/2: es la de cinco de las
                ocho plazas, así que un valor que falte falla por poco. */
             style={{ ["--proporcion" as string]: contenido.fotoRatio ?? 1.5 }}
@@ -101,16 +102,16 @@ export function FichaComercial({
                 fill
                 /* La caja ocupa el ancho entero del diálogo. */
                 sizes="(max-width: 900px) 94vw, 1040px"
-                className="com-fx__img"
+                className="uni-fx__img"
               />
             )}
-            <h3 className="com-fx__nombre">{contenido.nombre}</h3>
+            <h3 className="uni-fx__nombre">{contenido.nombre}</h3>
           </div>
 
-          <div className="com-fx__cuerpo">
-            <dl className="com-fx__datos">
+          <div className="uni-fx__cuerpo">
+            <dl className="uni-fx__datos">
               {contenido.datos.map((dato) => (
-                <div className="com-fx__d" key={dato.etiqueta}>
+                <div className="uni-fx__d" key={dato.etiqueta}>
                   <dt>{dato.etiqueta}</dt>
                   <dd>{dato.valor ?? "—"}</dd>
                 </div>

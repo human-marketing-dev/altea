@@ -151,6 +151,22 @@ export const FORESTAL: ContenidoUnidad = {
     titulo: "Forestal · PENDIENTE",
     lista: [],
   },
+  /*
+   * El cierre con la foto que se sale del panel, como Comercial. Para volver al
+   * cierre de siempre, borra este campo.
+   *
+   * La foto es una copia recortada de cta/forestal-cta.webp: el original trae
+   * el 37 % de arriba transparente (395 de 1080 px). El recorte es al borde de
+   * las copas y nada más; WebP sin pérdida.
+   */
+  cierre: {
+    color: colorDeUnidad("Forestal"),
+    foto: {
+      src: "/images/forestal/cta/forestal-cta-recorte.webp",
+      ancho: 1080,
+      alto: 685,
+    },
+  },
   proximos: {
     /* El mismo rótulo de sección que Comercial. */
     titulo: "Próximos\nproyectos",

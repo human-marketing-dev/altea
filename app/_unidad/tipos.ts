@@ -153,6 +153,26 @@ export interface ContenidoUnidad {
     lista: Marca[];
   };
   proximos: { titulo: string; proyectos: ProximoProyecto[] };
+  /**
+   * El cierre con la foto que se sale del panel (<CierreUnidad>). Sin este
+   * campo la página cierra con <CierreContacto>, como siempre. Hoy lo traen
+   * las cuatro unidades, a prueba: quitarlo devuelve el cierre de antes.
+   *
+   * El copy NO va aquí: es el del cierre de todas las páginas (CONTACT_CTA), y
+   * se toma de ahí para que los dos digan lo mismo.
+   */
+  cierre?: CierreConFoto;
+}
+
+/** Ver `cierre` en ContenidoUnidad. */
+export interface CierreConFoto {
+  /** El fondo del panel: el color de la unidad, como var(). */
+  color: string;
+  /**
+   * Un PNG recortado con alfa, con el edificio tocando el borde de arriba y la
+   * base al ras del de abajo: la altura de la foto es lo que lo saca del panel.
+   */
+  foto: { src: string; ancho: number; alto: number };
 }
 
 export interface Cifra {

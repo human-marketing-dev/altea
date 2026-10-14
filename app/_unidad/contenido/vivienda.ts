@@ -138,6 +138,22 @@ export const VIVIENDA: ContenidoUnidad = {
     titulo: "Vivienda · PENDIENTE",
     lista: [],
   },
+  /*
+   * El cierre con la foto que se sale del panel, como las otras tres. Para
+   * volver al cierre de siempre, borra este campo.
+   *
+   * La foto es una copia recortada de cta/vivienda-cta.webp: el original trae
+   * 318 px transparentes arriba. El recorte es al borde del pórtico y nada más;
+   * WebP sin pérdida.
+   */
+  cierre: {
+    color: colorDeUnidad("Vivienda"),
+    foto: {
+      src: "/images/vivienda/cta/vivienda-cta-recorte.webp",
+      ancho: 1080,
+      alto: 762,
+    },
+  },
   proximos: {
     /* El mismo rótulo de sección que Comercial. */
     titulo: "Próximos\nproyectos",

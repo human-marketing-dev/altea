@@ -60,10 +60,26 @@
   position: relative;
   z-index: 3;
   align-self: center;
+  /*
+   * CENTRADO EN LA PANTALLA, NO EN LA CAJA DEL HERO.
+   *
+   * El hero mide 100svh pero empieza DEBAJO de la barra, que va en el flujo: su
+   * centro cae media barra por debajo del centro de lo que se ve al cargar. Por
+   * eso el aire de abajo lleva, además, el alto de la barra: el bloque queda a la
+   * mitad entre la barra y el borde inferior de la ventana.
+   *
+   * Antes iba 16vh arriba y 3vh abajo —para librar una barra que ya no se le
+   * encima— y el texto caía unos 140 px por debajo del centro.
+   *
+   * --alto-barra es la cuenta de scroll-padding-top en globals.css sin su
+   * respiro: 82 px contra los 78–79 medidos, así que el centro queda a 1–2 px.
+   */
+  --alto-barra: calc(var(--space-4) + var(--nav-padding-y) * 2 + 46px);
+  --aire-hero: clamp(40px, 8vh, 96px);
   /* El margen de página a los dos lados: en móvil el derecho ES el borde de la
      ventana; en escritorio es el hueco hasta la nube, con el mismo valor. */
-  padding: clamp(100px, 16vh, 190px) var(--container-pad)
-    clamp(20px, 3vh, 44px) var(--container-pad);
+  padding: var(--aire-hero) var(--container-pad)
+    calc(var(--aire-hero) + var(--alto-barra)) var(--container-pad);
   width: min(100%, 54vw);
 }
 

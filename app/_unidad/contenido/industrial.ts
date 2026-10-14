@@ -238,6 +238,22 @@ export const INDUSTRIAL: ContenidoUnidad = {
     titulo: "Industrial · PENDIENTE",
     lista: [],
   },
+  /*
+   * El cierre con la foto que se sale del panel, como Comercial y Forestal.
+   * Para volver al cierre de siempre, borra este campo.
+   *
+   * La foto es una copia recortada de cta/industrial-cta.webp: el original trae
+   * 454 px transparentes arriba y 248 a la izquierda. El recorte es al borde de
+   * la nave y nada más; WebP sin pérdida.
+   */
+  cierre: {
+    color: colorDeUnidad("Industrial"),
+    foto: {
+      src: "/images/industrial/cta/industrial-cta-recorte.webp",
+      ancho: 832,
+      alto: 626,
+    },
+  },
   proximos: {
     /* El mismo rótulo de sección que Comercial. */
     titulo: "Próximos\nproyectos",

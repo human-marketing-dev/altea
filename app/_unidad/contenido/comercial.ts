@@ -1106,4 +1106,22 @@ export const COMERCIAL: ContenidoUnidad = {
       fotoRatio: 1.792,
     })),
   },
+  /*
+   * ⚠ PRUEBA (octubre de 2026): el cierre con el edificio saliéndose del panel.
+   * Para volver al cierre de antes, borra este campo: sin él la página monta
+   * <CierreContacto> como las otras tres.
+   *
+   * La foto es una copia recortada de cta/comercial-foto-cta.webp: el original
+   * trae el 43 % de arriba transparente (467 de 1080 px), y con él el edificio
+   * no llegaba a salirse del panel. El recorte es al borde del edificio y nada
+   * más; WebP sin pérdida, para no ensuciar el filo.
+   */
+  cierre: {
+    color: colorDeUnidad("Comercial"),
+    foto: {
+      src: "/images/comercial/cta/comercial-foto-cta-recorte.webp",
+      ancho: 1080,
+      alto: 613,
+    },
+  },
 };

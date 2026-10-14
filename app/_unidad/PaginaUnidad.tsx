@@ -3,6 +3,7 @@ import { CONTACT_CTA } from "@/app/_home/content";
 import { CierreContacto, Footer, NavBar } from "@/app/ui";
 import { Atributos } from "./Atributos";
 import { CarruselProyectos } from "./CarruselProyectos";
+import { CierreUnidad } from "./CierreUnidad";
 import { HeroCalado } from "./HeroCalado";
 import { LineasNegocio } from "./LineasNegocio";
 import { MuroMarcas } from "./MuroMarcas";
@@ -41,6 +42,7 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
     marcas,
     proximos,
     unidad,
+    cierre,
   } = contenido;
   return (
     <>
@@ -60,7 +62,19 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
         {marcas.mostrar && marcas.lista.length > 0 && <MuroMarcas marcas={marcas} />}
         {proximos.proyectos.length > 0 && <ProximosProyectos proximos={proximos} />}
       </main>
-      <CierreContacto {...CONTACT_CTA} unidad={unidad} />
+      {/* Con `cierre` en el contenido, el cierre con la foto que se sale del
+          panel (hoy las cuatro unidades, a prueba). Sin él, el de siempre: borrar el
+          campo en contenido/<unidad>.ts es volver atrás. */}
+      {cierre ? (
+        <CierreUnidad
+          eyebrow={CONTACT_CTA.eyebrow}
+          title={CONTACT_CTA.title}
+          unidad={unidad}
+          cierre={cierre}
+        />
+      ) : (
+        <CierreContacto {...CONTACT_CTA} unidad={unidad} />
+      )}
       <Footer />
     </>
   );

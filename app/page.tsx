@@ -52,10 +52,10 @@ export default function Home() {
             widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
             y lib/publicaciones.ts — para volver a mostrarla basta con importarla
             y poner <Publicaciones /> aquí. */}
-        {/* El cierre del home es <CierrePuntos>, sin foto. El <CierreContacto> de
-            siempre —el de la foto a la izquierda— queda oculto SÓLO aquí: las
-            demás páginas lo siguen usando. Para devolverlo, basta con volver a
-            poner <CierreContacto {...CONTACT_CTA} /> en esta línea. */}
+        {/* El cierre del home es <CierrePuntos>, sin foto; /nosotros lleva el
+            mismo y las unidades el suyo (<CierreUnidad>). Para devolver el de la
+            foto a la izquierda, basta con volver a poner
+            <CierreContacto {...CONTACT_CTA} /> en esta línea. */}
         <CierrePuntos eyebrow={CONTACT_CTA.eyebrow} title={CONTACT_CTA.title} />
       </main>
       <Footer />

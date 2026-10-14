@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CierreContacto, Footer, NavBar } from "@/app/ui";
+import { Footer, NavBar } from "@/app/ui";
+import { CierrePuntos } from "@/app/_home/CierrePuntos";
 import { CONTACT_CTA } from "@/app/_home/content";
 import { GrupoFirma } from "../_nosotros/GrupoFirma";
 import { HeroNube } from "../_nosotros/HeroNube";
@@ -34,8 +35,11 @@ export default function Nosotros() {
         <GrupoFirma />
         <Huella />
         <ResponsabilidadSocial />
+        {/* El cierre del home, el de la banderola de puntos (octubre de 2026).
+            Para volver al de la foto: <CierreContacto {...CONTACT_CTA} />,
+            fuera de <main>, como estaba. */}
+        <CierrePuntos eyebrow={CONTACT_CTA.eyebrow} title={CONTACT_CTA.title} />
       </main>
-      <CierreContacto {...CONTACT_CTA} />
       <Footer />
     </>
   );

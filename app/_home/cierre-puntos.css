@@ -1,0 +1,133 @@
+/* ═══ el cierre de puntos ════════════════════════════════════════════════
+ *
+ * El cierre del home y de /nosotros; las unidades usan <CierreUnidad>. Ver
+ * CierrePuntos.tsx.
+ *
+ * En su propio archivo, y lo importa el componente: antes vivía en
+ * secciones.css, que sólo carga el home, y montarlo en otra página habría
+ * obligado a cargar todas las secciones del home con él.
+ *
+ * Nada nuevo en la escala: el titular usa el escalón de "Próximos proyectos",
+ * el rótulo es el del cierre de hoy, el aire vertical es el clamp de 13vh que
+ * llevan casi todas las secciones, y el texto arranca en el margen de página con
+ * la medida acotada por --container-max.
+ */
+.home-cp {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+  background: var(--surface-page);
+}
+/* EL PANEL EN TINTA es lo que hace que el cierre destaque. Con radio y dentro
+   del margen de página, no a sangre: así no se funde con el pie, también tinta,
+   el día que sustituya al cierre actual. */
+.home-cp__panel {
+  display: grid;
+  /* Mitades: a 5/7 los dos botones grandes no cabían en un renglón a 1440. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 90px);
+  align-items: center;
+  padding: clamp(36px, 5vw, 84px);
+  border-radius: var(--radius-lg);
+  background: var(--altea-ink);
+  color: var(--text-on-dark);
+}
+/* El campo delante y el texto detrás en escritorio; en el DOM va al revés,
+   que es el orden de lectura. */
+.home-cp__campo {
+  grid-row: 1;
+  grid-column: 1;
+}
+.home-cp__txt {
+  grid-row: 1;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.home-cp__rotulo {
+  margin: 0 0 12px;
+  font-size: var(--text-rotulo);
+  line-height: var(--lh-rotulo);
+  letter-spacing: var(--ls-rotulo);
+  font-weight: var(--peso-rotulo);
+  text-transform: uppercase;
+  color: var(--text-on-dark-secondary);
+}
+/* El escalón de sección, el mismo de la frase de Emblem. Antes iba a
+   --text-display-2, un escalón por encima de los h2: como h2 de la página, ya
+   no puede pasar de ellos. */
+.home-cp__titulo {
+  margin: 0 0 var(--space-6);
+  max-width: 16ch;
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
+  text-wrap: balance;
+}
+.home-cp__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+/* El contorno del sistema está pensado para superficies claras: sobre tinta va
+   en crema. Al 56 %, como el borde del contorno claro, que es lo que lo deja
+   por encima del 3:1 de un control. */
+.home-cp .altea-btn--outline {
+  color: var(--altea-cream);
+  border-color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
+}
+.home-cp .altea-btn--outline:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--altea-cream) 10%, transparent);
+}
+.home-cp .altea-btn:focus-visible {
+  outline-color: var(--altea-cream);
+}
+.home-cp__correo {
+  margin-top: var(--space-6);
+  font-size: var(--text-small);
+  color: var(--text-on-dark-secondary);
+  text-underline-offset: 4px;
+}
+.home-cp__correo:hover {
+  color: var(--altea-cream);
+}
+/* El campo: el alto lo da la proporción, y el cursor sobre él es el gesto. */
+.home-cp__campo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 7 / 5;
+  min-height: 300px;
+}
+@media (max-width: 900px) {
+  .home-cp__panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* En una columna, el texto arriba y el campo debajo. */
+  .home-cp__campo,
+  .home-cp__txt {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .home-cp__campo {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+}
+/* En el teléfono el panel necesita menos relleno: con el de escritorio quedaban
+   278 px de ancho útil a 390 y el botón de WhatsApp se partía en dos renglones. */
+@media (max-width: 560px) {
+  .home-cp__panel {
+    padding: 28px 22px;
+  }
+  /* Y los botones a ancho completo, con el cuerpo del botón mediano (15 px): el
+     grande pedía unos 330 px para "Contáctanos por WhatsApp" y quedan 306. */
+  .home-cp__acciones {
+    width: 100%;
+  }
+  .home-cp .altea-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px 18px;
+    font-size: 15px;
+  }
+}

@@ -4,11 +4,13 @@ import { useEffect, useRef } from "react";
 import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
 import { BANDEROLA_CORAL, BANDEROLA_CREAM } from "@/lib/isotipo";
 import { ruta } from "@/lib/rutas";
+import "./cierre-puntos.css";
 
 /**
- * EL CIERRE DEL HOME (octubre de 2026). Sustituye en el home a <CierreContacto>,
- * el cierre con foto, que queda oculto sólo aquí: el resto de las páginas lo
- * siguen usando. Ver app/page.tsx.
+ * EL CIERRE DEL HOME Y DE /nosotros (octubre de 2026). Sustituye ahí a
+ * <CierreContacto>, el cierre con foto; las unidades cierran con
+ * <CierreUnidad>. Ver app/page.tsx y app/nosotros/page.tsx. Sus estilos están
+ * en cierre-puntos.css, que se importa aquí.
  *
  * EL CIERRE SIN FOTO. A la derecha lo mismo que dice el cierre de hoy —rótulo,
  * titular, los dos botones y el correo—; a la izquierda, en vez de la foto, un

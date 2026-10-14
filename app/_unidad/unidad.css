@@ -1558,6 +1558,194 @@
   }
 }
 
+/* ═══ 6 · cierre con foto (prueba en las cuatro unidades) ═══════════════════
+ *
+ * Panel de color con el texto a la izquierda y un edificio recortado a la
+ * derecha que SE SALE DEL PANEL POR ARRIBA. Lo monta <CierreUnidad> cuando la
+ * unidad trae `cierre`; sin él, la página cierra con <CierreContacto>.
+ *
+ * ⚠ NADA DE overflow: hidden NI clip, ni aquí ni en ningún ancestro: es lo que
+ * mata el desborde. Comprobado hasta <html> en octubre de 2026.
+ */
+.uni-cta {
+  /* Cuánto sube la foto por encima del panel. Es también el padding-top: así el
+     desborde cae entero en el hueco de esta sección y nunca se mete en la de
+     arriba. Para más o menos gesto se mueve esto, no la altura de la foto. */
+  --desborde: clamp(40px, 7vw, 104px);
+  --alto-panel: clamp(220px, 25vw, 340px);
+  --radio-cta: clamp(14px, 1.6vw, 26px);
+  /* El aire hasta el pie: el de las secciones vecinas (.uni-prox). */
+  --aire-abajo: clamp(70px, 13vh, 170px);
+  --k: 1;
+  position: relative;
+  padding: var(--desborde) var(--container-pad) var(--aire-abajo);
+}
+/*
+ * LA ENTRADA VA EN LA SECCIÓN, no en el panel y la foto por separado: un
+ * transform en el panel lo vuelve su propio contexto de apilado, y entonces la
+ * foto (z-index 1) quedaría ENCIMA del texto (z-index 2, que se quedaría dentro
+ * del panel). Moviendo los dos juntos el orden se conserva.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .uni-cta {
+    opacity: calc(0.1 + 0.9 * var(--k));
+    transform: translateY(calc((1 - var(--k)) * 18px));
+    transition:
+      opacity 0.7s var(--ease-standard),
+      transform 0.7s var(--ease-standard);
+  }
+}
+.uni-cta__panel {
+  display: flex;
+  align-items: center;
+  min-height: var(--alto-panel);
+  padding: clamp(28px, 2.6vw, 40px) clamp(30px, 4vw, 60px);
+  border-radius: var(--radio-cta);
+  background: var(--cta-color);
+}
+/* Tinta y no blanco: sobre el amarillo de Comercial el blanco da 1.48 y la
+   tinta 10.76; sobre el arena de Forestal, 8.2; sobre el verde de Vivienda,
+   9.5; sobre el azul de Industrial, 5.1. */
+.uni-cta__tex {
+  position: relative;
+  z-index: 2;
+  max-width: min(54%, 620px);
+  color: var(--text-primary);
+}
+.uni-cta__rot {
+  margin: 0 0 clamp(12px, 1.5vw, 20px);
+  font-size: var(--text-rotulo);
+  line-height: var(--lh-rotulo);
+  letter-spacing: var(--ls-rotulo);
+  font-weight: var(--peso-rotulo);
+  text-transform: uppercase;
+  /* Tinta entera, como el titular: lo distingue el cuerpo, no el color. Sobre
+     el azul de Industrial cualquier tinta rebajada baja de 4.5 (al 80 % da
+     3.8), y la entera da 5.1. */
+  color: var(--text-primary);
+}
+.uni-cta h2 {
+  margin: 0;
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
+  text-wrap: balance;
+}
+.uni-cta__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: clamp(22px, 3vw, 34px);
+}
+/* El contorno del sistema va a la tinta al 56 %, que sobre el amarillo no llega
+   a 3:1. Aquí, tinta entera. */
+.uni-cta .altea-btn--outline {
+  border-color: var(--text-primary);
+}
+.uni-cta .altea-btn--outline:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text-primary) 8%, transparent);
+}
+/* La flecha del secundario se mueve como en el cierre de siempre. */
+.uni-cta__secundario:hover .altea-btn__arrow {
+  transform: translateX(3px);
+}
+.uni-cta__correo {
+  display: inline-block;
+  margin-top: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+/* El anillo coral del sistema da 2.1 sobre el amarillo: aquí va en tinta. */
+.uni-cta .altea-btn:focus-visible,
+.uni-cta__correo:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
+/*
+ * LA FOTO, hermana del panel y no dentro: el border-radius del panel la
+ * recortaría por arriba y se perdería el desborde.
+ *
+ * ⚠ SU ALTO ES EL DESBORDE MÁS EL ALTO MÍNIMO DEL PANEL, NO EL 100 % DE LA
+ * SECCIÓN. El edificio de Comercial es apaisado (1.76:1): si siguiera al alto de
+ * la sección, cada vez que el texto se parte en otra línea la foto crecería y
+ * se ensancharía hacia el texto. Así, si el panel crece, la foto se queda y lo
+ * único que se pierde es desborde.
+ *
+ * Al ras del panel por la derecha y por abajo, con su misma esquina: el
+ * edificio ocupa el borde inferior entero del archivo y taparía la esquina
+ * redondeada del panel.
+ */
+.uni-cta__foto {
+  position: absolute;
+  right: var(--container-pad);
+  bottom: var(--aire-abajo);
+  z-index: 1;
+  width: auto;
+  max-width: none;
+  /*
+   * Y TOPA EN 42.8vw − 166px, que es lo que deja la base del edificio por debajo
+   * de los botones: medido con el alfa del PNG contra las cajas del texto, de
+   * 821 a 2560. Sin el tope, a 1280 el edificio pasaba por detrás de «Ir a
+   * contacto». Es una cuenta de ESTA foto y ESTE copy: si cambia cualquiera de
+   * los dos, hay que volver a medir.
+   */
+  height: min(
+    calc(var(--desborde) + var(--alto-panel)),
+    calc(42.8vw - 166px)
+  );
+  border-bottom-right-radius: var(--radio-cta);
+  pointer-events: none;
+}
+/*
+ * MÓVIL: una columna, el texto arriba y el edificio abajo a la derecha, SIN
+ * desborde. A ancho de teléfono el desborde no se lee como gesto, se lee como
+ * un error de maquetación.
+ */
+@media (max-width: 820px) {
+  .uni-cta {
+    --desborde: 0px;
+  }
+  .uni-cta__tex {
+    max-width: 100%;
+  }
+  .uni-cta__panel {
+    /* El hueco donde se apoya la foto: SU alto a ese ancho —el mismo
+       min(62 %, 300 px) de abajo entre su proporción— y algo de aire. Fijo en
+       150 px, la nave de Industrial (1.33:1, más alta que las otras) pisaba el
+       correo a 390. */
+    --hueco-foto: calc(
+      min(62vw, 300px) / var(--cta-proporcion, 1.5) + var(--space-5)
+    );
+    min-height: 0;
+    padding-bottom: var(--hueco-foto);
+  }
+  .uni-cta__foto {
+    width: min(62%, 300px);
+    height: auto;
+  }
+  /* Apilados, como en el cierre de siempre. */
+  .uni-cta__acciones {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+/* En teléfono, a todo el ancho: con el relleno del panel no cabe «Contáctanos
+   por WhatsApp» en una línea y el botón la partía en dos. Lo mismo que el
+   cierre del home (.home-cp). */
+@media (max-width: 560px) {
+  .uni-cta__acciones {
+    align-items: stretch;
+  }
+  .uni-cta .altea-btn {
+    justify-content: center;
+    padding: 15px 18px;
+    font-size: 15px;
+  }
+}
+
 /* ═══ movimiento reducido ═════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {

@@ -17,6 +17,15 @@ const nextConfig: NextConfig = {
     process.env.NODE_ENV === "development"
       ? ["js", "jsx", "mdx", "ts", "tsx", "dev.tsx"]
       : ["js", "jsx", "mdx", "ts", "tsx"],
+  images: {
+    /*
+     * 75 es el valor por defecto de Next 16 y el único que acepta sin esta
+     * lista: cualquier otro `quality` se rebaja al más cercano. El 90 es para
+     * los PNG recortados con alfa —el del cierre de /comercial—, donde el filo
+     * del recorte es lo primero que se ensucia al comprimir.
+     */
+    qualities: [75, 90],
+  },
 };
 
 export default nextConfig;

@@ -11,8 +11,9 @@ import "./legal.css";
  *
  * La cabecera es la de /contacto —la misma <SectionHeading> sobre ink— y el
  * cuerpo una columna de lectura con los tamaños que el sitio ya tiene
- * (--text-h3 para las secciones, --text-body con --leading-body para el texto).
- * No estrena ningún escalón tipográfico.
+ * (--text-titulo-bloque para las secciones, --text-titulo-ficha para los
+ * apartados, --text-body con --leading-body para el texto). No estrena ningún
+ * escalón tipográfico.
  */
 export function PaginaLegal({ documento }: { documento: DocumentoLegal }) {
   return (

@@ -147,7 +147,7 @@
 .home-stats__value .altea-count__prefijo { color: var(--text-accent); }
 .home-stats__label {
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -299,7 +299,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-h1);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   /* Titular entero en coral, no sólo una palabra. Va sobre ink, así que le
      toca el coral normal —4.87 de contraste—: el coral-dark de las superficies
@@ -406,7 +406,7 @@
 .home-units__nombre {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   /* Va en mayúsculas: con line-height normal la caja de línea reserva hueco
      para descendentes que aquí no existen. Ceñida al texto, el bloque se
      compacta. */
@@ -474,7 +474,7 @@
   border: 1px solid var(--border-subtle-on-dark);
   border-radius: var(--radius-pill);
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   transition:
@@ -604,23 +604,20 @@
   */
   word-spacing: -0.03em;
   /*
-    Un escalón por debajo de --text-display-1, que es donde estaba.
-
-    La frase pasó de 41 caracteres a 97. Al cuerpo de antes ocupaba 4 líneas a
-    1440 y SIETE en un teléfono: dejaba de ser una declaración y se volvía un
-    muro. A --text-display-2 con la caja en 24ch son 3 líneas a 1440 —152px de
-    alto contra los 141 que ocupaba la frase vieja—, o sea la misma mancha de
-    antes con el doble de texto.
+    El escalón de sección: la frase es lo que dice la sección, no un titular de
+    página. Antes iba a --text-display-2 (52 px a 1440, 60 a 1920) y ahora topa
+    en 42. La frase son 97 caracteres: a display-1 ocupaba 4 líneas a 1440 y
+    SIETE en un teléfono, y por eso ya se había bajado una vez.
   */
-  font-size: var(--text-display-2);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   /* 27ch: es el tope que da 3 líneas de 1024 hacia arriba. Por debajo manda el
      ancho útil del marco y la frase pasa a 4, que a ese cuerpo es lo correcto. */
   max-width: 27ch;
   margin-inline: auto;
   font-family: var(--font-display);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-display);
-  letter-spacing: -0.05em;
   /* Ink sobre el relleno de la caja: 13.11. Y sin versalitas: la frase de 97
      caracteres en mayúsculas se leía como un cartel. */
   color: var(--text-primary);

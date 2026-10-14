@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:map": "tsx scripts/build-mexico-map.ts"
+    "build:map": "tsx scripts/build-mexico-map.ts",
+    "verificar:escala": "node scripts/verificar-escala.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

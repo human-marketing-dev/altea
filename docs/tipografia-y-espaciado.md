@@ -4,6 +4,8 @@
 
 Inventario sin cambios, sacado del código en el commit `1bf935c` (13-10-2026). No hay propuesta de escala: sólo lo que existe.
 
+> **Octubre de 2026: la escala de títulos ya entró.** Las secciones 1 y 2 son el «antes»; lo que se hizo, y la tabla de antes y después, está en la sección 3, al final.
+
 ## 0 · Cómo se midió
 
 - **Sólo lo que se pinta.** Se recorrió el grafo de imports desde cada `page.tsx` y `app/layout.tsx`. Lo que no es alcanzable (lista en el apéndice) no entra en las cuentas. Marcas del home se lista pero no cuenta: está detrás de `MOSTRAR_MARCAS = false` (lib/marcas.ts:8). MuroMarcas de /comercial sí cuenta (`MOSTRAR_MARCAS_COMERCIAL = true`, _comercial/content.ts:626).
@@ -446,3 +448,126 @@ Grupos de casi iguales: `clamp(20px, 3.4vh, 40px)` ≈ `clamp(20px, 3.4vh, 44px)
 ## Apéndice · Componentes con tipografía propia que hoy no se pintan
 
 No están en ninguna cuenta. Si se reconectan, traen sus tamaños: `_home/BusinessUnits`, `HeroSlider`, `Stats` (home.css: `.home-hero__title` display-1, `.home-stats__*`, `.home-units__*`); `ui/BloquesRevelados`, `HeroUnidad`, `LeadCTA`, `MapaProyectos`, `ProjectCard`, `ProyectosPaneles`, `Publicaciones`, `SeccionRelato`, `StatBlock`, `Tag`, `WhatsAppFab` (components.css: `.altea-stat__*`, `.altea-project-card__*`, `.altea-hero-unidad__*`, `.altea-bloques__*`, `.altea-proyectos__*`, `.altea-relato__*`, `.altea-wa__*`); `ui/intro/IntroAltea` y `CloudLayers` (IntroAltea.module.css: `.title` `clamp(1.2rem, 6.3vw, 5.2rem)`). Son además los únicos usuarios de `--text-h3` en CSS y de la mayoría de los usos de `--text-h1` / `--text-h2`. `app/mapa-demo` (página de desarrollo) tampoco cuenta.
+
+---
+
+# 3 · La escala de títulos (octubre de 2026)
+
+Lo que se hizo con el inventario de arriba. **Las secciones 1 y 2 son el estado del commit `1bf935c`** y se dejan como estaban: son el «antes». El ritmo vertical (sección 2) no se tocó; queda para otra ronda.
+
+## 3.1 · Gotham y sus pesos
+
+- **Archivos que se cargan:** dos, en `app/fonts/` y declarados en `app/layout.tsx` con `next/font/local`: `Gotham-Medium.woff2` como **500** y `Gotham-Bold.woff2` como **700**. No hay Book (400) ni Light cargados.
+- **En el repo hay más:** `public/fonts/Gotham/` trae los 18 `.otf` de la familia (Thin a Ultra, con itálicas). No los usa nada. **Están en git y, por estar en `public/`, se servirían tal cual a cualquiera que pida `/fonts/Gotham/Gotham-Book.otf`.** El comentario de `layout.tsx` dice que los archivos están fuera de git: ya no es cierto, también los `.woff2` están dentro.
+- **¿Gotham carga de verdad?** En local sí: los archivos están y el build los empaqueta. En producción no se pudo comprobar: no hay despliegues registrados en GitHub ni una URL de producción en el repo.
+- **Qué pide el CSS (antes de la escala):** `var(--weight-bold)` 46 veces, `600` escrito a mano 25, `var(--weight-medium)` 9, `700` a mano 1; en Tailwind, `font-semibold` 15 y `font-medium` 1.
+- **Qué se pintaba:** 600 se pinta en **Bold** (el navegador sube al 700, que sí existe; no hay negrita sintética porque hay un archivo más grueso). El texto corrido no declaraba peso, o sea 400, y **sin Book el navegador lo sirve en Medium**: hoy todo el texto se ve en Medium aunque el CSS diga 400.
+- **Consecuencia:** `--peso-texto: 400` queda puesto, pero no se ve hasta que se cargue Book. Es una línea en `layout.tsx` (convertir `Gotham-Book.otf` a `.woff2` y declararlo como 400) — y antes, la licencia web.
+
+## 3.2 · Lo que quedó
+
+- **Los tokens** están en `app/globals.css`, en un `@theme static` (Tailwind sólo emite las variables de `@theme` que detecta en uso, y casi todas se usan desde hojas que importan los componentes). Cinco escalones con tamaño, interlínea, tracking y peso cada uno: `--text-titulo-pagina`, `--text-titulo-seccion`, `--text-titulo-bloque`, `--text-titulo-ficha`, `--text-rotulo`, y sus `--lh-*`, `--ls-*`, `--peso-*`. Más `--peso-texto` y las dos cifras, `--text-cifra` y `--text-cifra-sm`.
+- **Tailwind trae el escalón entero:** `text-titulo-bloque` pone tamaño, interlínea, tracking y peso (los pares `--text-*--line-height` etc.). Y `font-bold`, `font-semibold`, `font-medium` resuelven a `--weight-*`: `font-semibold` va a Bold, que es lo que ya se pintaba.
+- **Los nombres viejos se fueron:** `--text-display-1`, `--text-display-2`, `--text-h1`, `--text-h2`, `--text-h3`. Ningún título vivo los usa. Los siguen nombrando sólo bloques de CSS que no se montan (3.6).
+- **Ningún título vivo escribe su `font-size` ni su `font-weight`.** Los 24 `clamp()` a mano pasaron a tokens; los `600` y el `700` sueltos, a `var(--weight-bold)` (se pinta igual).
+- **El h1 de /contacto y de las páginas legales ya no comparte escalón con el h2 del cierre:** `<SectionHeading as="h1">` añade `altea-section-heading__title--pagina`.
+- **El h1 de /nosotros** ya no tiene corte en 900 ni crece sin tope: sale del token.
+- **La palabra del hero de las unidades queda fuera, a propósito,** con un comentario en `.uni-hero__t`: su tamaño lo reescribe el JavaScript en cada fotograma.
+- **`npm run verificar:escala`** (`scripts/verificar-escala.mjs`) lee los cinco escalones, comprueba los tres términos y barre de 280 a 2560 px. Hoy: 0 cruces, separación mínima 1.235× (bloque contra ficha, a 391 px). Falla si dos se cruzan o si dos vecinos quedan a menos de 1.15×; se probó rompiendo uno a propósito.
+
+## 3.3 · Pares que cambian de orden
+
+Medidos en las páginas generadas, en 23 anchos de 320 a 2560, con Chrome sin ventana: cuentan si a un ancho uno supera al otro en más de 3 % y a otro ancho pasa al revés.
+
+- **Antes: 37.** No son los 71 de 1.6 porque aquel recuento incluía `Proximamente` y los dos h1 de unidad que ya no existen, y contaba por separado selectores que dan la misma curva.
+- **Después: 0.** También con la palabra del hero dentro.
+- De 29 curvas de tamaño distintas entre los títulos vivos quedan 10: los cinco escalones, las dos cifras, la palabra del hero y su repetición, y los 14 px fijos de los rótulos en minúsculas (`.uni-ln__rotulo`, `.uni-giros__rotulo`) y del pie.
+
+## 3.4 · Antes y después
+
+Valores medidos (px), no calculados. **⚠ = se mueve más de 15 % en alguno de los cuatro anchos**: revisar uno por uno. El peso es el que pide el CSS; recuerda que 600 se pintaba en Bold y 400 se pinta en Medium (3.1).
+
+| Título | Página | Escalón | 390 | 768 | 1440 | 1920 | Peso | Interlínea / tracking | Mayor cambio | Nota |
+|---|---|---|---:|---:|---:|---:|---|---|---:|---|
+| ⚠ `h1.hero-a__titulo` | / | título de página | 36 | 44 → **46.81** | 72 → **66** | 88 → **66** | 700 → 500 | 0.950 / -0.046em → 1.040 / -0.035em | -25 % |  |
+| ⚠ `h2.home-carpetas__titulo` | / | título de sección | 26.4 → **26.01** | 26.4 → **31.77** | 41.6 → **42** | 41.6 → **42** | 700 → 500 | 1.040 / -0.010em → 1.100 / -0.030em | +20 % |  |
+| ⚠ `h3.home-carpetas__nombre` | / | título de bloque | 27.2 → **21** | 27.65 → **24.59** | 48 → **30.99** | 48 → **31** | 700 → 500 | 1.000 / -0.040em → 1.140 / -0.025em | -35 % |  |
+| ⚠ `h2.altea-carril__titulo` | / | título de sección | 26.4 → **26.01** | 26.4 → **31.77** | 41.6 → **42** | 41.6 → **42** | 700 → 500 | 1.040 / -0.010em → 1.100 / -0.030em | +20 % |  |
+| ⚠ `h2.home-cp__titulo` | / | título de sección | 36 → **26.01** | 36 → **31.77** | 51.84 → **42** | 60 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -30 % |  |
+| ⚠ `p.home-frase__texto` | / | título de sección | 24 → **26.01** | 26.88 → **31.77** | 46.4 → **42** | 46.4 → **42** | 500 | 1.160 / -0.032em → 1.100 / -0.030em | +18 % |  |
+| `dd.home-frase__cifra` | / | cifra | 41.6 | 56.83 → **63.49** | 102.4 | 102.4 | 700 | 0.860 / -0.055em | +12 % |  |
+| ⚠ `p.home-emblem__text` | / | título de sección | 36 → **26.01** | 36 → **31.77** | 51.84 → **42** | 60 → **42** | 700 → 500 | 0.980 / -0.050em → 1.100 / -0.030em | -30 % |  |
+| ⚠ `.altea-tj__txt b` | / · /comercial · /industrial · /vivienda | título de ficha | 16 → **17.01** | 16 → **18.45** | 21.6 → **21** | 21.6 → **21** | 700 → 500 | 1.500 / -0.025em → 1.300 / -0.015em | +15 % |  |
+| ⚠ `p.home-cp__rotulo` | / | rótulo | 13 → **11** | 13 → **11.72** | 13 | 13 | 600 → 700 | 1.500 / 0.060em → 1.500 / 0.160em | -15 % |  |
+| `span.altea-footer__column-title` | todas | — | 14 | 14 | 14 | 14 | 600 → 700 | 1.500 / 0.060em | +0 % | no es título de escala: rótulo de columna, sin cambio |
+| `h1.uni-hero__t` | /comercial · /industrial · /vivienda · /forestal | — | 60.06 | 118.27 | 221.76 | 240 | 400 | 1.500 / normal | +0 % | fuera de la escala a propósito (palabra del hero) |
+| `h2.altea-carrusel__titulo` | /comercial · /industrial · /vivienda | título de sección | 28.8 → **26.01** | 29.18 → **31.77** | 46.4 → **42** | 46.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -10 % |  |
+| `h2.uni-giros__titulo` | /comercial | título de sección | 28.8 → **26.01** | 29.18 → **31.77** | 46.4 → **42** | 46.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -10 % |  |
+| ⚠ `.uni-gr__t h3` | /comercial | título de bloque | 19.2 → **21** | 19.2 → **24.59** | 28.8 → **30.99** | 28.8 → **31** | 700 → 500 | 1.500 / -0.030em → 1.140 / -0.025em | +28 % |  |
+| ⚠ `h2.uni-marcas__titulo` | /comercial | título de sección | 24 → **26.01** | 24 → **31.77** | 36.8 → **42** | 36.8 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | +32 % |  |
+| ⚠ `h2.uni-prox__titulo` | /comercial · /industrial | título de sección | 28.8 → **26.01** | 30.72 → **31.77** | 49.6 → **42** | 49.6 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -15 % |  |
+| `h2.altea-section-heading__title` | /comercial · /industrial · /vivienda · /forestal · /nosotros | título de sección | 30 → **26.01** | 30 → **31.77** | 37.44 → **42** | 44 → **42** | 600 → 500 | 1.100 / normal → 1.100 / -0.030em | -13 % |  |
+| ⚠ `.uni-px__t b` | /comercial · /industrial | título de ficha | 16 → **17.01** | 16 → **18.45** | 21.6 → **21** | 21.6 → **21** | 700 → 500 | 1.140 / -0.025em → 1.300 / -0.015em | +15 % |  |
+| ⚠ `dd.uni-hd__cifra` | /comercial · /industrial · /vivienda · /forestal | cifra (sm) | 33.6 → **28.8** | 33.6 → **33.49** | 57.6 → **48** | 57.6 → **48** | 700 | 0.900 / -0.050em | -17 % |  |
+| ⚠ `dd.uni-hc__cifra` | /comercial · /industrial · /vivienda · /forestal | cifra (sm) | 33.6 → **28.8** | 35.33 → **33.49** | 60.8 → **48** | 60.8 → **48** | 700 | 0.900 / -0.050em | -21 % |  |
+| `div.uni-hero__lockup` | /comercial · /industrial · /vivienda · /forestal | — | 46.8 | 92.16 | 172.8 | 176 | 400 | 1.500 / normal | +0 % | fuera de la escala (repite la palabra del hero) |
+| ⚠ `span.altea-section-heading__eyebrow` | /comercial · /industrial · /vivienda · /forestal · /nosotros | rótulo | 13 → **11** | 13 → **11.72** | 13 | 13 | 600 → 700 | 1.500 / 0.060em → 1.500 / 0.160em | -15 % |  |
+| `p.uni-giros__rotulo` | /comercial | — | 14 | 14 | 14 | 14 | 500 | 1.500 / normal | +0 % | rótulo en minúsculas, --text-small, sin cambio |
+| `.uni-at__f h3` | /industrial | título de bloque | 21 | 24.59 | 30.99 | 31 | 700 → 500 | 1.180 / -0.025em → 1.140 / -0.025em | +0 % |  |
+| `h2.uni-ln__titulo` | /forestal | título de sección | 28.8 → **26.01** | 29.18 → **31.77** | 46.4 → **42** | 46.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -10 % |  |
+| `.uni-at__f h3` | /forestal | título de ficha | 17.01 | 18.45 | 21 | 21 | 700 → 500 | 1.200 / -0.025em → 1.300 / -0.015em | +0 % |  |
+| `p.uni-ln__rotulo` | /forestal | — | 14 | 14 | 14 | 14 | 500 | 1.500 / normal | +0 % | rótulo en minúsculas, --text-small, sin cambio |
+| ⚠ `h1.nos-hero__titulo` | /nosotros | título de página | 32 → **36.01** | 57.6 → **46.81** | 66.24 → **66** | 70.4 → **66** | 700 → 500 | 0.960 / -0.048em → 1.040 / -0.035em | -19 % |  |
+| `h2.nos-pilares__titulo` | /nosotros | título de sección | 28.8 → **26.01** | 29.18 → **31.77** | 46.4 → **42** | 46.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -10 % |  |
+| `h3.nos-pilar__titulo` | /nosotros | título de ficha | 16.8 → **17.01** | 16.8 → **18.45** | 22.4 → **21** | 22.4 → **21** | 700 → 500 | 1.080 / -0.020em → 1.300 / -0.015em | +10 % |  |
+| ⚠ `h2.nos-firma__titulo` | /nosotros | título de sección | 30.4 → **26.01** | 32.26 → **31.77** | 54.4 → **42** | 54.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -23 % |  |
+| ⚠ `h2.nos-huella__titulo` | /nosotros | título de sección | 30.4 → **26.01** | 32.26 → **31.77** | 54.4 → **42** | 54.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -23 % |  |
+| `h2.nos-rs__titulo` | /nosotros | título de sección | 28.8 → **26.01** | 29.18 → **31.77** | 46.4 → **42** | 46.4 → **42** | 700 → 500 | 1.020 / -0.010em → 1.100 / -0.030em | -10 % |  |
+| ⚠ `p.nos-origen__frase` | /nosotros | título de sección | 28.8 → **26.01** | 30.72 → **31.77** | 54.4 → **42** | 54.4 → **42** | 700 → 500 | 1.020 / -0.050em → 1.100 / -0.030em | -23 % |  |
+| ⚠ `dd.nos-hd__cifra` | /nosotros | cifra (sm) | 25.6 → **28.8** | 25.6 → **33.49** | 41.04 → **48** | 54.72 → **48** | 700 | 0.860 / -0.055em | +31 % |  |
+| `.nos-mapa__reposo b` | /nosotros | título de ficha | 17.6 → **17.01** | 17.6 → **18.45** | 24 → **21** | 24 → **21** | 700 → 500 | 1.100 / -0.010em → 1.300 / -0.015em | -12 % |  |
+| ⚠ `p.nos-rs__sub` | /nosotros | título de ficha | 16 → **17.01** | 16 → **18.45** | 16.56 → **21** | 17.92 → **21** | 500 | 1.720 / -0.020em → 1.300 / -0.015em | +27 % |  |
+| ⚠ `h1.altea-section-heading__title` | /aviso-de-privacidad · /terminos · /contacto | título de página | 30 → **36.01** | 30 → **46.81** | 37.44 → **66** | 44 → **66** | 600 → 500 | 1.100 / normal → 1.040 / -0.035em | +76 % |  |
+| ⚠ `h2.leg__titulo` | /aviso-de-privacidad · /terminos | título de bloque | 22 → **21** | 22 → **24.59** | 22 → **30.99** | 22 → **31** | 700 → 500 | 1.100 / normal → 1.140 / -0.025em | +41 % |  |
+| ⚠ `h3.leg__subtitulo` | /aviso-de-privacidad | título de ficha | 16 → **17.01** | 16 → **18.45** | 16 → **21** | 16 → **21** | 700 → 500 | 1.100 / normal → 1.300 / -0.015em | +31 % |  |
+| ⚠ `h2` «Canales directos» (Tailwind `text-h3` → `text-titulo-bloque`) | /contacto | título de bloque | 22 → **21** | 22 → **24.59** | 22 → **30.99** | 22 → **31** | 600 → 500 | 1.500 / normal → 1.140 / -0.025em | +41 % | antes `text-h3`, sin interlínea propia |
+| `p` «Gracias, recibimos tu mensaje» (LeadForm) | /contacto, tras enviar | título de bloque | 22 → 21 | 22 → 24.6 | 22 → 31 | 22 → 31 | 600 → 500 | 1.500 / normal → 1.140 / -0.025em | +41 % | no se midió: sólo aparece después de enviar |
+
+Lo que conviene mirar primero entre los marcados:
+
+- **El cierre del home (`.home-cp__titulo`) y la frase de Emblem** bajan de `--text-display-2` (52 px a 1440, 60 a 1920) al escalón de sección (42). Como h2 ya no pueden pasar a los otros h2, pero el cierre se había pedido «más llamativo».
+- **El h1 del home** baja de 72 a 66 a 1440 y de 88 a 66 a 1920: el escalón de página topa en 66.
+- **Los h1 de /contacto y de las legales** pasan de 37 a 66 a 1440. Su caja sigue en 640 px (`.altea-section-heading`), así que «Términos y Condiciones de Uso» va en dos líneas.
+- **Los h3 de las carpetas del home** bajan de 48 a 31: eran más grandes que el h2 de su propia sección.
+- **Las cifras del hero de unidad** bajan de 57.6 a 48 y **las de Huella** suben de 41 a 48, y dejan de crecer sin techo. `--text-cifra-sm` lo manda Huella: «+44,000,000 m²» vive en un tercio de la fila, y a 57.6 partía el m². Comprobado en una línea en todos los anchos.
+- **El subtítulo de Responsabilidad social (`.nos-rs__sub`)** nunca se había pintado con su tamaño ni con su color coral: `.nos-rs__copy p` le ganaba en especificidad y salía como un párrafo. Ahora sí sale, en el escalón de ficha.
+- **Los h2 de las páginas legales** pasan de 22 fijos a 21–31.
+
+## 3.5 · El punto 6 (`cqw`): no se aplicó, y por qué
+
+La tabla 1.7 midió **el ancho de la columna** contra el tamaño de letra. Pero en estos seis títulos el renglón no lo fija la columna sino su propio `max-width` en `ch` (Huella 11ch, RS 13ch, Origen 16ch) o un salto de línea en el texto (el h1 de /nosotros). Medido el renglón real, con la escala nueva, de 320 a 2560 px:
+
+| Título | Líneas en todos los anchos | Corte de su columna | Con `cqw`, antes → después del corte | Con el token |
+|---|---|---|---|---|
+| `.nos-huella__titulo` | siempre 1 | 980 → 981 | 42 → 28.6 | 35 → 35 |
+| `.nos-rs__titulo` | siempre 2 | — (su caja es la rejilla) | — | — |
+| `.nos-origen__frase` | siempre 4 | 900 → 901 | 42 → 26.3 | 33.8 → 33.8 |
+| `.nos-firma__titulo` | 1 a 900, 2 a 901 | 900 → 901 | 42 → 26.6 | 33.8 → 33.8 |
+| `.nos-hero__titulo` (h1) | siempre 3 | 900 → 901 | 66 → 41.3 | 50.6 → 50.6 |
+| `.home-carpetas__nombre` | siempre 1 | 900 → 901 | 31 → 21 | 25.8 → 25.9 |
+
+El coeficiente de cada uno se sacó de su propia columna a 1440 (`tamaño ÷ ancho × 100`), con el mínimo y el máximo de su escalón.
+
+- **Ninguno rompe en más líneas al cruzar el corte**, salvo Grupo Firma, que pasa de una línea a todo lo ancho a dos en media columna, que es lo esperable.
+- **Con `cqw` los seis saltarían de tamaño en el corte, entre 32 y 37 %.** El tamaño sigue a la columna, y la columna cae a la mitad o a un tercio en ese píxel. En el h1 de /nosotros, además, volvería exactamente el defecto que el punto 4 pedía quitar (un h1 que se encoge al crecer la ventana).
+- Con el token, el tamaño es continuo y el número de líneas no cambia. **Por eso los seis siguen en el token y no se siguió con los otros doce.** Si se quiere `cqw` en alguno, la condición es que su columna no cambie de golpe en un corte.
+
+## 3.6 · Lo que queda
+
+- **Tamaños de texto que no son título, aún escritos a mano:** párrafos (`clamp(1rem, 1.15vw, 1.14rem)` y parecidos en `.nos-origen__cols p`, `.nos-huella__body`, `.nos-rs__copy p`, `.uni-ln__p`, `.nos-firma__intro`), etiquetas de cifras (`.home-frase__etiqueta`, `.nos-hd__etiqueta`, `.uni-hd__etiqueta`, `.uni-hc__etiqueta`), los `dd` de las fichas (`0.92rem`), los botones (13/15/16 px) y el widget de WhatsApp (12, 22, 30 px). Esta ronda fue de títulos; ésos piden su propia escala de texto.
+- **Pesos:** ya no queda ninguno con número en el CSS. Quedan 7 `var(--weight-medium)` en etiquetas y datos, que no son párrafos.
+- **Código que no se monta y aún nombra los tokens viejos:** en `home.css`, `.home-hero`, `.home-stats` y `.home-units`; en `components.css`, `.altea-project-card`, `.altea-marcas`, `.altea-hero-unidad`, `.altea-bloques`, `.altea-proyectos` y `.altea-relato`; y los componentes `Proximamente`, `HeroUnidad`, `MapaProyectos`, `Publicaciones`, `LeadCTA` e `IntroAltea`. Ninguna página los renderiza. Se pueden borrar en su propio commit.
+- **`/proximamente`:** la ruta ya no existe. Queda `app/ui/Proximamente.tsx`, exportado en `app/ui/index.ts` y sin ningún uso: se puede borrar.
+- **Interlínea y tracking:** son los del prompt, elegidos sobre Montserrat. Hay que verlos con Gotham, sobre todo el `-0.035em` y el `-0.03em` de los dos escalones grandes.
+- **Emblem:** su `word-spacing: -0.03em` estaba calculado para el tracking de antes (-0.05em); con -0.03em el espacio entre palabras sale 0.02em más ancho.
+- **Cómo revertir:** tamaño y peso salen todos de los tokens de `app/globals.css`. Para volver a títulos en Bold basta con poner `--peso-titulo-*` en 700.

@@ -209,6 +209,12 @@
  * Consecuencia que sí hay que vigilar: con la palabra más corta la ventana a la
  * foto es más chica, así que en Vivienda y Forestal un `ancla` mal puesta se
  * nota más que en Comercial.
+ *
+ * ⚠ FUERA DE LA ESCALA DE TÍTULOS, A PROPÓSITO. Es el h1 de las cuatro unidades
+ * pero no usa --text-titulo-pagina: es la ventana a la foto, no un titular, y
+ * el JavaScript le reescribe el font-size en cada fotograma del scroll. Su
+ * tamaño, su peso (.uni-hero__tx) y su tracking son suyos y no se meten en los
+ * tokens. Lo mismo .uni-hero__lockup y .uni-hero__vuelve, que la repiten.
  */
 .uni-hero__t {
   margin: 0;
@@ -366,7 +372,7 @@
 .uni-hd__cifra {
   margin: 0;
   display: block;
-  font-size: clamp(2.1rem, 4.3vw, 3.6rem);
+  font-size: var(--text-cifra-sm);
   font-weight: var(--weight-bold);
   letter-spacing: -0.05em;
   line-height: 0.9;
@@ -495,7 +501,7 @@
 .uni-hc__cifra {
   margin: 0;
   display: block;
-  font-size: clamp(2.1rem, 4.6vw, 3.8rem);
+  font-size: var(--text-cifra-sm);
   font-weight: var(--weight-bold);
   letter-spacing: -0.05em;
   line-height: 0.9;
@@ -530,10 +536,10 @@
 .uni-marcas__titulo,
 .uni-prox__titulo {
   margin: 0 0 clamp(30px, 5vh, 62px);
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   max-width: 16ch;
 }
 
@@ -675,10 +681,10 @@
   bottom: clamp(18px, 2.4vw, 32px);
   left: clamp(24px, 3.4vw, 46px);
   margin: 0;
-  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.04em;
-  line-height: 1.02;
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
   color: #fff;
   text-wrap: balance;
 }
@@ -880,16 +886,10 @@
    las líneas de negocio (.uni-ln), y ahí no hay .uni-at. */
 .uni-at__f h3 {
   margin: 0;
-  /*
-   * ⚠ PROVISIONAL. Está pendiente la escala tipográfica —ver
-   * docs/tipografia-y-espaciado.md—, donde los clamp() sueltos de títulos pasan
-   * a tokens. Cuando entre, este pasa a --text-titulo-bloque y el clamp se
-   * borra.
-   */
-  font-size: clamp(1.3125rem, 0.952vw + 1.08rem, 1.9375rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.025em;
-  line-height: 1.18;
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
   text-wrap: balance;
 }
 /* Una columna por debajo de 860. El icono no crece: a una columna el 7.6vw lo
@@ -948,10 +948,10 @@
 .uni-ln__titulo {
   margin: 0 0 clamp(22px, 4vh, 40px);
   max-width: 16ch;
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 /*
  * 44ch y no más: en Gotham 1ch es el ancho del «0» (0.724 em) y el carácter
@@ -999,10 +999,10 @@
   margin: clamp(22px, 3vw, 36px) 0 clamp(16px, 2.2vw, 26px);
 }
 .uni-ln__lista .uni-at__f h3 {
-  /* ⚠ PROVISIONAL: con la escala tipográfica pasa a --text-titulo-ficha y el
-     clamp se borra (docs/tipografia-y-espaciado.md). */
-  font-size: clamp(1.0625rem, 0.381vw + 0.97rem, 1.3125rem);
-  line-height: 1.2;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
 }
 /*
  * ⚠ ESTOS CORTES IGNORAN data-cols A PROPÓSITO: a 1000 px las dos listas pasan
@@ -1170,9 +1170,10 @@
 }
 .uni-gr__t h3 {
   margin: 0;
-  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.03em;
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
 }
 /*
  * La descripción se abre con grid-template-rows de 0fr a 1fr, no con max-height:
@@ -1220,7 +1221,6 @@
 }
 .uni-marcas__titulo {
   max-width: 18ch;
-  font-size: clamp(1.5rem, 3vw, 2.3rem);
   margin-bottom: clamp(30px, 5vh, 58px);
 }
 /*
@@ -1420,7 +1420,6 @@
 }
 .uni-prox__titulo {
   max-width: 12ch;
-  font-size: clamp(1.8rem, 4vw, 3.1rem);
   margin-bottom: clamp(30px, 5vh, 60px);
 }
 .uni-prox__grid {
@@ -1487,10 +1486,10 @@
 }
 .uni-px__t b {
   display: block;
-  font-size: clamp(1rem, 1.5vw, 1.35rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.025em;
-  line-height: 1.14;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
 }
 .uni-px__t span {
   display: block;

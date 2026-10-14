@@ -10,7 +10,7 @@
 /* ============================ Button ============================ */
 .altea-btn {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   border: none;
   cursor: pointer;
   border-radius: var(--radius-pill);
@@ -110,7 +110,7 @@
 }
 .altea-field__label {
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   color: var(--text-secondary);
 }
 .altea-field__control {
@@ -181,7 +181,7 @@
   align-items: center;
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   padding: 6px 14px;
@@ -214,7 +214,7 @@
 }
 .altea-stat__value {
   font-size: clamp(2.25rem, 4vw, 3.5rem);
-  font-weight: 700;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
   line-height: 1;
   color: var(--altea-ink);
@@ -222,7 +222,7 @@
 .altea-stat__label {
   font-family: var(--font-body);
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -284,7 +284,7 @@ a.altea-project-card:focus-visible {
 }
 .altea-project-card__unit {
   font-size: var(--text-eyebrow);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--text-accent);
@@ -292,7 +292,7 @@ a.altea-project-card:focus-visible {
 .altea-project-card__title {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   margin: 6px 0 2px;
   color: var(--altea-ink);
 }
@@ -323,19 +323,33 @@ a.altea-project-card:focus-visible {
 }
 .altea-section-heading__eyebrow {
   font-family: var(--font-body);
-  font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
+  font-size: var(--text-rotulo);
+  line-height: var(--lh-rotulo);
+  letter-spacing: var(--ls-rotulo);
+  font-weight: var(--peso-rotulo);
   text-transform: uppercase;
   color: var(--text-accent);
 }
 .altea-section-heading__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 600;
-  line-height: var(--leading-heading);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   color: var(--altea-ink);
+}
+/*
+ * CUANDO ABRE LA PÁGINA ES OTRO ESCALÓN. El mismo componente pinta el h2 del
+ * cierre de contacto y el h1 de /contacto y de las páginas legales; con un solo
+ * selector el h1 de esas páginas medía lo que un h2 de cualquier otra. El
+ * modificador lo pone <SectionHeading> cuando se monta como h1.
+ */
+.altea-section-heading__title--pagina {
+  font-size: var(--text-titulo-pagina);
+  line-height: var(--lh-titulo-pagina);
+  letter-spacing: var(--ls-titulo-pagina);
+  font-weight: var(--peso-titulo-pagina);
 }
 .altea-section-heading__description {
   margin: 0;
@@ -525,7 +539,7 @@ a.altea-project-card:focus-visible {
   color: var(--altea-ink);
   text-decoration: none;
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   transition: color var(--duration-fast) var(--ease-standard);
@@ -769,7 +783,7 @@ a.altea-project-card:focus-visible {
 .altea-footer__column-title {
   margin-bottom: var(--space-1);
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   color: var(--altea-cream);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
@@ -948,7 +962,7 @@ a.altea-project-card:focus-visible {
 }
 .altea-wa__nombre {
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   font-size: var(--text-body);
 }
 .altea-wa__estado {
@@ -1010,7 +1024,7 @@ a.altea-project-card:focus-visible {
   background: var(--altea-coral);
   color: #fff;
   font: inherit;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   font-size: var(--text-small);
   padding: 11px 18px;
   transition: background var(--duration-fast) var(--ease-standard);
@@ -1045,7 +1059,7 @@ a.altea-project-card:focus-visible {
   text-align: center;
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   color: var(--altea-ink);
 }
@@ -1213,7 +1227,7 @@ a.altea-project-card:focus-visible {
   gap: var(--space-3);
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   /*
@@ -1422,7 +1436,7 @@ a.altea-project-card:focus-visible {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: var(--leading-heading);
   letter-spacing: var(--tracking-tight);
   color: var(--text-primary);
@@ -1695,13 +1709,13 @@ a.altea-project-card:focus-visible {
 .altea-proyectos__nombre {
   font-family: var(--font-display);
   font-size: var(--text-h3);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   line-height: 1.1;
   color: var(--altea-cream);
 }
 .altea-proyectos__giro {
   font-size: 0.72em;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--altea-coral);
@@ -2033,7 +2047,7 @@ a.altea-project-card:focus-visible {
   gap: var(--space-3);
   font-family: var(--font-body);
   font-size: var(--text-eyebrow);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   /* Ink y no el acento: es texto pequeño y necesita 4.5, que el coral-dark no
@@ -2386,10 +2400,10 @@ a.altea-project-card:focus-visible {
 .altea-carril__titulo {
   margin: 0;
   max-width: 18ch;
-  font-size: clamp(1.65rem, 3.4vw, 2.6rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.04;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 .altea-carril__n {
   margin: 0;
@@ -2586,9 +2600,10 @@ a.altea-project-card:focus-visible {
 }
 .altea-tj__txt b {
   display: block;
-  font-size: clamp(1rem, 1.5vw, 1.35rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.025em;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
 }
 .altea-tj__txt span {
   display: block;
@@ -2619,10 +2634,10 @@ a.altea-project-card:focus-visible {
 .altea-carrusel__titulo {
   margin: 0;
   max-width: 16ch;
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 .altea-carrusel__mando {
   display: flex;

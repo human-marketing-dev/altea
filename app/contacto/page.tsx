@@ -49,7 +49,7 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
         <section className="grid items-start gap-8 bg-surface-page px-(--container-pad) py-(--space-9) lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
           <div className="flex flex-col gap-8">
             <div>
-              <h2 className="m-0 mb-4 font-display text-h3 font-semibold text-ink">
+              <h2 className="m-0 mb-4 font-display text-titulo-bloque text-ink">
                 Canales directos
               </h2>
               <ul className="m-0 flex list-none flex-col gap-3 p-0">

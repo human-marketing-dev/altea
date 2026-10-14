@@ -181,7 +181,7 @@
 /* una sola linea siempre: el tamano se ata a vw, sin max-width ni balance */
 .title {
   margin: 0 0 clamp(16px, 2.6vh, 26px);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   font-size: clamp(1.2rem, 6.3vw, 5.2rem);
   line-height: 1.06;
   letter-spacing: -0.032em;
@@ -310,7 +310,7 @@
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: var(--text-small);
-  font-weight: 600;
+  font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   cursor: pointer;

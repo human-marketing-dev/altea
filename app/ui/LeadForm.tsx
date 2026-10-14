@@ -52,7 +52,7 @@ export function LeadForm({
         role="status"
       >
         <p
-          className={`m-0 font-display text-h3 font-semibold ${oscuro ? "text-cream" : "text-ink"}`}
+          className={`m-0 font-display text-titulo-bloque ${oscuro ? "text-cream" : "text-ink"}`}
         >
           Gracias, recibimos tu mensaje.
         </p>

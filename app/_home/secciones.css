@@ -34,10 +34,10 @@
    * menores.
    */
   max-width: min(43em, var(--container-max));
-  font-size: clamp(1.5rem, 3.5vw, 2.9rem);
-  font-weight: var(--weight-medium);
-  line-height: 1.16;
-  letter-spacing: -0.032em;
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 
 /* inline-block y no inline: una palabra partida entre dos líneas no puede
@@ -120,7 +120,7 @@
   grid-column: 1;
   grid-row: 1;
   margin: 0;
-  font-size: clamp(2.6rem, 7.4vw, 6.4rem);
+  font-size: var(--text-cifra);
   font-weight: var(--weight-bold);
   letter-spacing: -0.055em;
   line-height: 0.86;
@@ -214,10 +214,10 @@
 .home-carpetas__titulo {
   margin: 0;
   max-width: 38ch;
-  font-size: clamp(1.65rem, 3.4vw, 2.6rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.04;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 
 /*
@@ -362,10 +362,10 @@
 }
 .home-carpetas__nombre {
   margin: 0 0 14px;
-  font-size: clamp(1.7rem, 3.6vw, 3rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
 }
 /* Coral normal, no coral-dark: esto va sobre ink, y ahí el par documentado en
    tokens.css pide el coral vivo —4.87 contra el fondo—. */
@@ -584,10 +584,10 @@
   bottom: clamp(16px, 2.4vw, 28px);
   margin: 0;
   color: #fff;
-  font-size: clamp(1.6rem, 3.6vw, 2.7rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: -0.045em;
-  line-height: 0.98;
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
 }
 
 .home-ficha__cuerpo {
@@ -798,21 +798,23 @@
 }
 .home-cp__rotulo {
   margin: 0 0 12px;
-  font-size: var(--text-eyebrow);
-  font-weight: 600;
-  letter-spacing: var(--tracking-wide);
+  font-size: var(--text-rotulo);
+  line-height: var(--lh-rotulo);
+  letter-spacing: var(--ls-rotulo);
+  font-weight: var(--peso-rotulo);
   text-transform: uppercase;
   color: var(--text-on-dark-secondary);
 }
-/* Un escalón más que antes, y uno que ya existe: --text-display-2, el de la
-   frase de Emblem. Es el cierre de la página y le toca pesar. */
+/* El escalón de sección, el mismo de la frase de Emblem. Antes iba a
+   --text-display-2, un escalón por encima de los h2: como h2 de la página, ya
+   no puede pasar de ellos. */
 .home-cp__titulo {
   margin: 0 0 var(--space-6);
   max-width: 16ch;
-  font-size: var(--text-display-2);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   text-wrap: balance;
 }
 .home-cp__acciones {

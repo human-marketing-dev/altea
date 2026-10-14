@@ -2,10 +2,10 @@
  * Páginas LEGALES: aviso de privacidad y términos y condiciones.
  *
  * Una columna de lectura y nada más. Todo sale de tokens que el sitio ya usa:
- * el margen lateral es --container-pad, las secciones van a --text-h3 —el
- * mismo cuerpo que los h2 de /contacto— y el texto a --text-body con
- * --leading-body. No hay ningún tamaño nuevo: ver docs/tipografia-y-espaciado.md
- * antes de añadir uno.
+ * el margen lateral es --container-pad, las secciones van al escalón de bloque
+ * —el mismo de los h2 de /contacto—, los apartados al de ficha y el texto a
+ * --text-body con --leading-body. No hay ningún tamaño nuevo: la escala está en
+ * app/globals.css.
  */
 .leg {
   padding: var(--space-8) var(--container-pad) var(--space-9);
@@ -31,16 +31,18 @@
 .leg__titulo {
   margin: 0 0 var(--space-4);
   font-family: var(--font-display);
-  font-size: var(--text-h3);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
 }
 
 .leg__subtitulo {
   margin: var(--space-6) 0 var(--space-4);
-  font-size: var(--text-body);
-  font-weight: var(--weight-bold);
-  line-height: var(--leading-heading);
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
 }
 
 .leg__lista {

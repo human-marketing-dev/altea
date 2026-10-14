@@ -29,11 +29,8 @@
   --font-sans: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono);
 
-  --text-display-1: clamp(2.75rem, 5vw, 5.5rem);
-  --text-display-2: clamp(2.25rem, 3.6vw, 3.75rem);
-  --text-h1: clamp(1.875rem, 2.6vw, 2.75rem);
-  --text-h2: clamp(1.5rem, 2vw, 2rem);
-  --text-h3: 1.375rem;
+  /* Los títulos NO van aquí: tienen su escala propia, abajo (@theme static).
+     Lo que queda son los tamaños de texto que no son título. */
   --text-body-lg: 1.125rem;
   --text-body: 1rem;
   --text-small: 0.875rem;
@@ -84,6 +81,123 @@
   --nav-padding-y: 10px;
 }
 
+/*
+ * ═══ LA ESCALA DE TÍTULOS ════════════════════════════════════════════════
+ *
+ * Cinco escalones y nada más. Todo título del sitio sale de uno de ellos; ningún
+ * selector escribe su propio font-size ni su propio font-weight. Si un título no
+ * cabe en ninguno, se habla antes de abrir un sexto.
+ *
+ * LOS NOMBRES SON POR PAPEL, NO POR ELEMENTO. Antes eran --text-h1…--text-h3, y
+ * --text-h1 lo usaban un h2, un h1 y un p: en cuanto otro elemento necesita ese
+ * tamaño, el nombre deja de ser verdad. «Título de sección» lo puede usar un p
+ * sin mentir.
+ *
+ * CADA ESCALÓN LLEVA SU INTERLÍNEA, SU TRACKING Y SU PESO. Separados del tamaño,
+ * dos títulos al mismo px pesan distinto y la jerarquía se vuelve a deshacer.
+ *
+ * ⚠ LA FORMA ES clamp(min, A vw + B rem, max) Y NO clamp(min, A vw, max). Con el
+ * término en rem la recta pasa exactamente por los dos valores elegidos, a 390
+ * y a 1440 px de ventana; con sólo vw se fija uno y el otro sale como salga.
+ *
+ * ⚠ NO SE CRUZAN, Y HAY UN SCRIPT QUE LO COMPRUEBA: `npm run verificar:escala`
+ * (scripts/verificar-escala.mjs). Dos clamp() no se cruzan nunca si el de arriba
+ * gana en los tres términos —mínimo, pendiente y máximo—, porque clamp() es la
+ * mediana de sus argumentos y la mediana es monótona en cada uno. Si se añade o
+ * se cambia un escalón, el script falla antes de subirlo.
+ *
+ *                     390   768  1024  1440  1920
+ *   título de página   36    47    54    66    66
+ *   título de sección  26    32    36    42    42
+ *   título de bloque   21    25    27    31    31
+ *   título de ficha    17    18    19    21    21
+ *   rótulo             11    12    12    13    13
+ *
+ * ⚠ LA INTERLÍNEA Y EL TRACKING se eligieron mirando Montserrat y el sitio va en
+ * Gotham: los tamaños valen igual, esos dos valores son punto de partida.
+ *
+ * ⚠ LOS PESOS SON TOKEN A PROPÓSITO, para poder probar y revertir cambiando
+ * cinco números en este archivo. Gotham carga sólo Medium (500) y Bold (700)
+ * —app/layout.tsx—, así que hoy 400 se pinta en Medium: --peso-texto no se ve
+ * hasta que se cargue Book. No existe 600; pedirlo da Bold.
+ *
+ * `static`: Tailwind sólo emite las variables de @theme que detecta en uso, y la
+ * mayoría de estas se usan desde hojas que importan los componentes, no desde
+ * aquí. Sin `static` podrían salir sin definir.
+ *
+ * Los pares --text-*--line-height / --letter-spacing / --font-weight hacen que
+ * la utilidad de Tailwind (`text-titulo-bloque`) traiga el escalón entero, no
+ * sólo el tamaño.
+ */
+@theme static {
+  --text-titulo-pagina: clamp(2.25rem, 2.857vw + 1.554rem, 4.125rem); /* 36 → 66 */
+  --lh-titulo-pagina: 1.04;
+  --ls-titulo-pagina: -0.035em;
+  --peso-titulo-pagina: 500;
+
+  --text-titulo-seccion: clamp(1.625rem, 1.524vw + 1.254rem, 2.625rem); /* 26 → 42 */
+  --lh-titulo-seccion: 1.1;
+  --ls-titulo-seccion: -0.03em;
+  /* ⚠ Baja de 700 a 500. Es intencional. */
+  --peso-titulo-seccion: 500;
+
+  --text-titulo-bloque: clamp(1.3125rem, 0.952vw + 1.08rem, 1.9375rem); /* 21 → 31 */
+  --lh-titulo-bloque: 1.14;
+  --ls-titulo-bloque: -0.025em;
+  --peso-titulo-bloque: 500;
+
+  --text-titulo-ficha: clamp(1.0625rem, 0.381vw + 0.97rem, 1.3125rem); /* 17 → 21 */
+  --lh-titulo-ficha: 1.3;
+  --ls-titulo-ficha: -0.015em;
+  --peso-titulo-ficha: 500;
+
+  /* El rótulo va en mayúsculas en todos sus usos: el .16em es para eso. */
+  --text-rotulo: clamp(0.6875rem, 0.19vw + 0.641rem, 0.8125rem); /* 11 → 13 */
+  --lh-rotulo: 1.5;
+  --ls-rotulo: 0.16em;
+  /* Bold, como antes (pedía 600, que en Gotham es Bold). */
+  --peso-rotulo: 700;
+
+  /* El párrafo. Ver la nota de pesos arriba: hoy se pinta en Medium. */
+  --peso-texto: 400;
+
+  --text-titulo-pagina--line-height: var(--lh-titulo-pagina);
+  --text-titulo-pagina--letter-spacing: var(--ls-titulo-pagina);
+  --text-titulo-pagina--font-weight: var(--peso-titulo-pagina);
+  --text-titulo-seccion--line-height: var(--lh-titulo-seccion);
+  --text-titulo-seccion--letter-spacing: var(--ls-titulo-seccion);
+  --text-titulo-seccion--font-weight: var(--peso-titulo-seccion);
+  --text-titulo-bloque--line-height: var(--lh-titulo-bloque);
+  --text-titulo-bloque--letter-spacing: var(--ls-titulo-bloque);
+  --text-titulo-bloque--font-weight: var(--peso-titulo-bloque);
+  --text-titulo-ficha--line-height: var(--lh-titulo-ficha);
+  --text-titulo-ficha--letter-spacing: var(--ls-titulo-ficha);
+  --text-titulo-ficha--font-weight: var(--peso-titulo-ficha);
+  --text-rotulo--line-height: var(--lh-rotulo);
+  --text-rotulo--letter-spacing: var(--ls-rotulo);
+  --text-rotulo--font-weight: var(--peso-rotulo);
+
+  /*
+   * ═══ LAS CIFRAS: SISTEMA APARTE ═══
+   *
+   * NO SON TÍTULOS Y NO ENTRAN EN LA ESCALA DE ARRIBA. Se leen como elemento
+   * gráfico, y que la grande supere al h1 es intencional. No se «corrigen»
+   * metiéndolas en un escalón de título. Lo único que se les exige es la misma
+   * forma —con mínimo y máximo— para que dejen de crecer sin techo.
+   *
+   *   --text-cifra      las de FraseCifras, en el home        41.6 → 102.4
+   *   --text-cifra-sm   las del hero de unidad y las de Huella  28.8 → 48
+   *
+   * ⚠ --text-cifra-sm LO MANDA HUELLA: allí la cifra vive en una columna de un
+   * tercio, y «+44,000,000 m²» tiene que caber en una línea. A 57.6 partía el m².
+   * Por eso topa en 48, y la recta no pasa por 390 sino por 38.5 px a 1000, el
+   * ancho donde el hueco es más justo (medido: a 1024 caben 40.0). Antes Huella
+   * medía 41 a 1440 y no topaba nunca; el hero de unidad, 57.6.
+   */
+  --text-cifra: clamp(2.6rem, 5.79vw + 1.189rem, 6.4rem);
+  --text-cifra-sm: clamp(1.8rem, 2.159vw + 1.057rem, 3rem);
+}
+
 @keyframes aparecer {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -109,6 +223,16 @@
   --color-surface-sunken: var(--surface-sunken);
   --color-border-subtle: var(--border-subtle);
   --color-border-subtle-on-dark: var(--border-subtle-on-dark);
+
+  /*
+   * Los pesos de Tailwind, atados a los del sitio: `font-bold` y compañía
+   * resuelven a los mismos tokens que el CSS propio. `font-semibold` va a Bold
+   * porque Gotham no tiene 600 y el navegador ya lo pintaba en Bold.
+   */
+  --font-weight-normal: var(--weight-regular);
+  --font-weight-medium: var(--weight-medium);
+  --font-weight-semibold: var(--weight-bold);
+  --font-weight-bold: var(--weight-bold);
 }
 
 /*
@@ -143,4 +267,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  /* El peso del texto corrido sale de aquí y se hereda: los párrafos no lo
+     escriben. Ver --peso-texto. */
+  font-weight: var(--peso-texto);
 }

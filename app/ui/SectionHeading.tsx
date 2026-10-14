@@ -41,7 +41,15 @@ export function SectionHeading({
   return (
     <div className={classes}>
       {eyebrow && <span className="altea-section-heading__eyebrow">{eyebrow}</span>}
-      <Heading className="altea-section-heading__title">{title}</Heading>
+      <Heading
+        className={
+          Heading === "h1"
+            ? "altea-section-heading__title altea-section-heading__title--pagina"
+            : "altea-section-heading__title"
+        }
+      >
+        {title}
+      </Heading>
       {description && (
         <p className="altea-section-heading__description">{description}</p>
       )}

@@ -118,10 +118,10 @@
    * El token del sistema, no un clamp propio. El prototipo llevaba uno a medida
    * y el tamaño no correspondía con el de los demás heros del sitio.
    */
-  font-size: var(--text-display-1);
-  font-weight: var(--weight-bold);
-  line-height: 0.95;
-  letter-spacing: -0.046em;
+  font-size: var(--text-titulo-pagina);
+  line-height: var(--lh-titulo-pagina);
+  letter-spacing: var(--ls-titulo-pagina);
+  font-weight: var(--peso-titulo-pagina);
 }
 
 /*
@@ -162,18 +162,10 @@
  */
 
 /*
- * Móvil. El titular baja de tamaño porque con 16ch y el display-1 se come la
- * pantalla.
+ * Móvil: ya no hay regla. Bajaba el titular de display-1 a display-2 en un corte
+ * de 700px; el escalón de página ya llega a 36 px a 390 por su cuenta, sin corte.
+ * Por debajo de 700px manda el ancho del contenedor, no el 16ch de arriba.
  */
-@media (max-width: 700px) {
-  .hero-a__titulo {
-    /* Sin max-width propio: por debajo de 700px manda el ancho del contenedor
-       —el titular tiene el padding lateral de --container-pad—, así que el 16ch de
-       arriba nunca llega a aplicar y repetirlo aquí sólo daría algo que mantener
-       en sincronía. */
-    font-size: var(--text-display-2);
-  }
-}
 /*
  * Movimiento reducido: todo en su estado final y sin animación.
  *

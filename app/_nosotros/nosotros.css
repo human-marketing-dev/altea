@@ -75,10 +75,10 @@
  */
 .nos-hero__titulo {
   margin: 0 0 clamp(18px, 3vh, 32px);
-  font-weight: var(--weight-bold);
-  font-size: clamp(2rem, 4.6vw, 4.4rem);
-  line-height: 0.96;
-  letter-spacing: -0.048em;
+  font-size: var(--text-titulo-pagina);
+  line-height: var(--lh-titulo-pagina);
+  letter-spacing: var(--ls-titulo-pagina);
+  font-weight: var(--peso-titulo-pagina);
 }
 /* Cada línea en su caja recortada: el hijo sube desde fuera y el recorte es lo
    que hace que aparezca desde debajo en vez de aparecer y ya. */
@@ -159,10 +159,10 @@
 .nos-origen__frase {
   margin: 0 0 clamp(34px, 6vh, 72px);
   max-width: 16ch;
-  font-size: clamp(1.8rem, 4vw, 3.4rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 /* inline-block y no inline: la opacidad se anima por palabra y un inline partido
    entre dos líneas no puede animarse como una sola unidad. */
@@ -244,10 +244,10 @@
 }
 .nos-pilares__titulo {
   margin: 0 0 clamp(40px, 7vh, 86px);
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   max-width: 16ch;
 }
 .nos-pilares__grid {
@@ -276,10 +276,10 @@
 }
 .nos-pilar__titulo {
   margin: 0;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
   max-width: 12ch;
 }
 /* En el teléfono, un pilar por fila con el icono al lado del nombre. Tres
@@ -318,10 +318,10 @@
 }
 .nos-firma__titulo {
   margin: 0;
-  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 .nos-firma__intro {
   margin: 0;
@@ -798,10 +798,10 @@
 }
 .nos-huella__titulo {
   margin: 0;
-  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   max-width: 11ch;
 }
 .nos-huella__body {
@@ -866,7 +866,7 @@
    * parecido al anterior. Si hace falta recuperarlo, la palanca es el reparto de
    * columnas de .nos-huella, no este clamp.
    */
-  font-size: clamp(1.6rem, 2.85vw, 4.6rem);
+  font-size: var(--text-cifra-sm);
   font-weight: var(--weight-bold);
   letter-spacing: -0.055em;
   line-height: 0.86;
@@ -1027,13 +1027,13 @@
 }
 .nos-mapa__dato b,
 .nos-mapa__reposo b {
-  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-tight);
-  line-height: 1.1;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
 }
 .nos-mapa__dato span {
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-size: var(--text-titulo-bloque);
   font-weight: var(--weight-bold);
   letter-spacing: -0.035em;
   font-variant-numeric: tabular-nums;
@@ -1063,19 +1063,24 @@
 }
 .nos-rs__titulo {
   margin: 0;
-  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
-  font-weight: var(--weight-bold);
-  line-height: 1.02;
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
   max-width: 13ch;
 }
 /* coral-dark: 3.58 sobre el hundido. El coral vivo da 2.69 y no llega ni al 3.0
    de texto grande, y esto son 17-22px. */
-.nos-rs__sub {
+/* Con el párrafo delante en el selector: el subtítulo vive dentro de
+   .nos-rs__copy, y `.nos-rs__copy p` le ganaba en especificidad. Hasta la
+   escala tipográfica (octubre de 2026) nunca se pintó con su tamaño ni con su
+   color: salía como un párrafo más. */
+.nos-rs__copy .nos-rs__sub {
   margin: 0 0 clamp(16px, 2.6vh, 26px);
-  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
-  font-weight: var(--weight-medium);
-  letter-spacing: -0.02em;
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
   color: var(--text-accent);
 }
 .nos-rs__copy p {
@@ -1333,10 +1338,6 @@
 @media (max-width: 900px) {
   .nos-hero__txt {
     width: 100%;
-  }
-  /* Con el texto a todo el ancho, el cuerpo vuelve a medirse contra la ventana. */
-  .nos-hero__titulo {
-    font-size: clamp(2rem, 7.6vw, 3.6rem);
   }
   /* Una sola columna y la foto DESPUÉS del texto, que es el orden del marcado:
      no hace falta reordenar nada, sólo deshacer la rejilla. */

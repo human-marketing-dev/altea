@@ -71,8 +71,13 @@ import type { ContenidoUnidad } from "./tipos";
  * palanca sería poner menos columnas.
  */
 
-/** La mediana de la proporción de tinta de los 32. El logotipo que la tenga no se
- *  corrige; los más cuadrados suben y los más alargados bajan. */
+/** La mediana de la proporción de tinta de los 32 originales. El logotipo que la
+ *  tenga no se corrige; los más cuadrados suben y los más alargados bajan.
+ *
+ *  Con Tálisis, Hospital Sierra Madre, One Hoteles y NH son 36 y la mediana pasa
+ *  a 3.51. Se deja en 3.6 a propósito: moverla reescalaría los 32 ya afinados
+ *  mirando el muro. One y NH, casi cuadrados (1.16 y 1.13), suben un 25 % por
+ *  esta corrección, como KFC o IMSS. */
 const REFERENCIA = 3.6;
 /** 0 iguala altos de tinta; 0.5 iguala áreas. Ver el comentario de arriba. */
 const EXPONENTE = 0.2;

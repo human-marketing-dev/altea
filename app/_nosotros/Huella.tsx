@@ -60,6 +60,10 @@ export function Huella() {
           <a
             className="altea-btn altea-btn--primary altea-btn--lg nos-huella__cta"
             href={HUELLA.cta.href}
+            /* Fuera del sitio, en una pestaña nueva: el video se ve en YouTube y
+               la página se queda donde estaba. */
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {HUELLA.cta.texto}
             <span className="altea-btn__arrow" aria-hidden="true">

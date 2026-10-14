@@ -645,6 +645,9 @@
   overflow: hidden;
   /* Ver la nota de arriba: sin esto la proporción gana y la foto tapa el cuerpo. */
   place-self: stretch;
+  /* Una plaza sin foto: el nombre va en blanco y sin este fondo quedaba sobre
+     el claro del diálogo, ilegible. Es el mismo oscuro de las tarjetas. */
+  background: var(--surface-card-dark);
 }
 .uni-fx__img {
   object-fit: cover;
@@ -808,6 +811,233 @@
   }
 }
 
+/* ═══ 1b · atributos bajo el hero ═══════════════════════════════════════
+ *
+ * Tres columnas a la misma altura, cada una con un filete arriba: filete →
+ * icono → título. Es la composición de los pilares de /nosotros, a propósito.
+ *
+ * El ancho es el de las secciones vecinas: el relleno lateral de la página y
+ * nada más, como el carrusel de arriba y las secciones de abajo. Un contenedor
+ * propio lo dejaría desalineado de ellas por unos píxeles.
+ */
+.uni-at {
+  padding: clamp(66px, 11vh, 130px) var(--container-pad);
+}
+.uni-at__g {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(26px, 4vw, 72px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.uni-at__f {
+  /* El avance de entrada de cada una, de 0 a 1, lo escribe <Atributos> desde
+     su propia posición. En 1 por defecto: sin JS o con movimiento reducido,
+     salen puestas. */
+  --k: 1;
+  padding-top: clamp(18px, 2.4vh, 26px);
+  border-top: 1px solid var(--border-subtle);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .uni-at__f {
+    opacity: calc(0.08 + 0.92 * var(--k));
+    transform: translateY(calc((1 - var(--k)) * 16px));
+    transition:
+      opacity 0.68s var(--ease-standard),
+      transform 0.68s var(--ease-standard);
+  }
+}
+/*
+ * El color es el de la unidad, del token: <Atributos> lo pone en la sección.
+ *
+ * ⚠ overflow: visible NO ES OPCIONAL: el cordón inferior del icono de
+ * infraestructura va de −6 a 106, fuera de la caja por los dos lados, y es
+ * justo lo que dice el icono. Recortado, se pierde. Por lo mismo, ningún
+ * contenedor de este bloque puede llevar overflow: hidden.
+ */
+.uni-at__ic {
+  display: block;
+  width: clamp(72px, 7.6vw, 112px);
+  color: var(--color-unidad);
+  overflow: visible;
+  margin: clamp(24px, 3.2vw, 40px) 0 clamp(18px, 2.4vw, 28px);
+}
+/* ⚠ vector-effect: non-scaling-stroke tampoco es opcional: sin él el trazo
+   engorda con el icono y a 110 px deja de ser capilar. Con él se queda en
+   0.85 px reales a cualquier tamaño, que es lo que lo hace leer como dibujo
+   técnico y no como icono de interfaz. */
+.uni-at__ic .traza {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 0.85;
+  vector-effect: non-scaling-stroke;
+}
+.uni-at__ic .nodos {
+  fill: currentColor;
+}
+/* Atado a la columna y no a la sección: la misma lista va también dentro de
+   las líneas de negocio (.uni-ln), y ahí no hay .uni-at. */
+.uni-at__f h3 {
+  margin: 0;
+  /*
+   * ⚠ PROVISIONAL. Está pendiente la escala tipográfica —ver
+   * docs/tipografia-y-espaciado.md—, donde los clamp() sueltos de títulos pasan
+   * a tokens. Cuando entre, este pasa a --text-titulo-bloque y el clamp se
+   * borra.
+   */
+  font-size: clamp(1.3125rem, 0.952vw + 1.08rem, 1.9375rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  text-wrap: balance;
+}
+/* Una columna por debajo de 860. El icono no crece: a una columna el 7.6vw lo
+   dejaría en nada, así que manda el mínimo del clamp. */
+/* Cuatro columnas cuando la lista trae cuatro (las Aplicaciones de Teca). */
+.uni-at__g[data-cols="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 860px) {
+  .uni-at__g {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(30px, 5vh, 46px);
+  }
+  /* Las de cuatro, en 2×2: en una columna serían cuatro renglones casi vacíos. */
+  .uni-at__g[data-cols="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .uni-at {
+    padding-block: clamp(50px, 8vh, 80px);
+  }
+}
+
+/* ═══ 1c · líneas de negocio ════════════════════════════════════════════
+ *
+ * Texto y foto a dos columnas, y la lista debajo. La composición de "Más de 40
+ * años…" en /nosotros (nos-origen): las mismas pistas 1fr / 0.92fr, el mismo
+ * hueco y la foto en 4/5. La foto cambia de lado según `data-lado`.
+ */
+.uni-ln {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+}
+.uni-ln__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: clamp(30px, 5vw, 88px);
+  align-items: center;
+}
+.uni-ln[data-lado="izquierda"] .uni-ln__grid {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+}
+.uni-ln[data-lado="izquierda"] .uni-ln__foto {
+  grid-row: 1;
+  grid-column: 1;
+}
+.uni-ln[data-lado="izquierda"] .uni-ln__txt {
+  grid-row: 1;
+  grid-column: 2;
+}
+.uni-ln__rotulo {
+  margin: 0 0 clamp(14px, 2.4vh, 24px);
+  font-size: var(--text-small);
+  font-weight: var(--weight-medium);
+  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
+}
+/* El escalón de título de sección del resto de la página (carrusel, giros). */
+.uni-ln__titulo {
+  margin: 0 0 clamp(22px, 4vh, 40px);
+  max-width: 16ch;
+  font-size: clamp(1.8rem, 3.8vw, 2.9rem);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+}
+/*
+ * 44ch y no más: en Gotham 1ch es el ancho del «0» (0.724 em) y el carácter
+ * medio de estos textos mide 0.518 em, así que 44ch son unos 61 caracteres por
+ * línea, la medida de lectura. Ver la nota de .nos-origen__cols p.
+ */
+.uni-ln__p {
+  margin: 0 0 1.1em;
+  max-width: 44ch;
+  font-size: clamp(1rem, 1.15vw, 1.14rem);
+  line-height: 1.74;
+  color: color-mix(in srgb, var(--altea-ink) 74%, transparent);
+}
+.uni-ln__p:last-child {
+  margin-bottom: 0;
+}
+.uni-ln__foto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--surface-sunken);
+}
+.uni-ln__img {
+  object-fit: cover;
+}
+/* La lista, separada del bloque por más aire que el de sus columnas: es otra
+   cosa, no la continuación del texto. */
+.uni-ln__lista {
+  margin-top: clamp(56px, 10vh, 120px);
+}
+.uni-ln__lista .uni-at__g {
+  margin-top: var(--space-2);
+}
+/*
+ * EL ICONO Y EL TÍTULO, UN ESCALÓN ABAJO DEL BLOQUE DE INDUSTRIAL. Allá son tres
+ * columnas y el título va en el escalón de bloque; aquí las Aplicaciones son
+ * cuatro, y a cuatro ese escalón parte «Servicio de jardinería» en tres
+ * renglones. Las dos listas llevan el MISMO tamaño aunque tengan distinto
+ * número de columnas: dos tamaños para el mismo elemento en una página se leen
+ * como error.
+ */
+.uni-ln__lista .uni-at__ic {
+  width: clamp(66px, 6.8vw, 100px);
+  margin: clamp(22px, 3vw, 36px) 0 clamp(16px, 2.2vw, 26px);
+}
+.uni-ln__lista .uni-at__f h3 {
+  /* ⚠ PROVISIONAL: con la escala tipográfica pasa a --text-titulo-ficha y el
+     clamp se borra (docs/tipografia-y-espaciado.md). */
+  font-size: clamp(1.0625rem, 0.381vw + 0.97rem, 1.3125rem);
+  line-height: 1.2;
+}
+/*
+ * ⚠ ESTOS CORTES IGNORAN data-cols A PROPÓSITO: a 1000 px las dos listas pasan
+ * a dos columnas aunque una traiga tres y la otra cuatro. Si mandara el número
+ * de la lista, las Aplicaciones llegarían a tableta con cuatro columnas de 70 px.
+ */
+@media (max-width: 1000px) {
+  .uni-ln__lista .uni-at__g,
+  .uni-ln__lista .uni-at__g[data-cols="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .uni-ln__lista .uni-at__g,
+  .uni-ln__lista .uni-at__g[data-cols="4"] {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(28px, 5vh, 42px);
+  }
+}
+@media (max-width: 900px) {
+  .uni-ln__grid,
+  .uni-ln[data-lado="izquierda"] .uni-ln__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* En una columna, el texto primero y la foto debajo, en las dos líneas. */
+  .uni-ln[data-lado="izquierda"] .uni-ln__foto,
+  .uni-ln[data-lado="izquierda"] .uni-ln__txt {
+    grid-row: auto;
+    grid-column: 1;
+  }
+  .uni-ln__foto {
+    aspect-ratio: 4 / 3;
+  }
+}
+
 /* ═══ 3 · otros giros ═════════════════════════════════════════════════════ */
 
 .uni-giros {
@@ -902,6 +1132,22 @@
     rgb(16 19 22 / 0.88) 100%
   );
 }
+/*
+ * DONDE LA DESCRIPCIÓN VA SIEMPRE VISIBLE —táctil, o con movimiento reducido— el texto ocupa la
+ * mitad de la lámina o más, no sólo el pie, y el degradado de arriba no lo
+ * cubría: había párrafos enteros sobre cielo claro. Ahí el velo oscurece la
+ * lámina entera y se cierra más hacia abajo.
+ */
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .uni-gr__velo {
+    background: linear-gradient(
+      180deg,
+      rgb(16 19 22 / 0.42) 0%,
+      rgb(16 19 22 / 0.66) 45%,
+      rgb(16 19 22 / 0.9) 100%
+    );
+  }
+}
 .uni-gr__n {
   position: absolute;
   z-index: 2;
@@ -994,7 +1240,9 @@
  */
 .uni-marcas__rejilla {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  /* 9 y no 8: los 36 logotipos llenan cuatro filas exactas. Y 36 también se
+     reparte entero a 6, 4 y 3 columnas, las de los cortes de abajo. */
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   /*
    * EL VALOR REPRODUCE EL 5/3 QUE TENÍA LA CELDA, y por eso va en vw y cambia en
    * cada breakpoint: el ancho de celda depende de cuántas columnas haya, así que
@@ -1002,11 +1250,11 @@
    * tope plano de 130 px, a 2560 la celda quedaba en 299x130 —2.3:1— en vez del
    * 161x97 que tenía a 1440.
    *
-   * A 8 columnas con --container-pad en 5vw, la celda mide 0.1125 del ancho de
-   * ventana; sus tres quintos son 6.75vw. Comprobado: 97 px a 1440 —el 5/3 exacto
-   * que llevaba—, 130 a 1920 y 173 a 2560.
+   * A 9 columnas con --container-pad en 5vw, la celda mide 0.1 del ancho de
+   * ventana; sus tres quintos son 6vw: 86 px a 1440 (celda de 144) y 115 a 1920.
+   * Con 8 columnas era 6.75vw; si cambia el número de columnas, cambia esto.
    */
-  --alto-fila: clamp(84px, 6.75vw, 180px);
+  --alto-fila: clamp(84px, 6vw, 180px);
   grid-auto-rows: var(--alto-fila);
   gap: 1px;
   margin: 0;
@@ -1177,7 +1425,7 @@
 }
 .uni-prox__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
   gap: 5px;
   margin: 0;
   padding: 0;
@@ -1280,9 +1528,24 @@
     flex-direction: column;
     height: auto;
   }
+  /*
+   * EN UNA COLUMNA LA LÁMINA CRECE CON SU TEXTO. Con 230 px fijos y la
+   * descripción siempre visible (táctil), el texto no cabía: a 390 se salía
+   * hasta 26 px por arriba y el título quedaba encima del número. Ahora el
+   * texto va en el flujo, empujado al pie, y la lámina mide lo que necesite
+   * —230 como mínimo—. El relleno de arriba es el sitio del número.
+   */
   .uni-gr {
     flex: none;
-    height: 230px;
+    height: auto;
+    min-height: 230px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: calc(clamp(14px, 1.8vw, 24px) + 2.2em);
+  }
+  .uni-gr__t {
+    position: relative;
   }
   /* La foto no lleva override: ya va a todo el ancho con la proporción de su
      archivo, y en vertical eso es justo lo que toca. */

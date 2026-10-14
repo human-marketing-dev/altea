@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Footer, LeadForm, NavBar, SectionHeading } from "@/app/ui";
 import { CANALES, enlaceWhatsApp, unidadDesdeSlug } from "@/lib/contacto";
-import { ruta } from "@/lib/rutas";
 
 export const metadata: Metadata = {
   title: "Contacto — Altea",
@@ -30,13 +28,6 @@ const CANALES_DIRECTOS = [
   },
 ];
 
-const UNIDADES_ENLACE = [
-  { nombre: "Comercial", slug: "comercial", nota: "Renta de locales, islas y espacios publicitarios" },
-  { nombre: "Industrial", slug: "industrial", nota: "Naves, parques industriales y máster plan" },
-  { nombre: "Vivienda", slug: "vivienda", nota: "Desarrollos residenciales" },
-  { nombre: "Forestal", slug: "forestal", nota: "Viveros, teca y servicios forestales" },
-];
-
 export default async function Contacto({ searchParams }: PageProps<"/contacto">) {
   // El footer enlaza a …/contacto?unidad=comercial: se respeta y se preselecciona.
   const { unidad } = await searchParams;
@@ -50,7 +41,6 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
           <SectionHeading
             as="h1"
             tone="light"
-            eyebrow="Contacto"
             title="Hablemos de tu proyecto"
             description="Ya sea comercial, industrial, de vivienda o forestal, cuéntanos qué necesitas y te contactamos a la brevedad."
           />
@@ -90,31 +80,9 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
                 </li>
               </ul>
             </div>
-
-            <div>
-              <h2 className="m-0 mb-4 font-display text-h3 font-semibold text-ink">
-                Por unidad de negocio
-              </h2>
-              <ul className="m-0 flex list-none flex-col gap-3 p-0">
-                {UNIDADES_ENLACE.map((unidadEnlace) => (
-                  <li
-                    key={unidadEnlace.slug}
-                    className="border-t border-border-subtle pt-3"
-                  >
-                    <Link
-                      href={ruta(`/${unidadEnlace.slug}`)}
-                      className="text-body font-semibold text-ink underline underline-offset-4 transition-colors hover:text-coral"
-                    >
-                      {unidadEnlace.nombre}
-                    </Link>
-                    <p className="m-0 text-small text-ink-70">{unidadEnlace.nota}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
 
-          <LeadForm unidadPorDefecto={unidadPorDefecto} />
+          <LeadForm unidadPorDefecto={unidadPorDefecto} tono="claro" />
         </section>
       </main>
       <Footer />

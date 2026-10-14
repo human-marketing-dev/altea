@@ -173,7 +173,10 @@
 .home-video__frame {
   margin: 0;
   position: relative;
-  height: clamp(320px, 88svh, 900px);
+  /* Nunca más alto que el 16:9 del propio clip: en una ventana alta y angosta
+     —tablet en vertical— el 88svh pedía una caja casi cuadrada y el video se
+     recortaba por los lados hasta perder el texto que lleva dentro. */
+  height: min(clamp(320px, 88svh, 900px), 56.25vw);
   overflow: hidden;
 }
 /*
@@ -242,9 +245,14 @@
   height: 112%;
   position: absolute;
   inset: -6% 0;
-  object-fit: cover;
-  aspect-ratio: 16 / 9;
-  max-height: 86svh;
+  /*
+   * ⚠ SIN aspect-ratio NI max-height. Eran restos de cuando la caja salía de la
+   * proporción del clip, y topaban el alto del video en 86svh dentro de una caja
+   * de 88svh que además lo sube un 6 %: el video acababa unos 65 px antes del
+   * pie de la caja (a 1440x900) y los controles, que van abajo a la derecha de
+   * la CAJA, quedaban sobre el fondo de página en vez de encima del video.
+   * El encuadre lo decide `cover` dentro de esta caja del 112 %.
+   */
   object-fit: cover;
   /*
     70% y no 50%: el recorte se reparte 70/30 en vez de por mitades, así que se
@@ -692,7 +700,13 @@
 /* --- Móvil --- */
 @media (max-width: 900px) {
   /* El lateral es el margen de página; el vertical se queda como estaba. */
-  .home-video__frame { margin: var(--space-3) var(--container-pad); }
+  .home-video__frame {
+    margin: var(--space-3) var(--container-pad);
+    /* En móvil la caja es la del clip, 16:9, y el video se ve entero. Con el
+       88svh salía de 350x743 a 390: se veía el 23 % del ancho del video. */
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
   .home-hero {
     margin: var(--space-3);
     min-height: 72vh;

@@ -88,6 +88,12 @@ export const INDUSTRIAL: ContenidoUnidad = {
       etiqueta: "de m² desarrollables",
     },
   ],
+  /* El bloque de tres atributos bajo el hero. Sin descripción: no hay copy. */
+  atributos: [
+    { titulo: "Ubicación estratégica", icono: "ubicacion" },
+    { titulo: "Sustentabilidad operativa", icono: "sustentabilidad" },
+    { titulo: "Infraestructura de clase mundial", icono: "infraestructura" },
+  ],
   proyectos: {
     titulo: "Nuestros proyectos industriales",
     /*

@@ -31,14 +31,9 @@ export const STATS: HomeStat[] = [
   { to: 88, label: "proyectos desarrollados" },
 ];
 
-/*
- * Copy confirmado por Altea.
- *
- * Sin la coma antes de "y turismo" que traía el original: en una enumeración
- * española la conjunción no la lleva.
- */
+/* Copy confirmado por Altea (octubre de 2026). */
 export const STATS_INTRO =
-  "Desarrollamos industria, comercio, vivienda, salud, educación y turismo bajo una misma visión estratégica para generar entornos que respondan a las necesidades del presente y evolucionen con las del futuro.";
+  "Creamos soluciones que responden a diferentes necesidades, usos y oportunidades.";
 
 export const VIDEO = {
   /** Clip mudo de 20s en 1080p, en bucle. */

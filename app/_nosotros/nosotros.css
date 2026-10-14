@@ -135,8 +135,9 @@
    *
    * De 1200 para abajo —que es la mayor parte del rango de dos columnas— el
    * texto saca entre 60 y 210 px, y centrada la foto flotaba a media altura con
-   * un hueco arriba y otro abajo: el rótulo y la frase se quedaban sin nada al
-   * lado. Alineados por arriba, los dos bloques comparten canto y la sección se
+   * un hueco arriba y otro abajo: la frase se quedaba sin nada al
+   * lado. (Medido con el rótulo de encima, que ya no está: el texto es ahora
+   * unos 45 px más bajo.) Alineados por arriba, los dos bloques comparten canto y la sección se
    * lee como una composición en vez de como dos piezas sueltas.
    *
    * ⚠ Si cambia el copy o llega una foto que no sea 4/5, hay que volver a mirar
@@ -147,13 +148,6 @@
 .nos-origen__foto {
   /* La proporción la pone <MediaSlot> por su prop `ratio`; aquí sólo el acabado. */
   border-radius: var(--radius-lg);
-}
-.nos-origen__rotulo {
-  margin: 0 0 clamp(18px, 3vh, 32px);
-  font-size: var(--text-small);
-  font-weight: var(--weight-medium);
-  /* 4.98, contra el 48 % del prototipo que daba 2.94. */
-  color: color-mix(in srgb, var(--altea-ink) 66%, transparent);
 }
 /*
  * El cuerpo BAJA con el acomodo a dos columnas, y es el precio asumido.
@@ -287,6 +281,24 @@
   line-height: 1.08;
   letter-spacing: -0.02em;
   max-width: 12ch;
+}
+/* En el teléfono, un pilar por fila con el icono al lado del nombre. Tres
+   columnas de 107 px dejaban los iconos diminutos y los nombres pegados entre
+   sí y al borde. */
+@media (max-width: 640px) {
+  .nos-pilares__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .nos-pilar {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-5);
+    padding-block: var(--space-5);
+  }
+  .nos-pilar__titulo {
+    max-width: none;
+  }
 }
 /* ═══ 4 · Grupo Firmas ════════════════════════════════════════════════════ */
 

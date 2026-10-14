@@ -110,8 +110,15 @@ export function CarrilTarjetas({
            * el ancho a 520. El alto natural es el que sale del ancho de diseño
            * —clamp(260px, 32vw, 480px)— por la proporción 3/4, y es el techo.
            */
-          const natural =
-            (Math.min(480, Math.max(260, window.innerWidth * 0.32)) * 4) / 3;
+          /* En móvil el ancho de diseño es otro: clamp(220px, 74vw, 320px). Sin
+             esto el teléfono usaba el de escritorio y las tarjetas salían de
+             260 px en una pantalla de 390. */
+          const vw = window.innerWidth;
+          const anchoDiseno =
+            vw <= 900
+              ? Math.min(320, Math.max(220, vw * 0.74))
+              : Math.min(480, Math.max(260, vw * 0.32));
+          const natural = (anchoDiseno * 4) / 3;
           nodo.style.setProperty(
             "--alto-tarjeta",
             `${Math.max(240, Math.round(Math.min(natural, libre)))}px`,

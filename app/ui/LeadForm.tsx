@@ -14,6 +14,13 @@ import { Select } from "./Select";
 export interface LeadFormProps {
   /** Preselecciona la unidad, p. ej. desde la página de Industrial. */
   unidadPorDefecto?: Unidad;
+  /**
+   * Sobre qué fondo cae. Oscuro en el cierre de contacto de las páginas; claro
+   * en /contacto, que lo pone sobre la página. Con el tono equivocado salen
+   * campos negros y textos cream sobre claro.
+   * @default "oscuro"
+   */
+  tono?: "oscuro" | "claro";
   className?: string;
 }
 
@@ -21,7 +28,11 @@ export interface LeadFormProps {
  * Formulario de captación. La validación del servidor manda: la del navegador
  * es sólo para no hacer ir y venir al usuario.
  */
-export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
+export function LeadForm({
+  unidadPorDefecto,
+  tono = "oscuro",
+  className,
+}: LeadFormProps) {
   const [estado, accion, pendiente] = useActionState<EstadoLead, FormData>(
     enviarLead,
     ESTADO_LEAD_INICIAL,
@@ -30,6 +41,9 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
 
   const errores = estado.estado === "error" ? estado.errores : {};
   const errorDe = (campo: string) => errores[campo];
+  const oscuro = tono === "oscuro";
+  /* El texto de los mensajes de error y de envío, según el fondo. */
+  const textoError = oscuro ? "text-cream" : "text-coral-dark";
 
   if (estado.estado === "enviado") {
     return (
@@ -37,10 +51,14 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
         className={`flex flex-col gap-3 ${className ?? ""}`}
         role="status"
       >
-        <p className="m-0 font-display text-h3 font-semibold text-cream">
+        <p
+          className={`m-0 font-display text-h3 font-semibold ${oscuro ? "text-cream" : "text-ink"}`}
+        >
           Gracias, recibimos tu mensaje.
         </p>
-        <p className="m-0 text-body leading-relaxed text-cream-60">
+        <p
+          className={`m-0 text-body leading-relaxed ${oscuro ? "text-cream-60" : "text-ink-70"}`}
+        >
           Un asesor de Altea te contactará para revisar tu proyecto.
         </p>
       </div>
@@ -54,8 +72,9 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
       /* Sin tarjeta: fondo, sombra y padding se van juntos, que es lo
              que la hacía tarjeta. `altea-form--on-dark` retiñe los campos desde
              el contenedor: Input y Select se montan en varios sitios y no tiene
-             sentido que cada uno tenga que saber sobre qué fondo cayó. */
-      className={`altea-form--on-dark flex flex-col gap-4 ${className ?? ""}`}
+             sentido que cada uno tenga que saber sobre qué fondo cayó. En
+             claro no lleva clase: los campos ya son claros por defecto. */
+      className={`${oscuro ? "altea-form--on-dark " : ""}flex flex-col gap-4 ${className ?? ""}`}
     >
       {/* Nombre y correo comparten renglón: el formulario es ancho y en una sola
           columna los campos quedaban desproporcionados. */}
@@ -71,7 +90,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
             aria-describedby={errorDe("nombre") ? `${id}-nombre` : undefined}
           />
           {errorDe("nombre") && (
-            <p id={`${id}-nombre`} role="alert" className="m-0 mt-1.5 text-small text-cream">
+            <p id={`${id}-nombre`} role="alert" className={`m-0 mt-1.5 text-small ${textoError}`}>
               {errorDe("nombre")}
             </p>
           )}
@@ -89,7 +108,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
             aria-describedby={errorDe("correo") ? `${id}-correo` : undefined}
           />
           {errorDe("correo") && (
-            <p id={`${id}-correo`} role="alert" className="m-0 mt-1.5 text-small text-cream">
+            <p id={`${id}-correo`} role="alert" className={`m-0 mt-1.5 text-small ${textoError}`}>
               {errorDe("correo")}
             </p>
           )}
@@ -126,7 +145,7 @@ export function LeadForm({ unidadPorDefecto, className }: LeadFormProps) {
           aria-describedby={errorDe("mensaje") ? `${id}-mensaje` : undefined}
         />
         {errorDe("mensaje") && (
-          <p id={`${id}-mensaje`} role="alert" className="m-0 mt-1.5 text-small text-cream">
+          <p id={`${id}-mensaje`} role="alert" className={`m-0 mt-1.5 text-small ${textoError}`}>
             {errorDe("mensaje")}
           </p>
         )}

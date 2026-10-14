@@ -13,8 +13,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * Origen: cómo nació Altea.
  *
  * A DOS COLUMNAS: el texto a la izquierda y la foto a la derecha, centrados
- * entre sí. Dentro de la columna de texto, el rótulo pequeño, la frase de
- * apertura con el acento en coral-dark, la regla fina y los dos párrafos
+ * entre sí. Dentro de la columna de texto, la frase de apertura con el acento
+ * en coral-dark —que es también el nombre de la sección—, la regla fina y los dos párrafos
  * APILADOS — en media página, dos columnas de texto darían renglones de unos
  * treinta caracteres.
  *
@@ -68,11 +68,9 @@ export function Origen() {
     <section className="nos-origen" ref={raiz} aria-labelledby="origen-titulo">
       <div className="nos-origen__grid">
         <div className="nos-origen__txt">
-          <p className="nos-origen__rotulo" id="origen-titulo">
-            {ORIGEN.title}
-          </p>
-
-          <p className="nos-origen__frase js-frase">
+          {/* Sin rótulo encima: se quitó "¿Cómo nació Altea?". La frase es lo
+              que nombra la sección, así que el aria-labelledby apunta a ella. */}
+          <p className="nos-origen__frase js-frase" id="origen-titulo">
             {/* El espacio va como hermano del <span> y no lo pone el CSS: si el hueco
             lo diera un `gap`, la frase copiada saldría toda pegada. */}
             {ORIGEN.frase.map((trozo, i, todos) =>
@@ -113,7 +111,15 @@ export function Origen() {
           src={ORIGEN.foto.src}
           alt={ORIGEN.foto.alt}
           ratio="4 / 5"
-          sizes="(max-width: 900px) 92vw, 45vw"
+          /*
+           * EL ANCHO QUE SE PINTA, NO EL DE LA CAJA. La foto es horizontal
+           * (1.74:1) en una caja vertical (4/5), así que `cover` la escala por el
+           * ALTO y su ancho pintado es 2.17 veces el de la caja: a 1440 la caja
+           * mide 587 px y la foto se pinta a 1 275. Con el "45vw" de antes Next
+           * servía la versión de 750 px y la estiraba 1.7x: de ahí lo pixeleado.
+           * Medido: 89–91vw en dos columnas, 195vw en una.
+           */
+          sizes="(max-width: 900px) 196vw, 91vw"
         />
       </div>
     </section>

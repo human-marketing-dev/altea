@@ -53,6 +53,7 @@ export const HERO = {
 };
 
 export const ORIGEN = {
+  /* ⚠ SIN CONSUMIDOR: el rótulo se quitó de la sección (octubre de 2026). */
   title: "¿Cómo nació Altea?",
 
   /**
@@ -74,24 +75,21 @@ export const ORIGEN = {
   ],
 
   /**
-   * ⚠ PENDIENTE: NO HAY ARCHIVO. La sección vuelve a dos columnas —texto a la
-   * izquierda, foto a la derecha— y mientras la foto no llegue, <MediaSlot>
-   * compone el hueco etiquetado en vez de inventar una imagen.
+   * La fachada de uno de los cines, en blanco y negro (1363x784).
    *
-   * Y no se rellena con lo que haya: el rediseño anterior quitó precisamente
-   * esta foto porque llevaba Paseo La Fe prestado de /comercial, que ni es de
-   * los cines del relato ni tenía nada que ver con el origen. Un hueco honesto
-   * es mejor que una foto que cuenta otra cosa.
+   * La caja es 4/5 y la foto horizontal, así que `cover` se queda con el 46 %
+   * central del ancho: de x 368 a 995 sobre 1363. El letrero "CINEMAS" va de 450
+   * a 925 y cabe entero, con margen a los dos lados, que es lo que hace falta
+   * para que la foto diga de qué habla el texto. Si se cambia el archivo, hay
+   * que volver a mirar que el letrero quede dentro.
    *
-   * Cuando llegue, hay que mirar su proporción: la caja es 4/5 y con `cover` una
-   * foto horizontal se recorta bastante, que en arquitectura suele comerse justo
-   * la parte alta del edificio.
+   * ⚠ Con 1363 px de ancho, en una pantalla retina la caja pide unos 2 500: se
+   * verá algo blanda. Un archivo de ~2 600 px de ancho lo resuelve.
    */
   foto: {
-    label: "Foto del origen de Altea — PENDIENTE",
+    label: "Foto del origen de Altea",
     alt: "Los primeros cines de Altea, donde empezó el grupo",
-    /** La ruta, en cuanto exista el archivo. */
-    src: undefined as string | undefined,
+    src: "/images/nosotros/imagen-nosotros-altea.webp" as string | undefined,
   },
 };
 
@@ -267,7 +265,7 @@ const SECTORES: SectorFirma[] = [
 ];
 
 export const GRUPO_FIRMA = {
-  title: "Formamos parte de Grupo Firmas",
+  title: "Formamos parte de Grupo Firmas Globales",
   intro:
     "Altea es la división inmobiliaria de un grupo con presencia en medios, alimentos, energía, deportes y vinos. Esa estructura nos da músculo financiero y una visión de largo plazo que pocos desarrolladores tienen.",
   /**
@@ -279,7 +277,7 @@ export const GRUPO_FIRMA = {
    * veces seguidas.
    */
   raiz: {
-    nombre: "Grupo Firmas",
+    nombre: "Grupo Firmas Globales",
     logo: `${GF}/logo-grupo-firmas-globales.webp`,
     /* 537x206. */
     logoRatio: 2.607,
@@ -323,18 +321,16 @@ export const HUELLA = {
   /**
    * El botón del final de la sección.
    *
-   * ⚠ PENDIENTE: el destino todavía no existe. Mientras `href` sea `undefined`
-   * el componente pinta un <button> que no navega — y se ve igual que uno que
-   * sí, porque es un botón que va a funcionar, no un control deshabilitado.
-   *
-   * No va `href: "#"`, que es lo que parecería neutro y no lo es: un ancla a #
-   * salta al principio de la página, y eso se lee como sitio roto. Cuando llegue
-   * la URL, ESTA línea es lo único que cambia: con href, el componente pinta un
-   * enlace con las mismas clases.
+   * Lleva al video en YouTube, en una pestaña nueva. Si algún día se queda sin
+   * destino, `href: undefined` pinta un <button> que no navega, con el mismo
+   * aspecto. No va `href: "#"`: un ancla a # salta al principio de la página y
+   * se lee como sitio roto.
    */
   cta: {
     texto: "Conoce nuestra escala",
-    href: undefined as string | undefined,
+    /* El video en YouTube. Sin el `?si=` del enlace compartido, que sólo es un
+       identificador de quién lo compartió: el video es el mismo. */
+    href: "https://youtu.be/dEWAy7wrM7s" as string | undefined,
   },
   stats: [
     { prefix: "+", to: 400, label: "Propiedades" },

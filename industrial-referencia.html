@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Industrial — Altea · referencia</title>
+<!--
+  /industrial en un solo archivo: HTML, CSS y JS plano, sin build.
+
+  Va en la RAÍZ del repo a propósito: las fotos y la fuente se piden con la ruta
+  relativa del propio repositorio (public/images/…, app/fonts/…), así que se
+  abre con doble clic desde aquí y no se publica — Next sólo sirve app/ y public/.
+
+  Es una referencia, no la fuente de verdad: el sitio vive en app/_unidad/. Si
+  algo cambia allí, este archivo no se entera.
+
+  GSAP desde CDN, igual que el sitio usa GSAP + ScrollTrigger: el hero se fija y
+  se arrastra con el scroll, y eso es ScrollTrigger. Sin conexión, la página se
+  ve entera pero el hero no se fija.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Gotham es la fuente del sitio cuando están sus archivos (no van en git: no
+     tienen licencia web). Montserrat es el mismo respaldo que declara el sitio. */
+  @font-face{ font-family:Gotham; font-weight:500; font-display:swap;
+    src:url("app/fonts/Gotham-Medium.woff2") format("woff2"); }
+  @font-face{ font-family:Gotham; font-weight:700; font-display:swap;
+    src:url("app/fonts/Gotham-Bold.woff2") format("woff2"); }
+
+  /* ── tokens: copiados de app/ui/tokens.css y del @theme de globals.css ── */
+  :root{
+    --altea-ink:#212222; --altea-cream:#E7DFD1; --altea-coral:#F15D4D;
+    --altea-coral-dark:#D6473A; --altea-white:#FFFFFF;
+    --surface-page:#F5F5F3; --surface-sunken:#E9E9E6; --surface-card-dark:#2B2C2C;
+    --text-primary:var(--altea-ink); --text-secondary:#212222b3;
+    --text-accent:var(--altea-coral-dark); --text-on-dark:var(--altea-cream);
+    --text-on-dark-secondary:#E7DFD1b3; --border-subtle:#21222226;
+    --unidad-industrial:#5697D0;
+    --weight-bold:700; --weight-medium:500;
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+    --space-6:32px; --space-7:48px; --space-8:64px; --space-9:96px;
+    --container-pad:clamp(20px,5vw,80px); --container-max:1280px;
+    --radius-sm:4px; --radius-md:8px; --radius-lg:16px; --radius-pill:999px;
+    --text-eyebrow:.8125rem; --text-small:.875rem; --text-body:1rem;
+    --text-h1:clamp(1.875rem,2.6vw,2.75rem);
+    --tracking-tight:-.01em; --tracking-wide:.06em; --leading-heading:1.1;
+    --ease-standard:cubic-bezier(.4,0,.2,1); --duration-fast:150ms; --duration-base:220ms;
+    --shadow-card:0 1px 2px #21222212, 0 8px 24px -8px #21222222;
+  }
+  *{ box-sizing:border-box; }
+  html{ line-height:1.5; }
+  body{ margin:0; background:var(--surface-page); color:var(--text-primary);
+    font-family:Gotham,Montserrat,-apple-system,"Segoe UI",sans-serif; font-weight:500;
+    -webkit-font-smoothing:antialiased; }
+  img{ display:block; max-width:100%; }
+  h1,h2,h3{ margin:0; }
+  button{ font:inherit; }
+  .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);
+    white-space:nowrap; }
+
+  /* ── barra ─────────────────────────────────────────────────────────────
+     El LOGO cae en --container-pad, la línea de todo el contenido; la píldora
+     sobresale por fuera lo que mide su margen. Por eso el relleno lateral es el
+     margen de página menos el de la píldora y su borde. Por debajo de 640 ese
+     relleno no llega a 16 px y la píldora pasa a barra a ancho completo. */
+  .barra{ --mx:16px; position:fixed; z-index:50; top:16px; left:var(--mx); right:var(--mx);
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    padding:10px calc(var(--container-pad) - var(--mx) - 1px);
+    border:1px solid transparent; border-radius:var(--radius-pill);
+    transition:background-color .22s, border-color .22s, box-shadow .22s,
+               transform .5s cubic-bezier(.2,.7,.3,1); }
+  .barra[data-pegada="si"]{ background:color-mix(in srgb,#fff 55%,transparent);
+    backdrop-filter:blur(14px) saturate(1.3); border-color:var(--border-subtle);
+    box-shadow:var(--shadow-card); }
+  .barra[data-oculta="si"]{ transform:translateY(calc(-100% - 16px)); }
+  .barra img{ height:22px; width:auto; }
+  .barra nav{ display:flex; align-items:center; gap:24px; }
+  .barra nav a{ font-size:var(--text-small); color:inherit; text-decoration:none; }
+  .barra nav a[aria-current]{ font-weight:700; }
+  .barra nav .cta{ background:var(--altea-coral); color:#fff; padding:10px 20px;
+    border-radius:var(--radius-pill); font-weight:700; }
+  @media (max-width:900px){ .barra{ --mx:12px; top:12px; }
+    .barra nav a:not(.cta){ display:none; } }
+  @media (max-width:639px){ .barra{ --mx:0px; } .barra, .barra[data-pegada="si"]{
+    border-color:transparent; border-radius:0; } }
+
+  /* ── 1 · hero calado ───────────────────────────────────────────────────
+     Las pistas en minmax(0,…): una pista `auto` o `1fr` se mide contra el
+     contenido, y el contenido es una palabra que crece de 1 000 a 7 000 px. La
+     rejilla se ensancharía con ella y el desborde se iría todo a la derecha. */
+  .hero{ position:relative; min-height:100svh; overflow:hidden; display:grid;
+    grid-template-columns:minmax(0,1fr); grid-template-rows:minmax(0,1fr);
+    padding:clamp(92px,13vh,140px) var(--container-pad) clamp(26px,4.4vh,50px);
+    background:var(--surface-page); }
+
+  /* LA FOTO A SANGRE, debajo de todo, en el MISMO sitio que la de dentro de las
+     letras: las dos reciben su encuadre de la misma función. No entra con un
+     fundido: lo que crece es la zona donde se ve. La máscara son dos capas
+     cruzadas con `intersect`: el FRENTE (un círculo que se abre desde el
+     centro) y la TRAMA (un punto por celda cuyo radio crece). Al cruzarlas, la
+     foto entra como una retícula que nace en el centro y se cierra. */
+  .lleno{ position:absolute; inset:0; z-index:0; background-repeat:no-repeat;
+    pointer-events:none; --rej:clamp(13px,1.35vw,21px);
+    --m-trama:radial-gradient(circle at 50% 50%,#000 var(--d,0px),transparent calc(var(--d,0px) + .7px));
+    --m-frente:radial-gradient(circle at 50% 50%,#000 var(--r0,0px),transparent var(--r1,0px));
+    -webkit-mask-image:var(--m-trama),var(--m-frente); mask-image:var(--m-trama),var(--m-frente);
+    -webkit-mask-size:var(--rej) var(--rej),100% 100%; mask-size:var(--rej) var(--rej),100% 100%;
+    -webkit-mask-repeat:repeat,no-repeat; mask-repeat:repeat,no-repeat;
+    -webkit-mask-position:center,center; mask-position:center,center;
+    -webkit-mask-composite:source-in; mask-composite:intersect; }
+
+  .calado{ position:relative; z-index:1; align-self:center; justify-self:center;
+    width:100%; min-width:0; display:grid; gap:clamp(34px,6.4vh,88px); justify-items:center; }
+  .capas{ position:relative; display:grid; width:100%; min-width:0;
+    grid-template-columns:minmax(0,1fr); }
+  .capas > *{ grid-area:1/1; }
+
+  /* ⚠ EL CUERPO ES EL MISMO EN LAS CUATRO UNIDADES. clamp(3rem,15.4vw,15rem) y
+     el mismo peso para Comercial, Industrial, Vivienda y Forestal: la longitud de
+     la palabra es un dato del contenido, no un defecto de la tipografía. A 1440,
+     "Industrial" ocupa el 64 % de la ventana en Gotham (el 60 % en Montserrat)
+     y "Comercial" el 71 %. Si una se ve chica, no se toca esto: se habla. */
+  .t{ margin:0; width:100%; display:flex; justify-content:center; align-items:flex-start;
+    font-size:clamp(3rem,15.4vw,15rem); }
+  /* EL CALADO: background-clip:text con el color transparente. El texto sigue
+     en el DOM y un lector de pantalla lo lee como un <h1> cualquiera. El
+     relleno de .26em/.14em compensado con margen negativo agranda la caja del
+     recorte para que los rasgos no se corten arriba ni abajo. */
+  .tx{ padding:.26em 0 .14em; margin:-.26em 0 -.14em; display:block; white-space:nowrap;
+    font-weight:700; font-size:inherit; line-height:.84; letter-spacing:-.062em;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-repeat:no-repeat; }
+  /* La copia de detrás, sólo con contorno: mantiene la silueta sobre las zonas
+     claras de la foto. Se va pronto al hacer scroll. */
+  .eco{ pointer-events:none; }
+  .eco .tx{ -webkit-text-stroke:1px color-mix(in srgb,var(--altea-ink) 16%,transparent); }
+
+  /* LA BANDEROLA: los dos trazos de la marca de Altea, como mask-image y no como
+     clip-path, para que crezcan con la palabra sin tocar una coordenada. La
+     mitad izquierda NO lleva color: es otra ventana a la foto, con el mismo
+     encuadre que las letras. Sólo la derecha va en el color de la unidad. */
+  .gal{ position:relative; flex:none; display:block; height:.27em;
+    aspect-ratio:48.72/49.75; margin:-.085em 0 0 .055em; }
+  /* En el <h1> va invisible: sólo ocupa el sitio que ocupa la del eco, para que
+     las dos capas repartan igual el flex y la palabra caiga en el mismo punto. */
+  .t:not(.eco) .gal{ visibility:hidden; }
+  .gal i{ position:absolute; inset:0; display:block;
+    -webkit-mask-size:100% 100%; mask-size:100% 100%;
+    -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; }
+  .gal__izq{ background-repeat:no-repeat;
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='747.9 33.56 48.72 49.75' preserveAspectRatio='none'%3E%3Cpath d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='747.9 33.56 48.72 49.75' preserveAspectRatio='none'%3E%3Cpath d='M747.9,83.31h18.44c2.95-24.87,1.02-15.65,5.99-49.75-8.25,16.79-16.29,33.17-24.44,49.75Z'/%3E%3C/svg%3E"); }
+  .gal__der{ background:var(--unidad-industrial);
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='747.9 33.56 48.72 49.75' preserveAspectRatio='none'%3E%3Cpath d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='747.9 33.56 48.72 49.75' preserveAspectRatio='none'%3E%3Cpath d='M795.12,80.2c-6.35-12.87-12.66-25.76-18.96-38.65-1.21-2.48-2.38-4.98-3.82-7.99-4.97,34.1-3.04,24.87-5.99,49.75h30.27l-1.5-3.11Z'/%3E%3C/svg%3E"); }
+
+  /* Las cifras. Los signos en el color de la unidad, a plena intensidad: sobre
+     el claro dan 2.86 (Industrial) y se aceptó así a propósito — el dígito va
+     en tinta a 14.6 y la magnitud se dice entera en el texto oculto. */
+  .datos{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+    gap:clamp(22px,4.4vw,72px); margin:0; }
+  .hd, .hc{ display:flex; flex-direction:column-reverse; justify-content:flex-end;
+    text-align:center; min-width:clamp(142px,17vw,246px); padding-top:clamp(12px,1.8vh,18px);
+    border-top:1px solid color-mix(in srgb,var(--altea-ink) 24%,transparent); }
+  .hd dd, .hc dd{ margin:0; font-size:clamp(2.1rem,4.3vw,3.6rem); font-weight:700;
+    letter-spacing:-.05em; line-height:.9; font-variant-numeric:tabular-nums; }
+  .hd dd i, .hc dd i{ font-style:normal; color:var(--unidad-industrial); }
+  .hd dt{ margin-top:9px; font-size:clamp(.78rem,1vw,.96rem); line-height:1.4;
+    color:color-mix(in srgb,var(--altea-ink) 66%,transparent); }
+
+  .velo{ position:absolute; inset:0; z-index:2; opacity:0; pointer-events:none;
+    background:linear-gradient(180deg,rgb(18 20 20/.28) 0%,rgb(18 20 20/.5) 44%,rgb(18 20 20/.86) 100%); }
+
+  /* LA COMPOSICIÓN DE CIERRE: la de apertura invertida, la palabra blanca maciza
+     sobre la foto oscurecida. aria-hidden: repite el <h1> y las cifras, que
+     siguen en el árbol aunque se hayan desvanecido. */
+  .entrada{ position:absolute; inset:0; z-index:3; opacity:0; pointer-events:none;
+    padding:0 var(--container-pad); display:grid; align-content:center; justify-items:center;
+    gap:clamp(26px,5vh,66px); text-align:center; color:var(--text-on-dark); }
+  .lockup{ display:flex; align-items:flex-start; justify-content:center;
+    font-size:clamp(2.6rem,12vw,11rem); }
+  /* ⚠ LA EXCEPCIÓN DEL CIERRE: aquí la mitad izquierda va en BLANCO, no en el
+     color de unidad. No hay ventana que abrir —la foto ya está a sangre— y la
+     palabra es blanca maciza, así que el trazo y la palabra se leen como una
+     sola pieza. No la "unifiques" con el color de la unidad. */
+  .lockup .gal__izq{ background:var(--altea-white); }
+  .vuelve{ margin:0; white-space:nowrap; color:#fff; font-size:inherit; font-weight:700;
+    line-height:.84; letter-spacing:-.062em; }
+  .cierre-h{ display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+    gap:clamp(24px,4.8vw,84px); margin:0; }
+  .hc{ border-top-color:color-mix(in srgb,var(--altea-cream) 32%,transparent);
+    min-width:clamp(142px,17vw,250px); padding-top:clamp(14px,2vh,22px); }
+  .hc dd{ font-size:clamp(2.1rem,4.6vw,3.8rem); }
+  .hc dt{ margin-top:11px; font-size:clamp(.82rem,1.05vw,1rem); line-height:1.4;
+    color:var(--text-on-dark-secondary); }
+
+  /* ── 2 · carrusel de proyectos ─────────────────────────────────────────── */
+  .car{ padding:clamp(70px,13vh,170px) 0; }
+  .car__cab{ display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+    padding:0 var(--container-pad); margin:0 0 clamp(28px,5vh,56px); }
+  .h2{ max-width:16ch; font-size:clamp(1.8rem,3.8vw,2.9rem); font-weight:700;
+    line-height:1.02; letter-spacing:var(--tracking-tight); }
+  .car__mando{ display:flex; align-items:center; gap:clamp(14px,2vw,26px); flex:none; }
+  .car__n{ margin:0; font-size:var(--text-small); font-variant-numeric:tabular-nums;
+    color:var(--text-secondary); }
+  .car__fl{ display:flex; gap:8px; }
+  .car__bt{ width:42px; aspect-ratio:1; border-radius:var(--radius-pill); cursor:pointer;
+    display:grid; place-items:center; background:transparent; color:inherit;
+    border:1px solid var(--border-subtle); transition:background .22s, opacity .22s; }
+  .car__bt:hover:not([disabled]){ background:color-mix(in srgb,var(--altea-ink) 7%,transparent); }
+  .car__bt[disabled]{ opacity:.3; cursor:default; }
+  /* Scroll nativo con snap: en táctil el dedo ya arrastra, y el ratón se agrega
+     a mano (ver el JS). Sin barra: el progreso lo dice la línea de abajo. */
+  .pista{ display:flex; align-items:center; gap:clamp(12px,1.6vw,26px);
+    padding:0 var(--container-pad); margin:0; list-style:none; overflow-x:auto;
+    overscroll-behavior-x:contain; scroll-snap-type:x mandatory;
+    scroll-padding-left:var(--container-pad); scrollbar-width:none; }
+  .pista::-webkit-scrollbar{ display:none; }
+  .pista:focus-visible{ outline:2px solid var(--altea-coral); outline-offset:4px; }
+  /* Mientras se arrastra, sin snap: si no, cada movimiento salta a la tarjeta
+     más cercana y el arrastre se siente a tirones. */
+  .pista.arrastrando{ scroll-snap-type:none; cursor:grabbing; }
+  .pista > li{ flex:none; scroll-snap-align:start; }
+  .tj{ position:relative; display:block; width:clamp(260px,32vw,480px); aspect-ratio:3/4;
+    border-radius:var(--radius-lg); overflow:hidden; border:0; padding:0; cursor:pointer;
+    text-align:left; color:#fff; background:var(--surface-card-dark); }
+  /* La foto es un 24 % más ancha que la tarjeta: es el recorrido del parallax
+     horizontal que le escribe el JS según dónde esté la tarjeta en la ventana. */
+  .tj__foto{ position:absolute; top:0; bottom:0; left:-12%; width:124%; }
+  .tj__foto img{ width:100%; height:100%; object-fit:cover; }
+  .tj::after{ content:""; position:absolute; inset:0; transition:background .22s;
+    background:linear-gradient(180deg,rgb(16 19 22/0) 40%,rgb(16 19 22/.82) 100%); }
+  .tj:hover::after{ background:linear-gradient(180deg,rgb(16 19 22/.14) 24%,rgb(16 19 22/.88) 100%); }
+  .tj:focus-visible{ outline:2px solid var(--altea-coral); outline-offset:3px; }
+  .tj__marca{ position:absolute; z-index:3; top:13px; left:13px; padding:3px 8px;
+    border-radius:var(--radius-sm); background:rgb(16 19 22/.42); backdrop-filter:blur(6px);
+    border:1px solid rgb(255 255 255/.2); font-size:.6rem; letter-spacing:.14em;
+    text-transform:uppercase; color:rgb(255 255 255/.82); }
+  .tj__txt{ position:absolute; z-index:2; left:0; right:0; bottom:0; padding:clamp(16px,2vw,28px); }
+  .tj__txt b{ display:block; font-size:clamp(1rem,1.5vw,1.35rem); letter-spacing:-.025em; }
+  .tj__txt span{ display:block; margin-top:5px; font-size:var(--text-eyebrow);
+    letter-spacing:var(--tracking-wide); text-transform:uppercase; color:rgb(255 255 255/.72); }
+  .car__barra{ margin:clamp(22px,3.4vh,38px) var(--container-pad) 0; height:2px;
+    background:color-mix(in srgb,var(--altea-ink) 12%,transparent); }
+  .car__barra span{ display:block; height:100%; width:0; background:var(--altea-ink); }
+  @media (max-width:820px){ .tj{ width:clamp(220px,74vw,320px); } .car__fl{ display:none; } }
+
+  /* ── 3 · próximos proyectos ────────────────────────────────────────────── */
+  .prox{ padding:clamp(70px,13vh,170px) var(--container-pad); }
+  .prox .h2{ max-width:12ch; font-size:clamp(1.8rem,4vw,3.1rem); white-space:pre-line;
+    margin-bottom:clamp(30px,5vh,60px); }
+  .prox ul{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px;
+    margin:0; padding:0; list-style:none; }
+  .px{ position:relative; display:block; width:100%; aspect-ratio:4/3; overflow:hidden;
+    border-radius:var(--radius-lg); color:#fff; border:0; padding:0; background:none;
+    text-align:left; cursor:pointer; }
+  .px img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    transition:transform .9s cubic-bezier(.2,.7,.3,1); }
+  .px:hover img{ transform:scale(1.05); }
+  .px::after{ content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg,rgb(16 19 22/0) 42%,rgb(16 19 22/.84) 100%); }
+  .px:focus-visible{ outline:2px solid var(--altea-coral); outline-offset:3px; }
+  .px__t{ position:absolute; z-index:2; left:0; right:0; bottom:0; padding:clamp(16px,2vw,28px); }
+  .px__t b{ display:block; font-size:clamp(1rem,1.5vw,1.35rem); letter-spacing:-.025em; line-height:1.14; }
+  .px__t span{ display:block; margin-top:6px; font-size:var(--text-eyebrow); color:rgb(255 255 255/.72); }
+
+  /* ── la ficha ──────────────────────────────────────────────────────────
+     <dialog> con showModal(): foco atrapado, Escape y ::backdrop sin escribir
+     nada para ello. Fuera de su tope deja a cada lado el margen de página. */
+  .fx{ width:min(1040px,calc(100vw - 2*var(--container-pad))); max-height:86svh; padding:0;
+    border:0; border-radius:var(--radius-lg); overflow:auto; background:var(--surface-page);
+    color:var(--text-primary); margin:auto; opacity:0; transform:translateY(16px) scale(.985);
+    transition:opacity .35s var(--ease-standard), transform .4s cubic-bezier(.2,.7,.3,1),
+      overlay .4s allow-discrete, display .4s allow-discrete; }
+  .fx[open]{ opacity:1; transform:none; }
+  @starting-style{ .fx[open]{ opacity:0; transform:translateY(16px) scale(.985); } }
+  .fx::backdrop{ background:rgb(12 15 18/.66); backdrop-filter:blur(4px); }
+  /* La foto cede el alto que le sobra al cuerpo: es lo que hace que la ficha
+     entre sin barra en ventanas bajas. */
+  .fx article{ max-height:inherit; display:grid; grid-template-rows:minmax(150px,1fr) auto; }
+  /* La caja adopta la proporción REAL del archivo, así `cover` no recorta nada
+     mientras haya alto. */
+  .fx__foto{ position:relative; width:100%; aspect-ratio:var(--proporcion,1.5);
+    overflow:hidden; place-self:stretch; }
+  .fx__foto img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+    object-position:center 30%; }
+  .fx__foto::after{ content:""; position:absolute; inset:34% 0 0;
+    background:linear-gradient(to bottom,rgb(12 15 18/0),rgb(12 15 18/.78)); }
+  .fx__foto h3{ position:absolute; z-index:2; right:clamp(24px,3.4vw,46px);
+    bottom:clamp(18px,2.4vw,32px); left:clamp(24px,3.4vw,46px);
+    font-size:clamp(1.5rem,2.6vw,2.2rem); font-weight:700; letter-spacing:-.04em;
+    line-height:1.02; color:#fff; text-wrap:balance; }
+  .fx__cuerpo{ display:grid; grid-template-columns:minmax(0,34%) minmax(0,66%);
+    gap:clamp(20px,3vw,40px); align-items:start; padding:clamp(24px,3.4vw,46px); }
+  .fx__cuerpo:not(:has(p)){ grid-template-columns:minmax(0,1fr); }
+  .fx dl{ display:grid; gap:14px; margin:0; }
+  .fx dl div{ display:grid; gap:4px; padding-top:11px; border-top:1px solid var(--border-subtle); }
+  .fx dt{ font-size:var(--text-eyebrow); color:var(--text-secondary); }
+  .fx dd{ margin:0; font-size:.92rem; line-height:1.35; }
+  .fx__cuerpo p{ margin:0; line-height:1.74; color:color-mix(in srgb,var(--altea-ink) 76%,transparent); }
+  .fx__x{ position:absolute; z-index:4; top:14px; right:14px; width:38px; aspect-ratio:1;
+    border-radius:var(--radius-pill); border:0; cursor:pointer; display:grid; place-items:center;
+    font-size:1.1rem; line-height:1; background:rgb(255 255 255/.24);
+    backdrop-filter:blur(8px); color:#fff; }
+
+  /* ── cierre y pie, simplificados: no son el objeto de esta referencia ─── */
+  .cierre{ display:grid; grid-template-columns:minmax(0,4fr) minmax(0,6fr);
+    background:var(--surface-sunken); }
+  .cierre img{ width:100%; height:100%; object-fit:cover; }
+  .cierre__body{ display:flex; flex-direction:column; align-items:flex-start; gap:32px;
+    padding:var(--space-9) var(--container-pad) var(--space-9) var(--space-8); }
+  .cierre__eyebrow{ font-size:var(--text-eyebrow); font-weight:700; letter-spacing:var(--tracking-wide);
+    text-transform:uppercase; color:var(--text-secondary); }
+  .cierre h2{ max-width:640px; margin-top:12px; font-size:var(--text-h1); line-height:var(--leading-heading); }
+  .btn{ display:inline-flex; align-items:center; gap:8px; padding:16px 34px;
+    border-radius:var(--radius-pill); font-weight:700; text-decoration:none; }
+  .btn--primario{ background:var(--altea-coral); color:#fff; }
+  .btn--contorno{ color:var(--altea-ink); border:1px solid color-mix(in srgb,var(--altea-ink) 56%,transparent); }
+  .pie{ background:var(--altea-ink); color:var(--text-on-dark-secondary);
+    padding:clamp(80px,12vh,160px) var(--container-pad) clamp(40px,6vh,80px); font-size:var(--text-small); }
+  .pie__cols{ display:flex; flex-wrap:wrap; gap:var(--space-8); }
+  .pie b{ display:block; margin-bottom:var(--space-2); text-transform:uppercase;
+    letter-spacing:var(--tracking-wide); color:var(--altea-cream); }
+  .pie a{ display:block; color:inherit; text-decoration:none; line-height:2; }
+  .pie__legal{ margin-top:var(--space-8); padding-top:20px; border-top:1px solid #E7DFD133; }
+
+  @media (max-width:900px){
+    .prox ul, .fx__cuerpo, .cierre{ grid-template-columns:1fr; }
+    .cierre__body{ padding:var(--space-8) var(--container-pad); }
+  }
+  @media (prefers-reduced-motion:reduce){ .fx, .px img, .tj::after{ transition:none; } }
+</style>
+</head>
+<body>
+
+<header class="barra" id="barra">
+  <a href="#" aria-label="Altea — inicio"><img src="public/brand/logos/altea-logo-dark.svg" alt="" width="88" height="22"></a>
+  <nav aria-label="Principal">
+    <a href="#">Inicio</a><a href="#">Nosotros</a><a href="#">Comercial</a>
+    <a href="#" aria-current="page">Industrial</a><a href="#">Vivienda</a><a href="#">Forestal</a>
+    <a href="#" class="cta">Contacto</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" id="hero">
+    <div class="lleno" id="lleno" aria-hidden="true"></div>
+    <div class="calado">
+      <div class="capas" id="capas">
+        <h1 class="t"><span class="tx" id="tx">Industrial</span><span class="gal" aria-hidden="true"><i class="gal__izq"></i><i class="gal__der"></i></span></h1>
+        <span class="t eco" id="eco" aria-hidden="true"><span class="tx">Industrial</span><span class="gal"><i class="gal__izq" id="galIzq"></i><i class="gal__der"></i></span></span>
+      </div>
+      <dl class="datos" id="datos"></dl>
+    </div>
+    <div class="velo" id="velo" aria-hidden="true"></div>
+    <div class="entrada" id="entrada" aria-hidden="true">
+      <div class="lockup"><p class="vuelve">Industrial</p><span class="gal"><i class="gal__izq"></i><i class="gal__der"></i></span></div>
+      <dl class="cierre-h" id="cierreH"></dl>
+    </div>
+  </section>
+
+  <section class="car" aria-labelledby="car-t">
+    <div class="car__cab">
+      <h2 class="h2" id="car-t">Nuestros proyectos industriales</h2>
+      <div class="car__mando">
+        <p class="car__n" aria-hidden="true"><span id="carN">01</span> — <span id="carT"></span></p>
+        <div class="car__fl">
+          <button type="button" class="car__bt" id="ant" aria-label="Anterior">←</button>
+          <button type="button" class="car__bt" id="sig" aria-label="Siguiente">→</button>
+        </div>
+      </div>
+    </div>
+    <ul class="pista" id="pista" tabindex="0" aria-label="Nuestros proyectos industriales"></ul>
+    <div class="car__barra" aria-hidden="true"><span id="carB"></span></div>
+  </section>
+
+  <section class="prox" aria-labelledby="prox-t">
+    <h2 class="h2" id="prox-t">Próximos
+proyectos</h2>
+    <ul id="prox"></ul>
+  </section>
+</main>
+
+<section class="cierre" aria-labelledby="cierre-t">
+  <img src="public/images/home/altea-casco.webp" alt="">
+  <div class="cierre__body">
+    <div><span class="cierre__eyebrow">Trabajemos juntos</span>
+      <h2 id="cierre-t">Cuéntanos sobre tu proyecto, terreno o necesidad.</h2></div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <a class="btn btn--primario" href="https://wa.me/528135512000" target="_blank" rel="noopener noreferrer">Contáctanos por WhatsApp →</a>
+      <a class="btn btn--contorno" href="#">Ir a contacto →</a>
+    </div>
+    <a href="mailto:info@alteadesarrollos.com" style="color:inherit;font-size:var(--text-small)">info@alteadesarrollos.com</a>
+  </div>
+</section>
+
+<footer class="pie">
+  <div class="pie__cols">
+    <div><b>Unidades de negocio</b><a href="#">Comercial</a><a href="#">Industrial</a><a href="#">Vivienda</a><a href="#">Forestal</a></div>
+    <div><b>Altea</b><a href="#">Inicio</a><a href="#">Nosotros</a><a href="#">Contacto</a></div>
+    <div><b>Contacto</b><a href="mailto:info@alteadesarrollos.com">info@alteadesarrollos.com</a><a href="tel:+528117727272">+52 81 1772 7272</a><span>Monterrey, Nuevo León, México</span></div>
+  </div>
+  <div class="pie__legal">© 2026 Altea. Todos los derechos reservados. · Aviso de privacidad · Términos</div>
+</footer>
+
+<dialog class="fx" id="fx" aria-label="Ficha del proyecto"><article id="fxC"></article></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (id) => document.getElementById(id);
+  const hayGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+  if (hayGsap) gsap.registerPlugin(ScrollTrigger);
+
+  /* ── el contenido: copiado de app/_unidad/contenido/industrial.ts ───── */
+  const N = 'public/images/industrial/naves-industriales/';
+  const P = 'public/images/industrial/proximos-proyectos/';
+  const G = 'public/images/industrial/galeria/';
+  const OPC = ['Opción', 'Naves Especulativas y Build to Suit'];
+  const PAR = ['Formato', 'Parque industrial'];
+
+  /* ancla: qué punto del ALTO de la foto cae en el centro de la ventana. Es una
+     corrección por archivo, no por unidad. Las cinco van en el valor por
+     defecto, 0.52, SIN MEDIR: el síntoma de una mal puesta es ver cielo o
+     asfalto dentro de las letras en vez de la nave. */
+  const FOTOS = [
+    [G+'galeria-industrial-altea-1.webp', 1.7919, .52],
+    [G+'galeria-industrial-altea-2.webp', 1.6751, .52],
+    [G+'galeria-industrial-altea-3.webp', 1.8099, .52],
+    [G+'galeria-industrial-altea-4.webp', 1.7919, .52],
+    [G+'galeria-industrial-altea-5.webp', 1.5,    .52],
+  ].map(([foto, ratio, ancla]) => ({ foto, ratio, ancla }));
+
+  /* [prefijo, valor, signo, etiqueta, en palabras] */
+  const CIFRAS = [
+    ['+', 400, ' mil', 'm² desarrollados', 'más de 400 mil'],
+    ['', 4, 'M', 'de m² desarrollables', '4 millones'],
+  ];
+
+  /* [nombre, ubicación, foto, proporción, descripción, datos]. El primer dato
+     es el formato: va de chapa en la tarjeta y abre la ficha; detrás va la
+     ubicación y luego el resto. */
+  const PROYECTOS = [
+    ['Aeropuerto de Saltillo','Saltillo, Coahuila','public/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp',1.813,
+     'Proyecto de remodelación, modernización y ampliación del Aeropuerto Internacional Plan de Guadalupe en Saltillo, Coahuila, en el que participamos como socios tanto en su desarrollo como en su operación. El proyecto busca reactivar y modernizar sus instalaciones, mejorar integralmente las salas de espera y generar nuevas oportunidades de negocio que contribuyan al crecimiento y desarrollo de la región.',
+     [['Formato','Infraestructura aeroportuaria']]],
+    ['Bajío Industrial Park','Salamanca, Guanajuato',N+'bajio-undustrial-park-altea.webp',1.8092,
+     'Parque industrial estratégicamente ubicado en la entrada de la planta Mazda, con acceso directo a la carretera libre (45) Salamanca-Irapuato y lateral a la carretera de cuota a León. Su conectividad facilita las operaciones industriales, logísticas y el acceso a los principales corredores productivos de la región.',
+     [PAR,['Nave en renta','7,568 m²'],['Terreno en venta','21,946 m²'],OPC]],
+    ['Pocket Park Aeropuerto','Apodaca, Nuevo León',N+'pocket-park-aeropuerto-altea.webp',1.4727,
+     'Parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Diseñado para logística y manufactura ligera, ofrece espacios flexibles que facilitan la operación de empresas que requieren una ubicación accesible y conexión con importantes vías de transporte.',
+     [PAR,['En sociedad con','GP Desarrollos'],['4 Naves en renta','13,285 m²'],['Área Rentable Total','53,140 m²']]],
+    ['Primavera Industrial Park','Apodaca, Nuevo León',N+'primavera-industrial-park-altea.webp',1.3393,
+     'Parque industrial ubicado sobre Av. Miguel Alemán, en Apodaca, Nuevo León. Cuenta con naves PYME y espacios modulares diseñados para adaptarse a las necesidades de proveedores de la cadena de suministro y empresas de distribución regional, con acceso a uno de los principales corredores industriales de la zona.',
+     [PAR,['Bodegas en renta','De 901 m² a 1,800 m²'],['Área Rentable Total','6,538 m²']]],
+    ['Huinalá Industrial Park','Apodaca, Nuevo León',P+'huinala-industrial-park-altea.webp',1.6751,
+     'Parque industrial ubicado sobre Av. Miguel Alemán, en Apodaca, Nuevo León. Su conexión directa con la carretera facilita el acceso al Aeropuerto Internacional de Monterrey y a las principales vías de la zona metropolitana, favoreciendo la operación y movilidad de empresas industriales y logísticas.',
+     [PAR,['Área Rentable Total','18,410 m²'],['Área Disponible','6,344 m²'],OPC]],
+    ['López Mateos Industrial Park','San Nicolás de los Garza, Nuevo León',P+'lopez-mateos-industrial-park-altea.webp',1.7919,
+     'Parque industrial ubicado sobre Av. López Mateos, en San Nicolás de los Garza, Nuevo León. Su conexión directa con esta importante arteria facilita la integración logística con el área metropolitana de Monterrey y brinda acceso a una amplia base de mano de obra local, favoreciendo la operación y crecimiento de las empresas.',
+     [PAR,['Área Rentable Total','20,825 m²'],['Área Disponible','5,825 m²'],OPC]],
+  ];
+  const PROXIMOS = [
+    ['Aeropuerto Industrial Park','Apodaca, Nuevo León',P+'aeropuerto-industrial-park.webp',1.8033,
+     'Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.',
+     [['4 Naves','Desde 10,087 m² hasta 13,891 m²'],['Área Rentable Total','50,712 m²'],OPC]],
+    ['Cadereyta Industrial Park','Cadereyta Jiménez, Nuevo León',N+'cadereyta-industrial-park-altea.webp',1.7785,
+     'Parque industrial ubicado en el km 25.1 de la carretera libre a Reynosa, en Cadereyta Jiménez, Nuevo León. Su acceso directo a esta importante vía facilita la conexión con Monterrey y otros puntos de la región, ofreciendo una ubicación funcional para operaciones industriales, logísticas y comerciales.',
+     [['Terreno 1','Lotes de 21,820 m² a 41,920 m² · Área rentable: 730,965 m²'],['Terreno 2','Lotes de 12,241 m² a 33,655 m² · Área rentable: 644,324 m²'],['Terreno 3','Lotes de 23,507 m² a 28,598 m² · Área rentable: 363,511 m²'],OPC]],
+    ['Salinas Victoria Industrial Park','Salinas Victoria, Nuevo León',N+'salinas-victoria-industrial-park-altea.webp',1.8038,
+     'Parque industrial ubicado sobre la carretera Colombia km 14.4, en Salinas Victoria, Nuevo León. Forma parte de uno de los corredores industriales de mayor crecimiento al norte del estado y cuenta con conexión directa hacia la frontera a través de la ruta Colombia–Laredo, facilitando el acceso a importantes mercados y rutas de comercio.',
+     [['Lotes','De 40,977 m² a 135,228 m²'],['Área Rentable Total','517,361 m²'],OPC]],
+  ];
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  /* ── barra: se pega con fondo a partir de 24 px, se esconde al bajar ─── */
+  (function barra(){
+    const el = $('barra'); let ultimo = scrollY, seguidas = 0;
+    addEventListener('scroll', () => {
+      const y = scrollY; el.dataset.pegada = y > 24 ? 'si' : 'no';
+      const d = y - ultimo;
+      if (Math.abs(d) > 6){ seguidas = d > 0 ? seguidas + 1 : 0;
+        el.dataset.oculta = (y > 240 && seguidas > 2) ? 'si' : 'no'; ultimo = y; }
+    }, { passive:true });
+  })();
+
+  /* ── las cifras: apertura (cuenta) y cierre (con su valor puesto) ────── */
+  const fmt = (n) => n.toLocaleString('es-MX');
+  $('datos').innerHTML = CIFRAS.map(([p,v,s,t,dicho]) =>
+    `<div class="hd"><dt>${esc(t)}</dt><dd><span aria-hidden="true">${p?`<i>${p}</i>`:''}<b class="js-n" data-v="${v}" style="font-weight:inherit">${fmt(v)}</b>${s?`<i>${esc(s)}</i>`:''}</span><span class="sr">${esc(dicho)}</span></dd></div>`).join('');
+  /* El cierre aparece con el valor puesto: ahí entran a la vez el velo, la
+     palabra y las cifras, y con los números corriendo serían cuatro cosas
+     moviéndose en segundo y medio. */
+  $('cierreH').innerHTML = CIFRAS.map(([p,v,s,t]) =>
+    `<div class="hc"><dt>${esc(t)}</dt><dd>${p?`<i>${p}</i>`:''}${fmt(v)}${s?`<i>${esc(s)}</i>`:''}</dd></div>`).join('');
+  /* El número animado va aria-hidden y el valor final en texto oculto: así el
+     lector de pantalla no anuncia cifras intermedias mientras cuenta. */
+  if (!reduce) document.querySelectorAll('.js-n').forEach((el) => {
+    const to = +el.dataset.v; el.textContent = '0';
+    const t0 = performance.now();
+    (function tick(now){ const k = Math.min((now - t0) / 1600, 1);
+      el.textContent = fmt(Math.round(to * (1 - Math.pow(1 - k, 3))));
+      if (k < 1) requestAnimationFrame(tick); })(t0);
+  });
+
+  /* ── 1 · el hero calado ────────────────────────────────────────────────
+     EL CORAZÓN DEL EFECTO: LA FOTO NO CRECE CON LAS LETRAS, SE QUEDA QUIETA.
+     Si siguiera a la caja del texto —lo que hace `background-size: cover`— al
+     crecer la palabra se vería siempre el mismo trozo, más ampliado y más
+     blando. Anclada a la VENTANA, las letras se abren sobre ella y la van
+     descubriendo, y eso es lo que se lee como desborde. */
+  (function hero(){
+    const nodo = $('hero'), palabra = $('tx'), lleno = $('lleno'), galIzq = $('galIzq');
+    const eco = $('eco'), velo = $('velo'), entrada = $('entrada'), datos = $('datos');
+    const cajas = Array.from(nodo.querySelectorAll('.t'));
+    /* Las tres capas que son ventana a la misma foto, en el mismo sitio. */
+    const ventanas = [palabra, lleno, galIzq];
+
+    const VELO = .25;      // oscurece la foto DENTRO de las letras: sin él, dos
+                           // fotos de cada ocho no llegaban a 3:1 contra el gris
+    const BASE_MAX = 7;    // cuánto llega a crecer la palabra
+    /* ⚠ ZOOM y SOBRE_CUBRE están atados a los píxeles que hay: al final la foto
+       se pinta a 1.16 × 1.24 del ancho de ventana, 2 071 px a 1440 contra los
+       ~2 000 del archivo. Si se sube cualquiera sin cambiar los archivos, el
+       hero se ablanda. SOBRE_CUBRE da además margen para que `ancla` mueva. */
+    const ZOOM = .24, SOBRE_CUBRE = 1.16;
+
+    let actual = 0, base = 0, ultimo = 0;
+    const suave = (x) => { const t = Math.max(0, Math.min(1, x)); return t*t*(3 - 2*t); };
+
+    /* El cuerpo de apertura, leído del CSS ya resuelto. Hay que limpiar el
+       valor en línea antes de medir, o se mediría el del fotograma anterior. */
+    function medirBase(){ cajas.forEach((c) => c.style.fontSize = '');
+      base = parseFloat(getComputedStyle(cajas[0]).fontSize); }
+
+    /* EL ENCUADRE: las tres capas reciben el MISMO rectángulo, calculado
+       contra la ventana y no contra su propia caja; por eso coinciden píxel a
+       píxel. La posición se resta del borde de cada elemento. */
+    function encuadre(p){
+      const vw = innerWidth, vh = innerHeight, f = FOTOS[actual];
+      const iw = Math.max(vw, vh * f.ratio) * SOBRE_CUBRE * (1 + ZOOM * p);
+      const ih = iw / f.ratio, izq = (vw - iw) / 2;
+      const deriva = (p - .5) * .14 * Math.max(0, ih - vh);   // viaje vertical
+      /* el ancla, acotada para que la foto nunca deje de cubrir la ventana */
+      const arr = Math.max(vh - ih, Math.min(0, (vh - ih) / 2 + (.5 - f.ancla) * ih + deriva));
+      for (const el of ventanas){ const r = el.getBoundingClientRect();
+        el.style.backgroundSize = `${iw.toFixed(1)}px ${ih.toFixed(1)}px`;
+        el.style.backgroundPosition = `${(izq - r.left).toFixed(1)}px ${(arr - r.top).toFixed(1)}px`; }
+    }
+
+    /* El velo va DELANTE en la lista de capas: en CSS la primera es la de
+       arriba, y así lo recortan las mismas letras que a la foto. */
+    function pintar(k){
+      actual = k;
+      const capa = `linear-gradient(rgb(0 0 0/${VELO}),rgb(0 0 0/${VELO})), url("${FOTOS[k].foto}")`;
+      ventanas.forEach((el) => el.style.backgroundImage = capa);
+      encuadre(ultimo);
+      /* la siguiente se descarga mientras ésta se ve; sólo una por vez, para
+         no competir con la primera foto, que es lo primero que se pinta */
+      if (FOTOS.length > 1){ const s = new Image(); s.src = FOTOS[(k + 1) % FOTOS.length].foto; }
+    }
+
+    function aplicar(p){
+      ultimo = p;
+      /* La palabra crece ACELERANDO: con una rampa lineal el efecto se gasta
+         antes de que la foto asome fuera del calado. */
+      const px = `${(base * (1 + (BASE_MAX - 1) * Math.pow(p, 1.7))).toFixed(1)}px`;
+      cajas.forEach((c) => c.style.fontSize = px);
+      /* El contorno se va pronto: a ese cuerpo una línea de 1 px ya no sostiene
+         ninguna silueta. */
+      eco.style.opacity = Math.max(0, 1 - p / .3).toFixed(3);
+
+      /* EL FRENTE: un radio que crece desde el centro, no una opacidad. La
+         pluma también nace en cero: fija, el degradado empezaría opaco en el
+         centro aunque r0 valga 0 y la foto asomaría en reposo. */
+      const H = Math.hypot(innerWidth, innerHeight) / 2 * 1.04;
+      const Q = suave((p - .26) / .52), r0 = Q * H;
+      lleno.style.setProperty('--r0', `${r0.toFixed(0)}px`);
+      lleno.style.setProperty('--r1', `${(r0 + H * .1 * Math.min(1, Q * 4)).toFixed(0)}px`);
+      /* ⚠ LA RETÍCULA SE CALCULA AQUÍ Y SE ESCRIBE, NUNCA SE LEE: leer --rej
+         devuelve la cadena "clamp(…)" sin resolver, parseFloat da NaN, y un
+         calc(NaNpx) invalida la máscara entera — la foto se vería completa
+         desde el primer fotograma, sin ningún error. */
+      const rej = Math.max(13, Math.min(21, innerWidth * .0135));
+      lleno.style.setProperty('--rej', `${rej.toFixed(2)}px`);
+      /* LA TRAMA va por detrás del frente, para que el borde siga granulado
+         mientras avanza. ⚠ Topa en 0.62 del paso y no en 0.707, que la
+         cerraría del todo: queda un 3.2 % sin cubrir, en motas diminutas. Sin
+         eso el plano final se lee como foto de stock a pantalla completa. */
+      lleno.style.setProperty('--d', `${(rej * .62 * suave((p - .34) / .62)).toFixed(2)}px`);
+
+      velo.style.opacity = suave((p - .7) / .3).toFixed(3);
+      const Gc = suave((p - .8) / .2);
+      entrada.style.opacity = Gc.toFixed(3);
+      entrada.style.transform = `translateY(${((1 - Gc) * 28).toFixed(1)}px)`;
+      /* las cifras de apertura se van en el primer 22 % */
+      const s = Math.max(0, Math.min(1, p / .22));
+      datos.style.opacity = (1 - s).toFixed(3);
+      datos.style.transform = `translateY(${(s * 14).toFixed(1)}px)`;
+      encuadre(p);
+    }
+
+    medirBase(); pintar(0); aplicar(0);
+    const alMedir = () => { medirBase(); aplicar(ultimo); };
+    addEventListener('resize', alMedir);
+    /* Movimiento reducido o sin GSAP: la primera foto puesta y la palabra a su
+       cuerpo. Una portada quieta. */
+    if (reduce || !hayGsap) return;
+
+    gsap.from(datos, { opacity:0, y:18, duration:.85, ease:'power2.out', delay:.35 });
+    gsap.from('#capas', { opacity:0, scale:.985, duration:1.1, ease:'power3.out' });
+    /* Se fija 150 % de pantalla con scrub: el scroll arrastra el efecto. */
+    ScrollTrigger.create({ trigger:nodo, start:'top top', end:'+=150%', pin:true, scrub:.5,
+      anticipatePin:1, invalidateOnRefresh:true, onRefresh:alMedir,
+      onUpdate:(st) => aplicar(st.progress) });
+
+    /* El relevo de fotos, sólo antes de que arranque el recorrido: cambiar la
+       foto a media palabra sería un corte en mitad del efecto. Funde SÓLO el
+       relleno; fundiendo el bloque entero la palabra desaparecía cada 4.2 s. */
+    if (FOTOS.length > 1) setInterval(() => {
+      if (ultimo > .05) return;
+      gsap.to(palabra, { opacity:0, duration:.45, ease:'power2.in', onComplete(){
+        pintar((actual + 1) % FOTOS.length);
+        gsap.to(palabra, { opacity:1, duration:.6, ease:'power2.out' }); } });
+    }, 4200);
+  })();
+
+  /* ── la ficha: la abren el carrusel y los próximos ──────────────────── */
+  const fx = $('fx'), fxC = $('fxC'); let origen = null;
+  function abrir([nombre, , foto, ratio, desc], datos, boton){
+    origen = boton;
+    fxC.innerHTML = `
+      <button type="button" class="fx__x" aria-label="Cerrar ficha">×</button>
+      <div class="fx__foto" style="--proporcion:${ratio}">
+        <img src="${foto}" alt=""><h3>${esc(nombre)}</h3></div>
+      <div class="fx__cuerpo">
+        <dl>${datos.map(([e,v]) => `<div><dt>${esc(e)}</dt><dd>${esc(v ?? '—')}</dd></div>`).join('')}</dl>
+        ${desc ? `<p>${esc(desc)}</p>` : ''}
+      </div>`;
+    fx.setAttribute('aria-label', `Ficha de ${nombre}`);
+    fx.showModal();
+  }
+  /* El backdrop es el propio <dialog>: un clic fuera del artículo cierra. */
+  fx.addEventListener('click', (e) => { if (e.target === fx || e.target.closest('.fx__x')) fx.close(); });
+  fx.addEventListener('close', () => { origen?.focus(); });
+
+  /* ── 2 · el carrusel ─────────────────────────────────────────────────── */
+  (function carrusel(){
+    const pista = $('pista'), n = $('carN'), barra = $('carB'), ant = $('ant'), sig = $('sig');
+    $('carT').textContent = String(PROYECTOS.length).padStart(2, '0');
+    pista.innerHTML = PROYECTOS.map(([nom, ubi, foto, , , d], i) => `<li>
+      <button type="button" class="tj" data-i="${i}">
+        <span class="tj__foto js-foto"><img src="${foto}" alt="" loading="lazy"></span>
+        <span class="tj__marca">${esc(d[0][1])}</span>
+        <span class="tj__txt"><b>${esc(nom)}</b><span>${esc(ubi)}</span></span>
+      </button></li>`).join('');
+
+    const paso = () => { const t = pista.children, a = t[0]?.getBoundingClientRect();
+      if (!a) return 0; const b = t[1]?.getBoundingClientRect();
+      return (b ? b.left - a.left : 0) || a.width; };
+    function pintar(){
+      /* parallax: cada foto se corre dentro de su tarjeta según lo lejos que
+         esté la tarjeta del centro de la ventana */
+      if (!reduce){ const vw = innerWidth;
+        for (const li of pista.children){ const r = li.getBoundingClientRect();
+          const c = Math.max(-1, Math.min(1, (r.left + r.width / 2 - vw / 2) / vw));
+          li.querySelector('.js-foto').style.transform = `translateX(${(c * 8).toFixed(2)}%)`; } }
+      const max = pista.scrollWidth - pista.clientWidth;
+      barra.style.width = `${((max > 0 ? pista.scrollLeft / max : 0) * 100).toFixed(2)}%`;
+      const p = paso(); const k = p ? Math.min(PROYECTOS.length, Math.round(pista.scrollLeft / p) + 1) : 1;
+      n.textContent = String(k).padStart(2, '0');
+      ant.disabled = pista.scrollLeft <= 2; sig.disabled = pista.scrollLeft >= max - 2;
+    }
+    pista.addEventListener('scroll', pintar, { passive:true });
+    addEventListener('resize', pintar); pintar();
+    const mover = (d) => pista.scrollBy({ left:d * paso(), behavior:reduce ? 'auto' : 'smooth' });
+    sig.addEventListener('click', () => mover(1));
+    ant.addEventListener('click', () => mover(-1));
+    pista.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight'){ e.preventDefault(); mover(1); }
+      if (e.key === 'ArrowLeft'){ e.preventDefault(); mover(-1); } });
+
+    /* ARRASTRE CON RATÓN. En táctil no hace falta: el dedo ya hace scroll.
+       ⚠ El puntero se captura SÓLO cuando el arrastre arranca (más de 4 px),
+       no al bajar: capturarlo en pointerdown redirige el click al carril y la
+       tarjeta deja de abrir su ficha. Y si hubo arrastre, el click que llega
+       al soltar se descarta, o cada arrastre abriría una ficha. */
+    let agarre = null, arrastrado = false;
+    pista.addEventListener('pointerdown', (e) => { arrastrado = false;
+      if (e.pointerType !== 'mouse') return;
+      agarre = { x:e.clientX, inicio:pista.scrollLeft, movido:false }; });
+    pista.addEventListener('pointermove', (e) => { if (!agarre) return;
+      const d = e.clientX - agarre.x;
+      if (!agarre.movido && Math.abs(d) > 4){ agarre.movido = true;
+        pista.setPointerCapture(e.pointerId); pista.classList.add('arrastrando'); }
+      if (agarre.movido) pista.scrollLeft = agarre.inicio - d; });
+    const soltar = () => { if (!agarre) return; pista.classList.remove('arrastrando');
+      if (agarre.movido) arrastrado = true; agarre = null; };
+    pista.addEventListener('pointerup', soltar); pista.addEventListener('pointercancel', soltar);
+
+    pista.addEventListener('click', (e) => { const b = e.target.closest('.tj'); if (!b) return;
+      if (arrastrado){ arrastrado = false; return; }
+      const p = PROYECTOS[+b.dataset.i]; const [dato0, ...resto] = p[5];
+      /* Formato · Ubicación · el resto */
+      abrir(p, [dato0, ['Ubicación', p[1]], ...resto], b); });
+  })();
+
+  /* ── 3 · próximos proyectos: las tarjetas abren la misma ficha ─────── */
+  (function proximos(){
+    const ul = $('prox');
+    ul.innerHTML = PROXIMOS.map(([nom, , foto], i) => `<li>
+      <button type="button" class="px" data-i="${i}"><img src="${foto}" alt="" loading="lazy">
+        <span class="px__t"><b>${esc(nom)}</b><span>Industrial</span></span></button></li>`).join('');
+    ul.addEventListener('click', (e) => { const b = e.target.closest('.px'); if (!b) return;
+      const p = PROXIMOS[+b.dataset.i];
+      abrir(p, [['Unidad','Industrial'], ['Ubicación', p[1]], ...p[5]], b); });
+  })();
+})();
+</script>
+</body>
+</html>

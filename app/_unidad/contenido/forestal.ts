@@ -72,50 +72,78 @@ export const FORESTAL: ContenidoUnidad = {
       etiqueta: "Producción de árboles al año",
     },
   ],
+  /*
+   * LAS DOS LÍNEAS DE FORESTAL, cada una con su texto, su foto y su lista. El
+   * copy es el que entregó Altea. Sustituyen al carrusel de una sola tarjeta
+   * (Teca) y a las láminas de servicios sin foto que había antes.
+   *
+   * Los iconos de las siete columnas están en Atributos.tsx, en el mismo
+   * lenguaje que los de pilares e Industrial. Van en el color de Forestal
+   * (--unidad-forestal), que sobre la página clara da 1.79:1: a trazo capilar
+   * quedan tenues A PROPÓSITO. Si se ven lavados, la respuesta es el fondo, no
+   * el color.
+   */
+  lineas: [
+    {
+      id: "viveros-asturias",
+      titulo: "Viveros Asturias",
+      parrafos: [
+        "Contamos con experiencia desde 2002 en la producción y manejo de especies forestales para arbolado urbano, proyectos empresariales y gubernamentales. Ofrecemos soluciones integrales que abarcan la producción, suministro y mantenimiento de arbolado, así como servicios de jardinería y conservación de espacios verdes, aplicando técnicas especializadas para favorecer su desarrollo y preservación.",
+      ],
+      foto: {
+        src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-1.webp",
+        alt: "Árboles en contenedor en Viveros Asturias",
+        /* 1280x963 */
+        ratio: 1.3292,
+      },
+      lado: "derecha",
+      lista: {
+        rotulo: "Servicios",
+        items: [
+          { titulo: "Servicio de jardinería", icono: "jardineria" },
+          { titulo: "Reforestación", icono: "reforestacion" },
+          { titulo: "Mantenimiento", icono: "mantenimiento" },
+        ],
+      },
+    },
+    {
+      id: "teca",
+      rotulo: "Plantación forestal comercial",
+      titulo: "Teca",
+      parrafos: [
+        "Proyecto de plantación forestal comercial enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.",
+        "Integramos prácticas de manejo forestal y nuevas tecnologías para impulsar una producción de madera rentable y responsable, al mismo tiempo que contribuimos a la conservación de especies de fauna endémica y al desarrollo de una cultura forestal sostenible en la región.",
+      ],
+      foto: {
+        src: "/images/forestal/teca/teca-forestal-altea.webp",
+        alt: "Plantación de teca de Altea en la Península de Yucatán",
+        /* 1980x1485 */
+        ratio: 1.3333,
+      },
+      lado: "izquierda",
+      lista: {
+        rotulo: "Aplicaciones",
+        items: [
+          { titulo: "Mobiliario", icono: "mobiliario" },
+          { titulo: "Construcción", icono: "construccion" },
+          { titulo: "Hotelería", icono: "hoteleria" },
+          { titulo: "Embarcaciones", icono: "embarcaciones" },
+        ],
+      },
+    },
+  ],
+  /*
+   * Vacío: Teca pasó a su línea de negocio, arriba. El título se conserva por si
+   * vuelve un carrusel de proyectos forestales.
+   */
   proyectos: {
     titulo: "Nuestro proyecto de plantación forestal",
-    /*
-     * ⚠ Hay fotos de Viveros Asturias (/images/forestal/viveros-asturias, tres)
-     * sin copy: no entran.
-     */
-    lista: [
-      {
-        id: "teca",
-        nombre: "Teca",
-        ubicacion: "Península de Yucatán",
-        foto: "/images/forestal/teca/teca-forestal-altea.webp",
-        /* 1980x1485 */
-        fotoRatio: 1.3333,
-        alt: "",
-        label: "Teca",
-        /* Dos párrafos en el copy: la línea en blanco la respeta la ficha
-           (white-space: pre-line en .uni-fx__cuerpo > p). */
-        descripcion:
-          "Proyecto de plantación forestal comercial enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.\n\nIntegramos prácticas de manejo forestal y nuevas tecnologías para impulsar una producción de madera rentable y responsable, al mismo tiempo que contribuimos a la conservación de especies de fauna endémica y al desarrollo de una cultura forestal sostenible en la región.",
-        /* De la primera frase del copy: "Proyecto de plantación forestal
-           comercial". */
-        datos: [{ etiqueta: "Formato", valor: "Plantación forestal comercial" }],
-      },
-    ],
+    lista: [],
   },
+  /* Vacío: los servicios pasaron a la lista de Viveros Asturias, arriba. */
   giros: {
-    /*
-     * La sección de "Otros giros" de Comercial —hoteles, hospital, educación—
-     * con los tres servicios. Mismo diseño y misma estructura.
-     *
-     * ⚠ PENDIENTE: los iconos. El copy los pide y no están en el repo. Hasta
-     * que lleguen, las láminas van sin imagen, sobre ink, con el número y el
-     * título. Tampoco hay descripción de cada servicio, así que no se abren al
-     * pasar el cursor.
-     *
-     * Sin `eyebrow`: el copy da "Servicios" como encabezado y nada más.
-     */
     titulo: "Servicios",
-    bloques: [
-      { id: "jardineria", numero: "01", title: "Servicio de jardinería" },
-      { id: "reforestacion", numero: "02", title: "Reforestación" },
-      { id: "mantenimiento", numero: "03", title: "Mantenimiento" },
-    ],
+    bloques: [],
   },
   marcas: {
     mostrar: false,

@@ -185,12 +185,17 @@ export function CarpetasUnidades() {
                   <h3 className="home-carpetas__nombre">{unidad.name}</h3>
                   <p className="home-carpetas__frase">{unidad.apertura}</p>
                   <p className="home-carpetas__desc">{unidad.descripcion}</p>
+                  {/* El botón oscuro del sistema: tinta sobre el color de la
+                      unidad se lee siempre como botón, y el subrayado de antes
+                      no se leía como nada. */}
                   <Link
-                    className="home-carpetas__ir"
+                    className="altea-btn altea-btn--dark altea-btn--md home-carpetas__ir"
                     href={ruta(`/${unidad.slug}`)}
                   >
                     Explorar
-                    <span className="home-carpetas__raya" aria-hidden="true" />
+                    <span className="altea-btn__arrow" aria-hidden="true">
+                      →
+                    </span>
                     <span className="sr-only"> {unidad.name}</span>
                   </Link>
                 </div>

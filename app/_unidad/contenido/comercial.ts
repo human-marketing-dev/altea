@@ -369,7 +369,7 @@ export const PLAZAS: Plaza[] = [
     alt: "",
     label: "Paseo Durango",
     descripcion:
-      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
+      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
       { etiqueta: "Visitantes", valor: undefined },
@@ -451,6 +451,120 @@ export const PLAZAS: Plaza[] = [
       { etiqueta: "Visitantes", valor: undefined },
     ],
   },
+  /*
+   * Seis Power Centers más, con el copy de Altea (octubre de 2026). La
+   * Pastora estaba en "Próximos proyectos" y pasa aquí, ya en operación, con
+   * la foto que tenía allí. Las otras cinco llegaron después a
+   * centros-comerciales/.
+   */
+  {
+    id: "punto-la-pastora",
+    nombre: "Punto La Pastora",
+    ubicacion: "Guadalupe, Nuevo León",
+    foto: `/images/comercial/proximos-proyectos/punto-la-pastora-altea-proximo.webp`,
+    /* 1980x1114 */
+    fotoRatio: 1.7774,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto La Pastora",
+    descripcion:
+      "Power Center ubicado sobre Av. Eloy Cavazos, en Guadalupe, Nuevo León. Consolidada como un punto clave en la zona debido a su alto flujo vehicular y su conectividad en una de las arterias principales del municipio. Cuenta con marcas como Pastelería Lety, McDonald's, Firehouse Subs, Bolerama, Swiss Lab, Gorditas Doña Tota, Universidad INSUCO y Helados Dreambox.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-cumbres",
+    nombre: "Punto Cumbres",
+    ubicacion: "Monterrey, Nuevo León",
+    foto: `${CENTROS}/punto-cumbres-altea.webp`,
+    /* 2000x1125 */
+    fotoRatio: 1.7778,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto Cumbres",
+    descripcion:
+      "Power center ubicado sobre Av. Paseo de los Leones, en Monterrey, Nuevo León. Ubicada en un sector caracterizado por su continuo crecimiento y nivel adquisitivo, la plaza reúne firmas comerciales como Arbolitos de Cajeme, Maxi Home, Las Espadas, Kuchen, Todo Empanadas, Bolerama, Helados Dreambox y KFC. Su perfil orientado a restaurantes y entretenimiento fomenta visitas prolongadas y un ticket promedio elevado por parte de los consumidores.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-las-misiones",
+    nombre: "Punto Las Misiones",
+    ubicacion: "Monterrey, Nuevo León",
+    foto: `${CENTROS}/punto-las-misiones-altea.webp`,
+    /* 2000x1125 */
+    fotoRatio: 1.7778,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto Las Misiones",
+    descripcion:
+      "Power Center ubicado en la zona sur de la ciudad sobre Carretera Nacional, en Monterrey, Nuevo León. Es una plaza desarrollada para atender a un mercado con alto poder adquisitivo. Cuenta con inquilinos consolidados como KFC, Tim Hortons, Taco Palenque, U'gurt, Pescados Martínez Tijerina, Helados Dreambox, Firehouse Subs, Wok, John Ham, Blue Pilates y Divisas La Rioja. Al agrupar franquicias internacionales y servicios locales, ofrece un entorno comercial sólido y una alta tasa de retención de nuestros locatarios.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-guaymas",
+    nombre: "Punto Guaymas",
+    ubicacion: "Guaymas, Sonora",
+    foto: `${CENTROS}/punto-guaymas-altea.webp`,
+    /* 2000x933 */
+    fotoRatio: 2.1436,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto Guaymas",
+    descripcion:
+      "Power Center ubicado en Guaymas, Sonora. Funciona como uno de los complejos comerciales más relevantes del municipio. Su estructura se apoya en marcas ancla que generan una gran afluencia diaria, tales como Cinemex, Hotel City Express, City Salads, Dairy Queen y Muebles Dico. Al combinar giros de entretenimiento, hospedaje, artículos para el hogar y gastronomía, la plaza mantiene una actividad comercial constante, además de ofrecer excelente visibilidad y accesibilidad desde las vialidades principales.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-versalles",
+    nombre: "Punto Versalles",
+    ubicacion: "Monterrey, Nuevo León",
+    foto: `${CENTROS}/punto-versalles-altea.webp`,
+    /* 2000x1125 */
+    fotoRatio: 1.7778,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto Versalles",
+    descripcion:
+      "Power Center ubicado en la zona centro de Monterrey, Nuevo León. Destaca por su integración a la infraestructura urbana y su cercanía a importantes rutas de transporte público. Cuenta con una variedad de giros que incluyen comercio minorista, cultura y hospedaje, con inquilinos como Carl's Jr, Teatro Nena Delgado, Coppel, Hotel Fiesta Inn Express, Firehouse Subs, KFC y Helados Dreambox.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
+  {
+    id: "punto-lincoln",
+    nombre: "Punto Lincoln",
+    ubicacion: "Monterrey, Nuevo León",
+    foto: `${CENTROS}/punto-lincoln-altea.webp`,
+    /* 2000x1125 */
+    fotoRatio: 1.7778,
+    /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
+       defecto. */
+    alt: "",
+    label: "Punto Lincoln",
+    descripcion:
+      "Power Center ubicado sobre Av. Abraham Lincoln, una de las vialidades con mayor densidad vehicular y poblacional del área metropolitana, en Monterrey, Nuevo León. Su modelo de negocio se basa en la concentración de servicios esenciales, reuniendo al Módulo INE, CFE, Capillas Éxodo, Farmacias Guadalajara, Universidad INSUCO, Quick Learning y AT&T, junto con comercios como Maxi Home, Little Caesars, Grease Monkey y KFC. Esta composición asegura visitas diarias motivadas por trámites institucionales, compras de primera necesidad o servicios educativos.",
+    datos: [
+      { etiqueta: "Formato", valor: "Power Center" },
+      { etiqueta: "Visitantes", valor: undefined },
+    ],
+  },
 ];
 
 /*
@@ -473,8 +587,7 @@ export const PLAZAS: Plaza[] = [
  */
 
 export const GALERIA_PLAZAS = {
-  /** PENDIENTE */
-  titulo: "Nuestras plazas comerciales",
+  titulo: "Nuestros centros comerciales",
   plazas: PLAZAS,
 };
 
@@ -494,7 +607,7 @@ const GIROS: Giro[] = [
     numero: "01",
     title: "Hoteles",
     description:
-      "Desarrollamos hoteles de marcas reconocidas integrados en nuestros centros comerciales, para convertirlos en destinos más completos y funcionales. Fiesta Inn Durango, Fiesta Inn Tec, One Hotels y NH Hotels, en distintos puntos de la República Mexicana.",
+      "Nuestra experiencia también se extiende al desarrollo de hoteles de marcas reconocidas, integrados en nuestros centros comerciales para crear destinos más completos y funcionales. A través de proyectos como Fiesta Inn, One Hotels y NH Hotels, hemos desarrollado espacios de hospitalidad en distintos puntos de la República Mexicana.",
     image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
     alt: "Fiesta Inn dentro de un desarrollo de Altea",
   },
@@ -503,7 +616,7 @@ const GIROS: Giro[] = [
     numero: "02",
     title: "Hospital",
     description:
-      "En el Sierra Madre integramos infraestructura nueva con las instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno para entregarlo listo para operar desde el primer día. Espacios especializados que exigen los más altos estándares de planeación y tecnología.",
+      "Sierra Madre implicó la integración de nueva infraestructura con instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno, con el objetivo de entregar un espacio equipado y listo para operar desde el primer día. Con este proyecto, fortalecemos nuestra capacidad para desarrollar espacios especializados que requieren altos estándares de planeación y tecnología.",
     image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
     alt: "Hospital dentro de un desarrollo de Altea",
   },
@@ -560,13 +673,25 @@ const MARCAS_DIR = "/images/comercial/logos-marcas";
 
 
 /**
- * EL MURO DE MARCAS: 32, en ocho columnas de cuatro filas.
+ * EL MURO DE MARCAS: 36, en nueve columnas y cuatro filas exactas.
  *
- * Son 32 y no las 34 que hay en disco. La carpeta trae 36 archivos, de los que
- * dos son duplicados —`old-navy-logo-black-2` y `suburbia-logo-black-2`— y de los
- * 34 restantes quedan fuera Hospital Sierra Madre y Tálisis: no son marcas
- * inquilinas sino desarrollos de Altea, y ya salen en "Otros giros". 32 llena
- * además las cuatro filas exactas de la rejilla.
+ * ⚠ LA PRIMERA FILA VA PEDIDA POR ALTEA, Y EN ESTE ORDEN: Tálisis, Hospital
+ * Sierra Madre, Fiesta Inn, One Hotel y NH Hotel —los desarrollos propios y los
+ * hoteles—. Detrás, el resto por orden alfabético.
+ *
+ * One Hoteles y NH llegaron como SVG (octubre de 2026). Con ellos la primera
+ * fila son los cinco pedidos más Banorte, Bershka, Bodega Aurrera y Bolerama.
+ *
+ * Tálisis y Hospital Sierra Madre entraron en octubre de 2026. Estaban fuera
+ * porque son desarrollos de Altea y no inquilinos, y ya salen en "Otros giros";
+ * Altea los quiere también aquí. Con los cuatro nuevos son 36, y por eso la
+ * rejilla pasó de ocho a nueve columnas: cuatro filas llenas en escritorio, y
+ * también filas llenas a 6, 4 y 3 columnas.
+ *
+ * La carpeta trae además `old-navy-logo-black-2` y `suburbia-logo-black-2`, que
+ * NO son duplicados: son otra versión del logotipo de cada marca (Old Navy sin
+ * el óvalo; Suburbia con "Sb" en recuadro). Entra una por marca; falta que Altea
+ * diga cuál es la vigente. Si cambia, hay que medir la nueva.
  *
  * ⚠ PENDIENTE LEGAL, el mismo de lib/marcas.ts: usar marcas ajenas implica
  * endoso. Normalmente lo cubre el contrato de arrendamiento, pero hay que
@@ -576,6 +701,57 @@ const MARCAS_DIR = "/images/comercial/logos-marcas";
  * de la opacidad y no del grayscale — lo mismo que en Grupo Firmas.
  */
 export const MARCAS_COMERCIAL: MarcaComercial[] = [
+  /* Medidos del archivo con el mismo método que los demás: 500x158, la tinta
+     ocupa el 79.7 % del alto y su mancha es 3.71:1. */
+  {
+    nombre: "Tálisis",
+    src: `${MARCAS_DIR}/talisis-logo-black.webp`,
+    ratio: 3.16,
+    tinta: 0.797,
+    rTinta: 3.71,
+  },
+  /* 548x141; tinta 91.5 %, mancha 4.13:1. */
+  {
+    nombre: "Hospital Sierra Madre",
+    src: `${MARCAS_DIR}/hospital-sierra-madre-logo-black.webp`,
+    ratio: 3.89,
+    tinta: 0.915,
+    rTinta: 4.13,
+  },
+  {
+    nombre: "Fiesta Inn",
+    src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`,
+    ratio: 3.33,
+    tinta: 0.889,
+    rTinta: 3.12,
+  },
+  /*
+   * Los dos son SVG y no webp como el resto. Medidos igual, renderizados: la
+   * mancha de One ocupa el lienzo entero (es un bloque macizo con el nombre
+   * calado, y la ® va aparte a la derecha); la de NH, el 78.2 % del alto.
+   *
+   * ⚠ El SVG de NH traía un cuadrado blanco de fondo del tamaño del lienzo, que
+   * en la rejilla gris se habría visto como una caja blanca. Se quitó ese único
+   * trazado; el resto del archivo está como llegó, incluido su gris #303233.
+   *
+   * ⚠ One es una mancha negra maciza entre logotipos de trazo: aun con el mismo
+   * alto, es la que más pesa del muro. Si se ve de más, el ajuste es `escala`
+   * en esta entrada, no el tope de banda.
+   */
+  {
+    nombre: "One Hoteles",
+    src: `${MARCAS_DIR}/one-queretaro-centro-sur_logo-black.svg`,
+    ratio: 1.16,
+    tinta: 1,
+    rTinta: 1.16,
+  },
+  {
+    nombre: "NH Hotels",
+    src: `${MARCAS_DIR}/nh-hotels-logo-black.svg`,
+    ratio: 1,
+    tinta: 0.782,
+    rTinta: 1.13,
+  },
   {
     nombre: "Banorte",
     src: `${MARCAS_DIR}/banorte-logo-black.webp`,
@@ -655,13 +831,6 @@ export const MARCAS_COMERCIAL: MarcaComercial[] = [
     ratio: 4.09,
     tinta: 0.861,
     rTinta: 4.44,
-  },
-  {
-    nombre: "Fiesta Inn",
-    src: `${MARCAS_DIR}/fiesta-inn-logo-black.webp`,
-    ratio: 3.33,
-    tinta: 0.889,
-    rTinta: 3.12,
   },
   {
     nombre: "Firehouse Subs",
@@ -825,17 +994,10 @@ export const MARCAS_COMERCIAL: MarcaComercial[] = [
 const PROXIMOS = "/images/comercial/proximos-proyectos";
 
 /**
- * Tres, que es exactamente lo que cabe en una banda junto al titular. Con
- * <ProyectosPaneles> no hace falta forzar una segunda: sin sobrantes no se
- * dibuja.
- */
-/**
- * Tres, que es exactamente lo que cabe en una banda junto al titular.
- *
- * ⚠ El copy sólo trae DOS descripciones —la ampliación de Paseo La Fe y Punto
- * López Mateos—. Punto La Pastora se queda sin la suya, con el campo vacío: la
- * ficha se compone sin ella. Si ese proyecto ya no va en la lista, se borra su
- * entrada y <ProyectosPaneles> monta dos paneles sin dejar huecos.
+ * Dos: la ampliación de Paseo La Fe y Punto López Mateos. Punto La Pastora
+ * estaba aquí y pasó a las plazas en operación (octubre de 2026), con su copy.
+ * La rejilla toma tantas columnas como proyectos, hasta tres, así que con dos no
+ * queda un hueco.
  */
 export const PROXIMOS_PROYECTOS = {
   titulo: "Próximos\nproyectos",
@@ -857,14 +1019,6 @@ export const PROXIMOS_PROYECTOS = {
       image: `${PROXIMOS}/punto-lopez-mateos-altea-proximo.webp`,
       descripcion:
         "La ampliación comercial de Punto López Mateos surge como una intervención destinada a fortalecer y ampliar la oferta comercial del conjunto, donde actualmente se encuentra BBVA, así como la incorporación de nuevos establecimientos como Firehouse y Dreambox. El proyecto busca revitalizar el conjunto y amplificar la diversidad de usos disponibles para los visitantes, dentro de una propuesta arquitectónica renovada y funcional.",
-    },
-    {
-      slug: "punto-la-pastora",
-      name: "Punto La Pastora",
-      unit: "Comercial",
-      /** PENDIENTE: el copy de Altea no trajo descripción para este. */
-      location: "Guadalupe, Nuevo León",
-      image: `${PROXIMOS}/punto-la-pastora-altea-proximo.webp`,
     },
   ],
 };
@@ -917,8 +1071,11 @@ export const COMERCIAL: ContenidoUnidad = {
   unidad: "Comercial",
   metadata: {
     title: "Comercial — Altea",
-    description:
-      "Centros comerciales de Altea: ocho plazas en operación en cinco estados, con hoteles, hospital y educación dentro de los mismos desarrollos.",
+    /* El número de plazas y de estados sale de PLAZAS: si entra una plaza,
+       la descripción se actualiza sola. */
+    description: `Centros comerciales de Altea: ${enLetras(PLAZAS.length)} plazas en operación en ${enLetras(
+      new Set(PLAZAS.map((p) => p.ubicacion.split(", ").pop())).size,
+    )} estados, con hoteles, hospital y educación dentro de los mismos desarrollos.`,
   },
   hero: {
     palabra: HERO_CALADO.palabra,

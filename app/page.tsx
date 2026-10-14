@@ -1,7 +1,8 @@
-import { CierreContacto, Footer, Marcas, NavBar } from "@/app/ui";
+import { Footer, Marcas, NavBar } from "@/app/ui";
 import { MOSTRAR_MARCAS } from "@/lib/marcas";
 import { CarpetasUnidades } from "./_home/CarpetasUnidades";
 import { CarrilProyectos } from "./_home/CarrilProyectos";
+import { CierrePuntos } from "./_home/CierrePuntos";
 import { CorporateVideo } from "./_home/CorporateVideo";
 import { CONTACT_CTA } from "./_home/content";
 import { Emblem } from "./_home/Emblem";
@@ -51,7 +52,11 @@ export default function Home() {
             widget. El componente y sus datos siguen en app/ui/Publicaciones.tsx
             y lib/publicaciones.ts — para volver a mostrarla basta con importarla
             y poner <Publicaciones /> aquí. */}
-        <CierreContacto {...CONTACT_CTA} />
+        {/* El cierre del home es <CierrePuntos>, sin foto. El <CierreContacto> de
+            siempre —el de la foto a la izquierda— queda oculto SÓLO aquí: las
+            demás páginas lo siguen usando. Para devolverlo, basta con volver a
+            poner <CierreContacto {...CONTACT_CTA} /> en esta línea. */}
+        <CierrePuntos eyebrow={CONTACT_CTA.eyebrow} title={CONTACT_CTA.title} />
       </main>
       <Footer />
     </>

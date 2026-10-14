@@ -52,10 +52,18 @@ export function CarruselTarjetas({
    * pone al arrastrar y la consume el manejador del clic.
    */
   const arrastrado = useRef(false);
+  /**
+   * CON DOS O MENOS NO HAY CARRUSEL: hay una rejilla de tantas columnas como
+   * tarjetas. Dos tarjetas de carrusel dejan media sección vacía a la derecha
+   * y unas flechas que no llevan a ningún sitio. Hoy es Vivienda (Amarantha y
+   * Reserva Mezquital). Sin flechas, sin contador, sin barra y sin parallax:
+   * no hay recorrido que contar.
+   */
+  const fija = items.length <= 2;
 
   useEffect(() => {
     const carril = pista.current;
-    if (!carril) return;
+    if (!carril || fija) return;
     /* Copiados a variables locales: los `ref.current` del cierre de limpieza ya
        podrían apuntar a otro nodo cuando se ejecute. */
     const btAnt = ant.current;
@@ -224,42 +232,48 @@ export function CarruselTarjetas({
       carril.removeEventListener("pointerup", alSoltar);
       carril.removeEventListener("pointercancel", alSoltar);
     };
-  }, [items]);
+  }, [items, fija]);
 
   const total = String(items.length).padStart(2, "0");
 
   return (
-    <section className="altea-carrusel" aria-labelledby={tituloId}>
+    <section
+      className="altea-carrusel"
+      data-fija={fija ? "" : undefined}
+      aria-labelledby={tituloId}
+    >
       <div className="altea-carrusel__cab">
         <h2 className="altea-carrusel__titulo" id={tituloId}>
           {titulo}
         </h2>
 
-        <div className="altea-carrusel__mando">
-          {/* aria-hidden: es un indicador de posición dentro de un recorrido
+        {!fija && (
+          <div className="altea-carrusel__mando">
+            {/* aria-hidden: es un indicador de posición dentro de un recorrido
               visual, y leído en voz alta no dice nada que la lista no diga. */}
-          <p className="altea-carrusel__n" aria-hidden="true">
-            <span ref={contador}>01</span> — {total}
-          </p>
-          <div className="altea-carrusel__fl">
-            <button
-              type="button"
-              className="altea-carrusel__bt"
-              ref={ant}
-              aria-label="Anterior"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              className="altea-carrusel__bt"
-              ref={sig}
-              aria-label="Siguiente"
-            >
-              →
-            </button>
+            <p className="altea-carrusel__n" aria-hidden="true">
+              <span ref={contador}>01</span> — {total}
+            </p>
+            <div className="altea-carrusel__fl">
+              <button
+                type="button"
+                className="altea-carrusel__bt"
+                ref={ant}
+                aria-label="Anterior"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                className="altea-carrusel__bt"
+                ref={sig}
+                aria-label="Siguiente"
+              >
+                →
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* tabIndex para que las flechas del teclado lleguen al carril. Sigue
@@ -267,8 +281,9 @@ export function CarruselTarjetas({
       <ul
         className="altea-carrusel__pista"
         ref={pista}
-        tabIndex={0}
+        tabIndex={fija ? undefined : 0}
         aria-label={titulo}
+        style={fija ? { ["--cols" as string]: items.length } : undefined}
       >
         {items.map((item, k) => (
           <li key={item.id}>
@@ -289,9 +304,11 @@ export function CarruselTarjetas({
         ))}
       </ul>
 
-      <div className="altea-carrusel__barra" aria-hidden="true">
-        <span ref={barra} />
-      </div>
+      {!fija && (
+        <div className="altea-carrusel__barra" aria-hidden="true">
+          <span ref={barra} />
+        </div>
+      )}
 
       {children}
     </section>

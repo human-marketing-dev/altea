@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { CarruselTarjetas } from "@/app/ui";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, ProximoProyecto } from "./tipos";
 
@@ -34,13 +35,73 @@ export function ProximosProyectos({
   /* Quién abrió la ficha, para devolverle el foco al cerrar. */
   const origen = useRef<HTMLButtonElement | null>(null);
 
+  const ficha = (
+    <FichaUnidad
+      contenido={
+        activo && {
+          nombre: activo.name,
+          foto: activo.image,
+          /* Del contenido: en Comercial los tres archivos son 1980x1105. */
+          fotoRatio: activo.fotoRatio,
+          alt: activo.name,
+          /* Unidad · Ubicación: el giro clasifica y la ciudad sitúa, el mismo
+             orden que la ficha de plazas. */
+          datos: [
+            { etiqueta: "Unidad", valor: activo.unit },
+            { etiqueta: "Ubicación", valor: activo.location },
+            ...(activo.datos ?? []),
+          ],
+          descripcion: activo.descripcion,
+        }
+      }
+      onCerrar={() => {
+        setActivo(null);
+        origen.current?.focus();
+      }}
+      etiquetaVacia="Ficha del proyecto"
+    />
+  );
+
+  /*
+   * MÁS DE TRES, EN CARRUSEL. La rejilla es de tres columnas: con cuatro o más
+   * —hoy Vivienda— partía la sección en dos filas, y lo que se quiere es una
+   * sola. Entonces va el mismo carrusel de los proyectos de la unidad, con su
+   * arrastre, flechas y contador, y abre la misma ficha.
+   */
+  if (PROXIMOS_PROYECTOS.proyectos.length > 3) {
+    const lista = PROXIMOS_PROYECTOS.proyectos;
+    return (
+      <CarruselTarjetas
+        titulo={PROXIMOS_PROYECTOS.titulo}
+        tituloId="prox-titulo"
+        items={lista.map((p) => ({
+          id: p.slug,
+          nombre: p.name,
+          pie: p.unit,
+          foto: p.image,
+        }))}
+        onAbrir={(k, boton) => {
+          origen.current = boton;
+          setActivo(lista[k] ?? null);
+        }}
+      >
+        {ficha}
+      </CarruselTarjetas>
+    );
+  }
+
   return (
     <section className="uni-prox" aria-labelledby="prox-titulo">
       <h2 className="uni-prox__titulo" id="prox-titulo">
         {PROXIMOS_PROYECTOS.titulo}
       </h2>
 
-      <ul className="uni-prox__grid">
+      {/* Tantas columnas como proyectos, hasta tres: con dos no queda un
+          hueco a la derecha. */}
+      <ul
+        className="uni-prox__grid"
+        style={{ ["--cols" as string]: Math.min(3, PROXIMOS_PROYECTOS.proyectos.length) }}
+      >
         {PROXIMOS_PROYECTOS.proyectos.map((proyecto) => (
           <li key={proyecto.slug}>
             <button
@@ -85,30 +146,7 @@ export function ProximosProyectos({
         ))}
       </ul>
 
-      <FichaUnidad
-        contenido={
-          activo && {
-            nombre: activo.name,
-            foto: activo.image,
-            /* Del contenido: en Comercial los tres archivos son 1980x1105. */
-            fotoRatio: activo.fotoRatio,
-            alt: activo.name,
-            /* Unidad · Ubicación: el giro clasifica y la ciudad sitúa, el mismo
-               orden que la ficha de plazas. */
-            datos: [
-              { etiqueta: "Unidad", valor: activo.unit },
-              { etiqueta: "Ubicación", valor: activo.location },
-              ...(activo.datos ?? []),
-            ],
-            descripcion: activo.descripcion,
-          }
-        }
-        onCerrar={() => {
-          setActivo(null);
-          origen.current?.focus();
-        }}
-        etiquetaVacia="Ficha del proyecto"
-      />
+      {ficha}
     </section>
   );
 }

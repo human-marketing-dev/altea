@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { CONTACT_CTA } from "@/app/_home/content";
 import { CierreContacto, Footer, NavBar } from "@/app/ui";
+import { Atributos } from "./Atributos";
 import { CarruselProyectos } from "./CarruselProyectos";
 import { HeroCalado } from "./HeroCalado";
+import { LineasNegocio } from "./LineasNegocio";
 import { MuroMarcas } from "./MuroMarcas";
 import { OtrosGiros } from "./OtrosGiros";
 import { ProximosProyectos } from "./ProximosProyectos";
@@ -29,8 +31,17 @@ import "./unidad.css";
  * hay de contenido, no un recorte de la estructura.
  */
 export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
-  const { hero, cifras, proyectos, giros, marcas, proximos, unidad } =
-    contenido;
+  const {
+    hero,
+    cifras,
+    atributos,
+    lineas,
+    proyectos,
+    giros,
+    marcas,
+    proximos,
+    unidad,
+  } = contenido;
   return (
     <>
       {/* El `aria-current` lo pone <NavBar> comparando el enlace con
@@ -38,6 +49,12 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
       <NavBar tone="light" />
       <main>
         <HeroCalado hero={hero} cifras={cifras} />
+        {atributos && atributos.length > 0 && (
+          <Atributos atributos={atributos} unidad={unidad} color={hero.color} />
+        )}
+        {lineas && lineas.length > 0 && (
+          <LineasNegocio lineas={lineas} color={hero.color} />
+        )}
         {proyectos.lista.length > 0 && <CarruselProyectos proyectos={proyectos} />}
         {giros.bloques.length > 0 && <OtrosGiros giros={giros} />}
         {marcas.mostrar && marcas.lista.length > 0 && <MuroMarcas marcas={marcas} />}

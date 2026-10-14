@@ -21,18 +21,17 @@
 .home-frase__texto {
   margin: 0 0 clamp(52px, 9vh, 120px);
   /*
-   * De margen a margen. El tope de 43em NO es una caja de lectura, es un techo
-   * que casi nunca entra: son exactamente 90 caracteres a este cuerpo.
+   * De margen a margen. El tope de 43em NO es una caja de lectura, es un techo:
+   * unos 86 caracteres a este cuerpo.
    *
-   * Medido con la métrica de Gotham Medium y el letter-spacing ya contado, el
-   * avance medio de esta frase es 0.4784 em por carácter, así que:
-   *
-   *   1280 →  53.7 car/línea      1600 →  57.7
-   *   1440 →  57.7 car/línea      1920 →  57.7
+   * La frase actual —80 caracteres, 39.8 em medida con Gotham Medium y el
+   * letter-spacing ya contado— cabe en dos líneas de 768 en adelante y en
+   * cuatro a 390; no llega a ningún tope. Si cambia el copy, hay que volver a
+   * medirla.
    *
    * Desde 1440 manda --container-max: el bloque arranca en el margen y deja de
-   * estirarse a los 1280, sin centrarse. Sin él, 1920 daba 79 caracteres por
-   * línea y 2560, 108. El 43em queda de techo para cuerpos menores.
+   * estirarse a los 1280, sin centrarse. El 43em queda de techo para cuerpos
+   * menores.
    */
   max-width: min(43em, var(--container-max));
   font-size: clamp(1.5rem, 3.5vw, 2.9rem);
@@ -385,30 +384,21 @@
   color: color-mix(in srgb, var(--altea-cream) 72%, transparent);
 }
 
+/*
+ * "EXPLORAR" ES UN BOTÓN, y se ve como tal: es el .altea-btn--dark del sistema
+ * —píldora en tinta con el texto en cream—. Antes era texto en versalitas con
+ * una raya, y sobre los colores de unidad no se leía como algo que se pulsa.
+ *
+ * Sobre el color de cada unidad la píldora en tinta da entre 5.11 (Industrial)
+ * y 10.75 (Comercial), por encima del 3:1 de un control; el texto cream sobre
+ * la tinta, 12.06. Aquí sólo va lo que es de la carpeta: el sitio.
+ */
 .home-carpetas__ir {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
   margin-top: 22px;
-  font-size: var(--text-eyebrow);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  color: var(--altea-cream);
-  text-decoration: none;
 }
-.home-carpetas__raya {
-  width: 26px;
-  height: 1px;
-  background: var(--accent-on-ink);
-  transition: width var(--duration-base) var(--ease-standard);
-}
-.home-carpetas__ir:hover .home-carpetas__raya,
-.home-carpetas__ir:focus-visible .home-carpetas__raya {
-  width: 52px;
-}
-.home-carpetas__ir:focus-visible {
-  outline: 2px solid var(--accent-on-ink);
-  outline-offset: 4px;
+.home-carpetas__ir:hover .altea-btn__arrow,
+.home-carpetas__ir:focus-visible .altea-btn__arrow {
+  transform: translateX(3px);
 }
 
 /*
@@ -457,14 +447,16 @@
   color: color-mix(in srgb, var(--altea-ink) 80%, transparent);
 }
 /* La frase de apertura: ink puro. En coral daba 2.21 / 1.05 / 1.95. */
-.home-carpetas__caja[data-tono="color"] .home-carpetas__frase,
-.home-carpetas__caja[data-tono="color"] .home-carpetas__ir {
+.home-carpetas__caja[data-tono="color"] .home-carpetas__frase {
   color: var(--altea-ink);
 }
-.home-carpetas__caja[data-tono="color"] .home-carpetas__raya {
-  background: var(--altea-ink);
+/* Una carpeta SIN color va en ink, y ahí un botón en tinta no se vería: pasa
+   al primario del sistema, el coral. Hoy ninguna unidad cae aquí. */
+.home-carpetas__caja[data-tono="ink"] .home-carpetas__ir {
+  background: var(--altea-coral);
+  color: #fff;
 }
-/* El anillo de foco también: coral sobre estos fondos no se vería. */
+/* El anillo de foco del botón es coral, que sobre estos fondos no se vería. */
 .home-carpetas__caja[data-tono="color"] .home-carpetas__ir:focus-visible {
   outline-color: var(--altea-ink);
 }
@@ -760,5 +752,133 @@
   .home-ficha,
   .home-ficha::backdrop {
     transition: none;
+  }
+}
+
+/* ═══ el cierre de puntos ════════════════════════════════════════════════
+ *
+ * El cierre del home; las demás páginas usan <CierreContacto>. Ver
+ * CierrePuntos.tsx.
+ *
+ * Nada nuevo en la escala: el titular usa el escalón de "Próximos proyectos",
+ * el rótulo es el del cierre de hoy, el aire vertical es el clamp de 13vh que
+ * llevan casi todas las secciones, y el texto arranca en el margen de página con
+ * la medida acotada por --container-max.
+ */
+.home-cp {
+  padding: clamp(70px, 13vh, 170px) var(--container-pad);
+  background: var(--surface-page);
+}
+/* EL PANEL EN TINTA es lo que hace que el cierre destaque. Con radio y dentro
+   del margen de página, no a sangre: así no se funde con el pie, también tinta,
+   el día que sustituya al cierre actual. */
+.home-cp__panel {
+  display: grid;
+  /* Mitades: a 5/7 los dos botones grandes no cabían en un renglón a 1440. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 90px);
+  align-items: center;
+  padding: clamp(36px, 5vw, 84px);
+  border-radius: var(--radius-lg);
+  background: var(--altea-ink);
+  color: var(--text-on-dark);
+}
+/* El campo delante y el texto detrás en escritorio; en el DOM va al revés,
+   que es el orden de lectura. */
+.home-cp__campo {
+  grid-row: 1;
+  grid-column: 1;
+}
+.home-cp__txt {
+  grid-row: 1;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.home-cp__rotulo {
+  margin: 0 0 12px;
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-on-dark-secondary);
+}
+/* Un escalón más que antes, y uno que ya existe: --text-display-2, el de la
+   frase de Emblem. Es el cierre de la página y le toca pesar. */
+.home-cp__titulo {
+  margin: 0 0 var(--space-6);
+  max-width: 16ch;
+  font-size: var(--text-display-2);
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+.home-cp__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+/* El contorno del sistema está pensado para superficies claras: sobre tinta va
+   en crema. Al 56 %, como el borde del contorno claro, que es lo que lo deja
+   por encima del 3:1 de un control. */
+.home-cp .altea-btn--outline {
+  color: var(--altea-cream);
+  border-color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
+}
+.home-cp .altea-btn--outline:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--altea-cream) 10%, transparent);
+}
+.home-cp .altea-btn:focus-visible {
+  outline-color: var(--altea-cream);
+}
+.home-cp__correo {
+  margin-top: var(--space-6);
+  font-size: var(--text-small);
+  color: var(--text-on-dark-secondary);
+  text-underline-offset: 4px;
+}
+.home-cp__correo:hover {
+  color: var(--altea-cream);
+}
+/* El campo: el alto lo da la proporción, y el cursor sobre él es el gesto. */
+.home-cp__campo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 7 / 5;
+  min-height: 300px;
+}
+@media (max-width: 900px) {
+  .home-cp__panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* En una columna, el texto arriba y el campo debajo. */
+  .home-cp__campo,
+  .home-cp__txt {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .home-cp__campo {
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+}
+/* En el teléfono el panel necesita menos relleno: con el de escritorio quedaban
+   278 px de ancho útil a 390 y el botón de WhatsApp se partía en dos renglones. */
+@media (max-width: 560px) {
+  .home-cp__panel {
+    padding: 28px 22px;
+  }
+  /* Y los botones a ancho completo, con el cuerpo del botón mediano (15 px): el
+     grande pedía unos 330 px para "Contáctanos por WhatsApp" y quedan 306. */
+  .home-cp__acciones {
+    width: 100%;
+  }
+  .home-cp .altea-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 15px 18px;
+    font-size: 15px;
   }
 }

@@ -42,6 +42,54 @@ export interface FormaBandera {
   derecha: string;
 }
 
+/**
+ * Los iconos de los atributos, por nombre. Los trazados viven en Atributos.tsx:
+ * son dibujo, no texto, y no van en el contenido.
+ */
+export type IconoAtributo =
+  /* Industrial */
+  | "ubicacion"
+  | "sustentabilidad"
+  | "infraestructura"
+  /* Forestal · servicios */
+  | "jardineria"
+  | "reforestacion"
+  | "mantenimiento"
+  /* Forestal · aplicaciones */
+  | "mobiliario"
+  | "construccion"
+  | "hoteleria"
+  | "embarcaciones";
+
+/**
+ * Un atributo: título y, si ya está dibujado, su icono. Sin `icono` la columna
+ * va con el filete y el título.
+ */
+export interface Atributo {
+  titulo: string;
+  icono?: IconoAtributo;
+}
+
+/** Una línea de negocio de la unidad: ver `lineas` en ContenidoUnidad. */
+export interface LineaNegocio {
+  id: string;
+  /** Rótulo pequeño sobre el título. Opcional. */
+  rotulo?: string;
+  titulo: string;
+  /** Uno o más párrafos. */
+  parrafos: string[];
+  foto: {
+    src: string;
+    alt: string;
+    /** Ancho/alto del archivo, medido: de él sale el `sizes` de la foto. */
+    ratio: number;
+  };
+  /** De qué lado va la foto. Alternarlo entre líneas da el ritmo. */
+  lado: "izquierda" | "derecha";
+  /** La lista bajo el bloque: "Servicios", "Aplicaciones"… */
+  lista: { rotulo: string; items: Atributo[] };
+}
+
 /** Un proyecto en desarrollo: tarjeta en "Próximos proyectos" y su ficha. */
 export interface ProximoProyecto {
   slug: string;
@@ -84,6 +132,17 @@ export interface ContenidoUnidad {
   };
   /** Vacía: el hero se compone sin cifras, en la apertura y en el cierre. */
   cifras: Cifra[];
+  /**
+   * El bloque de atributos bajo el hero: icono y título, sin descripción. Sin
+   * este campo el bloque no existe para la unidad. Hoy sólo Industrial.
+   */
+  atributos?: Atributo[];
+  /**
+   * Las líneas de negocio de la unidad, cada una en su bloque de texto y foto
+   * con una lista de atributos debajo. Sin este campo no existen. Hoy sólo
+   * Forestal: Viveros Asturias y Teca.
+   */
+  lineas?: LineaNegocio[];
   proyectos: { titulo: string; lista: Proyecto[] };
   /** Sin `eyebrow`, la sección arranca en el título. */
   giros: { eyebrow?: string; titulo: string; nota?: string; bloques: Giro[] };

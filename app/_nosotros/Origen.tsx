@@ -102,24 +102,26 @@ export function Origen() {
           </div>
         </div>
 
-        {/* La caja vertical. Sin archivo, <MediaSlot> rinde el hueco etiquetado:
+        {/* La caja de la foto. Sin archivo, <MediaSlot> rinde el hueco etiquetado:
             la marca prohíbe fotografía inventada, así que la sección se compone
-            con el hueco en vez de romperse o de pedir prestada otra foto. */}
+            con el hueco en vez de romperse o de pedir prestada otra foto. La
+            proporción no va en `ratio` sino en la hoja (.nos-origen__foto),
+            porque cambia con el ancho: cuadrada en dos columnas, 4/3 en una. */}
         <MediaSlot
           className="nos-origen__foto"
           label={ORIGEN.foto.label}
           src={ORIGEN.foto.src}
           alt={ORIGEN.foto.alt}
-          ratio="4 / 5"
           /*
            * EL ANCHO QUE SE PINTA, NO EL DE LA CAJA. La foto es horizontal
-           * (1.74:1) en una caja vertical (4/5), así que `cover` la escala por el
-           * ALTO y su ancho pintado es 2.17 veces el de la caja: a 1440 la caja
-           * mide 587 px y la foto se pinta a 1 275. Con el "45vw" de antes Next
-           * servía la versión de 750 px y la estiraba 1.7x: de ahí lo pixeleado.
-           * Medido: 89–91vw en dos columnas, 195vw en una.
+           * (1.74:1) y la caja no, así que `cover` la escala por el ALTO y su
+           * ancho pintado es la caja por 1.74 —por 1.30 en la 4/3 del móvil—.
+           * En dos columnas la caja cuadrada mide ~41vw, así que la foto se
+           * pinta a ~71vw; en una, a ~118vw. Declarar el ancho de la caja hacía
+           * que Next sirviera una versión chica y la estirara: de ahí lo
+           * pixeleado de antes.
            */
-          sizes="(max-width: 900px) 196vw, 91vw"
+          sizes="(max-width: 900px) 118vw, 71vw"
         />
       </div>
     </section>

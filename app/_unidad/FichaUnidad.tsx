@@ -38,6 +38,8 @@ export interface ContenidoFicha {
   datos: DatoFicha[];
   /** Opcional: Punto La Pastora aún no tiene descripción en el copy de Altea. */
   descripcion?: string;
+  /** El sitio web del proyecto. Con él, la ficha lleva un botón que lo abre. */
+  sitio?: string;
 }
 
 export function FichaUnidad({
@@ -117,9 +119,27 @@ export function FichaUnidad({
                 </div>
               ))}
             </dl>
-            {/* Sin descripción no se pinta un párrafo vacío: la rejilla deja la
+            {/* Sin descripción ni sitio no se pinta nada: la rejilla deja la
                 columna libre y el bloque de datos se lee igual. */}
-            {contenido.descripcion && <p>{contenido.descripcion}</p>}
+            {(contenido.descripcion || contenido.sitio) && (
+              <div className="uni-fx__texto">
+                {contenido.descripcion && <p>{contenido.descripcion}</p>}
+                {contenido.sitio && (
+                  <a
+                    className="altea-btn altea-btn--dark altea-btn--md uni-fx__sitio"
+                    href={contenido.sitio}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visitar sitio web
+                    <span className="sr-only"> (se abre en otra pestaña)</span>
+                    <span className="altea-btn__arrow" aria-hidden="true">
+                      →
+                    </span>
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </article>
       )}

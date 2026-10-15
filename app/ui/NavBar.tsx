@@ -167,7 +167,11 @@ export function NavBar({
         <span className="altea-navbar__toggle-barra" aria-hidden="true" />
       </button>
 
+      {/* El envoltorio interior es lo que deja animar el despliegue en móvil:
+          la fila de la rejilla pasa de 0fr a 1fr y el contenido se abre con
+          ella. En escritorio es `display: contents` y no existe. */}
       <div id="altea-nav-menu" className="altea-navbar__links">
+        <div className="altea-navbar__links-int">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -185,6 +189,7 @@ export function NavBar({
             {link.label}
           </Link>
         ))}
+        </div>
       </div>
     </nav>
   );

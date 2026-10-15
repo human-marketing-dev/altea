@@ -79,13 +79,14 @@ export function CarruselProyectos({
             alt: activa.alt,
             /* Formato · Ubicación · el resto, en ese orden: el formato es lo
                que clasifica el proyecto y por eso abre. En Comercial el resto
-               es un solo par, Visitantes; en Industrial, las superficies. */
+               es Visitantes, sólo en los Paseos; en Industrial, las superficies. */
             datos: [
               activa.datos[0],
               { etiqueta: "Ubicación", valor: activa.ubicacion },
               ...activa.datos.slice(1),
             ],
             descripcion: activa.descripcion,
+            sitio: activa.sitio,
           }
         }
         onCerrar={() => {

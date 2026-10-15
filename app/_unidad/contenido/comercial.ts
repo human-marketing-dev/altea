@@ -338,7 +338,7 @@ export const PLAZAS: Plaza[] = [
       "Street Mall ubicado sobre Av. Eugenio Garza Sada, en Distrito Tec, al sur de Monterrey, Nuevo León y a pocos minutos del centro de la ciudad. Su propuesta integra comercio, gastronomía, entretenimiento y servicios para diferentes necesidades. El desarrollo también cuenta con el hotel Fiesta Inn y el salón de eventos GRAND 2411, consolidándose como un punto de encuentro que complementa la vida urbana de la zona Tec.",
     datos: [
       { etiqueta: "Formato", valor: "Street Mall" },
-      { etiqueta: "Visitantes", valor: undefined },
+      { etiqueta: "Visitantes", valor: "+300 mil al mes" },
     ],
   },
   {
@@ -372,7 +372,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: undefined },
+      { etiqueta: "Visitantes", valor: "+900 mil al mes" },
     ],
   },
   {
@@ -389,7 +389,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado entre Av. Rosales y Blvd. Centenario, en Los Mochis, Sinaloa. Es el único Fashion Mall de la ciudad y cuenta con una oferta comercial y de entretenimiento encabezada por marcas como Liverpool, Sears y Cinemex, consolidándose como uno de los principales destinos para compras, servicios y experiencias en Los Mochis.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: undefined },
+      { etiqueta: "Visitantes", valor: "+350 mil al mes" },
     ],
   },
   {
@@ -406,7 +406,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado en la región de La Laguna, en Gómez Palacio, Durango. Es el centro comercial más nuevo de nuestro portafolio y el único Fashion Mall de la ciudad. Cuenta con marcas como Cinemex, Suburbia y Del Sol, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierten en un nuevo punto de encuentro para la comunidad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: undefined },
+      { etiqueta: "Visitantes", valor: "+300 mil al mes" },
     ],
   },
   {
@@ -427,7 +427,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado en el cruce de Carretera Miguel Alemán y Carretera Huinalá, en Apodaca, Nuevo León. Su ubicación ofrece una conexión privilegiada con el Aeropuerto Internacional de Monterrey y uno de los principales corredores industriales de la zona, mientras que su oferta comercial está encabezada por Bodega Aurrera y Cinépolis, complementada por diversos comercios y servicios.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -448,7 +447,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado sobre Av. Río Nilo, en Tonalá, Jalisco. Su oferta está encabezada por Walmart y Cinépolis, complementada por una variedad de comercios y servicios.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   /*
@@ -472,7 +470,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado sobre Av. Eloy Cavazos, en Guadalupe, Nuevo León. Consolidada como un punto clave en la zona debido a su alto flujo vehicular y su conectividad en una de las arterias principales del municipio. Cuenta con marcas como Pastelería Lety, McDonald's, Firehouse Subs, Bolerama, Swiss Lab, Gorditas Doña Tota, Universidad INSUCO y Helados Dreambox.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -490,7 +487,6 @@ export const PLAZAS: Plaza[] = [
       "Power center ubicado sobre Av. Paseo de los Leones, en Monterrey, Nuevo León. Ubicada en un sector caracterizado por su continuo crecimiento y nivel adquisitivo, la plaza reúne firmas comerciales como Arbolitos de Cajeme, Maxi Home, Las Espadas, Kuchen, Todo Empanadas, Bolerama, Helados Dreambox y KFC. Su perfil orientado a restaurantes y entretenimiento fomenta visitas prolongadas y un ticket promedio elevado por parte de los consumidores.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -508,7 +504,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado en la zona sur de la ciudad sobre Carretera Nacional, en Monterrey, Nuevo León. Es una plaza desarrollada para atender a un mercado con alto poder adquisitivo. Cuenta con inquilinos consolidados como KFC, Tim Hortons, Taco Palenque, U'gurt, Pescados Martínez Tijerina, Helados Dreambox, Firehouse Subs, Wok, John Ham, Blue Pilates y Divisas La Rioja. Al agrupar franquicias internacionales y servicios locales, ofrece un entorno comercial sólido y una alta tasa de retención de nuestros locatarios.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -526,7 +521,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado en Guaymas, Sonora. Funciona como uno de los complejos comerciales más relevantes del municipio. Su estructura se apoya en marcas ancla que generan una gran afluencia diaria, tales como Cinemex, Hotel City Express, City Salads, Dairy Queen y Muebles Dico. Al combinar giros de entretenimiento, hospedaje, artículos para el hogar y gastronomía, la plaza mantiene una actividad comercial constante, además de ofrecer excelente visibilidad y accesibilidad desde las vialidades principales.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -544,7 +538,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado en la zona centro de Monterrey, Nuevo León. Destaca por su integración a la infraestructura urbana y su cercanía a importantes rutas de transporte público. Cuenta con una variedad de giros que incluyen comercio minorista, cultura y hospedaje, con inquilinos como Carl's Jr, Teatro Nena Delgado, Coppel, Hotel Fiesta Inn Express, Firehouse Subs, KFC y Helados Dreambox.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
   {
@@ -562,7 +555,6 @@ export const PLAZAS: Plaza[] = [
       "Power Center ubicado sobre Av. Abraham Lincoln, una de las vialidades con mayor densidad vehicular y poblacional del área metropolitana, en Monterrey, Nuevo León. Su modelo de negocio se basa en la concentración de servicios esenciales, reuniendo al Módulo INE, CFE, Capillas Éxodo, Farmacias Guadalajara, Universidad INSUCO, Quick Learning y AT&T, junto con comercios como Maxi Home, Little Caesars, Grease Monkey y KFC. Esta composición asegura visitas diarias motivadas por trámites institucionales, compras de primera necesidad o servicios educativos.",
     datos: [
       { etiqueta: "Formato", valor: "Power Center" },
-      { etiqueta: "Visitantes", valor: undefined },
     ],
   },
 ];

@@ -55,7 +55,10 @@
 
 .altea-btn--dark {
   background: var(--altea-ink);
-  color: var(--altea-cream);
+  /* El blanco del fondo de página y no el crema (octubre de 2026): sobre la
+     tinta, el crema se leía beige. Lo usan «Explorar» en las carpetas del home,
+     WhatsApp en el cierre de las unidades y el sitio web en la ficha. */
+  color: var(--surface-page);
 }
 .altea-btn--dark:hover:not(:disabled) {
   background: #000;
@@ -392,8 +395,8 @@ a.altea-project-card:focus-visible {
      contenido de debajo; la píldora sobresale por fuera de esa línea lo que
      mide su margen (16 px, 12 en móvil). Para eso el relleno lateral es el
      margen de página MENOS el margen de la píldora y su borde de 1 px —ver
-     --nav-relleno-x—. Por debajo de 640 ese relleno no llega a 16 px y la
-     píldora pasa a barra a ancho completo: ver el bloque de 639px. */
+     --nav-relleno-x—. En móvil ese relleno no baja de 16 px, aunque el logo
+     entre unos píxeles más que el contenido: ver el bloque de 900px. */
   --nav-margen-x: var(--space-4);
   --nav-relleno-x: calc(var(--container-pad) - var(--nav-margen-x) - 1px);
   margin: var(--space-4) var(--nav-margen-x) 0;
@@ -418,6 +421,7 @@ a.altea-project-card:focus-visible {
     background-color var(--duration-base) var(--ease-standard),
     box-shadow var(--duration-base) var(--ease-standard),
     border-color var(--duration-base) var(--ease-standard),
+    border-radius 0.35s cubic-bezier(0.2, 0.7, 0.3, 1),
     /* Más lento y con otra curva que el resto: el fondo funde y la cápsula se
        desliza, y son dos gestos distintos. */
     transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -535,6 +539,11 @@ a.altea-project-card:focus-visible {
   align-items: center;
   gap: var(--space-6);
 }
+/* En escritorio el envoltorio no existe: sus enlaces son hijos directos del
+   flex de arriba. Sólo cuenta en móvil, para el despliegue. */
+.altea-navbar__links-int {
+  display: contents;
+}
 .altea-navbar__link {
   color: var(--altea-ink);
   text-decoration: none;
@@ -595,9 +604,11 @@ a.altea-project-card:focus-visible {
   width: 24px;
   margin: 0 auto;
   background: var(--altea-ink);
+  /* 0.3 s y no --duration-fast (150 ms): a 150 el aspa se armaba antes de que
+     el ojo la viera moverse, y el botón parecía cambiar de icono de golpe. */
   transition:
-    transform var(--duration-fast) var(--ease-standard),
-    opacity var(--duration-fast) var(--ease-standard);
+    transform 0.3s cubic-bezier(0.2, 0.7, 0.3, 1),
+    opacity 0.2s var(--ease-standard);
 }
 .altea-navbar--dark .altea-navbar__toggle-barra {
   background: var(--altea-cream);
@@ -610,23 +621,79 @@ a.altea-project-card:focus-visible {
 @media (max-width: 900px) {
   .altea-navbar {
     flex-wrap: wrap;
+    /* Sin hueco entre filas: la de los enlaces mide 0 cuando el menú está
+       cerrado, y el `gap` de la barra le sumaría 24 px de todos modos. El aire
+       al abrir lo pone el relleno del envoltorio. */
+    row-gap: 0;
     top: var(--space-3);
+    /*
+     * EL MISMO MARGEN A LOS CUATRO LADOS: la cápsula flota a 12 px de arriba y
+     * también de los lados, como en escritorio. Antes, por debajo de 640, pasaba
+     * a barra a ancho completo, sin radio y pegada a los bordes.
+     */
     --nav-margen-x: var(--space-3);
+    /* El relleno lateral deja el logo en --container-pad mientras le quepan
+       16 px; por debajo de ~560 se queda en 16 y el logo entra 9 px más que
+       el contenido: es el precio de que la cápsula siga siendo cápsula. */
+    --nav-relleno-x: max(
+      16px,
+      calc(var(--container-pad) - var(--nav-margen-x) - 1px)
+    );
     margin: var(--space-3) var(--nav-margen-x) 0;
+    /* Cápsula entera con un radio que se puede animar: la mitad del alto de la
+       barra (el botón de 44 px, el relleno y el borde). Con 999 px el paso al
+       radio del panel abierto no se vería hasta el último instante. */
+    border-radius: calc((44px + var(--nav-padding-y) * 2 + 2px) / 2);
+  }
+  .altea-navbar.altea-navbar--abierto {
+    border-radius: var(--radius-lg);
   }
   .altea-navbar__toggle {
     display: flex;
   }
+  /*
+   * EL DESPLIEGUE SE ANIMA: la fila pasa de 0fr a 1fr y el contenido se abre
+   * con ella, sin medir alturas. `visibility` saca los enlaces del tabulador y
+   * del lector mientras está cerrado; al cerrar espera a que termine la
+   * animación para no cortarla.
+   */
   .altea-navbar__links {
-    display: none;
+    display: grid;
+    grid-template-rows: 0fr;
     flex-basis: 100%;
+    overflow: hidden;
+    visibility: hidden;
+    transition:
+      grid-template-rows 0.35s cubic-bezier(0.2, 0.7, 0.3, 1),
+      visibility 0s linear 0.35s;
+  }
+  .altea-navbar--abierto .altea-navbar__links {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition:
+      grid-template-rows 0.35s cubic-bezier(0.2, 0.7, 0.3, 1),
+      visibility 0s;
+  }
+  /* El relleno también se anima: con la fila en 0fr, un relleno fijo seguía
+     ocupando sus 32 px y la barra cerrada medía 98 en vez de 66. */
+  .altea-navbar__links-int {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-4);
-    padding: var(--space-5) 0 var(--space-2);
+    min-height: 0;
+    padding: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      padding 0.35s cubic-bezier(0.2, 0.7, 0.3, 1),
+      opacity 0.25s var(--ease-standard),
+      transform 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
   }
-  .altea-navbar--abierto .altea-navbar__links {
-    display: flex;
+  .altea-navbar--abierto .altea-navbar__links-int {
+    padding: var(--space-5) 0 var(--space-2);
+    opacity: 1;
+    transform: none;
   }
   .altea-navbar__link--destacado {
     align-self: flex-start;
@@ -644,29 +711,11 @@ a.altea-project-card:focus-visible {
   }
 }
 
-/*
- * POR DEBAJO DE 640, BARRA A ANCHO COMPLETO, SIN BORDE NI RADIO.
- *
- * Con la píldora, el relleno que deja el logo en --container-pad es el margen
- * de página menos el de la píldora: a 640 son 19 px, a 390 se quedarían en 7 y
- * el logo iría apretado contra el borde de la cápsula. Antes que apretarlo, se
- * quita la cápsula: sin margen lateral, el relleno es el margen de página
- * entero (menos el borde, que sigue ahí en transparente para no mover nada al
- * cambiar de estado) y el logo cae en la misma línea.
- *
- * Lo vertical no cambia: sigue a --space-3 de arriba, como en el resto del
- * móvil.
- */
-@media (max-width: 639px) {
-  .altea-navbar {
-    --nav-margen-x: 0px;
-  }
-  .altea-navbar,
-  .altea-navbar--pegada,
-  .altea-navbar--abierto,
-  .altea-navbar--dark.altea-navbar--pegada {
-    border-color: transparent;
-    border-radius: 0;
+@media (prefers-reduced-motion: reduce) {
+  .altea-navbar__links,
+  .altea-navbar__links-int,
+  .altea-navbar__toggle-barra {
+    transition: none;
   }
 }
 
@@ -2697,8 +2746,15 @@ a.altea-project-card:focus-visible {
   display: flex;
   align-items: center;
   gap: clamp(12px, 1.6vw, 26px);
-  padding: 0 var(--container-pad);
-  margin: 0;
+  /*
+   * ⚠ LOS 6 PX DE ARRIBA Y ABAJO SON PARA EL FOCO. Con overflow-x: auto el
+   * carril recorta también en vertical, y el anillo de foco de la tarjeta (2 px
+   * a 3 de distancia) sale 5 px de su caja: al cerrar la ficha, la tarjeta
+   * vuelve a tener el foco y su anillo salía cortado arriba y abajo. El margen
+   * negativo devuelve esos 6 px, así que nada se mueve.
+   */
+  padding: 6px var(--container-pad);
+  margin: -6px 0;
   list-style: none;
   overflow-x: auto;
   overscroll-behavior-x: contain;

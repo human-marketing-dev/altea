@@ -88,7 +88,7 @@ export const FORESTAL: ContenidoUnidad = {
       id: "viveros-asturias",
       titulo: "Viveros Asturias",
       parrafos: [
-        "Contamos con experiencia desde 2002 en la producción y manejo de especies forestales para arbolado urbano, proyectos empresariales y gubernamentales. Ofrecemos soluciones integrales que abarcan la producción, suministro y mantenimiento de arbolado, así como servicios de jardinería y conservación de espacios verdes, aplicando técnicas especializadas para favorecer su desarrollo y preservación.",
+        "Contamos con experiencia desde 2002 en la producción y manejo de especies forestales para arbolado urbano y proyectos empresariales y gubernamentales. Ofrecemos soluciones integrales que abarcan la producción, suministro y mantenimiento de arbolado, así como servicios de jardinería y conservación de espacios verdes, aplicando técnicas especializadas para favorecer su desarrollo y preservación.",
       ],
       foto: {
         src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-1.webp",
@@ -111,7 +111,7 @@ export const FORESTAL: ContenidoUnidad = {
       rotulo: "Plantación forestal comercial",
       titulo: "Teca",
       parrafos: [
-        "Proyecto de plantación forestal comercial enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.",
+        "Proyecto forestal enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.",
         "Integramos prácticas de manejo forestal y nuevas tecnologías para impulsar una producción de madera rentable y responsable, al mismo tiempo que contribuimos a la conservación de especies de fauna endémica y al desarrollo de una cultura forestal sostenible en la región.",
       ],
       foto: {

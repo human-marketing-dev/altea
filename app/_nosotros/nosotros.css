@@ -156,13 +156,28 @@
    * unos 45 px más bajo.) Alineados por arriba, los dos bloques comparten canto y la sección se
    * lee como una composición en vez de como dos piezas sueltas.
    *
-   * ⚠ Si cambia el copy o llega una foto que no sea 4/5, hay que volver a mirar
-   * esta tabla: con el texto y la foto parejos, `center` sería lo correcto.
+   * ⚠ La tabla es de cuando la foto iba en 4/5. Desde octubre de 2026 va
+   * cuadrada y queda casi a la par del texto; si cambia el copy o la proporción,
+   * hay que volver a medir: con los dos parejos, `center` sería lo correcto.
    */
   align-items: start;
 }
 .nos-origen__foto {
-  /* La proporción la pone <MediaSlot> por su prop `ratio`; aquí sólo el acabado. */
+  /*
+   * CUADRADA EN DOS COLUMNAS (octubre de 2026). Iba en 4/5 y a 1440 medía 733
+   * px de alto, más que el texto de al lado: se leía demasiado larga. En 1/1 baja
+   * a ~590 y queda a la par del texto. En una columna va en 4/3: ver el
+   * bloque de 900.
+   *
+   * Y TOPA EN 620 de alto: la caja cuadrada crece con la columna, y a 1920 se
+   * iba a 801 contra 528 de texto. Con el tope deja de ser cuadrada a partir de
+   * ~1500 px y la foto se recorta más por los lados (`cover`).
+   */
+  /* width: 100% explícito: sin él, el tope de alto se traslada al ancho por la
+     proporción y la caja se angosta en vez de recortar la foto. */
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 620px;
   border-radius: var(--radius-lg);
 }
 /*
@@ -1226,19 +1241,45 @@
    * vez de cruzarse por opacidad: dos bloques estáticos superpuestos por opacidad
    * ocuparían los dos su sitio y dejarían un hueco vacío debajo.
    */
+  /*
+   * ⚠ Y LOS DOS COMPARTEN CELDA, para que la sección no cambie de alto. Con uno
+   * en el flujo y el otro en `display: none`, cada estado medía distinto —un
+   * nombre largo, «sin dato» en vez de los m²— y el reposo otra cosa: la
+   * sección crecía y se encogía bajo el dedo. Superpuestos en la misma celda de
+   * la rejilla, la fila mide lo que el más alto, siempre, y se cruzan con el
+   * mismo fundido que en escritorio. `visibility` saca al oculto del lector.
+   */
+  .nos-mapa__rejilla {
+    display: grid;
+  }
+  .nos-mapa__lienzo {
+    grid-area: 1 / 1;
+  }
+  /* Y un alto mínimo: el del estado más alto —etiqueta, nombre y m²—. A partir
+     de ~430 px el texto de reposo cabe en una línea y queda más bajo que un
+     estado con su cifra, así que la celda compartida sola no bastaba: medido,
+     la sección todavía crecía 11–19 px al señalar. */
   .nos-mapa__dato,
   .nos-mapa__reposo {
     position: static;
+    grid-area: 2 / 1;
+    align-self: start;
     width: auto;
     transform: none;
     margin-top: clamp(20px, 3.4vh, 34px);
+    min-height: calc(
+      var(--text-eyebrow) * 1.5 + var(--space-3) * 2 + var(--text-titulo-ficha) *
+        var(--lh-titulo-ficha) + var(--text-titulo-bloque) * 1.5
+    );
   }
   .nos-mapa__dato {
-    opacity: 1;
+    visibility: hidden;
   }
-  .nos-mapa[data-on="no"] .nos-mapa__dato,
+  .nos-mapa[data-on="si"] .nos-mapa__dato {
+    visibility: visible;
+  }
   .nos-mapa[data-on="si"] .nos-mapa__reposo {
-    display: none;
+    visibility: hidden;
   }
 }
 
@@ -1270,7 +1311,13 @@
    * sale partida en dos tramos con un escalón entre ellos.
    */
   .nos-firma {
-    --sangria: clamp(14px, 4vw, 26px);
+    /*
+     * LA ESPINA CAE EN EL BORDE IZQUIERDO DEL BLOQUE, donde arrancan el logo y
+     * «Grupo Firmas Globales». Iba sangrada 14–26 px y a esa x caía justo
+     * debajo de la «R» de «Grupo»: se leía como un trazo suelto bajo una letra,
+     * no como el tronco del que cuelga todo.
+     */
+    --sangria: 0px;
     /* La caja ya no vive en una rejilla de seis: en vertical es la columna
        derecha de cada rama, acotada en 200 px. Medido en el navegador: se queda
        en 200 x 80 desde 999 px hasta 320, sin desbordar nunca. De aquí salen el
@@ -1280,6 +1327,9 @@
 
   .nos-firma__raiz {
     justify-content: flex-start;
+    /* El aire entre el nombre y el arranque de la espina: lo cruza el tramo
+       corto de .nos-firma__nudo::after, que ya no pisa el texto. */
+    margin-bottom: var(--space-3);
   }
   .nos-firma__gfg {
     align-items: flex-start;
@@ -1295,15 +1345,22 @@
     height: auto;
     margin-left: var(--sangria);
   }
-  /* El tramo corto que une GFG con el arranque de la espina. Sin él la línea
-     empieza en Goal Capital y la raíz queda suelta encima. */
+  /*
+   * El tramo corto que une GFG con el arranque de la espina. Sin él la línea
+   * empieza en Goal Capital y la raíz queda suelta encima.
+   *
+   * ⚠ EN left: 0, LA MISMA x QUE EL BORDE DE ABAJO. Iba en −1 px, así que el
+   * primer tramo salía un píxel corrido del resto, y subía 16 px METIDO EN EL
+   * TEXTO de la raíz: era el pedazo «movido» del principio. Ahora mide justo el
+   * aire que hay entre el nombre y Goal Capital, y no lo toca.
+   */
   .nos-firma__nudo::after {
     content: "";
     position: absolute;
-    left: -1px;
-    top: calc(var(--space-4) * -1);
+    left: 0;
+    top: calc(var(--space-3) * -1);
     width: 1px;
-    height: var(--space-4);
+    height: var(--space-3);
     background: var(--linea-arbol);
   }
   /* Goal Capital va pegado debajo de GFG y antes de las seis: cuelga de la raíz,
@@ -1367,6 +1424,13 @@
   .nos-origen__grid {
     grid-template-columns: 1fr;
     gap: clamp(26px, 5vh, 44px);
+  }
+  /* En una columna, a todo el ancho y apaisada. Iba en 4/5 y a 390 medía 438
+     de alto, casi una pantalla para una foto que es horizontal (1.74:1); en 4/3
+     baja a ~262 y se recorta menos. */
+  .nos-origen__foto {
+    aspect-ratio: 4 / 3;
+    max-height: none;
   }
   .nos-rs__cab,
   .nos-firma__cab {

@@ -79,6 +79,8 @@ export function CarpetasUnidades() {
      * por 32 px a 1366x768 y por 38 a 1280x720: en portátiles de 13" es lo único
      * que actúa.
      */
+    /** Dónde se pega la última carpeta: ver el título en `pintar`. */
+    let pegadaUltima = 0;
     const medir = () => {
       const arriba = parseFloat(getComputedStyle(cab).top) || 0;
       const abajoCab = arriba + cab.offsetHeight;
@@ -92,6 +94,7 @@ export function CarpetasUnidades() {
 
       pila.style.setProperty("--hueco", `${alto}px`);
       pila.style.setProperty("--tope", `${tope}px`);
+      pegadaUltima = tope + ESCALON * (total - 1);
     };
     medir();
     window.addEventListener("resize", medir);
@@ -115,6 +118,22 @@ export function CarpetasUnidades() {
         cajas[i].style.transform = `scale(${(1 - ENCOGE * k).toFixed(4)})`;
         cajas[i].style.filter = `brightness(${(1 - APAGA * k).toFixed(4)})`;
       }
+
+      /*
+       * EL TÍTULO SE VA CON LA ÚLTIMA CARPETA.
+       *
+       * La cabecera es pegajosa contra la sección, y la última carpeta contra la
+       * pila: se sueltan en momentos distintos. La carpeta empezaba a irse y el
+       * título se quedaba clavado mientras ella le pasaba por encima — unos
+       * 180 px de scroll con el título asomando detrás, en todos los tamaños, y
+       * en un teléfono eso es un cuarto de pantalla.
+       *
+       * Desde que la última se despega de su sitio, el título sube lo mismo que
+       * ella: salen juntos, con el mismo hueco entre los dos que tenían quietos.
+       */
+      const salida =
+        cartas[total - 1].getBoundingClientRect().top - pegadaUltima;
+      cab.style.transform = salida < -0.5 ? `translateY(${salida.toFixed(1)}px)` : "";
     };
     pintar();
 

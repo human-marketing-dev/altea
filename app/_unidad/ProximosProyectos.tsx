@@ -90,36 +90,69 @@ export function ProximosProyectos({
     );
   }
 
+  const lista = PROXIMOS_PROYECTOS.proyectos;
   return (
-    <section className="uni-prox" aria-labelledby="prox-titulo">
-      <h2 className="uni-prox__titulo" id="prox-titulo">
-        {PROXIMOS_PROYECTOS.titulo}
-      </h2>
-
-      {/* Tantas columnas como proyectos, hasta tres: con dos no queda un
-          hueco a la derecha. */}
-      <ul
-        className="uni-prox__grid"
-        style={{ ["--cols" as string]: Math.min(3, PROXIMOS_PROYECTOS.proyectos.length) }}
+    <>
+      {/*
+      EN MÓVIL, CARRUSEL TAMBIÉN CON TRES O MENOS: la rejilla se apilaba en una
+      columna de tarjetas a lo alto. Se montan los dos y la hoja enseña uno según
+      el ancho (ver .uni-prox--rejilla y .uni-prox__movil en unidad.css); la
+      ficha es una sola, fuera de los dos.
+    */}
+      <div className="uni-prox__movil">
+        <CarruselTarjetas
+          titulo={PROXIMOS_PROYECTOS.titulo}
+          tituloId="prox-titulo-movil"
+          rejillaHasta={0}
+          items={lista.map((p) => ({
+            id: p.slug,
+            nombre: p.name,
+            pie: p.unit,
+            foto: p.image,
+          }))}
+          onAbrir={(k, boton) => {
+            origen.current = boton;
+            setActivo(lista[k] ?? null);
+          }}
+        />
+      </div>
+      <section
+        className="uni-prox uni-prox--rejilla"
+        aria-labelledby="prox-titulo"
       >
-        {PROXIMOS_PROYECTOS.proyectos.map((proyecto) => (
-          <li key={proyecto.slug}>
-            <button
-              type="button"
-              className="uni-px"
-              onClick={(evento) => {
-                origen.current = evento.currentTarget;
-                setActivo(proyecto);
-              }}
-            >
-              {proyecto.image && (
-                <Image
-                  src={proyecto.image}
-                  /* Decorativa: el nombre va escrito dentro del propio botón, así
+        <h2 className="uni-prox__titulo" id="prox-titulo">
+          {PROXIMOS_PROYECTOS.titulo}
+        </h2>
+
+        {/* Tantas columnas como proyectos, hasta tres: con dos no queda un
+          hueco a la derecha. */}
+        <ul
+          className="uni-prox__grid"
+          style={{
+            ["--cols" as string]: Math.min(
+              3,
+              PROXIMOS_PROYECTOS.proyectos.length,
+            ),
+          }}
+        >
+          {PROXIMOS_PROYECTOS.proyectos.map((proyecto) => (
+            <li key={proyecto.slug}>
+              <button
+                type="button"
+                className="uni-px"
+                onClick={(evento) => {
+                  origen.current = evento.currentTarget;
+                  setActivo(proyecto);
+                }}
+              >
+                {proyecto.image && (
+                  <Image
+                    src={proyecto.image}
+                    /* Decorativa: el nombre va escrito dentro del propio botón, así
                      que un alt con la misma cadena lo diría dos veces. */
-                  alt=""
-                  fill
-                  /*
+                    alt=""
+                    fill
+                    /*
                     ESTO era la pixelación.
                     Los tres archivos miden 1980x1105 (proporción 1.79) y la caja es
                     vertical, así que con `object-fit: cover` la imagen se escala
@@ -132,21 +165,21 @@ export function ProximosProyectos({
                     (783 a 1920, 470 en móvil). Con 800 px declarados sobra, y los
                     archivos no hay que tocarlos: 1980 de ancho es de sobra.
                   */
-                  sizes="(max-width: 900px) 135vw, 800px"
-                  className="uni-px__img"
-                />
-              )}
-              <span className="uni-px__velo" aria-hidden="true" />
-              <span className="uni-px__t">
-                <b>{proyecto.name}</b>
-                <span>{proyecto.unit}</span>
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
-
+                    sizes="(max-width: 900px) 135vw, 800px"
+                    className="uni-px__img"
+                  />
+                )}
+                <span className="uni-px__velo" aria-hidden="true" />
+                <span className="uni-px__t">
+                  <b>{proyecto.name}</b>
+                  <span>{proyecto.unit}</span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
       {ficha}
-    </section>
+    </>
   );
 }

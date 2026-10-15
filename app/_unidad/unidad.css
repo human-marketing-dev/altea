@@ -714,7 +714,7 @@
  * resuelve sin que el componente tenga que avisar de nada, que es lo mismo que
  * hace la banda de giros unas líneas más arriba.
  */
-.uni-fx__cuerpo:not(:has(p)) {
+.uni-fx__cuerpo:not(:has(.uni-fx__texto)) {
   grid-template-columns: minmax(0, 1fr);
 }
 .uni-fx__datos {
@@ -740,7 +740,7 @@
   font-weight: var(--weight-medium);
   line-height: 1.35;
 }
-.uni-fx__cuerpo > p {
+.uni-fx__texto > p {
   margin: 0;
   /* Una descripción de dos párrafos (Teca) llega con una línea en blanco en
      medio; así se respeta sin partir la ficha en dos elementos. */
@@ -748,6 +748,17 @@
   line-height: 1.74;
   font-size: var(--text-body);
   color: color-mix(in srgb, var(--altea-ink) 76%, transparent);
+}
+/* El botón al sitio del proyecto, debajo de la descripción (Reserva
+   Mezquital). Tinta sobre el claro de la ficha, como los botones de las
+   carpetas del home. */
+.uni-fx__sitio {
+  margin-top: var(--space-5);
+}
+/* La misma flecha y el mismo gesto que «Explorar» en el home. */
+.uni-fx__sitio:hover .altea-btn__arrow,
+.uni-fx__sitio:focus-visible .altea-btn__arrow {
+  transform: translateX(3px);
 }
 .uni-fx__x {
   position: absolute;
@@ -906,6 +917,23 @@
 .uni-at__g[data-cols="4"] {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+/*
+ * EL BLOQUE DE INDUSTRIAL, CENTRADO (octubre de 2026): cada icono con su título
+ * al centro de su columna, y las tres columnas más juntas hacia el centro de la
+ * página —1040 px como mucho, centrados—, en vez de abrirse de margen a margen.
+ * Atado a .uni-at, que es sólo el bloque bajo el hero: las listas de Forestal
+ * usan las mismas piezas dentro de su columna y siguen alineadas a la izquierda.
+ */
+.uni-at .uni-at__g {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+.uni-at .uni-at__f {
+  text-align: center;
+}
+.uni-at .uni-at__ic {
+  margin-inline: auto;
+}
 @media (max-width: 860px) {
   .uni-at__g {
     grid-template-columns: minmax(0, 1fr);
@@ -922,9 +950,9 @@
 
 /* ═══ 1c · líneas de negocio ════════════════════════════════════════════
  *
- * Texto y foto a dos columnas, y la lista debajo. La composición de "Más de 40
- * años…" en /nosotros (nos-origen): las mismas pistas 1fr / 0.92fr, el mismo
- * hueco y la foto en 4/5. La foto cambia de lado según `data-lado`.
+ * Texto y foto a dos columnas, con la lista debajo del texto. Las pistas y el
+ * hueco son los de "Más de 40 años…" en /nosotros (nos-origen): 1fr / 0.92fr.
+ * La foto cambia de lado según `data-lado` y mide lo que mide el texto.
  */
 .uni-ln {
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
@@ -933,7 +961,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
   gap: clamp(30px, 5vw, 88px);
-  align-items: center;
+  /* La foto se estira al alto de la fila: ver .uni-ln__foto. */
+  align-items: stretch;
 }
 .uni-ln[data-lado="izquierda"] .uni-ln__grid {
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
@@ -976,9 +1005,17 @@
 .uni-ln__p:last-child {
   margin-bottom: 0;
 }
+/*
+ * LA FOTO MIDE LO QUE MIDE EL TEXTO (octubre de 2026). En dos columnas no tiene
+ * proporción propia: sin aspect-ratio no aporta alto, así que la fila la pone la
+ * columna del texto —título, párrafo y la lista de iconos— y la foto se estira a
+ * ella. Iba en 4/5 y centrada: en Viveros Asturias sobraba foto y en Teca
+ * sobraba texto. El suelo de 320 px es para que no se aplaste si un día el texto
+ * es muy corto. En una columna vuelve a tener proporción (bloque de 900).
+ */
 .uni-ln__foto {
   position: relative;
-  aspect-ratio: 4 / 5;
+  min-height: 320px;
   overflow: hidden;
   border-radius: var(--radius-lg);
   background: var(--surface-sunken);
@@ -988,29 +1025,49 @@
 }
 /* La lista, separada del bloque por más aire que el de sus columnas: es otra
    cosa, no la continuación del texto. */
+/* Dentro de la columna del texto, debajo del párrafo: el aire es el de un
+   bloque nuevo dentro de la misma línea, no el de una sección aparte. */
 .uni-ln__lista {
-  margin-top: clamp(56px, 10vh, 120px);
-}
-/* «Servicios», «Aplicaciones»: al escalón de los h2 de la página —el mismo de
-   «Viveros Asturias»—. Antes iban de rótulo, a 14 px, y se perdían encima de
-   la lista. El aire hasta el filete es el que separa el título de sección de su
-   contenido en las demás secciones. */
-.uni-ln__lista-titulo {
-  margin: 0 0 clamp(26px, 4vh, 44px);
-  font-size: var(--text-titulo-seccion);
-  line-height: var(--lh-titulo-seccion);
-  letter-spacing: var(--ls-titulo-seccion);
-  font-weight: var(--peso-titulo-seccion);
+  margin-top: clamp(40px, 7vh, 72px);
 }
 /*
- * ⚠ ESTOS CORTES IGNORAN data-cols A PROPÓSITO: a 1000 px las dos listas pasan
- * a dos columnas aunque una traiga tres y la otra cuatro. Si mandara el número
- * de la lista, las Aplicaciones llegarían a tableta con cuatro columnas de 70 px.
+ * EN UNA FILA, DENTRO DE MEDIA PÁGINA. La columna del texto mide la mitad del
+ * ancho —unos 630 px a 1440—, así que las listas de Forestal llevan dos cosas
+ * propias para que las cuatro Aplicaciones quepan en fila:
+ *   · los títulos a --text-titulo-ficha-sm, el escalón de ficha clavado en 17 px
+ *     (las dos listas, Servicios y Aplicaciones, igual);
+ *   · 16 px entre columnas en vez del hueco de las listas a todo lo ancho.
+ * Medido: «Embarcaciones» pide 127 px a 17 px, y la columna da 130 a 1280. Por
+ * debajo de ahí, dos columnas (ver el corte de 1279).
  */
-@media (max-width: 1000px) {
+.uni-ln__lista .uni-at__g {
+  column-gap: var(--space-4);
+}
+.uni-ln__lista .uni-at__f :is(h3, h4) {
+  font-size: var(--text-titulo-ficha-sm);
+}
+/* «Servicios», «Aplicaciones»: al escalón de bloque, el de los h3, un escalón
+   por debajo de «Viveros Asturias» y «Teca». Van dentro de la columna de su
+   proyecto, así que se leen como parte de él y no como otra sección. (Antes
+   iban de rótulo, a 14 px; luego, un tiempo, al escalón de los h2.) */
+.uni-ln__lista-titulo {
+  margin: 0 0 clamp(20px, 3vh, 32px);
+  font-size: var(--text-titulo-bloque);
+  line-height: var(--lh-titulo-bloque);
+  letter-spacing: var(--ls-titulo-bloque);
+  font-weight: var(--peso-titulo-bloque);
+}
+/*
+ * ⚠ ESTOS CORTES IGNORAN data-cols A PROPÓSITO: por debajo de 1280 las dos
+ * listas pasan a dos columnas aunque una traiga tres y la otra cuatro, con más
+ * aire entre filas que entre columnas. Por debajo de 1280 la columna del texto
+ * ya no da para cuatro.
+ */
+@media (max-width: 1279px) {
   .uni-ln__lista .uni-at__g,
   .uni-ln__lista .uni-at__g[data-cols="4"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(20px, 3vw, 40px);
   }
 }
 @media (max-width: 620px) {
@@ -1031,8 +1088,31 @@
     grid-row: auto;
     grid-column: 1;
   }
+  /*
+   * EN UNA COLUMNA EL ORDEN ES TÍTULO Y TEXTO, FOTO Y LUEGO LOS ICONOS
+   * (octubre de 2026). La lista vive dentro de la columna del texto —así va en
+   * escritorio, debajo del párrafo—, así que aquí esa columna se abre con
+   * `display: contents`: sus hijos pasan a ser filas de la rejilla y la lista
+   * se puede mandar detrás de la foto con `order`. En escritorio no cambia
+   * nada. Sin `row-gap`, porque ahora habría hueco entre título y párrafo;
+   * el aire lo ponen los márgenes de cada pieza.
+   */
+  .uni-ln__grid {
+    row-gap: 0;
+  }
+  .uni-ln__txt {
+    display: contents;
+  }
+  .uni-ln .uni-ln__foto {
+    order: 1;
+    margin-top: clamp(28px, 4vh, 40px);
+  }
+  .uni-ln__lista {
+    order: 2;
+  }
   .uni-ln__foto {
     aspect-ratio: 4 / 3;
+    min-height: 0;
   }
 }
 
@@ -1420,6 +1500,11 @@
   max-width: 12ch;
   margin-bottom: clamp(30px, 5vh, 60px);
 }
+/* El carrusel de los próximos con tres o menos sólo existe en móvil: ver
+   ProximosProyectos.tsx y el bloque de 900. */
+.uni-prox__movil {
+  display: none;
+}
 .uni-prox__grid {
   display: grid;
   grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
@@ -1511,9 +1596,15 @@
   }
 }
 @media (max-width: 900px) {
-  .uni-fx__cuerpo,
-  .uni-prox__grid {
+  .uni-fx__cuerpo {
     grid-template-columns: 1fr;
+  }
+  /* Los próximos van en carrusel en móvil, también con tres o menos. */
+  .uni-prox--rejilla {
+    display: none;
+  }
+  .uni-prox__movil {
+    display: block;
   }
   .uni-marcas__rejilla {
     grid-template-columns: repeat(4, minmax(0, 1fr));

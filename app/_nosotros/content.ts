@@ -210,14 +210,8 @@ const GF = "/images/logo/logos-grupo-firmas-globales";
  */
 /* Va como const TIPADA y no con `satisfies`, para que las entradas sin `logo`
    —Deportes— sigan admitiendo el campo cuando el componente lo consulta. */
+/* Altea primero y Multimedios segundo (octubre de 2026). */
 const SECTORES: SectorFirma[] = [
-  {
-    id: "medios",
-    logo: `${GF}/logo-multimedios-grupo-firma-globales.webp`,
-    logoRatio: 7.065,
-    categoria: "Medios",
-    marca: "Multimedios",
-  },
   {
     id: "inmobiliaria",
     logo: "/brand/logos/altea-logo-light.svg",
@@ -225,6 +219,13 @@ const SECTORES: SectorFirma[] = [
     categoria: "Inmobiliaria",
     marca: "ALTEA",
     nuestra: true,
+  },
+  {
+    id: "medios",
+    logo: `${GF}/logo-multimedios-grupo-firma-globales.webp`,
+    logoRatio: 7.065,
+    categoria: "Medios",
+    marca: "Multimedios",
   },
   {
     id: "vinos",
@@ -267,7 +268,7 @@ const SECTORES: SectorFirma[] = [
 export const GRUPO_FIRMA = {
   title: "Formamos parte de Grupo Firmas Globales",
   intro:
-    "Altea es la división inmobiliaria de un grupo con presencia en medios, alimentos, energía, deportes y vinos. Esa estructura nos da músculo financiero y una visión de largo plazo que pocos desarrolladores tienen.",
+    "En Altea formamos parte de un grupo empresarial que integra distintas marcas y capacidades, lo que nos permite trabajar estratégicamente en conjunto con recursos que fortalecen cada etapa de nuestros desarrollos.",
   /**
    * La raíz del grupo, encima de la fila de sectores.
    *

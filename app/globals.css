@@ -147,6 +147,11 @@
   --peso-titulo-bloque: 500;
 
   --text-titulo-ficha: clamp(1.0625rem, 0.381vw + 0.97rem, 1.3125rem); /* 17 → 21 */
+  /* ⚠ VARIANTE, NO UN SEXTO ESCALÓN: el escalón de ficha clavado en su mínimo,
+     17 px. Sólo para las listas de iconos que van dentro de una columna de
+     texto (Forestal), donde a 21 px «Embarcaciones» no cabía en cuatro
+     columnas. Lleva la interlínea, el tracking y el peso de ficha. */
+  --text-titulo-ficha-sm: 1.0625rem;
   --lh-titulo-ficha: 1.3;
   --ls-titulo-ficha: -0.015em;
   --peso-titulo-ficha: 500;
@@ -270,4 +275,39 @@ body {
   /* El peso del texto corrido sale de aquí y se hereda: los párrafos no lo
      escriben. Ver --peso-texto. */
   font-weight: var(--peso-texto);
+}
+
+/*
+ * ═══ TEXTO CORRIDO JUSTIFICADO (octubre de 2026) ═══
+ *
+ * Entró como prueba y se quedó. Todo vive en este bloque: si algún día se
+ * quiere volver a alinear a la izquierda, se borra entero y nada más.
+ *
+ * Sólo texto corrido —párrafos, descripciones, fichas, legales, el pie—. Los
+ * títulos y las frases de display (la de las cifras del home, la de Origen, la
+ * de Emblem) se quedan alineados a la izquierda: justificar una frase de cuatro
+ * líneas a 42 px abre huecos entre palabras que se ven de lejos.
+ *
+ * Con `hyphens: auto` y el idioma del <html> (es-MX), el navegador parte
+ * palabras con guion al final de línea. Sin eso, en columnas angostas —las
+ * fichas, el pie, el teléfono— el justificado abre «ríos» de espacio.
+ */
+:is(
+    .nos-hero__bajada,
+    .nos-origen__cols p,
+    .nos-firma__intro,
+    .nos-huella__body,
+    .nos-rs__copy p:not(.nos-rs__sub),
+    .home-carpetas__desc,
+    .home-ficha__cuerpo p,
+    .uni-ln__p,
+    .uni-fx__texto > p,
+    .uni-gr__caja > p,
+    .leg__cuerpo p,
+    .altea-section-heading__description,
+    .altea-footer__descripcion
+  ) {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }

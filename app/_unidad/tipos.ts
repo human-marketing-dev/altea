@@ -241,10 +241,16 @@ export interface Proyecto {
    * Los pares del <dl> de la ficha, al menos uno. El PRIMERO es el formato
    * —Fashion Mall, Parque industrial…—: va de chapa en la tarjeta y abre la
    * ficha. Detrás de él la ficha pone la Ubicación, y luego el resto en orden.
-   * En Comercial son exactamente dos (Formato y Visitantes); en Industrial el
+   * En Comercial, Formato y, sólo en los Paseos, Visitantes (los Puntos no
+   * tienen conteo de afluencia); en Industrial el
    * resto son superficies, que varían por parque.
    */
   datos: [ParDato, ...ParDato[]];
+  /**
+   * El sitio web propio del proyecto, si lo tiene: la ficha pone un botón que
+   * lo abre en otra pestaña. Hoy sólo Reserva Mezquital.
+   */
+  sitio?: string;
 }
 
 export interface ParDato {

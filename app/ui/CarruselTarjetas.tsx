@@ -30,6 +30,12 @@ export interface CarruselTarjetasProps {
   onAbrir: (indice: number, boton: HTMLButtonElement) => void;
   /** Lo que se monta dentro de la sección pero fuera del carrusel: el diálogo. */
   children?: React.ReactNode;
+  /**
+   * Hasta cuántas tarjetas va en rejilla fija en vez de carrusel. Con 0 es
+   * carrusel siempre: lo usan los próximos proyectos en móvil.
+   * @default 2
+   */
+  rejillaHasta?: number;
 }
 
 export function CarruselTarjetas({
@@ -38,6 +44,7 @@ export function CarruselTarjetas({
   items,
   onAbrir,
   children,
+  rejillaHasta = 2,
 }: CarruselTarjetasProps) {
   const pista = useRef<HTMLUListElement>(null);
   const contador = useRef<HTMLSpanElement>(null);
@@ -59,7 +66,7 @@ export function CarruselTarjetas({
    * Reserva Mezquital). Sin flechas, sin contador, sin barra y sin parallax:
    * no hay recorrido que contar.
    */
-  const fija = items.length <= 2;
+  const fija = items.length <= rejillaHasta;
 
   useEffect(() => {
     const carril = pista.current;
@@ -115,13 +122,39 @@ export function CarruselTarjetas({
       if (barra.current)
         barra.current.style.width = `${(avance * 100).toFixed(2)}%`;
 
-      const anchoPaso = paso();
-      const k = anchoPaso
-        ? Math.min(items.length, Math.round(carril.scrollLeft / anchoPaso) + 1)
-        : 1;
-      const texto = String(k).padStart(2, "0");
-      /* Al DOM y no por setState: `scroll` corre a 60 fps y esto son ocho
-         valores en todo el recorrido. */
+      /*
+       * EL CONTADOR DICE QUÉ TARJETAS SE VEN, no cuál va primero: «01–03 / 06».
+       *
+       * Antes contaba la de la izquierda, y en escritorio caben casi tres a la
+       * vez: al llegar al final la primera visible era la cuarta, el carrusel ya
+       * no se movía y el contador se quedaba en «04 — 06» con la quinta y la
+       * sexta enteras a la vista. Con el rango, el final dice «04–06 / 06».
+       *
+       * Una tarjeta cuenta si se ve al menos el 60 % de su ancho: la que asoma
+       * por el borde no entra. Si sólo se ve una —el teléfono—, va un número.
+       */
+      const vista = carril.getBoundingClientRect();
+      const izq = Math.max(vista.left, 0);
+      const der = Math.min(vista.right, window.innerWidth);
+      let primera = -1;
+      let ultima = -1;
+      Array.from(carril.children).forEach((tarjeta, i) => {
+        const r = tarjeta.getBoundingClientRect();
+        const visto = Math.min(r.right, der) - Math.max(r.left, izq);
+        if (r.width > 0 && visto / r.width >= 0.6) {
+          if (primera < 0) primera = i;
+          ultima = i;
+        }
+      });
+      const dos = (n: number) => String(n + 1).padStart(2, "0");
+      const texto =
+        primera < 0
+          ? "01"
+          : primera === ultima
+            ? dos(primera)
+            : `${dos(primera)}–${dos(ultima)}`;
+      /* Al DOM y no por setState: `scroll` corre a 60 fps y esto son unos
+         pocos valores en todo el recorrido. */
       if (contador.current && contador.current.textContent !== texto) {
         contador.current.textContent = texto;
       }
@@ -252,7 +285,7 @@ export function CarruselTarjetas({
             {/* aria-hidden: es un indicador de posición dentro de un recorrido
               visual, y leído en voz alta no dice nada que la lista no diga. */}
             <p className="altea-carrusel__n" aria-hidden="true">
-              <span ref={contador}>01</span> — {total}
+              <span ref={contador}>01</span> / {total}
             </p>
             <div className="altea-carrusel__fl">
               <button

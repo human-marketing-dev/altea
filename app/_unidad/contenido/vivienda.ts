@@ -87,9 +87,10 @@ export const VIVIENDA: ContenidoUnidad = {
       {
         id: "amarantha",
         nombre: "Amarantha",
-        /* La del carril del home; el copy dice "Zona Sur de Monterrey, sobre
-           Carretera Nacional". */
-        ubicacion: "Zona Sur de Monterrey, Nuevo León",
+        /* La de Altea, octubre de 2026. La descripción sigue diciendo "Zona Sur
+           de Monterrey, sobre Carretera Nacional", y el carril del home todavía
+           lleva esa como ubicación (app/_home/content.ts). */
+        ubicacion: "Santiago, Nuevo León",
         foto: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
         /* 1979x1319 */
         fotoRatio: 1.5004,
@@ -122,6 +123,7 @@ export const VIVIENDA: ContenidoUnidad = {
           { etiqueta: "Lotes", valor: "238" },
           { etiqueta: "Desde", valor: "127.5 m²" },
         ],
+        sitio: "https://reservamezquital.mx/",
       },
     ],
   },
@@ -162,8 +164,7 @@ export const VIVIENDA: ContenidoUnidad = {
         slug: "valle-de-los-altos",
         name: "Valle de los Altos",
         unit: "Vivienda",
-        /* El copy da la vialidad, no la ciudad: PENDIENTE. */
-        location: "Prolongación Eloy Cavazos",
+        location: "Juárez, Nuevo León",
         image: `${PROXIMOS}/valle-de-los-altos-altea.webp`,
         /* 1980x1106 */
         fotoRatio: 1.7902,
@@ -174,8 +175,7 @@ export const VIVIENDA: ContenidoUnidad = {
         slug: "huajuquito",
         name: "Huajuquito",
         unit: "Vivienda",
-        /* PENDIENTE: el copy no da ubicación. La ficha pinta un guion. */
-        location: undefined,
+        location: "Santiago, Nuevo León",
         image: `${PROXIMOS}/huajuquito-altea.webp`,
         /* 1980x1105 */
         fotoRatio: 1.7919,
@@ -186,8 +186,7 @@ export const VIVIENDA: ContenidoUnidad = {
         slug: "margaritas",
         name: "Margaritas",
         unit: "Vivienda",
-        /* El copy da la zona, no la ciudad: PENDIENTE. */
-        location: "Zona de Carretera Nacional",
+        location: "Santiago, Nuevo León",
         image: `${PROXIMOS}/margaritas-altea.webp`,
         /* 1980x1105 */
         fotoRatio: 1.7919,
@@ -198,7 +197,7 @@ export const VIVIENDA: ContenidoUnidad = {
         slug: "cumbres-de-loreto",
         name: "Cumbres de Loreto",
         unit: "Vivienda",
-        location: "Zona Cumbres, al poniente de Monterrey",
+        location: "Monterrey, Nuevo León",
         image: `${PROXIMOS}/cumbres-de-loreto-altea.webp`,
         /* 1980x1566 */
         fotoRatio: 1.2644,

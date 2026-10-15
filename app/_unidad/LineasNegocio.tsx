@@ -72,10 +72,16 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
       </div>
 
       <div className="uni-ln__lista">
-        <p className="uni-ln__rotulo">{linea.lista.rotulo}</p>
+        {/*
+          El título de la lista, al tamaño de los h2 de la página. En el
+          esquema es h3: la lista es parte de su línea (Viveros Asturias, Teca),
+          que ya lleva el h2. Por eso los títulos de cada icono bajan a h4.
+        */}
+        <h3 className="uni-ln__lista-titulo">{linea.lista.rotulo}</h3>
         <ListaAtributos
           items={linea.lista.items}
           columnas={linea.lista.items.length >= 4 ? 4 : 3}
+          nivel="h4"
         />
       </div>
     </section>

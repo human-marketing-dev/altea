@@ -842,7 +842,9 @@
      su propia posición. En 1 por defecto: sin JS o con movimiento reducido,
      salen puestas. */
   --k: 1;
-  padding-top: clamp(18px, 2.4vh, 26px);
+  /* Las medidas de la lista son las mismas que las de los pilares de
+     /nosotros: ver «Listas de icono y título» en tokens.css. */
+  padding-top: var(--lista-aire-filete);
   border-top: 1px solid var(--border-subtle);
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -864,10 +866,10 @@
  */
 .uni-at__ic {
   display: block;
-  width: clamp(72px, 7.6vw, 112px);
+  width: var(--lista-icono);
   color: var(--color-unidad);
   overflow: visible;
-  margin: clamp(24px, 3.2vw, 40px) 0 clamp(18px, 2.4vw, 28px);
+  margin: var(--lista-icono-arriba) 0 var(--lista-icono-abajo);
 }
 /* ⚠ vector-effect: non-scaling-stroke tampoco es opcional: sin él el trazo
    engorda con el icono y a 110 px deja de ser capilar. Con él se queda en
@@ -884,12 +886,18 @@
 }
 /* Atado a la columna y no a la sección: la misma lista va también dentro de
    las líneas de negocio (.uni-ln), y ahí no hay .uni-at. */
-.uni-at__f h3 {
+/*
+ * EL ESCALÓN DE FICHA, en las tres listas: Industrial, Forestal y los pilares
+ * de /nosotros. Industrial iba un escalón arriba (bloque), y a cuatro columnas
+ * ese escalón partía «Servicio de jardinería» en tres renglones; dos tamaños
+ * para el mismo elemento se leen como error.
+ */
+.uni-at__f :is(h3, h4) {
   margin: 0;
-  font-size: var(--text-titulo-bloque);
-  line-height: var(--lh-titulo-bloque);
-  letter-spacing: var(--ls-titulo-bloque);
-  font-weight: var(--peso-titulo-bloque);
+  font-size: var(--text-titulo-ficha);
+  line-height: var(--lh-titulo-ficha);
+  letter-spacing: var(--ls-titulo-ficha);
+  font-weight: var(--peso-titulo-ficha);
   text-wrap: balance;
 }
 /* Una columna por debajo de 860. El icono no crece: a una columna el 7.6vw lo
@@ -983,26 +991,16 @@
 .uni-ln__lista {
   margin-top: clamp(56px, 10vh, 120px);
 }
-.uni-ln__lista .uni-at__g {
-  margin-top: var(--space-2);
-}
-/*
- * EL ICONO Y EL TÍTULO, UN ESCALÓN ABAJO DEL BLOQUE DE INDUSTRIAL. Allá son tres
- * columnas y el título va en el escalón de bloque; aquí las Aplicaciones son
- * cuatro, y a cuatro ese escalón parte «Servicio de jardinería» en tres
- * renglones. Las dos listas llevan el MISMO tamaño aunque tengan distinto
- * número de columnas: dos tamaños para el mismo elemento en una página se leen
- * como error.
- */
-.uni-ln__lista .uni-at__ic {
-  width: clamp(66px, 6.8vw, 100px);
-  margin: clamp(22px, 3vw, 36px) 0 clamp(16px, 2.2vw, 26px);
-}
-.uni-ln__lista .uni-at__f h3 {
-  font-size: var(--text-titulo-ficha);
-  line-height: var(--lh-titulo-ficha);
-  letter-spacing: var(--ls-titulo-ficha);
-  font-weight: var(--peso-titulo-ficha);
+/* «Servicios», «Aplicaciones»: al escalón de los h2 de la página —el mismo de
+   «Viveros Asturias»—. Antes iban de rótulo, a 14 px, y se perdían encima de
+   la lista. El aire hasta el filete es el que separa el título de sección de su
+   contenido en las demás secciones. */
+.uni-ln__lista-titulo {
+  margin: 0 0 clamp(26px, 4vh, 44px);
+  font-size: var(--text-titulo-seccion);
+  line-height: var(--lh-titulo-seccion);
+  letter-spacing: var(--ls-titulo-seccion);
+  font-weight: var(--peso-titulo-seccion);
 }
 /*
  * ⚠ ESTOS CORTES IGNORAN data-cols A PROPÓSITO: a 1000 px las dos listas pasan

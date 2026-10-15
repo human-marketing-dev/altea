@@ -335,9 +335,13 @@ const ICONOS: Record<IconoAtributo, React.ReactNode> = {
 export function ListaAtributos({
   items,
   columnas = 3,
+  nivel: Titulo = "h3",
 }: {
   items: Atributo[];
   columnas?: 3 | 4;
+  /** El nivel de los títulos: h3 bajo el h2 de la sección; h4 cuando la lista
+      lleva su propio h3 encima (las líneas de Forestal). Se ven igual. */
+  nivel?: "h3" | "h4";
 }) {
   const raiz = useRef<HTMLUListElement>(null);
 
@@ -397,7 +401,7 @@ export function ListaAtributos({
               {ICONOS[item.icono]}
             </svg>
           )}
-          <h3>{item.titulo}</h3>
+          <Titulo>{item.titulo}</Titulo>
         </li>
       ))}
     </ul>

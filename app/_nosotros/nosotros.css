@@ -274,16 +274,19 @@
   padding: 0;
   list-style: none;
 }
+/* Las medidas son las de los atributos de Industrial y las listas de Forestal:
+   ver «Listas de icono y título» en tokens.css. El filete es el mismo
+   --border-subtle; antes iba más oscuro aquí que allá. */
 .nos-pilar {
   display: grid;
-  gap: clamp(16px, 2.6vh, 26px);
   align-content: start;
-  padding-top: clamp(20px, 3vh, 32px);
-  border-top: 1px solid color-mix(in srgb, var(--altea-ink) 27%, transparent);
+  padding-top: var(--lista-aire-filete);
+  border-top: 1px solid var(--border-subtle);
 }
 .nos-pilar__icono {
   display: block;
-  width: clamp(64px, 6.4vw, 92px);
+  width: var(--lista-icono);
+  margin: var(--lista-icono-arriba) 0 var(--lista-icono-abajo);
 }
 .nos-pilar__icono img {
   width: 100%;
@@ -296,7 +299,9 @@
   line-height: var(--lh-titulo-ficha);
   letter-spacing: var(--ls-titulo-ficha);
   font-weight: var(--peso-titulo-ficha);
-  max-width: 12ch;
+  /* Sin el tope de 12ch que tenía: partía «Innovación disruptiva» en dos
+     renglones con la columna medio vacía. Igual que en las otras listas. */
+  text-wrap: balance;
 }
 /* En el teléfono, un pilar por fila con el icono al lado del nombre. Tres
    columnas de 107 px dejaban los iconos diminutos y los nombres pegados entre
@@ -312,8 +317,10 @@
     column-gap: var(--space-5);
     padding-block: var(--space-5);
   }
-  .nos-pilar__titulo {
-    max-width: none;
+  /* Con el icono al lado del nombre, el aire de arriba y abajo lo pone la
+     fila, no el icono. */
+  .nos-pilar__icono {
+    margin: 0;
   }
 }
 /* ═══ 4 · Grupo Firmas ════════════════════════════════════════════════════ */
@@ -1371,7 +1378,7 @@
    * Con un párrafo debajo de cada uno, tres columnas a este ancho dejaban líneas
    * de cinco o seis palabras y había que apilarlas. Sin él, cada pilar es un
    * icono y dos palabras: apilados, tres elementos diminutos ocupaban 600 px de
-   * alto para decir seis palabras. En fila siguen cabiendo —el icono baja a 64 px
+   * alto para decir seis palabras. En fila siguen cabiendo —el icono baja a 66 px
    * y el nombre parte en dos líneas— y la sección recupera su proporción.
    */
   .nos-pilares__grid {

@@ -14,6 +14,23 @@ import { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } from "./content";
  * se pone en cada tarjeta y qué ficha abre—, que es justo lo que las dos
  * secciones no comparten.
  */
+
+/*
+ * ⚠ FUERA DEL COMPONENTE, NO EN EL RENDER. <CarrilTarjetas> rehace su
+ * animación cuando cambia `items`, y un `.map()` en el JSX es un arreglo nuevo
+ * en cada render: abrir o cerrar una ficha (setActivo) volvía a montar el
+ * carril entero —otro juego de ScrollTriggers, otro oyente de resize y la
+ * entrada de las tarjetas repetida— encima del anterior.
+ */
+const ITEMS = FEATURED_PROJECTS.map((p) => ({
+  id: p.slug,
+  nombre: p.name,
+  /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
+     lista que mezcla comercial, industrial y vivienda. */
+  pie: p.unit,
+  foto: p.image,
+}));
+
 export function CarrilProyectos() {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [activo, setActivo] = useState<FeaturedProject | null>(null);
@@ -33,14 +50,7 @@ export function CarrilProyectos() {
     <CarrilTarjetas
       titulo={FEATURED_PROJECTS_INTRO.titulo}
       tituloId="carril-titulo"
-      items={FEATURED_PROJECTS.map((p) => ({
-        id: p.slug,
-        nombre: p.name,
-        /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
-           lista que mezcla comercial, industrial y vivienda. */
-        pie: p.unit,
-        foto: p.image,
-      }))}
+      items={ITEMS}
       onAbrir={(k, boton) => {
         origen.current = boton;
         setActivo(FEATURED_PROJECTS[k] ?? null);

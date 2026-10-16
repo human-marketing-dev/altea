@@ -175,8 +175,17 @@ export function CampoPuntos({
       t += 0.004;
       pintar();
     };
-    gsap.ticker.add(correr);
+    /* Sólo mientras el lienzo se ve: estaba en el ticker toda la visita, con el
+       hero ya fuera de la pantalla. En pausa `t` no avanza. */
+    let corriendo = false;
+    const vista = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !corriendo) gsap.ticker.add(correr);
+      if (!e.isIntersecting && corriendo) gsap.ticker.remove(correr);
+      corriendo = e.isIntersecting;
+    });
+    vista.observe(canvas);
     return () => {
+      vista.disconnect();
       gsap.ticker.remove(correr);
       window.removeEventListener("resize", medir);
     };

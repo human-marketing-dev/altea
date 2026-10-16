@@ -97,6 +97,19 @@ export function CarruselTarjetas({
 
     const pintar = () => {
       /*
+       * ⚠ PRIMERO SE LEE TODO Y DESPUÉS SE ESCRIBE TODO. Leer una tarjeta
+       * después de escribir la foto de la anterior obliga al navegador a
+       * recalcular en cada vuelta; aquí cada rectángulo se lee una vez y sirve
+       * para el parallax y para el contador.
+       */
+      const vw = window.innerWidth;
+      const tarjetas = Array.from(carril.children);
+      const rects = tarjetas.map((t) => t.getBoundingClientRect());
+      const vista = carril.getBoundingClientRect();
+      const max = carril.scrollWidth - carril.clientWidth;
+      const izqScroll = carril.scrollLeft;
+
+      /*
        * EL PARALLAX, calculado de la posición de cada tarjeta en la VENTANA.
        *
        * La foto corre al revés que el carril: es lo que evita que un carrusel de
@@ -106,19 +119,17 @@ export function CarruselTarjetas({
        * home, porque lo que se mueve es el carril y no la página.
        */
       if (!reducido) {
-        const vw = window.innerWidth;
-        for (const tarjeta of Array.from(carril.children)) {
+        tarjetas.forEach((tarjeta, i) => {
           const foto = tarjeta.querySelector<HTMLElement>(".js-tarjeta-foto");
-          if (!foto) continue;
-          const r = tarjeta.getBoundingClientRect();
+          if (!foto) return;
+          const r = rects[i];
           const centro = (r.left + r.width / 2 - vw / 2) / vw;
           const acotado = Math.max(-1, Math.min(1, centro));
           foto.style.transform = `translateX(${(acotado * 8).toFixed(2)}%)`;
-        }
+        });
       }
 
-      const max = carril.scrollWidth - carril.clientWidth;
-      const avance = max > 0 ? carril.scrollLeft / max : 0;
+      const avance = max > 0 ? izqScroll / max : 0;
       if (barra.current)
         barra.current.style.width = `${(avance * 100).toFixed(2)}%`;
 
@@ -133,13 +144,11 @@ export function CarruselTarjetas({
        * Una tarjeta cuenta si se ve al menos el 60 % de su ancho: la que asoma
        * por el borde no entra. Si sólo se ve una —el teléfono—, va un número.
        */
-      const vista = carril.getBoundingClientRect();
       const izq = Math.max(vista.left, 0);
-      const der = Math.min(vista.right, window.innerWidth);
+      const der = Math.min(vista.right, vw);
       let primera = -1;
       let ultima = -1;
-      Array.from(carril.children).forEach((tarjeta, i) => {
-        const r = tarjeta.getBoundingClientRect();
+      rects.forEach((r, i) => {
         const visto = Math.min(r.right, der) - Math.max(r.left, izq);
         if (r.width > 0 && visto / r.width >= 0.6) {
           if (primera < 0) primera = i;
@@ -159,8 +168,8 @@ export function CarruselTarjetas({
         contador.current.textContent = texto;
       }
 
-      if (btAnt) btAnt.disabled = carril.scrollLeft <= 2;
-      if (btSig) btSig.disabled = carril.scrollLeft >= max - 2;
+      if (btAnt) btAnt.disabled = izqScroll <= 2;
+      if (btSig) btSig.disabled = izqScroll >= max - 2;
     };
 
     carril.addEventListener("scroll", pintar, { passive: true });
@@ -265,7 +274,13 @@ export function CarruselTarjetas({
       carril.removeEventListener("pointerup", alSoltar);
       carril.removeEventListener("pointercancel", alSoltar);
     };
-  }, [items, fija]);
+    /*
+     * La cantidad y no el arreglo: quien lo usa pasa `items` en línea, así que
+     * es un arreglo nuevo en cada render y abrir o cerrar una ficha desmontaba
+     * y volvía a montar todo esto. El efecto sólo lee el DOM; lo que cambia
+     * lo que hay que medir es cuántas tarjetas hay.
+     */
+  }, [items.length, fija]);
 
   const total = String(items.length).padStart(2, "0");
 

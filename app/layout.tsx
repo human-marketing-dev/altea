@@ -61,24 +61,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="es-MX"
       className={`${brandFont.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        {/* Las dos están en el primer cuadro de la intro: se piden antes de que
-            el componente cliente llegue a montarse. El cielo va como
-            background-image en el CSS module, así que sin esto ni siquiera
-            empieza a descargarse hasta que el navegador resuelve la hoja. */}
-        <link
-          rel="preload"
-          as="image"
-          href="/hero/background-cloud-altea-hero.webp"
-          type="image/webp"
-        />
-        <link
-          rel="preload"
-          as="image"
-          href="/hero/edificio-altea-home.webp"
-          type="image/webp"
-        />
-      </head>
+      {/*
+        Aquí había dos <link rel="preload"> de la intro —el cielo y el edificio,
+        1.67 MB— que se pedían con prioridad alta en TODAS las páginas. La intro
+        (app/ui/intro) ya no se monta en ninguna, así que competían con la foto
+        principal de cada página por nada. Si vuelve, que vuelvan con ella.
+      */}
       <body className="min-h-full flex flex-col">
         {children}
         <RevealOnScroll />

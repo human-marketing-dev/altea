@@ -46,6 +46,8 @@ export { MediaSlot } from "./MediaSlot";
 
 export { CarrilTarjetas } from "./CarrilTarjetas";
 export { CarruselTarjetas } from "./CarruselTarjetas";
+export { CarruselFotos } from "./CarruselFotos";
+export type { FotoCarrusel } from "./CarruselFotos";
 export type { CarruselTarjetasProps } from "./CarruselTarjetas";
 export { TarjetaProyecto } from "./TarjetaProyecto";
 export type { TarjetaProyectoProps } from "./TarjetaProyecto";

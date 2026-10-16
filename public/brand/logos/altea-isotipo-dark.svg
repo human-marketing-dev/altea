@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Isotipo de Altea en versión oscura: la misma geometría de altea-isotipo.svg
+  (pórtico y banderola, viewBox 494 × 430), con el crema cambiado por el ink de
+  marca (#212222, --altea-ink). El coral de la banderola no cambia.
+
+  De aquí salen el favicon y el icono de Apple (app/icon.svg, app/favicon.ico,
+  app/apple-icon.png). Si cambia este archivo, hay que regenerarlos.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 494 430">
+  <path fill="#212222" d="M422.12,430h-71.48l-38.83-79.92H110.31l-38.83,79.92H0L211.06,0l211.06,430ZM283.1,290.98l-72.04-147.46-72.04,147.46h144.08Z"/>
+  <polygon fill="#212222" points="349.92 147.46 398.73 147.46 421.96 0 349.92 147.46"/>
+  <polygon fill="#ff5b49" points="421.96 0 398.73 147.46 494 147.46 421.96 0"/>
+</svg>

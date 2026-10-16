@@ -189,16 +189,29 @@ export function HeroNube() {
       }));
     };
 
-    construir();
-    const observador = new ResizeObserver(construir);
-    observador.observe(canvas);
-
     let cuadro = 0;
     let reloj = 0;
     let actual: "isotipo" | "piramide" = "isotipo";
+    /*
+     * EL BUCLE SÓLO CORRE MIENTRAS SE VE, Y CON MOVIMIENTO REDUCIDO NO CORRE.
+     * Repintaba el lienzo entero sesenta veces por segundo durante toda la
+     * visita, con el hero ya fuera de la pantalla y también con movimiento
+     * reducido, donde cada cuadro era idéntico al anterior. El reloj cuenta
+     * cuadros, así que en pausa no avanza: al volver sigue donde se quedó.
+     */
+    let visible = true;
+    const seguir = () => visible && !reducido;
+
+    construir();
+    const observador = new ResizeObserver(() => {
+      construir();
+      /* Quieto, el único repintado es el de cada reconstrucción. */
+      if (!seguir()) pintar();
+    });
+    observador.observe(canvas);
 
     const pintar = () => {
-      cuadro = requestAnimationFrame(pintar);
+      cuadro = seguir() ? requestAnimationFrame(pintar) : 0;
       if (!puntos.length) return;
 
       if (!reducido) {
@@ -232,9 +245,16 @@ export function HeroNube() {
     };
     pintar();
 
+    const vista = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (seguir() && !cuadro) cuadro = requestAnimationFrame(pintar);
+    });
+    vista.observe(canvas);
+
     return () => {
       cancelAnimationFrame(cuadro);
       observador.disconnect();
+      vista.disconnect();
     };
   }, [reducido]);
 

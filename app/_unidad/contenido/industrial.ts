@@ -112,9 +112,9 @@ export const INDUSTRIAL: ContenidoUnidad = {
         id: "aeropuerto-saltillo",
         nombre: "Aeropuerto de Saltillo",
         ubicacion: "Saltillo, Coahuila",
-        foto: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp",
-        /* 2560x1412 */
-        fotoRatio: 1.813,
+        foto: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea-2.webp",
+        /* 2000x1623 */
+        fotoRatio: 1.2323,
         alt: "",
         label: "Aeropuerto de Saltillo",
         descripcion:

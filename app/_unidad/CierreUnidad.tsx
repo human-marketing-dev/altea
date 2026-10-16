@@ -59,18 +59,18 @@ export function CierreUnidad({
       nodo.style.setProperty("--k", k.toFixed(3));
     };
     pintar();
-    let pedido = false;
+    let pedido = 0;
     const alScroll = () => {
       if (pedido) return;
-      pedido = true;
-      requestAnimationFrame(() => {
-        pedido = false;
+      pedido = requestAnimationFrame(() => {
+        pedido = 0;
         pintar();
       });
     };
     window.addEventListener("scroll", alScroll, { passive: true });
     window.addEventListener("resize", alScroll);
     return () => {
+      cancelAnimationFrame(pedido);
       window.removeEventListener("scroll", alScroll);
       window.removeEventListener("resize", alScroll);
     };

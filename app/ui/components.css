@@ -730,8 +730,17 @@ a.altea-project-card:focus-visible {
    */
   --aire-footer: clamp(80px, 12vh, 160px);
 
+  /*
+   * EL TEXTO VA EN EL BLANCO DEL FONDO DE PÁGINA, NO EN EL CREMA (octubre de
+   * 2026), como los botones oscuros y el hero de /contacto. Lo secundario lo
+   * sigue marcando la opacidad —el mismo 70 % que tenía el crema—, y los
+   * títulos y el hover van enteros. Local al footer: --text-on-dark-secondary
+   * sigue en crema para el resto de superficies oscuras.
+   */
+  --footer-texto: var(--surface-page);
+  --footer-texto-secundario: color-mix(in srgb, var(--surface-page) 70%, transparent);
   background: var(--altea-ink);
-  color: var(--text-on-dark-secondary);
+  color: var(--footer-texto-secundario);
   padding: var(--aire-footer) var(--container-pad) calc(var(--aire-footer) / 2);
   font-family: var(--font-body);
   display: flex;
@@ -759,7 +768,7 @@ a.altea-project-card:focus-visible {
   max-width: 42ch;
   font-size: var(--text-small);
   line-height: var(--leading-body);
-  color: var(--text-on-dark-secondary);
+  color: var(--footer-texto-secundario);
 }
 /*
   Área de toque de 44x44 aunque el icono mida 24: el mínimo para el dedo, y lo
@@ -833,7 +842,7 @@ a.altea-project-card:focus-visible {
   margin-bottom: var(--space-1);
   font-size: var(--text-small);
   font-weight: var(--weight-bold);
-  color: var(--altea-cream);
+  color: var(--footer-texto);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
@@ -870,7 +879,7 @@ a.altea-project-card:focus-visible {
   display: block;
 }
 .altea-footer__link:hover {
-  color: var(--altea-cream);
+  color: var(--footer-texto);
 }
 .altea-footer__link:focus-visible {
   outline: 2px solid var(--altea-coral);
@@ -888,6 +897,130 @@ a.altea-project-card:focus-visible {
 .altea-footer__legal-links {
   display: flex;
   gap: 20px;
+}
+
+/* ========================= CarruselFotos ========================= */
+/*
+ * Varias fotos en la caja de una sola, con una pista de scroll nativo dentro.
+ * La caja —tamaño, proporción, radio— la pone quien lo usa (.uni-ln__foto en
+ * /forestal, .nos-origen__foto en /nosotros); aquí sólo lo que necesita
+ * cualquier caja para contener la pista. Ver CarruselFotos.tsx.
+ */
+.altea-cf {
+  position: relative;
+  overflow: hidden;
+  /* El fondo mientras carga la foto, el mismo de <MediaSlot>. */
+  background: var(--surface-sunken);
+}
+.altea-cf__img {
+  object-fit: cover;
+}
+.altea-cf__pista {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.altea-cf__pista::-webkit-scrollbar {
+  display: none;
+}
+.altea-cf__foto {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+/* Las flechas: en escritorio aparecen al pasar por la foto o al llegar con el
+   teclado; donde no hay cursor, se quedan a la vista. */
+.altea-cf__bt {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface-page) 88%, transparent);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    background var(--duration-base) var(--ease-standard);
+}
+.altea-cf__bt--ant {
+  left: var(--space-3);
+}
+.altea-cf__bt--sig {
+  right: var(--space-3);
+}
+.altea-cf:hover .altea-cf__bt,
+.altea-cf:focus-within .altea-cf__bt {
+  opacity: 1;
+}
+.altea-cf__bt:hover {
+  background: var(--surface-page);
+}
+@media (hover: none) {
+  .altea-cf__bt {
+    opacity: 1;
+  }
+}
+/* Los puntos: botones de 24 px para el dedo, con el punto dibujado dentro. El
+   de la foto actual se alarga. */
+.altea-cf__puntos {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: var(--space-3);
+  display: flex;
+  gap: 2px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: rgb(16 19 22 / 0.32);
+  transform: translateX(-50%);
+}
+.altea-cf__punto {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.altea-cf__punto::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.6);
+  transition:
+    width var(--duration-base) var(--ease-standard),
+    background var(--duration-base) var(--ease-standard);
+}
+.altea-cf__punto[aria-current="true"]::before {
+  width: 16px;
+  background: #fff;
+}
+.altea-cf__bt:focus-visible,
+.altea-cf__punto:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .altea-cf__bt,
+  .altea-cf__punto::before {
+    transition: none;
+  }
 }
 
 /* =========================== MediaSlot =========================== */
@@ -2567,7 +2700,10 @@ a.altea-project-card:focus-visible {
   text-align: left;
   color: #fff;
   background: var(--surface-card-dark);
-  will-change: transform;
+  /* Sin will-change: la tarjeta no se mueve —se mueve su foto, que sí lo
+     lleva—. En los carruseles de unidad nunca se transforma, y en el carril del
+     home sólo la mueve la entrada de una vez, que GSAP promueve mientras dura.
+     Era una capa de vídeo por tarjeta, permanente: 16 en /comercial. */
 }
 /* La foto es más ancha que su caja para poder correr dentro de ella: así cada
    tarjeta tiene su propio recorrido sin que la tarjeta se mueva. */

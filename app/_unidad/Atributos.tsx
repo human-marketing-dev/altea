@@ -359,29 +359,32 @@ export function ListaAtributos({
      * ventana es el tramo en que se completa.
      */
     const pintar = () => {
+      /* Primero se leen todas y después se escriben todas: leer una fila
+         después de escribir la anterior obliga al navegador a recalcular el
+         estilo en cada vuelta. */
+      const tops = filas.map((fila) => fila.getBoundingClientRect().top);
       filas.forEach((fila, i) => {
-        const r = fila.getBoundingClientRect();
         const k = Math.max(
           0,
-          Math.min(1, (innerHeight - r.top - i * 34) / (innerHeight * 0.38)),
+          Math.min(1, (innerHeight - tops[i] - i * 34) / (innerHeight * 0.38)),
         );
         fila.style.setProperty("--k", k.toFixed(3));
       });
     };
     pintar();
 
-    let pedido = false;
+    let pedido = 0;
     const alScroll = () => {
       if (pedido) return;
-      pedido = true;
-      requestAnimationFrame(() => {
-        pedido = false;
+      pedido = requestAnimationFrame(() => {
+        pedido = 0;
         pintar();
       });
     };
     window.addEventListener("scroll", alScroll, { passive: true });
     window.addEventListener("resize", alScroll);
     return () => {
+      cancelAnimationFrame(pedido);
       window.removeEventListener("scroll", alScroll);
       window.removeEventListener("resize", alScroll);
     };

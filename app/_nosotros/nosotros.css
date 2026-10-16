@@ -102,9 +102,11 @@
   display: block;
   overflow: hidden;
 }
+/* Sin will-change: hoy nada mueve estas líneas (HeroNube no anima el
+   titular), y una capa de vídeo por línea es memoria sin uso. Si vuelve la
+   entrada línea por línea, el tween ya promueve la capa mientras corre. */
 .nos-hero__linea > span {
   display: block;
-  will-change: transform;
 }
 /* coral-dark: 3.99 sobre el gris de página. El coral vivo da 2.9998. */
 .nos-hero__acento {

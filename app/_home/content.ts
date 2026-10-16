@@ -296,7 +296,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     unit: "Industrial",
     // PENDIENTE: ubicación sin confirmar.
     location: "Saltillo, Coahuila",
-    image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea.webp",
+    image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea-2.webp",
     descripcion:
       "Proyecto de remodelación desarrollado en colaboración con el Aeropuerto Internacional Plan de Guadalupe, en Saltillo, Coahuila; enfocado en la reactivación del aeropuerto y en la generación de nuevas oportunidades de negocio para la región.",
   },

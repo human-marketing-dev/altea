@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Fragment, useRef } from "react";
-import { MediaSlot } from "@/app/ui";
+import { CarruselFotos, MediaSlot } from "@/app/ui";
 import { ORIGEN } from "./content";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -22,6 +22,20 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * Repetirlo en otra sección lo convierte en un tic — en el home el mismo recurso
  * aparece dos veces y no más, y aquí una.
  */
+/*
+ * EL ANCHO QUE SE PINTA, NO EL DE LA CAJA. Las fotos son más apaisadas que la
+ * caja, así que `cover` las escala por el ALTO y su ancho pintado es la caja
+ * por la proporción del archivo entre la de la caja. En dos columnas la caja es
+ * cuadrada y mide ~41vw; en una es 4/3 y ~90vw. Con la del cine (1.74:1) sale
+ * lo de antes: 71vw y 118vw. Declarar el ancho de la caja hacía que Next
+ * sirviera una versión chica y la estirara: de ahí lo pixeleado de antes.
+ */
+const sizesDe = (ratio: number) => {
+  const enDos = Math.max(1, ratio / 1);
+  const enUna = Math.max(1, ratio / (4 / 3));
+  return `(max-width: 900px) ${Math.round(90 * enUna)}vw, ${Math.round(41 * enDos)}vw`;
+};
+
 export function Origen() {
   const raiz = useRef<HTMLElement>(null);
 
@@ -102,27 +116,28 @@ export function Origen() {
           </div>
         </div>
 
-        {/* La caja de la foto. Sin archivo, <MediaSlot> rinde el hueco etiquetado:
-            la marca prohíbe fotografía inventada, así que la sección se compone
-            con el hueco en vez de romperse o de pedir prestada otra foto. La
+        {/* La caja de la foto. Con varias, un carrusel en la misma caja; con una,
+            <MediaSlot>, que sin archivo rinde el hueco etiquetado: la marca
+            prohíbe fotografía inventada, así que la sección se compone con el
+            hueco en vez de romperse o de pedir prestada otra foto. La
             proporción no va en `ratio` sino en la hoja (.nos-origen__foto),
             porque cambia con el ancho: cuadrada en dos columnas, 4/3 en una. */}
-        <MediaSlot
-          className="nos-origen__foto"
-          label={ORIGEN.foto.label}
-          src={ORIGEN.foto.src}
-          alt={ORIGEN.foto.alt}
-          /*
-           * EL ANCHO QUE SE PINTA, NO EL DE LA CAJA. La foto es horizontal
-           * (1.74:1) y la caja no, así que `cover` la escala por el ALTO y su
-           * ancho pintado es la caja por 1.74 —por 1.30 en la 4/3 del móvil—.
-           * En dos columnas la caja cuadrada mide ~41vw, así que la foto se
-           * pinta a ~71vw; en una, a ~118vw. Declarar el ancho de la caja hacía
-           * que Next sirviera una versión chica y la estirara: de ahí lo
-           * pixeleado de antes.
-           */
-          sizes="(max-width: 900px) 118vw, 71vw"
-        />
+        {ORIGEN.fotos.length > 1 ? (
+          <CarruselFotos
+            className="nos-origen__foto"
+            fotos={ORIGEN.fotos}
+            sizes={ORIGEN.fotos.map((foto) => sizesDe(foto.ratio))}
+            etiqueta="Fotos de la historia de Altea"
+          />
+        ) : (
+          <MediaSlot
+            className="nos-origen__foto"
+            label={ORIGEN.etiquetaFoto}
+            src={ORIGEN.fotos[0]?.src}
+            alt={ORIGEN.fotos[0]?.alt}
+            sizes={ORIGEN.fotos[0] ? sizesDe(ORIGEN.fotos[0].ratio) : "100vw"}
+          />
+        )}
       </div>
     </section>
   );

@@ -340,7 +340,16 @@ export function HeroCalado({
         window.removeEventListener("resize", alMedir);
       };
     },
-    { scope: raiz, dependencies: [reducido] },
+    /*
+     * ⚠ revertOnUpdate ES LO QUE HACE QUE EL MOVIMIENTO REDUCIDO FUNCIONE AL
+     * CARGAR. `reducido` vale false en el primer render —el snapshot de
+     * servidor— y pasa a true al hidratar si el usuario lo tiene activado. Sin
+     * esta opción, useGSAP con dependencias sólo revierte al desmontar
+     * (@gsap/react 2.1): la segunda pasada se sumaba a la primera y el pin, el
+     * scrub y el relevo de fotos seguían vivos. Con ella, la primera se deshace
+     * entera antes de la portada quieta.
+     */
+    { scope: raiz, dependencies: [reducido], revertOnUpdate: true },
   );
 
   return (

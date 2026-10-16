@@ -552,7 +552,17 @@ export default function Escena3D({
 
     let libre = 0;
     let cuadro = 0;
+    /*
+     * SÓLO SE PINTA MIENTRAS EL LIENZO SE VE. Renderizaba cada cuadro durante
+     * toda la visita, con el hero ya muy atrás. En pausa `libre` no avanza, así
+     * que al volver la pieza sigue exactamente donde se quedó.
+     */
+    let visible = true;
     const bucle = () => {
+      if (!visible) {
+        cuadro = 0;
+        return;
+      }
       cuadro = requestAnimationFrame(bucle);
       const est = estado.current;
       if (!est) return;
@@ -590,8 +600,18 @@ export default function Escena3D({
     listo = true;
     bucle();
 
+    const vista = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && !cuadro) cuadro = requestAnimationFrame(bucle);
+    });
+    vista.observe(canvas);
+
     return () => {
+      /* Antes que nada: una textura que termine de cargar después de desmontar
+         llamaría a render() sobre un renderer ya liberado. */
+      listo = false;
       cancelAnimationFrame(cuadro);
+      vista.disconnect();
       observador.disconnect();
       for (const z of trozos) {
         z.solido.geometry.dispose();

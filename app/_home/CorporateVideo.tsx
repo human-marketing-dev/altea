@@ -57,7 +57,9 @@ export function CorporateVideo() {
         },
       );
     },
-    { scope: raiz, dependencies: [reducido] },
+    /* revertOnUpdate: sin él, al pasar `reducido` a true tras hidratar el
+       parallax de la primera pasada seguía vivo. Ver HeroA. */
+    { scope: raiz, dependencies: [reducido], revertOnUpdate: true },
   );
   const [sonando, setSonando] = useState(false);
   const [conSonido, setConSonido] = useState(false);

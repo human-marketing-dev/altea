@@ -127,7 +127,14 @@ export function HeroA() {
         .to(".js-campo", { opacity: 1, duration: 0.85, ease: "power2.out" }, 0.45);
 
     },
-    { scope: raiz, dependencies: [reducido] },
+    /*
+     * revertOnUpdate: `reducido` es false en el primer render (snapshot de
+     * servidor) y pasa a true al hidratar si el usuario lo pide. Sin esto,
+     * useGSAP con dependencias no revierte hasta desmontar (@gsap/react 2.1), y
+     * el timeline de la primera pasada seguía moviendo el titular y armando la
+     * A con el scroll pese a la preferencia.
+     */
+    { scope: raiz, dependencies: [reducido], revertOnUpdate: true },
   );
 
   const etiqueta = HERO_A.lineas

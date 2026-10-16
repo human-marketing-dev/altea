@@ -2,12 +2,23 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { FotoLinea } from "./tipos";
+
+export interface FotoCarrusel {
+  src: string;
+  alt: string;
+}
 
 /**
- * Varias fotos en la caja de una línea de negocio, una a la vez (Viveros
- * Asturias). La caja es la misma .uni-ln__foto de la foto única: mide lo que
- * el texto en escritorio y va en 4/3 en móvil.
+ * Varias fotos en una caja, una a la vez: la de Viveros Asturias en /forestal y
+ * la de la historia en /nosotros.
+ *
+ * LA CAJA LA PONE QUIEN LO USA, por `className`: el carrusel no decide su
+ * tamaño ni su proporción, ocupa la caja de la foto única que sustituye
+ * (.uni-ln__foto, .nos-origen__foto). Así pasar de una foto a varias no
+ * descoloca la composición.
+ *
+ * Vivía en app/_unidad; subió a ui/ cuando lo pidió /nosotros (octubre de
+ * 2026), y con él sus estilos, de unidad.css a components.css.
  *
  * EL DESPLAZAMIENTO ES NATIVO —overflow-x con scroll-snap—, como el carrusel de
  * tarjetas: el dedo y el trackpad funcionan sin programarlos, y las flechas y
@@ -21,12 +32,15 @@ export function CarruselFotos({
   fotos,
   sizes,
   etiqueta,
+  className,
 }: {
-  fotos: FotoLinea[];
+  fotos: FotoCarrusel[];
   /** Uno por foto: cada una tiene su proporción. */
   sizes: string[];
   /** Para el lector de pantalla: "Fotos de Viveros Asturias". */
   etiqueta: string;
+  /** La caja: su tamaño, su proporción y su radio. */
+  className?: string;
 }) {
   const pista = useRef<HTMLDivElement>(null);
   const [actual, setActual] = useState(0);
@@ -35,19 +49,21 @@ export function CarruselFotos({
   useEffect(() => {
     const nodo = pista.current;
     if (!nodo) return;
-    let pedido = false;
+    let pedido = 0;
     const leer = () => {
-      pedido = false;
+      pedido = 0;
       const ancho = nodo.clientWidth || 1;
       setActual(Math.min(total - 1, Math.round(nodo.scrollLeft / ancho)));
     };
     const alScroll = () => {
       if (pedido) return;
-      pedido = true;
-      requestAnimationFrame(leer);
+      pedido = requestAnimationFrame(leer);
     };
     nodo.addEventListener("scroll", alScroll, { passive: true });
-    return () => nodo.removeEventListener("scroll", alScroll);
+    return () => {
+      cancelAnimationFrame(pedido);
+      nodo.removeEventListener("scroll", alScroll);
+    };
   }, [total]);
 
   const ir = (i: number) => {
@@ -66,15 +82,15 @@ export function CarruselFotos({
 
   return (
     <div
-      className="uni-ln__foto uni-cf"
+      className={className ? `altea-cf ${className}` : "altea-cf"}
       role="region"
       aria-roledescription="carrusel"
       aria-label={etiqueta}
     >
-      <div className="uni-cf__pista" ref={pista}>
+      <div className="altea-cf__pista" ref={pista}>
         {fotos.map((foto, i) => (
           <div
-            className="uni-cf__foto"
+            className="altea-cf__foto"
             key={foto.src}
             role="group"
             aria-roledescription="foto"
@@ -85,7 +101,7 @@ export function CarruselFotos({
               alt={foto.alt}
               fill
               sizes={sizes[i]}
-              className="uni-ln__img"
+              className="altea-cf__img"
             />
           </div>
         ))}
@@ -93,7 +109,7 @@ export function CarruselFotos({
 
       <button
         type="button"
-        className="uni-cf__bt uni-cf__bt--ant"
+        className="altea-cf__bt altea-cf__bt--ant"
         aria-label="Foto anterior"
         onClick={() => ir(actual - 1)}
       >
@@ -101,18 +117,18 @@ export function CarruselFotos({
       </button>
       <button
         type="button"
-        className="uni-cf__bt uni-cf__bt--sig"
+        className="altea-cf__bt altea-cf__bt--sig"
         aria-label="Foto siguiente"
         onClick={() => ir(actual + 1)}
       >
         <span aria-hidden="true">→</span>
       </button>
 
-      <div className="uni-cf__puntos">
+      <div className="altea-cf__puntos">
         {fotos.map((foto, i) => (
           <button
             type="button"
-            className="uni-cf__punto"
+            className="altea-cf__punto"
             key={foto.src}
             aria-label={`Ver foto ${i + 1} de ${total}`}
             aria-current={i === actual ? "true" : undefined}

@@ -161,8 +161,11 @@ export function CarrilTarjetas({
                todo el recorrido pero onUpdate corre a 60 fps, y el nodo no lo
                maneja React —no tiene hijos ni se re-renderiza—. */
             const k = Math.min(total, Math.floor(s.progress * total) + 1);
-            if (contador.current)
-              contador.current.textContent = String(k).padStart(2, "0");
+            /* Sólo si cambia: reescribir el mismo texto en cada fotograma
+               cambia el nodo igual y obliga a volver a maquetarlo. */
+            const texto = String(k).padStart(2, "0");
+            if (contador.current && contador.current.textContent !== texto)
+              contador.current.textContent = texto;
           },
         },
       });
@@ -203,7 +206,13 @@ export function CarrilTarjetas({
         nodo.style.removeProperty("--alto-tarjeta");
       };
     },
-    { scope: raiz, dependencies: [items] },
+    /*
+     * revertOnUpdate: SIN ÉL, CADA CAMBIO DE `items` SUMA, NO SUSTITUYE. Con
+     * dependencias, useGSAP sólo revierte al desmontar (@gsap/react 2.1): cada
+     * nueva pasada dejaba vivas la anterior —tweens, ScrollTriggers y su oyente
+     * de resize—. Quien lo usa debe pasar `items` estable; esto es la red.
+     */
+    { scope: raiz, dependencies: [items], revertOnUpdate: true },
   );
 
   const total = String(items.length).padStart(2, "0");

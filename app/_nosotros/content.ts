@@ -75,22 +75,39 @@ export const ORIGEN = {
   ],
 
   /**
-   * La fachada de uno de los cines, en blanco y negro (1363x784).
+   * LAS FOTOS DE LA HISTORIA, en carrusel desde octubre de 2026: con más de una,
+   * la caja de la foto es <CarruselFotos>; con una sola, la foto de siempre.
    *
-   * La caja es 4/5 y la foto horizontal, así que `cover` se queda con el 46 %
-   * central del ancho: de x 368 a 995 sobre 1363. El letrero "CINEMAS" va de 450
-   * a 925 y cabe entero, con margen a los dos lados, que es lo que hace falta
-   * para que la foto diga de qué habla el texto. Si se cambia el archivo, hay
-   * que volver a mirar que el letrero quede dentro.
+   * `ratio` es ancho / alto del archivo: con él se calcula el `sizes` de cada
+   * una (ver Origen.tsx), porque `cover` las pinta más anchas que la caja.
    *
-   * ⚠ Con 1363 px de ancho, en una pantalla retina la caja pide unos 2 500: se
-   * verá algo blanda. Un archivo de ~2 600 px de ancho lo resuelve.
+   * 1 · La fachada de uno de los cines, en blanco y negro (1363x784). La caja
+   *     es cuadrada en dos columnas y la foto horizontal, así que `cover` se
+   *     queda con el centro: el letrero "CINEMAS" va de x 450 a 925 sobre 1363
+   *     y cabe entero. Si se cambia el archivo, hay que volver a mirar que el
+   *     letrero quede dentro.
+   *
+   *     ⚠ Con 1363 px de ancho, en una pantalla retina la caja pide unos
+   *     2 500: se verá algo blanda. Un archivo de ~2 600 px de ancho lo
+   *     resuelve.
+   *
+   * 2 · Una obra de Altea vista desde el aire, también en blanco y negro
+   *     (1449x1085). ⚠ PENDIENTE: qué desarrollo es, para afinar el `alt`.
    */
-  foto: {
-    label: "Foto del origen de Altea",
-    alt: "Los primeros cines de Altea, donde empezó el grupo",
-    src: "/images/nosotros/imagen-nosotros-altea.webp" as string | undefined,
-  },
+  fotos: [
+    {
+      src: "/images/nosotros/imagen-nosotros-altea.webp",
+      alt: "Los primeros cines de Altea, donde empezó el grupo",
+      ratio: 1.7385,
+    },
+    {
+      src: "/images/nosotros/imagen-nosotros-altea-2.webp",
+      alt: "Vista aérea de un desarrollo de Altea en construcción",
+      ratio: 1.3355,
+    },
+  ] as { src: string; alt: string; ratio: number }[],
+  /** El hueco etiquetado de <MediaSlot>, si un día no hubiera foto. */
+  etiquetaFoto: "Foto del origen de Altea",
 };
 
 /* ─── 3 · Pilares de identidad ─────────────────────────────────────────── */

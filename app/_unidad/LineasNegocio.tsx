@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ListaAtributos } from "./Atributos";
-import { CarruselFotos } from "./CarruselFotos";
+import { CarruselFotos } from "@/app/ui";
 import type { ContenidoUnidad, FotoLinea, LineaNegocio } from "./tipos";
 
 /**
@@ -108,6 +108,7 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
         </div>
         {linea.fotos.length > 1 ? (
           <CarruselFotos
+            className="uni-ln__foto"
             fotos={linea.fotos}
             sizes={linea.fotos.map(sizesDe)}
             etiqueta={`Fotos de ${linea.titulo}`}

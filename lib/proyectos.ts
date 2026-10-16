@@ -73,13 +73,13 @@ export const PROYECTOS: Proyecto[] = [
     descripcion: "Centro comercial de barrio.",
   },
   {
-    /* Confirmado por el copy de /comercial, que lo describe como Street Mall en
+    /* Confirmado por el copy de /comercial, que lo describe como Strip Mall en
        Distrito Tec. Estuvo fuera esperando esa confirmación. */
     id: "paseo-tec",
     nombre: "Paseo Tec",
     estado: "MX-NLE",
     ciudad: "Monterrey",
-    descripcion: "Centro comercial · Street Mall en Distrito Tec.",
+    descripcion: "Centro comercial · Strip Mall en Distrito Tec.",
   },
   {
     id: "paseo-durango",

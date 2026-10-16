@@ -40,19 +40,16 @@ export const VIVIENDA: ContenidoUnidad = {
     descripcion: TARJETA.descripcion,
     segundos: 4.2,
     /*
-     * Las cinco de la galería, 1980 px de ancho.
+     * SÓLO AMARANTHA (octubre de 2026): la foto de su carpeta y la 1 y la 2 de
+     * la galería. Las otras tres de la galería —la 4 es el pórtico de Reserva
+     * Mezquital— siguen en el repositorio sin usarse aquí.
      *
-     * ⚠ galeria-vivienda-altea-1 es el pórtico de Amarantha y la 4 el de Reserva
-     * Mezquital: las mismas tomas que sus fotos de proyecto, con otro encuadre.
-     *
-     * ⚠ PENDIENTE: el `ancla` de las cinco es el valor por defecto, sin medir.
+     * ⚠ PENDIENTE: el `ancla` de las tres es el valor por defecto, sin medir.
      */
     fotos: [
+      { foto: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp", ratio: 1.5004, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
       { foto: `${GALERIA}/galeria-vivienda-altea-1.webp`, ratio: 1.5011, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
       { foto: `${GALERIA}/galeria-vivienda-altea-2.webp`, ratio: 1.5023, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
-      { foto: `${GALERIA}/galeria-vivienda-altea-3.webp`, ratio: 1.5023, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
-      { foto: `${GALERIA}/galeria-vivienda-altea-4.webp`, ratio: 1.5, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
-      { foto: `${GALERIA}/galeria-vivienda-altea-5.webp`, ratio: 1.5, ancla: ANCLA_POR_DEFECTO /* PENDIENTE */ },
     ],
     /*
      * El color de Vivienda, de Altea: --unidad-vivienda en app/ui/tokens.css, el mismo de
@@ -144,16 +141,29 @@ export const VIVIENDA: ContenidoUnidad = {
    * El cierre con la foto que se sale del panel, como las otras tres. Para
    * volver al cierre de siempre, borra este campo.
    *
-   * La foto es una copia recortada de cta/vivienda-cta.webp: el original trae
-   * 318 px transparentes arriba. El recorte es al borde del pórtico y nada más;
-   * WebP sin pérdida.
+   * La foto es una copia recortada de cta/vivienda-cta.webp (el pórtico,
+   * octubre de 2026; las anteriores quedaron como vivienda-cta-viejo, -viejo-2
+   * a -viejo-7): el original trae 480 px transparentes arriba, y es lo único
+   * que se le quita. A lo ancho va ENTERA, a petición de Altea.
+   *
+   * POR ESO LLEVA SU TOPE. Es muy apaisada (1.8:1) y por la izquierda le llegan
+   * la punta del techo y el muro de piedra: con el tope de siempre se metía bajo
+   * el título y los botones entre 1205 y 1680 px. calc(34vw - 135px) es el alto
+   * máximo que no los toca, medido con el alfa contra las cajas del texto (con
+   * 6 px de aire). El precio: hasta ~1400 px no se sale del panel; sale ~15 px
+   * a 1440, ~65 a 1600 y los 102 de siempre desde ~1700. Bajo 1181 px no aplica
+   * (ver .uni-cta__foto en unidad.css).
+   *
+   * ⚠ CADA FOTO NUEVA, UN NOMBRE NUEVO. El optimizador de imágenes de Next y el
+   * navegador guardan por URL: con el mismo nombre seguían sirviendo la vieja.
    */
   cierre: {
     color: colorDeUnidad("Vivienda"),
     foto: {
-      src: "/images/vivienda/cta/vivienda-cta-recorte.webp",
+      src: "/images/vivienda/cta/vivienda-cta-portico-5-recorte.webp",
       ancho: 1080,
-      alto: 762,
+      alto: 600,
+      tope: "calc(34vw - 135px)",
     },
   },
   proximos: {

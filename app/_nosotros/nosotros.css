@@ -318,6 +318,20 @@
      renglones con la columna medio vacía. Igual que en las otras listas. */
   text-wrap: balance;
 }
+/*
+ * CENTRADOS, COMO LOS ATRIBUTOS DE INDUSTRIAL (octubre de 2026): cada icono con
+ * su nombre al centro de su columna, y las tres columnas más juntas hacia el
+ * centro de la página —1040 px como mucho— en vez de abrirse de margen a
+ * margen. El título de la sección se queda donde estaba, en el margen.
+ */
+.nos-pilares__grid {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+.nos-pilar {
+  justify-items: center;
+  text-align: center;
+}
 /* En el teléfono, un pilar por fila con el icono al lado del nombre. Tres
    columnas de 107 px dejaban los iconos diminutos y los nombres pegados entre
    sí y al borde. */
@@ -329,6 +343,8 @@
   .nos-pilar {
     grid-template-columns: auto minmax(0, 1fr);
     align-items: center;
+    justify-items: start;
+    text-align: left;
     column-gap: var(--space-5);
     padding-block: var(--space-5);
   }

@@ -77,7 +77,9 @@ export function ProximosProyectos({
         items={lista.map((p) => ({
           id: p.slug,
           nombre: p.name,
-          pie: p.unit,
+          /* La ubicación, como las tarjetas de los proyectos de la unidad; la
+             unidad sólo si un próximo todavía no la tiene. */
+          pie: p.location ?? p.unit,
           foto: p.image,
         }))}
         onAbrir={(k, boton) => {
@@ -107,7 +109,9 @@ export function ProximosProyectos({
           items={lista.map((p) => ({
             id: p.slug,
             nombre: p.name,
-            pie: p.unit,
+            /* La ubicación, como las tarjetas de los proyectos de la unidad; la
+             unidad sólo si un próximo todavía no la tiene. */
+            pie: p.location ?? p.unit,
             foto: p.image,
           }))}
           onAbrir={(k, boton) => {
@@ -172,7 +176,7 @@ export function ProximosProyectos({
                 <span className="uni-px__velo" aria-hidden="true" />
                 <span className="uni-px__t">
                   <b>{proyecto.name}</b>
-                  <span>{proyecto.unit}</span>
+                  <span>{proyecto.location ?? proyecto.unit}</span>
                 </span>
               </button>
             </li>

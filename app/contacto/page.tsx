@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Footer, LeadForm, NavBar, SectionHeading } from "@/app/ui";
+import { CampoBanderola } from "@/app/ui/CampoBanderola";
 import { CANALES, enlaceWhatsApp, unidadDesdeSlug } from "@/lib/contacto";
+import "./contacto.css";
 
 export const metadata: Metadata = {
   title: "Contacto — Altea",
@@ -37,13 +39,16 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
     <>
       <NavBar tone="light" />
       <main>
-        <section className="bg-ink px-(--container-pad) py-(--space-9)">
+        <section className="cto-hero bg-ink px-(--container-pad) py-(--space-9)">
           <SectionHeading
             as="h1"
             tone="light"
             title="Hablemos de tu proyecto"
             description="Ya sea comercial, industrial, de vivienda o forestal, cuéntanos qué necesitas y te contactamos a la brevedad."
           />
+          {/* El terreno de puntos de los cierres, de fondo y sin banderola, con
+              su onda coral. */}
+          <CampoBanderola className="cto-hero__campo" banderola={false} />
         </section>
 
         <section className="grid items-start gap-8 bg-surface-page px-(--container-pad) py-(--space-9) lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">

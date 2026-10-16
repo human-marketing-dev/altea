@@ -87,15 +87,42 @@ export const FORESTAL: ContenidoUnidad = {
     {
       id: "viveros-asturias",
       titulo: "Viveros Asturias",
+      /* El logotipo va en lugar del título. 471x316, recortado de
+         logo-viveros-asturias-altea.webp. */
+      logo: {
+        src: "/images/forestal/viveros-asturias/logo-viveros-asturias-altea-recorte.webp",
+        alt: "Viveros Asturias",
+        ancho: 471,
+        alto: 316,
+      },
       parrafos: [
         "Contamos con experiencia desde 2002 en la producción y manejo de especies forestales para arbolado urbano y proyectos empresariales y gubernamentales. Ofrecemos soluciones integrales que abarcan la producción, suministro y mantenimiento de arbolado, así como servicios de jardinería y conservación de espacios verdes, aplicando técnicas especializadas para favorecer su desarrollo y preservación.",
       ],
-      foto: {
-        src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-1.webp",
-        alt: "Árboles en contenedor en Viveros Asturias",
-        /* 1280x963 */
-        ratio: 1.3292,
-      },
+      /*
+       * Las tres de la carpeta, en carrusel. ⚠ La 2 y la 3 son 1980x915 —más
+       * apaisadas que la caja— y se recortan mucho por los lados, sobre todo
+       * en escritorio, donde la caja es casi cuadrada.
+       */
+      fotos: [
+        {
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-1.webp",
+          alt: "Árboles en contenedor en Viveros Asturias",
+          /* 1280x963 */
+          ratio: 1.3292,
+        },
+        {
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-2.webp",
+          alt: "Plántulas en bolsas de vivero, vistas desde arriba, en Viveros Asturias",
+          /* 1980x915 */
+          ratio: 2.1639,
+        },
+        {
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-3.webp",
+          alt: "Plantas de tuya en maceta en Viveros Asturias",
+          /* 1980x915 */
+          ratio: 2.1639,
+        },
+      ],
       lado: "derecha",
       lista: {
         rotulo: "Servicios",
@@ -110,16 +137,26 @@ export const FORESTAL: ContenidoUnidad = {
       id: "teca",
       rotulo: "Plantación forestal comercial",
       titulo: "Teca",
+      /* El logotipo va en lugar del título. 630x376, recortado de
+         logo-teca-altea.webp. ⚠ El logo dice «Teca San Miguel», no sólo «Teca». */
+      logo: {
+        src: "/images/forestal/teca/logo-teca-altea-recorte.webp",
+        alt: "Teca San Miguel",
+        ancho: 630,
+        alto: 376,
+      },
       parrafos: [
         "Proyecto forestal enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.",
         "Integramos prácticas de manejo forestal y nuevas tecnologías para impulsar una producción de madera rentable y responsable, al mismo tiempo que contribuimos a la conservación de especies de fauna endémica y al desarrollo de una cultura forestal sostenible en la región.",
       ],
-      foto: {
-        src: "/images/forestal/teca/teca-forestal-altea.webp",
-        alt: "Plantación de teca de Altea en la Península de Yucatán",
-        /* 1980x1485 */
-        ratio: 1.3333,
-      },
+      fotos: [
+        {
+          src: "/images/forestal/teca/teca-forestal-altea.webp",
+          alt: "Plantación de teca de Altea en la Península de Yucatán",
+          /* 1980x1485 */
+          ratio: 1.3333,
+        },
+      ],
       lado: "izquierda",
       lista: {
         rotulo: "Aplicaciones",

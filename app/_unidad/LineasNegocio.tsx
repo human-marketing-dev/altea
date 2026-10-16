@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ListaAtributos } from "./Atributos";
-import type { ContenidoUnidad, LineaNegocio } from "./tipos";
+import { CarruselFotos } from "./CarruselFotos";
+import type { ContenidoUnidad, FotoLinea, LineaNegocio } from "./tipos";
 
 /**
  * Las líneas de negocio de una unidad, una sección cada una: texto y foto a dos
@@ -40,9 +41,12 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
    * contra eso. En una columna es 4/3 y ~90vw. Sin esto Next sirve una versión
    * chica y la estira, que es lo que pixeló la foto de /nosotros.
    */
-  const enDos = Math.max(1, linea.foto.ratio / 0.4);
-  const enUna = Math.max(1, linea.foto.ratio / (4 / 3));
-  const sizes = `(max-width: 900px) ${Math.round(90 * enUna)}vw, ${Math.round(41 * enDos)}vw`;
+  const sizesDe = (foto: FotoLinea) => {
+    const enDos = Math.max(1, foto.ratio / 0.4);
+    const enUna = Math.max(1, foto.ratio / (4 / 3));
+    return `(max-width: 900px) ${Math.round(90 * enUna)}vw, ${Math.round(41 * enDos)}vw`;
+  };
+  const [primera] = linea.fotos;
 
   return (
     <section
@@ -54,8 +58,29 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
       <div className="uni-ln__grid">
         <div className="uni-ln__txt">
           {linea.rotulo && <p className="uni-ln__rotulo">{linea.rotulo}</p>}
-          <h2 className="uni-ln__titulo" id={tituloId}>
-            {linea.titulo}
+          {/* Con logotipo, el logo ES el título: va dentro del h2 y su `alt` es
+              el nombre que se lee —y el que nombra la sección—. */}
+          <h2
+            className={
+              linea.logo
+                ? "uni-ln__titulo uni-ln__titulo--logo"
+                : "uni-ln__titulo"
+            }
+            id={tituloId}
+          >
+            {linea.logo ? (
+              <Image
+                src={linea.logo.src}
+                alt={linea.logo.alt}
+                width={linea.logo.ancho}
+                height={linea.logo.alto}
+                sizes="280px"
+                quality={90}
+                className="uni-ln__logo"
+              />
+            ) : (
+              linea.titulo
+            )}
           </h2>
           {linea.parrafos.map((parrafo) => (
             <p className="uni-ln__p" key={parrafo.slice(0, 24)}>
@@ -81,17 +106,24 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
             />
           </div>
         </div>
-        <div className="uni-ln__foto">
-          <Image
-            src={linea.foto.src}
-            alt={linea.foto.alt}
-            fill
-            sizes={sizes}
-            className="uni-ln__img"
+        {linea.fotos.length > 1 ? (
+          <CarruselFotos
+            fotos={linea.fotos}
+            sizes={linea.fotos.map(sizesDe)}
+            etiqueta={`Fotos de ${linea.titulo}`}
           />
-        </div>
+        ) : (
+          <div className="uni-ln__foto">
+            <Image
+              src={primera.src}
+              alt={primera.alt}
+              fill
+              sizes={sizesDe(primera)}
+              className="uni-ln__img"
+            />
+          </div>
+        )}
       </div>
-
     </section>
   );
 }

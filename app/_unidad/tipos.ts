@@ -76,18 +76,31 @@ export interface LineaNegocio {
   /** Rótulo pequeño sobre el título. Opcional. */
   rotulo?: string;
   titulo: string;
+  /**
+   * El logotipo de la línea, si lo tiene: va en lugar del título, dentro del
+   * mismo h2, con `alt` igual a lo que dice el logo. `titulo` se sigue usando
+   * para lo demás (el nombre del carrusel de fotos, por ejemplo).
+   */
+  logo?: { src: string; alt: string; ancho: number; alto: number };
   /** Uno o más párrafos. */
   parrafos: string[];
-  foto: {
-    src: string;
-    alt: string;
-    /** Ancho/alto del archivo, medido: de él sale el `sizes` de la foto. */
-    ratio: number;
-  };
+  /**
+   * Una foto o varias. Con más de una, la caja es un carrusel (<CarruselFotos>):
+   * Viveros Asturias lleva tres.
+   */
+  fotos: [FotoLinea, ...FotoLinea[]];
   /** De qué lado va la foto. Alternarlo entre líneas da el ritmo. */
   lado: "izquierda" | "derecha";
   /** La lista bajo el bloque: "Servicios", "Aplicaciones"… */
   lista: { rotulo: string; items: Atributo[] };
+}
+
+/** Una foto de una línea de negocio. */
+export interface FotoLinea {
+  src: string;
+  alt: string;
+  /** Ancho/alto del archivo, medido: de él sale el `sizes` de la foto. */
+  ratio: number;
 }
 
 /** Un proyecto en desarrollo: tarjeta en "Próximos proyectos" y su ficha. */
@@ -172,7 +185,17 @@ export interface CierreConFoto {
    * Un PNG recortado con alfa, con el edificio tocando el borde de arriba y la
    * base al ras del de abajo: la altura de la foto es lo que lo saca del panel.
    */
-  foto: { src: string; ancho: number; alto: number };
+  foto: {
+    src: string;
+    ancho: number;
+    alto: number;
+    /**
+     * El tope de alto de la foto, si ESTA foto necesita uno distinto del de
+     * siempre (calc(42.8vw - 166px), ver .uni-cta__foto). Lo pide una foto con
+     * el lado izquierdo alto, que se acerca a los botones antes que las demás.
+     */
+    tope?: string;
+  };
 }
 
 export interface Cifra {

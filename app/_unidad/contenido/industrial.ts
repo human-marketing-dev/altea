@@ -136,9 +136,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
           "Parque industrial estratégicamente ubicado en la entrada de la planta Mazda, con acceso directo a la carretera libre (45) Salamanca-Irapuato y lateral a la carretera de cuota a León. Su conectividad facilita las operaciones industriales, logísticas y el acceso a los principales corredores productivos de la región.",
         datos: [
           PARQUE,
-          { etiqueta: "Nave en renta", valor: "7,568 m²" },
-          { etiqueta: "Terreno en venta", valor: "21,946 m²" },
-          OPCION,
+          { etiqueta: "Área total", valor: "107,374 m²" },
         ],
       },
       {
@@ -154,10 +152,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
           "Parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Diseñado para logística y manufactura ligera, ofrece espacios flexibles que facilitan la operación de empresas que requieren una ubicación accesible y conexión con importantes vías de transporte.",
         datos: [
           PARQUE,
-          /* "(en sociedad con GP Desarrollos)", que en el copy va junto al nombre. */
-          { etiqueta: "En sociedad con", valor: "GP Desarrollos" },
-          { etiqueta: "4 Naves en renta", valor: "13,285 m²" },
-          { etiqueta: "Área Rentable Total", valor: "53,140 m²" },
+          { etiqueta: "Área total", valor: "53,140 m²" },
         ],
       },
       {
@@ -173,8 +168,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
           "Parque industrial ubicado sobre Av. Miguel Alemán, en Apodaca, Nuevo León. Cuenta con naves PYME y espacios modulares diseñados para adaptarse a las necesidades de proveedores de la cadena de suministro y empresas de distribución regional, con acceso a uno de los principales corredores industriales de la zona.",
         datos: [
           PARQUE,
-          { etiqueta: "Bodegas en renta", valor: "De 901 m² a 1,800 m²" },
-          { etiqueta: "Área Rentable Total", valor: "6,538 m²" },
+          { etiqueta: "Área total", valor: "6,538 m²" },
         ],
       },
       {
@@ -190,9 +184,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
           "Parque industrial ubicado sobre Av. Miguel Alemán, en Apodaca, Nuevo León. Su conexión directa con la carretera facilita el acceso al Aeropuerto Internacional de Monterrey y a las principales vías de la zona metropolitana, favoreciendo la operación y movilidad de empresas industriales y logísticas.",
         datos: [
           PARQUE,
-          { etiqueta: "Área Rentable Total", valor: "18,410 m²" },
-          { etiqueta: "Área Disponible", valor: "6,344 m²" },
-          OPCION,
+          { etiqueta: "Área total", valor: "18,410 m²" },
         ],
       },
       {
@@ -208,9 +200,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
           "Parque industrial ubicado sobre Av. López Mateos, en San Nicolás de los Garza, Nuevo León. Su conexión directa con esta importante arteria facilita la integración logística con el área metropolitana de Monterrey y brinda acceso a una amplia base de mano de obra local, favoreciendo la operación y crecimiento de las empresas.",
         datos: [
           PARQUE,
-          { etiqueta: "Área Rentable Total", valor: "20,825 m²" },
-          { etiqueta: "Área Disponible", valor: "5,825 m²" },
-          OPCION,
+          { etiqueta: "Área total", valor: "20,825 m²" },
         ],
       },
     ],

@@ -1,0 +1,33 @@
+/*
+ * EL HERO DE /contacto (octubre de 2026): el encabezado de siempre sobre un
+ * fondo de puntos —el terreno de los cierres, <CampoBanderola> sin la
+ * banderola—, que ocupa la sección entera, por detrás del texto.
+ */
+.cto-hero {
+  position: relative;
+  overflow: hidden;
+}
+.cto-hero > .altea-section-heading {
+  position: relative;
+  z-index: 1;
+}
+/*
+ * EL TEXTO EN EL BLANCO DEL FONDO DE PÁGINA, no en el crema del encabezado
+ * claro: sobre la tinta, el crema se leía beige. La descripción al 80 % para
+ * que no compita con el título. Sólo aquí: las páginas legales usan el mismo
+ * encabezado y se quedan como estaban.
+ */
+.cto-hero .altea-section-heading__title {
+  color: var(--surface-page);
+}
+.cto-hero .altea-section-heading__description {
+  color: color-mix(in srgb, var(--surface-page) 80%, transparent);
+}
+.cto-hero__campo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}

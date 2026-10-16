@@ -203,7 +203,7 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
   },
   {
     valor: 34,
-    etiqueta: "inmuebles comerciales",
+    etiqueta: "centros comerciales",
   },
   {
     valor: 94,
@@ -295,7 +295,7 @@ export const DESCRIPCION_COMERCIAL = {
  * Las ocho plazas, con el copy confirmado por Altea.
  *
  * Los dos pares del <dl> salen del propio texto: el FORMATO —Fashion Mall,
- * Street Mall o Power Center, que el copy declara en la primera frase de cada
+ * Strip Mall o Power Center, que el copy declara en la primera frase de cada
  * una— y los VISITANTES, que sólo da para Paseo La Fe y Paseo Juárez. Donde no
  * hay cifra va un guion, no un número inventado.
  *
@@ -335,9 +335,9 @@ export const PLAZAS: Plaza[] = [
     alt: "",
     label: "Paseo Tec",
     descripcion:
-      "Street Mall ubicado sobre Av. Eugenio Garza Sada, en Distrito Tec, al sur de Monterrey, Nuevo León y a pocos minutos del centro de la ciudad. Su propuesta integra comercio, gastronomía, entretenimiento y servicios para diferentes necesidades. El desarrollo también cuenta con el hotel Fiesta Inn y el salón de eventos GRAND 2411, consolidándose como un punto de encuentro que complementa la vida urbana de la zona Tec.",
+      "Strip Mall ubicado sobre Av. Eugenio Garza Sada, en Distrito Tec, al sur de Monterrey, Nuevo León y a pocos minutos del centro de la ciudad. Su propuesta integra comercio, gastronomía, entretenimiento y servicios para diferentes necesidades. El desarrollo también cuenta con el hotel Fiesta Inn y el salón de eventos GRAND 2411, consolidándose como un punto de encuentro que complementa la vida urbana de la zona Tec.",
     datos: [
-      { etiqueta: "Formato", valor: "Street Mall" },
+      { etiqueta: "Formato", valor: "Strip Mall" },
       { etiqueta: "Visitantes", valor: "+300 mil al mes" },
     ],
   },
@@ -451,17 +451,18 @@ export const PLAZAS: Plaza[] = [
   },
   /*
    * Seis Power Centers más, con el copy de Altea (octubre de 2026). La
-   * Pastora estaba en "Próximos proyectos" y pasa aquí, ya en operación, con
-   * la foto que tenía allí. Las otras cinco llegaron después a
+   * Pastora estaba en "Próximos proyectos" y pasa aquí, ya en operación; su
+   * foto de plaza llegó después (la de próximos, que usaba antes, se quedó en
+   * proximos-proyectos/ sin uso). Las otras cinco, también en
    * centros-comerciales/.
    */
   {
     id: "punto-la-pastora",
     nombre: "Punto La Pastora",
     ubicacion: "Guadalupe, Nuevo León",
-    foto: `/images/comercial/proximos-proyectos/punto-la-pastora-altea-proximo.webp`,
-    /* 1980x1114 */
-    fotoRatio: 1.7774,
+    foto: `${CENTROS}/punto-la-pastora-altea.webp`,
+    /* 2000x1127 */
+    fotoRatio: 1.7746,
     /* PENDIENTE: el `ancla` sin medir; entra en el hero con el valor por
        defecto. */
     alt: "",
@@ -997,7 +998,7 @@ export const PROXIMOS_PROYECTOS = {
     {
       slug: "paseo-la-fe-ampliacion",
       name: "Paseo La Fe · Ampliación",
-      unit: "Ampliación",
+      unit: "Ampliación comercial",
       location: "San Nicolás, Nuevo León",
       image: `${PROXIMOS}/paseo-la-fe-altea-proximo.webp`,
       descripcion:
@@ -1007,7 +1008,7 @@ export const PROXIMOS_PROYECTOS = {
       slug: "punto-lopez-mateos",
       name: "Punto López Mateos",
       unit: "Comercial",
-      location: "Zapopan, Jalisco",
+      location: "Guadalupe, Nuevo León",
       image: `${PROXIMOS}/punto-lopez-mateos-altea-proximo.webp`,
       descripcion:
         "La ampliación comercial de Punto López Mateos surge como una intervención destinada a fortalecer y ampliar la oferta comercial del conjunto, donde actualmente se encuentra BBVA, así como la incorporación de nuevos establecimientos como Firehouse y Dreambox. El proyecto busca revitalizar el conjunto y amplificar la diversidad de usos disponibles para los visitantes, dentro de una propuesta arquitectónica renovada y funcional.",

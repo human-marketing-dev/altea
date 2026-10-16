@@ -85,6 +85,9 @@ export function CierreUnidad({
         ["--cta-color" as string]: cierre.color,
         /* Para reservar en móvil el hueco exacto de la foto: ver unidad.css. */
         ["--cta-proporcion" as string]: cierre.foto.ancho / cierre.foto.alto,
+        ...(cierre.foto.tope
+          ? { ["--cta-tope" as string]: cierre.foto.tope }
+          : {}),
       }}
     >
       <div className="uni-cta__panel">

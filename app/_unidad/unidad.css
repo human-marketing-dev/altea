@@ -991,6 +991,22 @@
   font-weight: var(--peso-titulo-seccion);
 }
 /*
+ * EL LOGOTIPO EN LUGAR DEL TÍTULO (Viveros Asturias, Teca San Miguel, octubre
+ * de 2026). Se mide por el ALTO, no por el ancho: los dos logos tienen
+ * proporciones distintas (1.49 y 1.68) y así se leen del mismo tamaño, con el
+ * icono y el nombre a la misma escala. Archivos recortados a su contenido, sin
+ * margen transparente.
+ */
+.uni-ln__titulo--logo {
+  max-width: none;
+  line-height: 0;
+}
+.uni-ln__logo {
+  display: block;
+  width: auto;
+  height: clamp(92px, 9vw, 140px);
+}
+/*
  * 44ch y no más: en Gotham 1ch es el ancho del «0» (0.724 em) y el carácter
  * medio de estos textos mide 0.518 em, así que 44ch son unos 61 caracteres por
  * línea, la medida de lectura. Ver la nota de .nos-origen__cols p.
@@ -1022,6 +1038,118 @@
 }
 .uni-ln__img {
   object-fit: cover;
+}
+
+/*
+ * EL CARRUSEL DE FOTOS de una línea (Viveros Asturias): la misma caja
+ * .uni-ln__foto, con una pista de scroll nativo dentro. Ver CarruselFotos.tsx.
+ */
+.uni-cf__pista {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.uni-cf__pista::-webkit-scrollbar {
+  display: none;
+}
+.uni-cf__foto {
+  position: relative;
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+/* Las flechas: en escritorio aparecen al pasar por la foto o al llegar con el
+   teclado; donde no hay cursor, se quedan a la vista. */
+.uni-cf__bt {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface-page) 88%, transparent);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    background var(--duration-base) var(--ease-standard);
+}
+.uni-cf__bt--ant {
+  left: var(--space-3);
+}
+.uni-cf__bt--sig {
+  right: var(--space-3);
+}
+.uni-cf:hover .uni-cf__bt,
+.uni-cf:focus-within .uni-cf__bt {
+  opacity: 1;
+}
+.uni-cf__bt:hover {
+  background: var(--surface-page);
+}
+@media (hover: none) {
+  .uni-cf__bt {
+    opacity: 1;
+  }
+}
+/* Los puntos: botones de 24 px para el dedo, con el punto dibujado dentro. El
+   de la foto actual se alarga. */
+.uni-cf__puntos {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: var(--space-3);
+  display: flex;
+  gap: 2px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: rgb(16 19 22 / 0.32);
+  transform: translateX(-50%);
+}
+.uni-cf__punto {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.uni-cf__punto::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.6);
+  transition:
+    width var(--duration-base) var(--ease-standard),
+    background var(--duration-base) var(--ease-standard);
+}
+.uni-cf__punto[aria-current="true"]::before {
+  width: 16px;
+  background: #fff;
+}
+.uni-cf__bt:focus-visible,
+.uni-cf__punto:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .uni-cf__bt,
+  .uni-cf__punto::before {
+    transition: none;
+  }
 }
 /* La lista, separada del bloque por más aire que el de sus columnas: es otra
    cosa, no la continuación del texto. */
@@ -1574,10 +1702,15 @@
   letter-spacing: var(--ls-titulo-ficha);
   font-weight: var(--peso-titulo-ficha);
 }
+/* La ubicación, en versalitas como en las tarjetas del carrusel
+   (.altea-tj__txt span): las de próximos en móvil ya son ésas, y así las de
+   escritorio dicen lo mismo de la misma forma. */
 .uni-px__t span {
   display: block;
   margin-top: 6px;
   font-size: var(--text-eyebrow);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
   color: rgb(255 255 255 / 0.72);
 }
 
@@ -1783,10 +1916,23 @@
    */
   height: min(
     calc(var(--desborde) + var(--alto-panel)),
-    calc(42.8vw - 166px)
+    var(--cta-tope, calc(42.8vw - 166px))
   );
   border-bottom-right-radius: var(--radio-cta);
   pointer-events: none;
+}
+/*
+ * EL TOPE DE CADA FOTO (`tope` en su contenido) VALE DESDE 1181 PX. Más angosto,
+ * el titular va en tres líneas y los botones apilados: el panel es más alto,
+ * la foto no se sale y el tope de siempre ya la deja lejos del texto. Hacia
+ * 1205 el panel baja de golpe, al acomodarse el texto, y eso no hay min() que
+ * lo siga. Se declara en la foto y no en la sección para ganarle al --cta-tope
+ * que la sección le hereda; las fotos sin `tope` no cambian.
+ */
+@media (max-width: 1180px) {
+  .uni-cta__foto {
+    --cta-tope: calc(42.8vw - 166px);
+  }
 }
 /*
  * MÓVIL: una columna, el texto arriba y el edificio abajo a la derecha, SIN

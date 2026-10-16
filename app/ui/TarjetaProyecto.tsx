@@ -39,7 +39,7 @@ export interface TarjetaProyectoProps {
   /**
    * La chapa de arriba a la izquierda. Opcional: en el home no la lleva.
    *
-   * En plazas es el FORMATO —Fashion Mall, Street Mall, Power Center—, que es el
+   * En plazas es el FORMATO —Fashion Mall, Strip Mall, Power Center—, que es el
    * dato que la tarjeta no puede dar de otra forma.
    */
   etiqueta?: string;

@@ -1,5 +1,14 @@
 "use server";
 
+import { headers } from "next/headers";
+import {
+  esRepetido,
+  gastarFicha,
+  limpiarTexto,
+  revisarContenido,
+  revisarFicha,
+  revisarLimite,
+} from "@/lib/antispam";
 import { enviarCorreo, faltantesBrevo } from "@/lib/brevo";
 import { CANALES, UNIDADES } from "@/lib/contacto";
 import type { EstadoLead } from "./estado-lead";
@@ -14,6 +23,11 @@ import type { EstadoLead } from "./estado-lead";
  * ⚠ UN SOLO DESTINO PARA LAS CUATRO UNIDADES. El brief habla de repartir —CRM
  * para Vivienda, ventas para Comercial, contacto industrial para Industrial—;
  * cuando existan esos destinos, se elige aquí por `unidad`.
+ *
+ * ANTISPAM: trampa oculta, ficha firmada con hora, límites por IP y global,
+ * repetidos y contenido. Todo en lib/antispam.ts, con sus límites y su letra
+ * pequeña (la memoria es del proceso). A un bot detectado se le responde
+ * «enviado» sin enviar nada, para no enseñarle qué lo delató.
  *
  * Si Brevo falla, el usuario NO ve «gracias»: ve el error con el correo y el
  * WhatsApp para que no se pierda el contacto. Decirle que lo contactarán cuando
@@ -50,13 +64,19 @@ export async function enviarLead(
     return { estado: "enviado" };
   }
 
+  // La ficha firmada que puso la página: sin ella, o demasiado rápida, es bot.
+  const ficha = String(datos.get("ficha") ?? "");
+  const deFicha = revisarFicha(ficha);
+  if (!deFicha.ok && deFicha.silencio) return { estado: "enviado" };
+
+  /* Sin caracteres de control ni de dirección: el nombre va en el asunto. */
   const texto = (clave: keyof typeof MAX | "unidad") =>
-    String(datos.get(clave) ?? "").trim();
+    limpiarTexto(String(datos.get(clave) ?? "")).trim();
   const nombre = texto("nombre");
   const correo = texto("correo");
   const telefono = texto("telefono");
   const unidadCruda = texto("unidad");
-  const mensaje = texto("mensaje");
+  const mensaje = limpiarTexto(String(datos.get("mensaje") ?? ""), true).trim();
   /* Sólo una de las cuatro: el select se puede manipular desde el navegador. */
   const unidad = UNIDADES.find((u) => u === unidadCruda);
 
@@ -76,6 +96,34 @@ export async function enviarLead(
   if (Object.keys(errores).length > 0) {
     return { estado: "error", errores, valores };
   }
+
+  /* Los avisos que sí se le muestran a una persona: página vieja, demasiados
+     enlaces, demasiados envíos seguidos. Lo que escribió se le devuelve. */
+  const aviso = (mensajeAviso: string): EstadoLead => ({
+    estado: "error",
+    errores: { envio: mensajeAviso },
+    valores,
+  });
+  if (!deFicha.ok) return aviso(deFicha.mensaje);
+
+  const deContenido = revisarContenido(mensaje);
+  if (!deContenido.ok)
+    return deContenido.silencio ? { estado: "enviado" } : aviso(deContenido.mensaje);
+
+  /* La IP la pone el proxy del hosting. Sin proxy delante, x-forwarded-for la
+     escribe el cliente y se puede falsear: por eso existe también el techo
+     global, que no depende de ella. */
+  const cabeceras = await headers();
+  const ip =
+    cabeceras.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    cabeceras.get("x-real-ip")?.trim() ||
+    "desconocida";
+  const deLimite = revisarLimite(ip);
+  if (!deLimite.ok)
+    return deLimite.silencio ? { estado: "enviado" } : aviso(deLimite.mensaje);
+
+  /* El mismo mensaje dos veces —doble clic, recarga— llega una sola vez. */
+  if (esRepetido(correo, mensaje)) return { estado: "enviado" };
 
   const destino = process.env.CONTACTO_DESTINO?.trim();
   const faltan = faltantesBrevo();
@@ -146,6 +194,7 @@ ${filas
     return errorDeEnvio(valores);
   }
 
+  gastarFicha(ficha);
   return { estado: "enviado" };
 }
 

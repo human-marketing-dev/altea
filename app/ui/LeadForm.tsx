@@ -18,6 +18,13 @@ export interface LeadFormProps {
    * @default "oscuro"
    */
   tono?: "oscuro" | "claro";
+  /**
+   * La ficha antispam firmada con la hora (lib/antispam.ts → emitirFicha). La
+   * emite la página en el servidor, en cada petición: SIN ELLA EL SERVIDOR
+   * DESCARTA EL ENVÍO como si fuera un bot. Por eso sólo puede ir en una página
+   * dinámica, como /contacto: en una estática quedaría congelada en el build.
+   */
+  ficha?: string;
   className?: string;
 }
 
@@ -28,6 +35,7 @@ export interface LeadFormProps {
 export function LeadForm({
   unidadPorDefecto,
   tono = "oscuro",
+  ficha = "",
   className,
 }: LeadFormProps) {
   const [estado, accion, pendiente] = useActionState<EstadoLead, FormData>(
@@ -166,6 +174,8 @@ export function LeadForm({
           </p>
         )}
       </div>
+
+      <input type="hidden" name="ficha" value={ficha} />
 
       {/* Trampa para bots. Fuera de pantalla, no anunciado, no tabulable. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">

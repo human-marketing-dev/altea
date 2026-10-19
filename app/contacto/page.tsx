@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Footer, LeadForm, NavBar, SectionHeading } from "@/app/ui";
 import { CampoBanderola } from "@/app/ui/CampoBanderola";
+import { emitirFicha } from "@/lib/antispam";
 import { CANALES, enlaceWhatsApp, unidadDesdeSlug } from "@/lib/contacto";
 import "./contacto.css";
 
@@ -87,7 +88,13 @@ export default async function Contacto({ searchParams }: PageProps<"/contacto">)
             </div>
           </div>
 
-          <LeadForm unidadPorDefecto={unidadPorDefecto} tono="claro" />
+          {/* La ficha antispam: una por petición, firmada con la hora. Ver
+              lib/antispam.ts. */}
+          <LeadForm
+            unidadPorDefecto={unidadPorDefecto}
+            tono="claro"
+            ficha={emitirFicha()}
+          />
         </section>
       </main>
       <Footer />

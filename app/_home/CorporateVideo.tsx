@@ -65,17 +65,52 @@ export function CorporateVideo() {
   const [conSonido, setConSonido] = useState(false);
 
   /*
-   * Con movimiento reducido el clip no se reproduce solo. `autoPlay` ya sale en
-   * false, pero el snapshot de servidor del hook es `false` para no depender del
-   * cliente al pintar: el HTML llega con el atributo puesto y el navegador puede
-   * haber arrancado antes de que hidrate. Esto lo devuelve al primer cuadro, que
-   * es la misma imagen del poster.
+   * ⚠ EL VIDEO SE PIDE CUANDO LA SECCIÓN SE ACERCA, NO CON EL HTML (octubre de
+   * 2026). Con `autoPlay` en el marcado el navegador ignoraba `preload` y
+   * empezaba a bajar los 14.5 MB al leer el HTML —el 94 % del peso del home—,
+   * compitiendo con el hero, que está tres pantallas antes. Ahora el <video>
+   * llega SIN `src` y con `preload="none"`, y esto le pone la fuente cuando
+   * falta un par de pantallas para que entre: a esa distancia el primer cuadro
+   * llega antes de que se vea, así que en pantalla no cambia nada.
+   *
+   * Con movimiento reducido se carga igual —el usuario puede darle a
+   * reproducir— pero no arranca solo.
    */
+  const cargado = useRef(false);
+  const cargar = useCallback(() => {
+    const nodo = video.current;
+    if (!nodo || cargado.current || !VIDEO.url) return;
+    cargado.current = true;
+    /* En teléfono, la de 720p: misma imagen a ese ancho, un tercio del peso.
+       Ver `urlMovil` en content.ts. */
+    const movil = window.matchMedia("(max-width: 600px)").matches;
+    nodo.src = (movil && VIDEO.urlMovil) || VIDEO.url;
+    nodo.preload = "auto";
+  }, []);
+
+  useEffect(() => {
+    const nodo = video.current;
+    if (!nodo) return;
+    const vista = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        cargar();
+        if (!reducido) nodo.play().catch(() => {});
+        vista.disconnect();
+      },
+      { rootMargin: "200% 0px" },
+    );
+    vista.observe(nodo);
+    return () => vista.disconnect();
+  }, [cargar, reducido]);
+
+  /* Con movimiento reducido no se reproduce solo, y si la preferencia cambia
+     con la página abierta, se detiene en el primer cuadro (el del póster). */
   useEffect(() => {
     const nodo = video.current;
     if (!nodo || !reducido) return;
     nodo.pause();
-    nodo.currentTime = 0;
+    if (cargado.current) nodo.currentTime = 0;
   }, [reducido]);
 
   /* El estado se lee del elemento, no se adivina: el navegador puede pausar por
@@ -102,9 +137,10 @@ export function CorporateVideo() {
   const alternarPausa = useCallback(() => {
     const nodo = video.current;
     if (!nodo) return;
-    if (nodo.paused) void nodo.play();
+    cargar();
+    if (nodo.paused) nodo.play().catch(() => {});
     else nodo.pause();
-  }, []);
+  }, [cargar]);
 
   /* Sólo toca `muted`. No reinicia ni vuelve a llamar a play(): si el clip ya
      iba corriendo, activar el sonido no debe saltar al principio. */
@@ -122,7 +158,7 @@ export function CorporateVideo() {
             <video
               ref={video}
               className="home-video__player"
-              src={VIDEO.url}
+              /* Sin `src`: la pone `cargar` cuando la sección se acerca. */
               poster={VIDEO.poster}
               /*
                 `muted` SE QUEDA en el marcado: es lo que permite el arranque
@@ -134,10 +170,10 @@ export function CorporateVideo() {
               loop
               /* Sin esto, iOS lo abre a pantalla completa al reproducir. */
               playsInline
-              /* `metadata` y no `auto`: que no se descarguen 7 MB antes de que
-                 la sección esté siquiera a la vista. */
-              preload="metadata"
-              autoPlay={!reducido}
+              /* `none` y sin `autoPlay`: con autoPlay el navegador ignora
+                 `preload` y baja el archivo entero al leer el HTML. El arranque
+                 lo da el observador de arriba. */
+              preload="none"
             />
 
             <div className="home-video__controles">

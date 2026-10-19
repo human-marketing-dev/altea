@@ -36,11 +36,27 @@ export const STATS_INTRO =
   "Creamos soluciones que responden a diferentes necesidades, usos y oportunidades.";
 
 export const VIDEO = {
-  /** Clip mudo de 20s en 1080p, en bucle. */
+  /** Clip de 20s en 1080p, en bucle (lleva audio; arranca silenciado). */
   url: "/video/altea-institucional.mp4" as string | undefined,
   /**
-   * Lo que se ve mientras carga y, en iOS con ahorro de batería, lo único que
-   * se ve si el autoplay no arranca.
+   * La misma, en 720p, para teléfonos (hasta 600 px de ancho): 4.6 MB contra
+   * 14.2. Al ancho que la pinta un teléfono no se distingue: 43.8 dB de PSNR
+   * medio cuadro por cuadro sobre los 600 cuadros, el peor 36.6.
+   *
+   * Sacada del original con: ffmpeg -i altea-institucional.mp4 -vf scale=-2:720
+   * -c:v libx264 -profile:v high -preset slow -crf 26 -pix_fmt yuv420p
+   * -movflags +faststart -c:a aac -b:a 96k altea-institucional-720.mp4
+   * Si cambia el video, se vuelve a sacar con lo mismo.
+   */
+  urlMovil: "/video/altea-institucional-720.mp4" as string | undefined,
+  /**
+   * Lo que se ve mientras carga y, en iOS con ahorro de batería o con
+   * movimiento reducido, lo único que se ve si el clip no arranca solo.
+   *
+   * Es el cuadro de los 3.0 s —«Todo comienza con una idea», ya con la escena—
+   * a 1600 px, WebP 70: 26 KB. NO el primero, que es casi negro (brillo medio 3
+   * de 255): de póster sería una caja negra. Si cambia el video, se vuelve a
+   * sacar: `ffmpeg -ss 3 -i altea-institucional.mp4 -frames:v 1 cuadro.png`.
    */
   poster: "/video/poster.webp" as string | undefined,
   caption: "Video corporativo",

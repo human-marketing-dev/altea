@@ -64,6 +64,8 @@ export function CarruselProyectos({
          */
         etiqueta: plaza.datos[0].valor,
         foto: plaza.foto,
+        /* Para el `sizes` de la rejilla fija (Vivienda, con dos). */
+        fotoRatio: plaza.fotoRatio,
       }))}
       onAbrir={(k, boton) => {
         origen.current = boton;

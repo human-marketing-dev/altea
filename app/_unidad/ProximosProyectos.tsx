@@ -81,6 +81,7 @@ export function ProximosProyectos({
              unidad sólo si un próximo todavía no la tiene. */
           pie: p.location ?? p.unit,
           foto: p.image,
+          fotoRatio: p.fotoRatio,
         }))}
         onAbrir={(k, boton) => {
           origen.current = boton;
@@ -113,6 +114,7 @@ export function ProximosProyectos({
              unidad sólo si un próximo todavía no la tiene. */
             pie: p.location ?? p.unit,
             foto: p.image,
+            fotoRatio: p.fotoRatio,
           }))}
           onAbrir={(k, boton) => {
             origen.current = boton;

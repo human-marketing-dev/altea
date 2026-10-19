@@ -38,6 +38,42 @@ export interface CarruselTarjetasProps {
   rejillaHasta?: number;
 }
 
+/**
+ * EL `sizes` DE LA REJILLA FIJA (dos tarjetas o menos), que NO es el del
+ * carrusel. Aquí la tarjeta es apaisada (4/3) y a todo el ancho de su columna,
+ * no una tarjeta vertical de 320 px: con el `sizes` del carrusel —178vw en
+ * teléfono— Vivienda bajaba la variante de 1920 para pintar 731 px, y la de
+ * 3840 en un teléfono de 3x para pintar 1181.
+ *
+ * La cuenta es la del ancho al que se PINTA, como en TarjetaProyecto: con
+ * `cover`, una foto más apaisada que la caja se pinta a su alto, o sea al ancho
+ * de la caja por 0.75 × su proporción. La caja sale de .altea-carrusel[data-fija]
+ * en components.css: una columna hasta 640 px (todo el ancho menos el
+ * --container-pad, que es 20 px hasta 400 y 5vw después) y `cols` columnas con
+ * el hueco del carrusel después. Medido en el navegador, la variante elegida
+ * nunca queda por debajo de lo que se pinta.
+ *
+ * ⚠ Y SE PIDE 1.4 VECES LO QUE SE PINTA, NO LO JUSTO. Con la variante justa
+ * (750 para pintar 730) la foto salía más blanda que antes: mostrada casi a
+ * 1:1 enseña la compresión del optimizador, y reducida desde una más grande la
+ * disimula. Comparadas a 2× con píxel duro, la de 1080 ya no se distingue de la
+ * de 1920. Con 1.4: 1080 en un teléfono de 1.75x (antes 1920), 1920 en uno de
+ * 3x (antes 3840) y 2048 en escritorio retina (antes 3840).
+ *
+ * Sin proporción se asume 1.92, la foto más apaisada de los dos juegos: pedir de
+ * más, nunca de menos.
+ */
+const SOBREMUESTREO = 1.4;
+function sizesRejilla(cols: number, ratio = 1.92) {
+  const k = (Math.max(1, 0.75 * ratio) * SOBREMUESTREO).toFixed(3);
+  return [
+    `(max-width: 400px) calc((100vw - 40px) * ${k})`,
+    `(max-width: 640px) calc(90vw * ${k})`,
+    `(max-width: 1600px) calc((90vw - ${(cols - 1) * 1.6}vw) / ${cols} * ${k})`,
+    `calc((100vw - 160px - ${(cols - 1) * 26}px) / ${cols} * ${k})`,
+  ].join(", ");
+}
+
 export function CarruselTarjetas({
   titulo,
   tituloId,
@@ -340,6 +376,7 @@ export function CarruselTarjetas({
               pie={item.pie}
               foto={item.foto}
               etiqueta={item.etiqueta}
+              sizes={fija ? sizesRejilla(items.length, item.fotoRatio) : undefined}
               onClick={(boton) => {
                 if (arrastrado.current) {
                   arrastrado.current = false;

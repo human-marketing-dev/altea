@@ -43,6 +43,8 @@ export interface TarjetaProyectoProps {
    * dato que la tarjeta no puede dar de otra forma.
    */
   etiqueta?: string;
+  /** Otro `sizes` para la foto, si la caja no es la del carril/carrusel. */
+  sizes?: string;
   onClick: (boton: HTMLButtonElement) => void;
 }
 
@@ -51,6 +53,7 @@ export function TarjetaProyecto({
   pie,
   foto,
   etiqueta,
+  sizes = SIZES,
   onClick,
 }: TarjetaProyectoProps) {
   return (
@@ -60,7 +63,7 @@ export function TarjetaProyecto({
       onClick={(evento) => onClick(evento.currentTarget)}
     >
       <span className="altea-tj__foto js-tarjeta-foto">
-        {foto && <Image src={foto} alt="" fill sizes={SIZES} className="altea-tj__img" />}
+        {foto && <Image src={foto} alt="" fill sizes={sizes} className="altea-tj__img" />}
       </span>
       {etiqueta && <span className="altea-tj__marca">{etiqueta}</span>}
       <span className="altea-tj__txt">

@@ -49,6 +49,8 @@ export interface TarjetaCarril {
   foto?: string;
   /** La chapa de arriba a la izquierda. Sólo la usa el carrusel de plazas. */
   etiqueta?: string;
+  /** Ancho / alto del archivo de la foto. Lo usa la rejilla fija para su `sizes`. */
+  fotoRatio?: number;
 }
 
 export interface CarrilTarjetasProps {

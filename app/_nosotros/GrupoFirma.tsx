@@ -126,13 +126,25 @@ const AJUSTES: Record<string, number> = {
    * la más grande para distinguirse: tiene la caja sólida en ink y el trazo coral.
    */
   "logo-delta-electric-grupo-firma-globales.webp": 0.62,
+  /*
+   * Sultanes y Fuerza Regia, los dos de Deportes, en fila en la misma caja. Por
+   * fórmula salían a 0.71 —29 px a 1440— y junto a Bornos y Foodplay (34) se
+   * leían un escalón más chicos. A 0.82 llegan a su alto.
+   */
+  "logo-sultanes-grupo-firma-globales.webp": 0.82,
+  "logo-fuerza-regia-grupo-firma-globales.webp": 0.82,
   "altea-logo-light.svg": 0.58,
 };
 
 /*
- * ⚠ DEPORTES NO TIENE LOGOTIPO: LLEVA UN ICONO GENÉRICO, Y LA DIFERENCIA IMPORTA.
+ * EL RESPALDO DE UN SECTOR SIN LOGOTIPO: ICONO GENÉRICO Y NOMBRE.
  *
- * Es el único de los seis sin archivo. En logos-grupo-firmas-globales/ están
+ * Hoy no lo usa nadie: Deportes, que era el caso, lleva desde octubre de 2026
+ * los logotipos de Sultanes y Fuerza Regia en fila (`logos` en content.ts). Se
+ * queda para el sector que llegue sin archivo. Lo que sigue es por qué es un
+ * icono de librería y no un dibujo propio.
+ *
+ * Deportes era el único de los seis sin archivo. En logos-grupo-firmas-globales/ están
  * Sultanes y Fuerza Regia —las dos sub-marcas— pero no hay marca paraguas de
  * "Deportes", ni ahí ni en ningún otro sitio del repositorio.
  *
@@ -234,7 +246,26 @@ export function GrupoFirma() {
           >
             <span className="nos-firma__cat">{sector.categoria}</span>
             <span className="nos-firma__marca">
-              {sector.logo ? (
+              {sector.logos ? (
+                /* Varias marcas en la misma caja, en fila: ver `logos` en
+                   content.ts y .nos-firma__par en nosotros.css. */
+                <span className="nos-firma__par">
+                  {sector.logos.map((logo) => (
+                    <Image
+                      key={logo.src}
+                      className="nos-firma__logo"
+                      src={logo.src}
+                      alt={logo.alt}
+                      width={400}
+                      height={Math.round(400 / logo.ratio)}
+                      style={{
+                        ["--factor" as string]: factorDe(logo.src, logo.ratio),
+                      }}
+                      unoptimized
+                    />
+                  ))}
+                </span>
+              ) : sector.logo ? (
                 <Image
                   className="nos-firma__logo"
                   src={sector.logo}

@@ -208,7 +208,7 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
   {
     valor: 94,
     signo: "%",
-    etiqueta: "Tasa de ocupación",
+    etiqueta: "tasa de ocupación",
   },
 ];
 

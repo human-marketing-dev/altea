@@ -69,7 +69,7 @@ export const FORESTAL: ContenidoUnidad = {
        */
       valor: 18,
       signo: " mil",
-      etiqueta: "Producción de árboles al año",
+      etiqueta: "producción de árboles al año",
     },
   ],
   /*

@@ -18,7 +18,7 @@ export const CONTACTO = {
   datos: [
     { texto: "info@alteadesarrollos.com", icono: "correo" },
     {
-      texto: "Paricutín 390, Nuevo Repueblo, Monterrey, N.L.",
+      texto: "Paricutín 390, Colonia Roma, Monterrey, N.L.",
       icono: "ubicacion",
     },
   ],
@@ -34,7 +34,7 @@ export const CANALES = {
   whatsappMensaje: "Hola Altea, me interesa conocer más sobre sus proyectos.",
   telefono: "+52 81 1772 7272",
   /* Octubre de 2026. Lo pintan /contacto y el pie. */
-  domicilio: "Paricutín 390, Nuevo Repueblo, Monterrey, N.L.",
+  domicilio: "Paricutín 390, Colonia Roma, Monterrey, N.L.",
 } as const;
 
 /** Redes sociales. Los tres enlaces los confirmó Altea. */

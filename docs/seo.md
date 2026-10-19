@@ -139,10 +139,9 @@ CSS, no una imagen). No hay `og:*`, `twitter:*`, canónica ni JSON-LD en ninguna
 11. **La 404 es la de Next, en inglés, sin barra ni pie** (un callejón sin
     enlaces), y con dos `<title>`. Por su `.meta` el código implica estado 404
     de verdad; no se pudo comprobar en vivo.
-12. **El domicilio no coincide entre páginas.** El pie y contacto dicen
-    «Paricutín 390, Nuevo Repueblo» (`lib/contacto.ts`). El aviso y los
-    términos dicen «Colonia Roma, C.P. 64700». Para el marcado y para Google
-    tiene que ser uno solo.
+12. ~~**El domicilio no coincide entre páginas.**~~ Resuelto en octubre de
+    2026: el pie y contacto dicen ahora «Paricutín 390, Colonia Roma» como los
+    textos legales. Sólo falta el C.P. 64700, que los legales sí llevan.
 13. **El aviso de privacidad cita `https://www.alteadesarrollos.com/privacidad`**
     (`aviso-de-privacidad.ts:234`). La redirección del §3 hace que funcione;
     corregir el texto es decisión de Altea.
@@ -234,7 +233,7 @@ confirmados:
 - correo `info@alteadesarrollos.com`
 - redes de `lib/contacto.ts`
 
-El domicilio entra **sólo** cuando se resuelva el hallazgo 12. La razón social
+El domicilio ya coincide en todo el sitio (hallazgo 12). La razón social
 completa tampoco está: los términos dicen literalmente «[RAZÓN SOCIAL
 COMPLETA]».
 
@@ -265,7 +264,7 @@ En este orden: el sitio se abre al final, cuando todo lo demás ya está puesto.
 - [ ] `app/not-found.tsx` en español, con barra y pie (hallazgo 11).
 - [ ] `app/sitemap.ts` con las 9 rutas indexables y URLs absolutas.
 - [ ] `next.config.ts` → `redirects()` con la tabla del §3.
-- [ ] Domicilio único en todo el sitio (hallazgo 12).
+- [x] Domicilio único en todo el sitio (hallazgo 12).
 
 **El día de publicación**
 

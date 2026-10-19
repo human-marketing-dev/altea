@@ -188,6 +188,13 @@ export interface SectorFirma {
   logo?: string;
   /** Proporción ancho/alto del archivo. La consume el ancho máximo del logotipo. */
   logoRatio?: number;
+  /**
+   * VARIOS LOGOTIPOS EN LA MISMA CAJA, en fila. Para un sector sin marca
+   * paraguas que se representa con sus marcas —Deportes: Sultanes y Fuerza
+   * Regia—. Si está, manda sobre `logo`. La caja no cambia: la misma 5/2 que
+   * los otros cinco.
+   */
+  logos?: { src: string; alt: string; ratio: number }[];
 }
 
 /**
@@ -202,9 +209,10 @@ export interface SectorFirma {
  * todo color y es el único que no se grisa: ver la nota de .nos-firma__gfg en
  * nosotros.css.
  *
- * De los doce restantes, OCHO SE QUEDARON SIN CONSUMIDOR al quitarse el tercer
- * nivel del organigrama: KFC, Tim Hortons, Firehouse Subs, Bolerama, Helados
- * Dreambox, Sultanes y Fuerza Regia. No se borran: el nivel puede volver.
+ * De los doce restantes, varios se quedaron sin consumidor al quitarse el tercer
+ * nivel del organigrama: KFC, Tim Hortons, Firehouse Subs, Bolerama y Helados
+ * Dreambox. No se borran: el nivel puede volver. Sultanes y Fuerza Regia sí se
+ * usan: son la caja de Deportes.
  */
 const GF = "/images/logo/logos-grupo-firmas-globales";
 
@@ -260,11 +268,24 @@ const SECTORES: SectorFirma[] = [
   },
   {
     id: "deportes",
-    /* ⚠ SIN LOGOTIPO, el único de los seis. En logos-grupo-firmas-globales/ están
-       Sultanes y Fuerza Regia, pero no hay archivo de "Deportes" como marca
-       paraguas. La caja se queda con el nombre en texto antes que improvisar. */
+    /* Sin marca paraguas de "Deportes": la caja lleva sus dos equipos, en fila
+       (octubre de 2026). Antes iba el nombre en texto con un icono genérico. */
     categoria: "Deportes",
     marca: "Deportes",
+    logos: [
+      {
+        src: `${GF}/logo-sultanes-grupo-firma-globales.webp`,
+        alt: "Sultanes",
+        /* 258x218 */
+        ratio: 1.183,
+      },
+      {
+        src: `${GF}/logo-fuerza-regia-grupo-firma-globales.webp`,
+        alt: "Fuerza Regia",
+        /* 246x227 */
+        ratio: 1.084,
+      },
+    ],
   },
   {
     id: "energia",

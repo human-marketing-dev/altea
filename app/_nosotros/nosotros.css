@@ -683,6 +683,8 @@
 
 /* Proporción fija: con los logotipos reales dentro, la fila sigue alineada. */
 .nos-firma__marca {
+  /* Para la fila de Deportes (.nos-firma__par), que va absoluta. */
+  position: relative;
   display: grid;
   place-items: center;
   width: 100%;
@@ -743,6 +745,29 @@
   max-height: calc(100% * var(--objetivo) * var(--factor, 1));
   max-width: 94%;
   object-fit: contain;
+}
+/*
+ * DOS MARCAS EN UNA CAJA (Deportes: Sultanes y Fuerza Regia), EN FILA.
+ *
+ * La fila ocupa la caja entera para que los `max-height` en % de los logotipos
+ * se sigan midiendo contra el alto de la caja, igual que un logotipo solo: así
+ * cada uno sale al mismo alto que tendría solo, con su factor óptico. El ancho
+ * se reparte —44 % cada uno— y no llega a tocar: son casi cuadrados.
+ */
+.nos-firma__par {
+  /* Fuera del flujo, a toda la caja: dentro de él, la fila empujaba la caja y
+     Deportes salía 6 px más ancha y 5 más alta que las otras cinco. */
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10%;
+}
+.nos-firma__par .nos-firma__logo {
+  width: auto;
+  height: auto;
+  max-width: 44%;
 }
 
 /*

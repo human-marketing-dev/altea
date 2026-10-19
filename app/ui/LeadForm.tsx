@@ -1,11 +1,8 @@
 "use client";
 
 import { useActionState, useId } from "react";
-import {
-  ESTADO_LEAD_INICIAL,
-  enviarLead,
-  type EstadoLead,
-} from "@/app/_actions/enviar-lead";
+import { enviarLead } from "@/app/_actions/enviar-lead";
+import { ESTADO_LEAD_INICIAL, type EstadoLead } from "@/app/_actions/estado-lead";
 import { UNIDADES, type Unidad } from "@/lib/contacto";
 import { Button } from "./Button";
 import { Input } from "./Input";
@@ -41,6 +38,8 @@ export function LeadForm({
 
   const errores = estado.estado === "error" ? estado.errores : {};
   const errorDe = (campo: string) => errores[campo];
+  /* Lo escrito vuelve como valor por defecto: ver `valores` en enviar-lead.ts. */
+  const valores = estado.estado === "error" ? (estado.valores ?? {}) : {};
   const oscuro = tono === "oscuro";
   /* El texto de los mensajes de error y de envío, según el fondo. */
   const textoError = oscuro ? "text-cream" : "text-coral-dark";
@@ -85,6 +84,7 @@ export function LeadForm({
             name="nombre"
             placeholder="Tu nombre"
             autoComplete="name"
+            defaultValue={valores.nombre}
             required
             aria-invalid={Boolean(errorDe("nombre"))}
             aria-describedby={errorDe("nombre") ? `${id}-nombre` : undefined}
@@ -103,6 +103,7 @@ export function LeadForm({
             type="email"
             placeholder="tu@correo.com"
             autoComplete="email"
+            defaultValue={valores.correo}
             required
             aria-invalid={Boolean(errorDe("correo"))}
             aria-describedby={errorDe("correo") ? `${id}-correo` : undefined}
@@ -116,15 +117,29 @@ export function LeadForm({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Input
-          label="Teléfono (opcional)"
-          name="telefono"
-          type="tel"
-          placeholder="81 0000 0000"
-          autoComplete="tel"
-        />
+        <div>
+          <Input
+            label="Teléfono (opcional)"
+            name="telefono"
+            type="tel"
+            placeholder="81 0000 0000"
+            autoComplete="tel"
+            defaultValue={valores.telefono}
+            aria-invalid={Boolean(errorDe("telefono"))}
+            aria-describedby={errorDe("telefono") ? `${id}-telefono` : undefined}
+          />
+          {errorDe("telefono") && (
+            <p id={`${id}-telefono`} role="alert" className={`m-0 mt-1.5 text-small ${textoError}`}>
+              {errorDe("telefono")}
+            </p>
+          )}
+        </div>
 
-        <Select label="Unidad de interés" name="unidad" defaultValue={unidadPorDefecto ?? ""}>
+        <Select
+          label="Unidad de interés"
+          name="unidad"
+          defaultValue={valores.unidad ?? unidadPorDefecto ?? ""}
+        >
           <option value="">Selecciona una</option>
           {UNIDADES.map((unidad) => (
             <option key={unidad} value={unidad}>
@@ -141,6 +156,7 @@ export function LeadForm({
           as="textarea"
           placeholder="Cuéntanos sobre tu proyecto"
           required
+          defaultValue={valores.mensaje}
           aria-invalid={Boolean(errorDe("mensaje"))}
           aria-describedby={errorDe("mensaje") ? `${id}-mensaje` : undefined}
         />
@@ -158,6 +174,13 @@ export function LeadForm({
           <input type="text" name="sitio-web" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
+
+      {/* El fallo de envío (Brevo caído o sin configurar): no es de un campo. */}
+      {errorDe("envio") && (
+        <p role="alert" className={`m-0 text-small ${textoError}`}>
+          {errorDe("envio")}
+        </p>
+      )}
 
       <Button type="submit" variant="primary" size="lg" disabled={pendiente} className="self-start">
         {pendiente ? "Enviando…" : "Enviar mensaje"}

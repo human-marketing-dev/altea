@@ -252,7 +252,17 @@ export default function Escena3D({
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    /*
+     * ⚠ TOPE DE DENSIDAD EN 1.5, NO EN 2 (octubre de 2026), y es lo que más
+     * pesa en un teléfono. El costo de cada cuadro crece con los píxeles del
+     * lienzo: medido sin GPU —como corre PageSpeed— a 412×823, el render pasa de
+     * ~20 ms a ~16 con 1.5, y el TBT del home de 6.2 s a 4.2.
+     *
+     * Por qué 1.5 y no menos: comparadas las capturas con la A armada, a 1.5 no
+     * se distingue ni en móvil ni en escritorio retina; a 1.25 el grano del
+     * concreto ya se nota más suave. Bajarlo es decisión de diseño, no de aquí.
+     */
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     /* Sin esto los grises salen lavados y el material no cuaja. En three 0.186
        ya no existen outputEncoding ni sRGBEncoding, que es lo que usaba el
        prototipo: son outputColorSpace y SRGBColorSpace. */

@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { HERO_A } from "../content";
 import {
@@ -15,6 +15,7 @@ import {
   type EstadoHero,
 } from "./estado";
 import { CampoPuntos } from "./CampoPuntos";
+import { hayGpu } from "./gpu";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -48,12 +49,26 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  *
  * Con prefers-reduced-motion ni se pide el chunk: no hay nada que animar y una A
  * de hormigón quieta no aporta sobre el titular.
+ *
+ * SIN GPU TAMPOCO (octubre de 2026): ver gpu.ts. Por software la escena se come
+ * el hilo principal; el hero se queda con titular y campo, que es la misma
+ * composición que se ve mientras llega el chunk. La prueba corre en el cliente
+ * tras montar, así que el HTML es el mismo para todos y no cambia nada de sitio:
+ * el lienzo va en absoluto sobre el escenario.
  */
 const Escena3D = dynamic(() => import("./Escena3D"), { ssr: false });
 
 export function HeroA() {
   const raiz = useRef<HTMLDivElement>(null);
   const reducido = useMovimientoReducido();
+  /*
+   * ¿Se monta la A? null mientras no se sabe: la escena no se pide hasta tener
+   * la respuesta. Se pregunta DENTRO del useGSAP de abajo y no en un efecto
+   * aparte, porque el timeline necesita saberlo al armarse: sin la A, el titular
+   * no se va (ver allí). Preguntarlo después obligaría a rearmar el timeline y
+   * la entrada del titular se repetiría.
+   */
+  const [gpu, setGpu] = useState<boolean | null>(null);
 
   /*
    * El puente con la escena 3D. Objeto mutable y NO estado de React: lo escribe
@@ -74,6 +89,10 @@ export function HeroA() {
         estado.current = estadoFinal();
         return;
       }
+
+      /* Ver gpu.ts. Sin aceleración por hardware no hay A. */
+      const conA = hayGpu();
+      setGpu(conA);
 
       /*
        * Entrada, sin scroll: el titular sube desde su propia caja recortada.
@@ -111,8 +130,17 @@ export function HeroA() {
         },
       });
 
+      /*
+       * EL TITULAR SE VA PARA DEJARLE SITIO A LA A. Sin la A (sin GPU) se queda:
+       * irse dejaba dos pantallas de campo vacío, que se leen como una pieza que
+       * no llegó. Quieto sobre el campo es la composición del hero con
+       * movimiento reducido, que ya es una composición terminada; la onda de
+       * puntos sigue corriendo con el scroll igual que siempre.
+       */
+      if (conA) {
+        linea.to(".js-titular", { yPercent: -14, opacity: 0, duration: 0.85, ease: "power2.in" }, 0);
+      }
       linea
-        .to(".js-titular", { yPercent: -14, opacity: 0, duration: 0.85, ease: "power2.in" }, 0)
         /* 1 · se construye de lado. El escorzo apenas se abre aquí: lo que ocupa
            la atención es el ensamble, no la cámara. */
         .to(est, { ensamble: 1, duration: 1.5 }, 0.1)
@@ -148,7 +176,7 @@ export function HeroA() {
           <CampoPuntos estado={estado} reducido={reducido} />
         </div>
 
-        {!reducido && <Escena3D estado={estado} reducido={reducido} />}
+        {!reducido && gpu && <Escena3D estado={estado} reducido={reducido} />}
 
         <div className="hero-a__titular js-titular">
           {/*

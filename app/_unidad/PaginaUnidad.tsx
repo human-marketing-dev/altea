@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import { CONTACT_CTA } from "@/app/_home/content";
 import { CierreContacto, Footer, NavBar } from "@/app/ui";
 import { Atributos } from "./Atributos";
@@ -44,6 +45,15 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
     unidad,
     cierre,
   } = contenido;
+  /*
+   * LA PRIMERA FOTO DEL HERO, PEDIDA DESDE EL HTML. <HeroCalado> la pone como
+   * fondo por JavaScript, así que sin esto el navegador no se enteraba de que
+   * existía hasta hidratar: 7 a 10 s de «retraso de carga» del LCP en las
+   * cuatro unidades. Es la misma URL que pinta el componente —el archivo
+   * crudo, sin optimizador: ver ZOOM en HeroCalado— y la misma para sus tres
+   * capas, así que se ve idéntica y no toca la entrada del hero.
+   */
+  if (hero.fotos[0]) preload(hero.fotos[0].foto, { as: "image", fetchPriority: "high" });
   return (
     <>
       {/* El `aria-current` lo pone <NavBar> comparando el enlace con

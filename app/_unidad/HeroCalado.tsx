@@ -80,6 +80,13 @@ const BASE_MAX = 7;
  * ABLANDA. En pantalla retina ni así alcanza: harían falta archivos de unos
  * 4 000 px, y eso no se arregla desde el código.
  *
+ * ⚠ Y POR LO MISMO LAS FOTOS NO PASAN POR EL OPTIMIZADOR DE NEXT (octubre de
+ * 2026, decidido): en un teléfono la capa a pantalla completa pide entre 2 500
+ * y 3 100 px y los archivos miden ~2 000, así que la foto YA se está estirando.
+ * No hay resolución que recortar; lo único que el optimizador podría hacer es
+ * recomprimir, y la compresión es justo lo que se ve dentro de las letras. No se
+ * vuelve a proponer. Ver docs/pendientes.md, «Las fotos de los heroes».
+ *
  * SOBRE_CUBRE existe además para que `ancla` tenga margen donde moverse: un
  * `cover` a secas deja apenas 60 px de holgura vertical en una foto 3:2 sobre
  * una ventana de 900, y con eso no se desplaza nada. Ver `ancla` en tipos.ts.
@@ -182,7 +189,14 @@ export function HeroCalado({
         encuadre(ultimo);
         /* La siguiente se va descargando mientras ésta se ve, así que el relevo
            no paga la descarga a mitad del fundido. Sólo una por vez: precargar
-           las ocho al montar competiría con el LCP, que es esta misma foto. */
+           las ocho al montar competiría con el LCP, que es esta misma foto.
+
+           ⚠ NO SE DIFIERE AL `load`. Se probó (octubre de 2026): la primera
+           llegaba antes, pero en Comercial, a 10 Mbps, la segunda empezaba al
+           terminar la carga, competía con tarjetas y logos y ya no estaba lista
+           en el primer relevo (lista a 6.1 s, relevo a 5.4 s). Eso cambia el
+           relevo, así que se quedó como estaba: la mejora del LCP la da el
+           `preload` de la primera, en PaginaUnidad. */
         if (FOTOS.length > 1) {
           const siguiente = new Image();
           siguiente.src = FOTOS[(k + 1) % FOTOS.length].foto;

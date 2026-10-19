@@ -59,24 +59,30 @@ el hosting o el DNS, como hoy. Al migrar hay que comprobar que siguen puestas.
 
 ## 3 · Las URLs del sitio viejo
 
-El sitemap del WordPress actual (`/wp-sitemap.xml`) publica 31 URLs. Si el sitio
-nuevo se publica sin redirigirlas, todo lo que Google tenga indexado pasa a dar
-404.
+El sitemap del WordPress actual (`/wp-sitemap.xml` y sus 6 parciales) publica
+**27 URLs**. Si el sitio nuevo se publica sin redirigirlas, lo que Google tenga
+indexado pasa a 404. *Implementado en octubre de 2026*: las reglas están en
+`next.config.ts` (`redirects()` y `skipTrailingSlashRedirect`) y en `proxy.ts`,
+así que viajan con el repositorio. **Tienen que estar desplegadas antes de que
+el dominio apunte al servidor nuevo.**
 
-| URL vieja | Destino | Notas |
-|---|---|---|
-| `/`, `/nosotros/`, `/comercial/`, `/industrial/`, `/contacto/` | la misma ruta sin barra | Next ya redirige `/x/` → `/x` con 308; no hay que escribir nada |
-| `/privacidad/` | `/aviso-de-privacidad` | **Hay que escribirla.** Además arregla el texto del aviso, que cita esta URL |
-| `/desarrollos/paseo-la-fe/` y las otras 7 de `/desarrollos/*` | `/comercial` | Son plazas: Paseo Tec, Juárez, Durango, Los Mochis y Gómez Palacio, y Punto Huinala y Río Nilo |
-| `/category/plazas-comerciales/` y `-2/`, `-3/` | `/comercial` | |
-| `/wp-sitemap.xml` | `/sitemap.xml` | |
-| `/hello-world/`, `/sample-page/`, `/prueba/`, `/category/uncategorized/`, `/author/*`, `/feed/`, `/comments/feed/` | ninguno: que den 404 (o 410) | Basura de WordPress; no conviene conservarla |
-| `/?ae_global_templates=…` | nada | El home ignora el parámetro; la canónica lo resuelve |
+| URL vieja | Código | Destino | Notas |
+|---|---|---|---|
+| `/` | — | `/` (200) | |
+| `/nosotros/`, `/comercial/`, `/industrial/`, `/contacto/` | 308 | la misma sin barra | La regla genérica de la barra, al final de la lista |
+| `/privacidad/` (y `/privacidad`) | 301 | `/aviso-de-privacidad` | Arregla también el texto del aviso, que cita `/privacidad` |
+| `/desarrollos/<plaza>/` (las 8) | 301 | `/comercial` | Paseo La Fe, Tec, Juárez, Durango, Los Mochis, Gómez Palacio; Punto Huinala y Río Nilo. No hay página por plaza |
+| `/category/plazas-comerciales/`, `/plaza-comerciales-2/`, `/plaza-comerciales-3/` | 301 | `/comercial` | |
+| `/?ae_global_templates=…` (las 4) | 301 | `/`, sin la query | En `proxy.ts`: las redirecciones de la configuración no pueden quitar la query |
+| `/hello-world/`, `/sample-page/`, `/prueba/`, `/category/uncategorized/`, `/author/*` (2) | 308 → 404 | — | Basura de WordPress: se dejan morir. Decidido |
+| `/wp-sitemap.xml` y los 6 parciales | 404 | — | Cuando exista `/sitemap.xml` se apuntan ahí; redirigir a un 404 sería peor. Decidido |
+| `/feed/`, `/comments/feed/` (no están en el sitemap) | 308 → 404 | — | Igual que la basura de arriba |
 
-Van en `next.config.ts` → `redirects()`, con `permanent: true`. Next responde
-308, que Google trata igual que un 301.
-
----
+**Por qué la barra la quitamos nosotros y no Next.** La regla interna de Next
+(`/:path+/` → 308) va con prioridad, antes que las redirecciones propias: con
+ella `/privacidad/` daba dos saltos. `skipTrailingSlashRedirect` la apaga, las
+reglas específicas atrapan la URL con barra o sin ella (`{/}?`) en un salto, y la
+genérica de la barra va al final.
 
 ## 4 · Inventario por ruta
 
@@ -263,7 +269,7 @@ En este orden: el sitio se abre al final, cuando todo lo demás ya está puesto.
 - [ ] Favicon y `apple-icon` de Altea en lugar de `app/favicon.ico` (hallazgo 4).
 - [ ] `app/not-found.tsx` en español, con barra y pie (hallazgo 11).
 - [ ] `app/sitemap.ts` con las 9 rutas indexables y URLs absolutas.
-- [ ] `next.config.ts` → `redirects()` con la tabla del §3.
+- [x] `next.config.ts` → `redirects()` y `proxy.ts` con la tabla del §3 (falta desplegar).
 - [x] Domicilio único en todo el sitio (hallazgo 12).
 
 **El día de publicación**
@@ -284,8 +290,8 @@ En este orden: el sitio se abre al final, cuando todo lo demás ya está puesto.
 - [ ] En el código fuente de cada una de las 9 páginas: sin
       `<meta name="robots" content="noindex…">`, y con canónica absoluta propia.
 - [ ] `curl -I https://www.alteadesarrollos.com/no-existe`: **404**, no 200.
-- [ ] `curl -I https://www.alteadesarrollos.com/privacidad/` y una de
-      `/desarrollos/…`: 308 al destino del §3.
+- [ ] `curl -I` a las 27 URLs del §3 (más `/privacidad`, los sitemaps y los
+      feeds): el código y el destino de la tabla, en un solo salto.
 - [ ] Search Console: verificar la propiedad (DNS), enviar el sitemap y usar
       «Inspeccionar URL» en el home y en una unidad.
 - [ ] Una semana después: Search Console → Páginas, revisar que no haya

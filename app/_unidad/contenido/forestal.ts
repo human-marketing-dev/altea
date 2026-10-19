@@ -96,7 +96,8 @@ export const FORESTAL: ContenidoUnidad = {
         alto: 316,
       },
       parrafos: [
-        "Contamos con experiencia desde 2002 en la producción y manejo de especies forestales para arbolado urbano y proyectos empresariales y gubernamentales. Ofrecemos soluciones integrales que abarcan la producción, suministro y mantenimiento de arbolado, así como servicios de jardinería y conservación de espacios verdes, aplicando técnicas especializadas para favorecer su desarrollo y preservación.",
+        "Ofrecemos soluciones integrales de arbolado urbano, jardinería y conservación de espacios verdes para proyectos empresariales y gubernamentales. Nuestros servicios abarcan desde la producción y suministro de árboles hasta su mantenimiento y preservación, mediante técnicas especializadas que favorecen su desarrollo.",
+        "Actualmente, brindamos servicios de jardinería en 23 centros comerciales y mantenimiento en 19 terrenos, con más de 40,000 m² de áreas verdes atendidas mensualmente y más de 18,000 nuevos árboles plantados, contribuyendo a la conservación y mejora de los espacios naturales.",
       ],
       /*
        * Las tres de la carpeta, en carrusel. ⚠ La 2 y la 3 son 1980x915 —más
@@ -146,8 +147,7 @@ export const FORESTAL: ContenidoUnidad = {
         alto: 376,
       },
       parrafos: [
-        "Proyecto forestal enfocado en recuperar el uso forestal de áreas degradadas por actividades agrícolas y ganaderas mediante la plantación sostenible de Teca en la Península de Yucatán.",
-        "Integramos prácticas de manejo forestal y nuevas tecnologías para impulsar una producción de madera rentable y responsable, al mismo tiempo que contribuimos a la conservación de especies de fauna endémica y al desarrollo de una cultura forestal sostenible en la región.",
+        "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, enfocado en recuperar la vocación forestal de tierras degradadas por actividades agrícolas y ganaderas. En 2011, iniciamos la plantación sostenible de 682,853 árboles de teca en 841 hectáreas, un proceso que permitió restaurar la salud del suelo y que contribuye a revitalizar la economía de al menos 100 familias mayas de la región.",
       ],
       fotos: [
         {

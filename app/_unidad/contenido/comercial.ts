@@ -203,7 +203,7 @@ export const CIFRAS_COMERCIAL: Cifra[] = [
   },
   {
     valor: 34,
-    etiqueta: "centros comerciales",
+    etiqueta: "desarrollos comerciales",
   },
   {
     valor: 94,

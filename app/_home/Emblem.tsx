@@ -138,12 +138,18 @@ export function Emblem() {
         <i aria-hidden="true" />
         <i aria-hidden="true" />
 
-        {/* El aria-label lleva la frase entera y los caracteres van aria-hidden:
-            partida en 97 <span>, un lector la anunciaría letra por letra. */}
-        <p
-          className="home-emblem__text js-emblema-texto"
-          aria-label={EMBLEM.palabras.join(" ")}
-        >
+        {/* La frase entera va en un <span> sólo para lectores y los caracteres
+            van aria-hidden: partida en 97 <span>, un lector la anunciaría letra
+            por letra.
+
+            ⚠ NO CON aria-label EN EL <p>. Estuvo así y no lo leía nadie: un
+            párrafo no admite nombre accesible (aria-label está prohibido en el
+            rol paragraph, lo marca Lighthouse), así que el lector ignoraba la
+            etiqueta y, con todo lo demás aria-hidden, no quedaba nada. El texto
+            oculto está en el árbol desde el principio, no espera a la máquina
+            de escribir. */}
+        <p className="home-emblem__text js-emblema-texto">
+          <span className="sr-only">{EMBLEM.palabras.join(" ")}</span>
           {caracteres.map(({ c, acento }, i) => (
             <span
               key={i}

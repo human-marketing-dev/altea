@@ -280,10 +280,13 @@ const SECTORES: SectorFirma[] = [
         ratio: 1.183,
       },
       {
-        src: `${GF}/logo-fuerza-regia-grupo-firma-globales.webp`,
+        /* El logotipo nuevo (octubre de 2026), recortado a su mancha: el
+           original, logo-fuerza-regia-2-grupo-firmas-globales.webp, viene en un
+           lienzo de 2980x1550 con el 30 % de aire alrededor. */
+        src: `${GF}/logo-fuerza-regia-2-grupo-firmas-globales-recorte.webp`,
         alt: "Fuerza Regia",
-        /* 246x227 */
-        ratio: 1.084,
+        /* 560x297 */
+        ratio: 1.886,
       },
     ],
   },
@@ -321,12 +324,21 @@ export const GRUPO_FIRMA = {
     /* 537x206. */
     logoRatio: 2.607,
   },
-  /** Goal Capital va aparte: es el family office, no un sector operativo. */
+  /**
+   * Lo que cuelga aparte de la raíz, fuera de la fila de sectores.
+   *
+   * Era Goal Capital con su rótulo «Family office»; desde octubre de 2026 es
+   * Fundación Multimedios, y SÓLO EL LOGOTIPO, sin rótulo (`rol` no va). El
+   * archivo está recortado a su mancha: el original,
+   * logo-fundacion-multimedios-grupo-firmas-globales.webp, es un lienzo de
+   * 2980x1550 con el logotipo en una franja de 475 px.
+   */
   aparte: {
-    nombre: "Goal Capital",
-    rol: "Family office",
-    logo: `${GF}/logo-goal-capital-grupo-firma-globales.webp`,
-    logoRatio: 4.48,
+    nombre: "Fundación Multimedios",
+    rol: undefined as string | undefined,
+    logo: `${GF}/logo-fundacion-multimedios-grupo-firmas-globales-recorte.webp`,
+    /* 1000x199 */
+    logoRatio: 5.025,
   },
   sectores: SECTORES,
   pie: ["Seis sectores", "Una sola visión de largo plazo"],

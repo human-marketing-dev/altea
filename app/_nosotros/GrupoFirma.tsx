@@ -132,7 +132,7 @@ const AJUSTES: Record<string, number> = {
    * leían un escalón más chicos. A 0.82 llegan a su alto.
    */
   "logo-sultanes-grupo-firma-globales.webp": 0.82,
-  "logo-fuerza-regia-grupo-firma-globales.webp": 0.82,
+  "logo-fuerza-regia-2-grupo-firmas-globales-recorte.webp": 0.82,
   "altea-logo-light.svg": 0.58,
 };
 
@@ -216,10 +216,13 @@ export function GrupoFirma() {
 
       <div className="nos-firma__nudo">
         <span className="nos-firma__codo" aria-hidden="true" />
-        {/* Goal Capital cuelga de la raíz, no de la fila: es el family office y
-            no un sector operativo, así que no le corresponde una rama. */}
+        {/* Fundación Multimedios (antes Goal Capital, el family office) cuelga de
+            la raíz, no de la fila: no es un sector operativo, así que no le
+            corresponde una rama. Va sin rótulo: sólo el logotipo. */}
         <p className="nos-firma__aparte">
-          <span className="nos-firma__cat">{GRUPO_FIRMA.aparte.rol}</span>
+          {GRUPO_FIRMA.aparte.rol && (
+            <span className="nos-firma__cat">{GRUPO_FIRMA.aparte.rol}</span>
+          )}
           <Image
             className="nos-firma__logo-aparte"
             src={GRUPO_FIRMA.aparte.logo}

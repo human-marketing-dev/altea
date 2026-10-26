@@ -66,6 +66,20 @@ indexado pasa a 404. *Implementado en octubre de 2026*: las reglas están en
 así que viajan con el repositorio. **Tienen que estar desplegadas antes de que
 el dominio apunte al servidor nuevo.**
 
+**Verificado el 26 de octubre de 2026**, con peticiones reales contra el build
+de producción local (`npm run start`). Las 37 URLs son las 27 del sitemap (sacadas
+del `wp-sitemap.xml` en vivo, no escritas de memoria), `/privacidad` sin barra,
+los 7 sitemaps y los 2 feeds. Todas responden lo que dice la tabla de abajo y en
+un solo salto. Las cuatro de `ae_global_templates` llegan a `/` sin la query.
+
+**Falta repetirlo en el servidor real, antes del cambio de DNS.** El nginx de
+RunCloud va delante de Next y puede agregar sus propios saltos (http→https, www,
+barra final) y encadenar dos. Se despliega a mano desde RunCloud; después del
+despliegue se repite la misma prueba contra el servidor (por su IP o con
+`curl --resolve`), sin tocar el dominio. Por URL: `curl -s -o /dev/null -w
+'%{http_code} %{redirect_url}'` para el primer salto y lo mismo con `-L` y
+`%{num_redirects} %{url_effective}` para el destino final.
+
 | URL vieja | Código | Destino | Notas |
 |---|---|---|---|
 | `/` | — | `/` (200) | |

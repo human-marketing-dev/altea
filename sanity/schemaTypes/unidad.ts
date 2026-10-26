@@ -213,7 +213,7 @@ export const unidad = defineType({
       title: "Fotos del hero",
       type: "array",
       group: "hero",
-      description: `Las que se ven dentro de la palabra y, al bajar, a pantalla completa. Se turnan cada 4.2 segundos en este orden; la primera es la que carga primero. ${textoDeAncho("hero")} Hasta 8.`,
+      description: `Las que se ven dentro de la palabra y, al bajar, a pantalla completa. Se turnan cada 4.2 segundos en este orden; la primera es la que carga primero. ${textoDeAncho("hero")} Hasta 14.`,
       of: [
         defineArrayMember({
           type: "image",
@@ -222,9 +222,10 @@ export const unidad = defineType({
           validation: (r) => anchoMinimo("hero", "el hero")(r),
         }),
       ],
-      // Decidido, no medido (26 oct 2026): con más fotos crece el peso y lo que hay
-      // que administrar; la maqueta aceptaría más.
-      validation: (rule) => cantidad(1, 8, "más fotos son más peso y más que administrar")(rule),
+      // Decidido, no medido (26 oct 2026): 14 es lo que tiene hoy Comercial, la que
+      // más tiene. Más abajo obligaría a tirar fotos al migrar; más arriba es más
+      // peso y más que administrar. La maqueta aceptaría más.
+      validation: (rule) => cantidad(1, 14, "más fotos son más peso y más que administrar")(rule),
     }),
     defineField({
       name: "cifras",

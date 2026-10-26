@@ -74,8 +74,8 @@ export function anchoDeImagen(valor: unknown): number | null {
  * Si Altea entrega los originales en alta, se reexportan y `minimo` sube hacia
  * `sePinta`. Si no, se queda así.
  *
- * Carpeta y galería son la excepción: sus fotos de hoy (1 980 px) sobran, así
- * que el mínimo es lo que se pinta y no el tamaño del archivo.
+ * En carpeta y galería el mínimo queda por ENCIMA de `sePinta`: sus fotos de hoy
+ * miden 1 980 y el criterio es el mismo, que no entre nada peor.
  */
 export const ANCHO = {
   /** Dentro de la palabra del hero y a pantalla completa. Hoy la más chica: Amarantha, 1 979. */
@@ -92,9 +92,9 @@ export const ANCHO = {
   /** Paneles de Otros giros (Comercial). Hoy el más chico: Fiesta Inn, 1 159. */
   giro: { minimo: 1159, sePinta: 1860 },
   /** Carpetas del home. Hoy: 1 980. */
-  carpeta: { minimo: 1400, sePinta: 1400 },
+  carpeta: { minimo: 1980, sePinta: 1400 },
   /** Galería de Responsabilidad social. Hoy: 1 980. */
-  galeria: { minimo: 1100, sePinta: 1052 },
+  galeria: { minimo: 1980, sePinta: 1052 },
 } as const;
 
 export type CampoDeFoto = keyof typeof ANCHO;

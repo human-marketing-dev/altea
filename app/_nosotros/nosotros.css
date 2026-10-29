@@ -1048,20 +1048,39 @@
   color: var(--text-primary);
   padding: clamp(70px, 13vh, 170px) var(--container-pad);
 }
-.nos-rs__cab {
-  display: grid;
-  grid-template-columns: minmax(0, 38%) minmax(0, 62%);
-  gap: clamp(24px, 4vw, 80px);
-  align-items: start;
-  margin-bottom: clamp(34px, 6vh, 68px);
-}
 .nos-rs__titulo {
-  margin: 0;
+  margin: 0 0 clamp(34px, 6vh, 68px);
   font-size: var(--text-titulo-seccion);
   line-height: var(--lh-titulo-seccion);
   letter-spacing: var(--ls-titulo-seccion);
   font-weight: var(--peso-titulo-seccion);
   max-width: 13ch;
+}
+/*
+ * LOS DOS BLOQUES, EN ZIGZAG (29 oct 2026): texto de un lado y fotos del otro,
+ * centrados entre sí. El primero lleva el texto a la izquierda; el segundo, a
+ * la derecha. En el marcado el texto va siempre primero: el lado lo pone la
+ * rejilla, no el orden. Ver ResponsabilidadSocial.tsx.
+ */
+.nos-rs__bloque {
+  display: grid;
+  grid-template-columns: minmax(0, 36%) minmax(0, 64%);
+  gap: clamp(28px, 4.4vw, 84px);
+  align-items: center;
+}
+.nos-rs__bloque + .nos-rs__bloque {
+  margin-top: clamp(56px, 10vh, 120px);
+}
+.nos-rs__bloque--inverso {
+  grid-template-columns: minmax(0, 64%) minmax(0, 36%);
+}
+.nos-rs__bloque--inverso .nos-rs__copy {
+  grid-column: 2;
+  grid-row: 1;
+}
+.nos-rs__bloque--inverso .nos-rs__fotos {
+  grid-column: 1;
+  grid-row: 1;
 }
 /* coral-dark: 3.58 sobre el hundido. El coral vivo da 2.69 y no llega ni al 3.0
    de texto grande, y esto son 17-22px. */
@@ -1088,11 +1107,32 @@
 
 .nos-rs__fotos {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 5px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+/*
+ * ENTORNOS VERDES: LA MISMA REJILLA DE 2 × 3, con la columna izquierda en una
+ * sola celda alta para la foto vertical (1204x1600). La celda mide 0.58:1 y la
+ * foto 0.75:1, así que `cover` le quita un 22 % de ancho y nada de alto; las
+ * tres 4:3 van a la derecha en celdas 16:9, igual que las de comunidades. Así
+ * las dos galerías miden exactamente lo mismo.
+ */
+.nos-rs__fotos--verdes {
+  grid-template-rows: repeat(3, auto);
+}
+.nos-rs__fotos--verdes > li:first-child {
+  grid-row: 1 / span 3;
+}
+.nos-rs__fotos--verdes > li:first-child .nos-fz {
+  aspect-ratio: auto;
+  height: 100%;
+}
+/* Sin pie no hay velo: sólo está para que el pie se lea. */
+.nos-fz:not(:has(figcaption))::after {
+  content: none;
 }
 .nos-fz {
   position: relative;
@@ -1369,9 +1409,19 @@
     aspect-ratio: 4 / 3;
     max-height: none;
   }
-  .nos-rs__cab,
   .nos-firma__cab {
     grid-template-columns: 1fr;
+  }
+  /* Los bloques, apilados: el texto y debajo sus fotos, en los dos. Las
+     rejillas se quedan en 2 × 3: una columna serían seis fotos a lo alto. */
+  .nos-rs__bloque,
+  .nos-rs__bloque--inverso {
+    grid-template-columns: 1fr;
+  }
+  .nos-rs__bloque--inverso .nos-rs__copy,
+  .nos-rs__bloque--inverso .nos-rs__fotos {
+    grid-column: auto;
+    grid-row: auto;
   }
   /*
    * LOS PILARES SE QUEDAN EN TRES COLUMNAS, y esto cambió al quitarles el texto.
@@ -1384,14 +1434,6 @@
    */
   .nos-pilares__grid {
     gap: clamp(14px, 2.6vw, 48px);
-  }
-  .nos-rs__fotos {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (max-width: 700px) {
-  .nos-rs__fotos {
-    grid-template-columns: 1fr;
   }
 }
 

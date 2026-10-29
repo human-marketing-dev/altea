@@ -442,8 +442,11 @@ export const QUIENES_SOMOS = {
 /** Sección 6 del sitemap — Responsabilidad social. */
 export interface FotoGaleria {
   id: string;
-  /** Qué debe ir en el hueco mientras no haya imagen. */
-  nota: string;
+  /**
+   * El pie: qué es la iniciativa. Sale al pasar el cursor (siempre, en táctil).
+   * Las de entornos verdes no lo traen y van sin pie: no se inventa.
+   */
+  nota?: string;
   src?: string;
   alt?: string;
 }
@@ -491,14 +494,52 @@ const GALERIA_RS: FotoGaleria[] = [
   },
 ];
 
+/**
+ * Las cuatro de entornos verdes (29 oct 2026): vivero y huertos. La PRIMERA es
+ * la vertical (1204x1600) y tiene que seguir siendo la primera: es la que ocupa
+ * la celda alta de la izquierda. Las otras tres son 4:3 (1600x1204). Ver
+ * .nos-rs__fotos--verdes.
+ */
+const VERDES = "/images/responsabildiad-social/entornos-verdes";
+const GALERIA_VERDES: FotoGaleria[] = [
+  {
+    id: "verdes-1",
+    src: `${VERDES}/responsabilidad-social-altea-entornos-verdes-1.webp`,
+    alt: "Hileras de árboles jóvenes en contenedor, con tutores de madera, al pie de un cerro arbolado",
+  },
+  {
+    id: "verdes-2",
+    src: `${VERDES}/responsabilidad-social-altea-entornos-verdes-2.webp`,
+    alt: "Plantación de árboles jóvenes en bolsas de vivero, en hileras, con montañas al fondo",
+  },
+  {
+    id: "verdes-3",
+    src: `${VERDES}/responsabilidad-social-altea-entornos-verdes-3.webp`,
+    alt: "Árboles de cítricos en hileras, con una línea de riego por goteo",
+  },
+  {
+    id: "verdes-4",
+    src: `${VERDES}/responsabilidad-social-altea-entornos-verdes-4.webp`,
+    alt: "Huerto de cítricos sobre pasto verde, bajo un cielo nublado",
+  },
+];
+
 export const RESPONSABILIDAD = {
   eyebrow: "Compromiso",
   title: "Responsabilidad social",
-  /** Entre el título y el cuerpo. Campo nuevo. */
+  /** El título del primer bloque, el de comunidades. */
   subtitulo: "Nuestro compromiso con las comunidades",
   descripcion: [
     "En Altea creemos que nuestro compromiso con las comunidades va más allá de los proyectos que desarrollamos. Por eso, impulsamos iniciativas que nos permiten contribuir de manera cercana y activa con nuestro entorno.",
     "Porque crear proyectos que materialicen sueños también significa contribuir a construir comunidades más humanas, conectadas y solidarias.",
   ],
   galeria: GALERIA_RS,
+  /** El segundo bloque, debajo del de comunidades (29 oct 2026). */
+  verdes: {
+    titulo: "Impulsamos la creación de entornos más verdes",
+    descripcion: [
+      "Contamos con más de 40,000 árboles de diversas especies y seis ranchos dedicados a actividades forestales, que en conjunto abarcan más de 350 hectáreas. Con estas acciones, contribuimos a la conservación de áreas verdes y al desarrollo de espacios más sostenibles.",
+    ],
+    galeria: GALERIA_VERDES,
+  },
 };

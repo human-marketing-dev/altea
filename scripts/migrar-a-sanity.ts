@@ -381,33 +381,6 @@ const sinSalto = (texto: string, donde: string) => {
   return limpio;
 };
 
-/* ── Lo provisional ───────────────────────────────────────────────────── */
-
-/**
- * ETIQUETAS DE CIFRA ACORTADAS, PROVISIONALES HASTA QUE ALTEA LAS APRUEBE. En
- * Sanity va la versión corta; el sitio sigue con la larga, que es la de los .ts.
- *
- * Medido en el navegador (28 oct 2026, build real, 360 / 390 / 1280 / 1440): con
- * dos cifras, la fila del hero se rompe a 360 en cuanto una etiqueta pasa de 23
- * o 24 caracteres (22 si las dos son largas), y las dos cifras se apilan. Las
- * tres de abajo ya la rompen hoy en teléfono. Con la versión corta la fila queda
- * en un renglón en los cuatro tamaños, como Industrial.
- */
-const PROVISIONALES: Record<string, Record<string, string>> = {
-  "unidad-vivienda": { "de m² desarrollables, equivalente +30 terrenos": "de m² desarrollables" },
-  "unidad-forestal": {
-    "hectáreas para uso forestal": "hectáreas forestales",
-    "producción de árboles al año": "árboles al año",
-  },
-};
-
-function etiquetaDe(id: string, etiqueta: string) {
-  const corta = PROVISIONALES[id]?.[etiqueta];
-  if (!corta) return etiqueta;
-  notas.push(`${id}: PROVISIONAL hasta que Altea la apruebe: «${etiqueta}» (${etiqueta.length}) → «${corta}» (${corta.length}). El sitio sigue con la larga.`);
-  return corta;
-}
-
 /* ── Proyectos ────────────────────────────────────────────────────────── */
 
 const claveUnidad = (u: ContenidoUnidad) => u.unidad.toLowerCase();
@@ -508,7 +481,7 @@ function unidad(u: ContenidoUnidad): Doc {
     descripcion: carpeta?.descripcion,
     fotoCarpeta: carpeta ? imagen(carpeta.image, `carpeta ${k}`, { alt: carpeta.alt }) : undefined,
     fotosHero: u.hero.fotos.map((f, i) => imagen(f.foto, `hero ${k}`, { ancla: f.ancla, _key: clave(id, "hero", i) })),
-    cifras: u.cifras.map((c: Cifra, i) => cifra("cifraUnidad", { ...c, etiqueta: etiquetaDe(id, c.etiqueta) }, clave(id, "cifra", i))),
+    cifras: u.cifras.map((c: Cifra, i) => cifra("cifraUnidad", c, clave(id, "cifra", i))),
     metaTitulo: u.metadata.title,
   };
 

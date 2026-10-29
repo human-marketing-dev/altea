@@ -38,6 +38,7 @@ Ronda de solo lectura: no se arregló nada. Cada punto lleva archivo y línea; l
 | 26 | **Se publicarían 56 archivos de `public/` que nadie usa (22.3 MB).** Entre ellos: `video/institucional-prueba.mp4` (6.8 MB), `hero/edificio-altea-home-oldoldoldold.webp` (1.6 MB), `images/comercial/altea-hero-comercial.webp` (2.0 MB; se nombra en el contenido pero no se pinta), `comercial/hoteles/nh-collections-altea.webp` (1.5 MB), `comercial/cta/comercial-foto-cta-vieja.png` y los cinco SVG de create-next-app (`next.svg`, `vercel.svg`…). | `public/` | Puede esperar | Limpiar antes del despliegue. |
 | 27 | **No hay `.env.example`.** Hoy el proyecto no necesita ninguna variable de entorno; en cuanto se conecte el formulario va a necesitar las del destino. | Raíz del repo | Puede esperar | Crearlo junto con la fila 1. |
 | 28 | **El enlace al video completo en Vimeo está pendiente.** El hueco del botón «ver completo» ya existe en el componente. | `app/_home/content.ts:47-50` | Puede esperar | La URL de Vimeo. |
+| 29 | **Las cifras del hero de Forestal y Vivienda están rotas hoy en teléfono** (detectado el 28 oct 2026, no lo causa la migración a Sanity). A **360 y 390 px** las dos cifras no caben en un renglón y se apilan, y la palabra del hero sube: **45 px a 360** (arriba en 355 contra 400 de Industrial) y **46 px a 390** (404 contra 450). Nada se encima ni se corta, pero la apertura sale del sistema: las rayas de arriba quedan de distinto ancho y no se compone como Industrial. En 1280 y 1440 se ve bien. La causa son las etiquetas de hoy —Vivienda «de m² desarrollables, equivalente +30 terrenos» (46); Forestal «hectáreas para uso forestal» (27) y «producción de árboles al año» (28)— contra lo que cabe: con dos cifras, a 360 la fila se parte al pasar de 23–24 caracteres (22 si las dos son largas). Comercial va en 2 + 1 a propósito y no cuenta. | `app/_unidad/contenido/vivienda.ts:63`, `forestal.ts:58`; la fila, `app/_unidad/unidad.css:348` (`.uni-hero__datos`) y `:363` (`.uni-hd`) | Debería | Acortar las etiquetas cuando Altea apruebe las versiones cortas (ver «Contenido en Sanity: provisional o inferido», abajo), o rediseñar la fila para que dos cifras quepan en dos renglones a propósito. |
 
 ## Los ocho que ya sabíamos, hoy
 
@@ -83,7 +84,7 @@ El video institucional pesa 14.2 MB y solo se usa en el home (fila 15). `public/
 ## Cuántos hay
 
 - **Bloquea:** 6 (filas 1–6)
-- **Debería:** 16 (filas 7–22)
+- **Debería:** 17 (filas 7–22 y 29)
 - **Puede esperar:** 6 (filas 23–28)
 
 ## Lo que no estaba en ninguna lista
@@ -139,3 +140,36 @@ Los archivos: `paseo-la-fe-altea.webp` 2000 × 1332 (822 KB), `galeria-industria
 
 **Lo que se probó y no entró:** diferir la precarga de la segunda foto hasta el `load`. Mejoraba más el LCP de Vivienda y Forestal, pero en Comercial, a 10 Mbps, la segunda foto ya no estaba lista en el primer relevo: cambiaba el relevo. Ver la nota en `HeroCalado.tsx` (`pintar`).
 
+
+## Contenido en Sanity: provisional o inferido
+
+*28 de octubre de 2026, al migrar los `.ts` a Sanity (`scripts/migrar-a-sanity.ts`).*
+
+**Etiquetas de cifra acortadas, provisionales hasta que Altea las apruebe.** En
+Sanity va la versión corta; el sitio sigue mostrando la larga, que es la de los
+`.ts`, hasta que la página se pase a Sanity.
+
+| Unidad | Hoy | En Sanity (provisional) |
+|---|---|---|
+| Vivienda | «de m² desarrollables, equivalente +30 terrenos» (46) | «de m² desarrollables» (20) |
+| Forestal | «hectáreas para uso forestal» (27) | «hectáreas forestales» (20) |
+| Forestal | «producción de árboles al año» (28) | «árboles al año» (14) |
+
+Por qué: medido en el navegador con el build real, a 360 px la fila de dos
+cifras se rompe en cuanto una etiqueta pasa de 23–24 caracteres (22 si las dos
+son largas), y las dos cifras se apilan. Las tres ya la rompen hoy en teléfono
+(360 y 390). Con la versión corta la fila queda en un renglón en 360, 390, 1280
+y 1440, como Industrial. En Vivienda se pierde «equivalente +30 terrenos».
+
+**Pregunta para Altea (Vivienda):** «equivalente +30 terrenos» es un dato, no
+relleno. Si lo quieren conservar, habría que moverlo a un texto de la sección en
+lugar de tirarlo. Ojo: hoy la página de Vivienda no tiene un párrafo donde
+quepa (el hero y la sección de proyectos sólo llevan título), así que habría
+que decidir dónde va.
+
+**El estado de los proyectos es inferido, no dato.** La página de la unidad no
+dice si un proyecto está en operación o en desarrollo. Amarantha quedó «En
+desarrollo» porque así la pone el carril del home; los otros 21 de las listas,
+«En operación» por omisión. Los 9 próximos sí son dato: están en «Próximos
+proyectos». Aeropuerto Industrial Park, que el home llama «En desarrollo», quedó
+como próximo porque así está en su unidad. Que Altea lo confirme.

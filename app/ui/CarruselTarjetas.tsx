@@ -25,6 +25,11 @@ export interface CarruselTarjetasProps {
   titulo: string;
   /** El id del <h2>, para el aria-labelledby de la sección. */
   tituloId: string;
+  /**
+   * Un texto corto a la derecha del título, alineado abajo; en móvil, debajo.
+   * Con él el título deja de toparse en 16ch: ya no está solo en la cabecera.
+   */
+  nota?: string;
   items: TarjetaCarril[];
   /** Qué hacer al pulsar una tarjeta. El botón viene para devolverle el foco. */
   onAbrir: (indice: number, boton: HTMLButtonElement) => void;
@@ -77,6 +82,7 @@ function sizesRejilla(cols: number, ratio = 1.92) {
 export function CarruselTarjetas({
   titulo,
   tituloId,
+  nota,
   items,
   onAbrir,
   children,
@@ -326,10 +332,15 @@ export function CarruselTarjetas({
       data-fija={fija ? "" : undefined}
       aria-labelledby={tituloId}
     >
-      <div className="altea-carrusel__cab">
+      <div
+        className={
+          nota ? "altea-carrusel__cab altea-carrusel__cab--nota" : "altea-carrusel__cab"
+        }
+      >
         <h2 className="altea-carrusel__titulo" id={tituloId}>
           {titulo}
         </h2>
+        {nota && <p className="altea-carrusel__nota">{nota}</p>}
 
         {!fija && (
           <div className="altea-carrusel__mando">

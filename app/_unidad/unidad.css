@@ -1137,10 +1137,15 @@
 
 /* ═══ 3 · otros giros ═════════════════════════════════════════════════════
  *
- * Sin reglas propias: desde el 29 oct 2026 son las tarjetas y la ficha de las
- * plazas (.altea-carrusel en components.css, .uni-fx aquí). Las láminas que se
+ * Sólo el cambio de rejilla a carrusel: desde el 29 oct 2026 son las tarjetas y
+ * la ficha de las plazas (.altea-carrusel en components.css, .uni-fx aquí). Las láminas que se
  * abrían al pasar el cursor —.uni-giros y .uni-gr— se fueron enteras.
  */
+/* El carrusel de los giros sólo existe en móvil: ver OtrosGiros.tsx y el
+   bloque de 900. */
+.uni-giros__movil {
+  display: none;
+}
 
 /* ═══ 4 · el muro de marcas ═══════════════════════════════════════════════ */
 
@@ -1460,6 +1465,13 @@
     display: none;
   }
   .uni-prox__movil {
+    display: block;
+  }
+  /* Y los otros giros, igual. */
+  .uni-giros__rejilla {
+    display: none;
+  }
+  .uni-giros__movil {
     display: block;
   }
   .uni-marcas__rejilla {

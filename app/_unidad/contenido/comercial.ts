@@ -630,7 +630,7 @@ const GIROS: Giro[] = [
     numero: "03",
     title: "Educación",
     description:
-      "Tálisis es infraestructura educativa en el centro de Monterrey, para la creciente demanda de espacios académicos del entorno urbano: coworking académico, laboratorios especializados y espacios modulares adaptables a distintas necesidades pedagógicas.",
+      "Adaptamos un edificio existente en el centro de Monterrey para convertirlo en un espacio educativo alineado con los lineamientos de Tálisis. El proyecto responde a la creciente demanda de infraestructura académica en la zona, integrando áreas de coworking, laboratorios especializados y espacios modulares que se ajustan a distintas necesidades de aprendizaje.",
     image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
     /* 1200x896 */
     fotoRatio: 1.3393,
@@ -645,14 +645,15 @@ const GIROS: Giro[] = [
 export const OTROS_GIROS = {
   /** PENDIENTE */
   eyebrow: "Otros giros",
-  /** PENDIENTE */
-  titulo: "Hoteles, hospital y educación dentro de nuestros desarrollos",
+  /* Confirmado (29 oct 2026). */
+  titulo: "Desarrollamos, transformamos y adaptamos proyectos.",
   /**
-   * PENDIENTE — NO EXISTE. Nota corta a la derecha de la cabecera, alineada
-   * abajo. No la inventé: sin valor, la cabecera se compone sin ella y el
-   * encabezado ocupa el ancho que le haga falta.
+   * El texto a la derecha de la cabecera, alineado abajo (29 oct 2026). En
+   * móvil va debajo del título. Ver `nota` en CarruselTarjetas.
    */
-  nota: undefined as string | undefined,
+  nota: "Encontramos el potencial de cada inmueble para convertirlo en espacios funcionales que respondan a las necesidades de distintos sectores, ofreciendo soluciones que se alinean con los objetivos de cada cliente." as
+    | string
+    | undefined,
   bloques: GIROS,
 };
 

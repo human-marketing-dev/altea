@@ -2824,6 +2824,35 @@ a.altea-project-card:focus-visible {
   letter-spacing: var(--ls-titulo-seccion);
   font-weight: var(--peso-titulo-seccion);
 }
+/*
+ * CON TEXTO A LA DERECHA (Otros giros de Comercial, 29 oct 2026). Es el trato
+ * de la cabecera de Grupo Firmas en Nosotros —el título a la izquierda, el
+ * párrafo a la derecha en un 44 % y alineados abajo—, con la misma letra.
+ * El título suelta el tope de 16ch: con el párrafo al lado ya no está solo, y
+ * a 16ch partía una frase de 50 caracteres en cuatro renglones.
+ */
+.altea-carrusel__cab--nota .altea-carrusel__titulo {
+  flex: 1 1 0;
+  max-width: 22ch;
+}
+.altea-carrusel__nota {
+  flex: 0 1 44%;
+  margin: 0;
+  line-height: 1.72;
+  font-size: clamp(1rem, 1.15vw, 1.12rem);
+  color: var(--text-secondary);
+}
+/* En móvil el párrafo baja a su propio renglón, debajo del título; las flechas
+   del carrusel, si las hay, se quedan a la derecha del título. */
+@media (max-width: 900px) {
+  .altea-carrusel__cab--nota {
+    flex-wrap: wrap;
+  }
+  .altea-carrusel__cab--nota .altea-carrusel__nota {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
 .altea-carrusel__mando {
   display: flex;
   align-items: center;

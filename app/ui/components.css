@@ -2758,11 +2758,19 @@ a.altea-project-card:focus-visible {
  * velo con desenfoque la hace legible pase lo que pase en la foto, sin tocar el
  * degradado de abajo, y el blanco sube al 82 %.
  */
-.altea-tj__marca {
+/* Las chapas van en fila, arriba a la izquierda: el formato y, si lo hay, un
+   aviso como «Próximamente». Si no caben en una línea, la segunda baja. */
+.altea-tj__marcas {
   position: absolute;
   z-index: 3;
   top: 13px;
   left: 13px;
+  right: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.altea-tj__marca {
   padding: 3px 8px;
   /* --radius-sm (4px) y no los 6 del prototipo: el sistema tiene token. */
   border-radius: var(--radius-sm);

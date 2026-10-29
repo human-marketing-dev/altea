@@ -63,6 +63,7 @@ export function CarruselProyectos({
          * par del <dl> de la ficha, que es el mismo "Formato".
          */
         etiqueta: plaza.datos[0].valor,
+        aviso: plaza.aviso,
         foto: plaza.foto,
         /* Para el `sizes` de la rejilla fija (Vivienda, con dos). */
         fotoRatio: plaza.fotoRatio,

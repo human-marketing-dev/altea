@@ -387,6 +387,7 @@ export function CarruselTarjetas({
               pie={item.pie}
               foto={item.foto}
               etiqueta={item.etiqueta}
+              aviso={item.aviso}
               sizes={fija ? sizesRejilla(items.length, item.fotoRatio) : undefined}
               onClick={(boton) => {
                 if (arrastrado.current) {

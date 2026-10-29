@@ -43,6 +43,11 @@ export interface TarjetaProyectoProps {
    * dato que la tarjeta no puede dar de otra forma.
    */
   etiqueta?: string;
+  /**
+   * Una segunda chapa, al lado de la primera y con el mismo trato: un aviso
+   * sobre el proyecto, no un dato de él. Hoy, el «Próximamente» de Amarantha.
+   */
+  aviso?: string;
   /** Otro `sizes` para la foto, si la caja no es la del carril/carrusel. */
   sizes?: string;
   onClick: (boton: HTMLButtonElement) => void;
@@ -53,6 +58,7 @@ export function TarjetaProyecto({
   pie,
   foto,
   etiqueta,
+  aviso,
   sizes = SIZES,
   onClick,
 }: TarjetaProyectoProps) {
@@ -65,7 +71,12 @@ export function TarjetaProyecto({
       <span className="altea-tj__foto js-tarjeta-foto">
         {foto && <Image src={foto} alt="" fill sizes={sizes} className="altea-tj__img" />}
       </span>
-      {etiqueta && <span className="altea-tj__marca">{etiqueta}</span>}
+      {(etiqueta || aviso) && (
+        <span className="altea-tj__marcas">
+          {etiqueta && <span className="altea-tj__marca">{etiqueta}</span>}
+          {aviso && <span className="altea-tj__marca">{aviso}</span>}
+        </span>
+      )}
       <span className="altea-tj__txt">
         <b>{nombre}</b>
         <span>{pie}</span>

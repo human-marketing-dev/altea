@@ -270,6 +270,11 @@ export interface Proyecto {
    */
   datos: [ParDato, ...ParDato[]];
   /**
+   * Una segunda chapa en la tarjeta, junto al formato: un aviso sobre el
+   * proyecto, como «Próximamente». Sin él, la tarjeta lleva sólo el formato.
+   */
+  aviso?: string;
+  /**
    * El sitio web propio del proyecto, si lo tiene: la ficha pone un botón que
    * lo abre en otra pestaña. Hoy sólo Reserva Mezquital.
    */

@@ -100,6 +100,9 @@ export const VIVIENDA: ContenidoUnidad = {
           { etiqueta: "Lotes", valor: "Aproximadamente 323" },
           { etiqueta: "Desde", valor: "200 m²" },
         ],
+        /* Pedido el 29 oct 2026. ⚠ El carril del home la sigue poniendo «En
+           desarrollo» (app/_home/content.ts). */
+        aviso: "Próximamente",
       },
       {
         id: "reserva-mezquital",

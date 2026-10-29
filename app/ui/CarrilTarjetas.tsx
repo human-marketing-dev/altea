@@ -49,6 +49,8 @@ export interface TarjetaCarril {
   foto?: string;
   /** La chapa de arriba a la izquierda. Sólo la usa el carrusel de plazas. */
   etiqueta?: string;
+  /** Una segunda chapa junto a la primera: p. ej. «Próximamente». */
+  aviso?: string;
   /** Ancho / alto del archivo de la foto. Lo usa la rejilla fija para su `sizes`. */
   fotoRatio?: number;
 }
@@ -241,6 +243,7 @@ export function CarrilTarjetas({
                 pie={item.pie}
                 foto={item.foto}
                 etiqueta={item.etiqueta}
+                aviso={item.aviso}
                 onClick={(boton) => onAbrir(k, boton)}
               />
             </li>

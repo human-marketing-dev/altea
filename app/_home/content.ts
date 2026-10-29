@@ -300,9 +300,9 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     name: "Paseo Durango",
     unit: "Comercial",
     location: "Durango, Durango",
-    image: "/images/comercial/centros-comerciales/paseo-durango-altea.webp",
+    image: "/images/comercial/centros-comerciales/paseo-durango-altea-1.webp",
     descripcion:
-      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
+      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
   },
   {
     estado: "En operación",

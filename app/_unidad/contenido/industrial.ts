@@ -104,8 +104,8 @@ export const INDUSTRIAL: ContenidoUnidad = {
      * copy los pone EN OPERACIÓN; manda el copy. Al revés con Cadereyta y
      * Salinas Victoria, que están en naves-industriales y son próximos.
      *
-     * ⚠ Pocket Park y Primavera tienen fotos chicas (1078 y 1200 px de ancho):
-     * en la ficha, a 1040 px, se verán algo blandas.
+     * ⚠ Primavera tiene foto chica (1200 px de ancho): en la ficha, a 1040 px,
+     * se verá algo blanda. Pocket Park ya no: su foto nueva mide 2000.
      */
     lista: [
       {
@@ -143,9 +143,9 @@ export const INDUSTRIAL: ContenidoUnidad = {
         id: "pocket-park-aeropuerto",
         nombre: "Pocket Park Aeropuerto",
         ubicacion: "Apodaca, Nuevo León",
-        foto: `${NAVES}/pocket-park-aeropuerto-altea.webp`,
-        /* 1078x732 */
-        fotoRatio: 1.4727,
+        foto: `${NAVES}/pocket-park-aeropuerto-altea-1.webp`,
+        /* 2000x1333 */
+        fotoRatio: 1.5004,
         alt: "",
         label: "Pocket Park Aeropuerto",
         descripcion:

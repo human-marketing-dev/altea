@@ -390,7 +390,7 @@
  * ═══ EL ÁRBOL ═══
  *
  * La sección dejó de ser seis columnas y es un organigrama: GFG arriba, el nudo
- * con el codo a Goal Capital, la barra horizontal y las seis ramas.
+ * con el tronco, la barra horizontal y las seis ramas.
  *
  * TODO EL TRAZADO VA CON BORDES Y PSEUDO-ELEMENTOS, no con SVG. Un SVG habría que
  * recalcularlo en cada cambio de ancho —midiendo dónde quedó cada caja y
@@ -434,8 +434,7 @@
      cuerpo, y esto es el alto de la mancha del archivo. */
   height: clamp(30px, 4.4vw, 52px);
 }
-.nos-firma__gfg span,
-.nos-firma__aparte {
+.nos-firma__gfg span {
   font-size: var(--text-eyebrow);
   letter-spacing: var(--tracking-wide);
   /* 4.98, contra el 39 % del prototipo que daba 2.32. */
@@ -445,22 +444,15 @@
   text-transform: uppercase;
 }
 /*
- * EL NUDO: el tramo entre GFG y la barra, con el tronco centrado.
+ * EL NUDO: el tramo entre GFG y la barra, con el tronco centrado en su ::before.
  *
- * ⚠ ES DE ANCHO COMPLETO A PROPÓSITO, y aquí está la trampa que costó encontrar:
- * el bloque de Goal Capital NO puede colgar de la línea del tronco. Esa línea es
- * un elemento de 1 px de ancho, y un hijo posicionado dentro calcula sus
- * porcentajes contra ese píxel, así que acaba en cualquier sitio. El contenedor
- * ocupa el ancho entero y es él quien posiciona; el tronco es sólo su ::before.
+ * El alto se quedó como estaba cuando colgaba de él Fundación Multimedios, con
+ * su codo a un lado (quitada el 29 oct 2026): el suelo de 78 lo pedía su logo,
+ * que va en vw, en ventanas anchas y bajas. Ya no lo fuerza nada y podría bajar,
+ * pero el árbol se dejó con la misma altura.
  */
 .nos-firma__nudo {
   position: relative;
-  /*
-   * El suelo es 78 y no 66, y es por ventanas ANCHAS Y BAJAS. El alto del nudo
-   * va en vh, pero el de Goal Capital va en vw: en 1920x473 el nudo cae a su
-   * mínimo mientras la caja sigue en 48 px, y con 66 quedaban 9 px de aire a cada
-   * lado — no se montaba con la fila, pero rozaba. Con 78 el peor caso son 15.
-   */
   height: clamp(78px, 10vh, 112px);
 }
 .nos-firma__nudo::before {
@@ -471,40 +463,6 @@
   bottom: 0;
   width: 1px;
   background: var(--linea-arbol);
-}
-/*
- * EL CODO SALE DEL TRONCO Y VA RECTO DE LADO, SIN BAJAR DESPUÉS.
- *
- * La tentación es llevarlo de lado y luego bajar hasta la caja, como un codo de
- * verdad. No funciona: con la bajada, Goal Capital queda a la altura de la fila
- * de ramas y se monta con ellas. Yendo recto, la caja se queda a media altura del
- * nudo, en la franja que no ocupa nadie.
- */
-.nos-firma__codo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 14%;
-  height: 1px;
-  background: var(--linea-arbol);
-}
-.nos-firma__aparte {
-  position: absolute;
-  top: 50%;
-  /*
-   * 67 y no 64. El codo termina en el 64 % —mide 14 % desde el tronco, que está en
-   * el 50— así que arrancar el bloque ahí mismo dejaba "FAMILY OFFICE" pegado a la
-   * punta de la línea. Con 67 quedan 3 puntos de aire, unos 39 px a 1440.
-   */
-  left: 67%;
-  transform: translateY(-50%);
-  width: clamp(112px, 14vw, 200px);
-  display: flex;
-  align-items: center;
-  gap: clamp(10px, 1.4vw, 18px);
-  margin: 0;
-  line-height: 1.5;
-  letter-spacing: normal;
 }
 /*
  * LAS SEIS RAMAS, CON SU BARRA Y SUS CAÍDAS.
@@ -581,50 +539,6 @@
   color: color-mix(in srgb, var(--altea-ink) 48%, transparent);
 }
 
-.nos-firma__aparte .nos-firma__cat {
-  flex: none;
-  max-width: 7ch;
-}
-/*
- * Goal Capital. Gris por opacidad como los otros ajenos, y A TAMAÑO DE SECTOR.
- *
- * No es una sub-marca: en el organigrama real cuelga directo de GFG, igual que
- * los seis, así que lleva el mismo tamaño que ellos y no el de segundo nivel.
- * Pasa de 16 px a 31.8 a 1440 —casi el doble—, que es lo que mediría un logotipo
- * de su proporción (4.48:1) dentro de una caja de sector.
- *
- * Aquí no hay caja dibujada —el logotipo va en línea en el párrafo de la raíz—,
- * así que el tamaño se reconstruye en vw. Y se reconstruye del ANCHO de la caja y
- * no de su alto: con 4.48:1, Goal Capital topa con el `max-width: 94%` antes de
- * llegar al alto común, igual que Multimedios y Altea. Por eso tampoco lleva
- * --factor: cuando manda el ancho, el factor no entra. 0.94 x 0.121667 / 4.479 =
- * 0.02553 del ancho de ventana.
- */
-.nos-firma__logo-aparte {
-  display: block;
-  /*
-   * Sale del ANCHO de la caja y no de su alto: con 4.48:1, Goal Capital topa con
-   * el `max-width: 94%` antes de llegar al alto común, igual que Multimedios y
-   * Altea. Por eso tampoco lleva --factor: cuando manda el ancho, el factor no
-   * entra. 0.94 x 2.5 / 4.479 = 0.5247 del alto de caja.
-   *
-   * El tope de 48 px es por el contexto, no por la geometría: a 3 columnas la
-   * caja es mucho más ancha y la fórmula pediría 51 px, que al lado del "GFG" de
-   * la cabecera se ve desproporcionado. Dentro de una caja de sector sí los
-   * mediría.
-   */
-  /* Fundación Multimedios (oct. 2026), 5.025:1: 0.94 x 2.5 / 5.025 = 0.4677.
-     Con Goal Capital (4.48:1) era 0.5247; la cuenta de arriba es la misma. */
-  height: min(calc(var(--alto-caja, 70px) * 0.4677), 48px);
-  width: auto;
-  filter: grayscale(1);
-  opacity: 0.55;
-  transition: opacity var(--duration-base) var(--ease-standard);
-}
-.nos-firma__raiz:hover .nos-firma__logo-aparte {
-  opacity: 0.72;
-}
-
 /*
  * --ALTO-CAJA ES EL ALTO REAL DE .nos-firma__marca, RECONSTRUIDO EN vw.
  *
@@ -645,9 +559,6 @@
  * coeficiente cambia: 6.667vw menos 28.8 px. El max() toma el que manda en cada
  * zona y los dos se cruzan exactamente en 1600. Sin él, el error a 2560 es del
  * 12 % y las sub-marcas se quedan cortas.
- *
- * Vive en la sección y no en la rejilla porque Goal Capital —que va en la
- * cabecera, fuera de las columnas— también se mide con él.
  */
 .nos-firma {
   --alto-caja: clamp(42px, max(4.867vw, 6.667vw - 28.8px), 142px);
@@ -1343,16 +1254,15 @@
 @media (max-width: 1000px) {
   .nos-firma__rama::before,
   .nos-firma__rama::after,
-  .nos-firma__nudo::before,
-  .nos-firma__codo {
+  .nos-firma__nudo::before {
     display: none !important;
   }
 
   /*
    * UNA SOLA SANGRÍA PARA TODO LO QUE CUELGA DE GFG.
    *
-   * Goal Capital y las seis ramas tienen que caer en la MISMA x: la espina no es
-   * un elemento, es el borde izquierdo de cada uno, y si van a sangrías distintas
+   * Las seis ramas tienen que caer en la MISMA x que el tramo que baja de GFG: la
+   * espina no es un elemento, es el borde izquierdo de cada una, y si van a sangrías distintas
    * sale partida en dos tramos con un escalón entre ellos.
    */
   .nos-firma {
@@ -1366,7 +1276,7 @@
     /* La caja ya no vive en una rejilla de seis: en vertical es la columna
        derecha de cada rama, acotada en 200 px. Medido en el navegador: se queda
        en 200 x 80 desde 999 px hasta 320, sin desbordar nunca. De aquí salen el
-       alto de los sub-logotipos y el de Goal Capital. */
+       alto de los sub-logotipos. */
     --alto-caja: 80px;
   }
 
@@ -1392,12 +1302,12 @@
   }
   /*
    * El tramo corto que une GFG con el arranque de la espina. Sin él la línea
-   * empieza en Goal Capital y la raíz queda suelta encima.
+   * empieza en la primera rama y la raíz queda suelta encima.
    *
    * ⚠ EN left: 0, LA MISMA x QUE EL BORDE DE ABAJO. Iba en −1 px, así que el
    * primer tramo salía un píxel corrido del resto, y subía 16 px METIDO EN EL
    * TEXTO de la raíz: era el pedazo «movido» del principio. Ahora mide justo el
-   * aire que hay entre el nombre y Goal Capital, y no lo toca.
+   * aire que hay entre el nombre y la primera rama, y no lo toca.
    */
   .nos-firma__nudo::after {
     content: "";
@@ -1408,24 +1318,6 @@
     height: var(--space-3);
     background: var(--linea-arbol);
   }
-  /* Goal Capital va pegado debajo de GFG y antes de las seis: cuelga de la raíz,
-     no es un sector más. */
-  .nos-firma__aparte {
-    position: static;
-    transform: none;
-    width: auto;
-    display: grid;
-    gap: var(--space-2);
-    justify-items: start;
-    padding: var(--space-4) 0 var(--space-4) clamp(18px, 5vw, 30px);
-    border-left: 1px solid var(--linea-arbol);
-    border-bottom: 1px solid var(--border-subtle);
-  }
-  .nos-firma__aparte .nos-firma__cat {
-    max-width: none;
-    text-align: left;
-  }
-
   .nos-firma__ramas {
     display: block;
     margin-left: var(--sangria);

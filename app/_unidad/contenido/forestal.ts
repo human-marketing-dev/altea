@@ -85,15 +85,49 @@ export const FORESTAL: ContenidoUnidad = {
    */
   lineas: [
     {
+      id: "teca",
+      titulo: "Teca",
+      /* El logotipo va en lugar del título. 630x376, recortado de
+         logo-teca-altea.webp. ⚠ El logo dice «Teca San Miguel», no sólo «Teca». */
+      logo: {
+        src: "/images/forestal/teca/logo-teca-altea-recorte.webp",
+        alt: "Teca San Miguel",
+        ancho: 630,
+        alto: 376,
+      },
+      parrafos: [
+        "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, enfocado en recuperar la vocación forestal de tierras degradadas por actividades agrícolas y ganaderas. En 2011, iniciamos la plantación sostenible de 682,853 árboles de teca en 841 hectáreas, un proceso que permitió restaurar la salud del suelo y que contribuye a revitalizar la economía de al menos 100 familias mayas de la región.",
+      ],
+      fotos: [
+        {
+          src: "/images/forestal/teca/teca-forestal-altea.webp",
+          alt: "Plantación de teca de Altea en la Península de Yucatán",
+          /* 1980x1485 */
+          ratio: 1.3333,
+        },
+      ],
+      lado: "derecha",
+      lista: {
+        rotulo: "Aplicaciones",
+        items: [
+          { titulo: "Mobiliario", icono: "mobiliario" },
+          { titulo: "Construcción", icono: "construccion" },
+          { titulo: "Hotelería", icono: "hoteleria" },
+          { titulo: "Embarcaciones", icono: "embarcaciones" },
+        ],
+      },
+    },
+    {
       id: "viveros-asturias",
       titulo: "Viveros Asturias",
-      /* El logotipo va en lugar del título. 471x316, recortado de
-         logo-viveros-asturias-altea.webp. */
+      /* El logotipo va en lugar del título, a color (29 oct 2026). 601x403,
+         recortado a su mancha de LOGOTIPO_VIVEROS_ASTURIAS_CURVAS-01-COLOR.webp,
+         que viene en 1650x1275 con casi todo el lienzo vacío. */
       logo: {
-        src: "/images/forestal/viveros-asturias/logo-viveros-asturias-altea-recorte.webp",
+        src: "/images/forestal/viveros-asturias/logo-viveros-asturias-color-altea-recorte.webp",
         alt: "Viveros Asturias",
-        ancho: 471,
-        alto: 316,
+        ancho: 601,
+        alto: 403,
       },
       parrafos: [
         "Ofrecemos soluciones integrales de arbolado urbano, jardinería y conservación de espacios verdes para proyectos empresariales y gubernamentales. Nuestros servicios abarcan desde la producción y suministro de árboles hasta su mantenimiento y preservación, mediante técnicas especializadas que favorecen su desarrollo.",
@@ -124,47 +158,13 @@ export const FORESTAL: ContenidoUnidad = {
           ratio: 2.1639,
         },
       ],
-      lado: "derecha",
+      lado: "izquierda",
       lista: {
         rotulo: "Servicios",
         items: [
           { titulo: "Servicio de jardinería", icono: "jardineria" },
           { titulo: "Reforestación", icono: "reforestacion" },
           { titulo: "Mantenimiento", icono: "mantenimiento" },
-        ],
-      },
-    },
-    {
-      id: "teca",
-      rotulo: "Plantación forestal comercial",
-      titulo: "Teca",
-      /* El logotipo va en lugar del título. 630x376, recortado de
-         logo-teca-altea.webp. ⚠ El logo dice «Teca San Miguel», no sólo «Teca». */
-      logo: {
-        src: "/images/forestal/teca/logo-teca-altea-recorte.webp",
-        alt: "Teca San Miguel",
-        ancho: 630,
-        alto: 376,
-      },
-      parrafos: [
-        "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, enfocado en recuperar la vocación forestal de tierras degradadas por actividades agrícolas y ganaderas. En 2011, iniciamos la plantación sostenible de 682,853 árboles de teca en 841 hectáreas, un proceso que permitió restaurar la salud del suelo y que contribuye a revitalizar la economía de al menos 100 familias mayas de la región.",
-      ],
-      fotos: [
-        {
-          src: "/images/forestal/teca/teca-forestal-altea.webp",
-          alt: "Plantación de teca de Altea en la Península de Yucatán",
-          /* 1980x1485 */
-          ratio: 1.3333,
-        },
-      ],
-      lado: "izquierda",
-      lista: {
-        rotulo: "Aplicaciones",
-        items: [
-          { titulo: "Mobiliario", icono: "mobiliario" },
-          { titulo: "Construcción", icono: "construccion" },
-          { titulo: "Hotelería", icono: "hoteleria" },
-          { titulo: "Embarcaciones", icono: "embarcaciones" },
         ],
       },
     },

@@ -1,68 +1,63 @@
-import Image from "next/image";
-import type { ContenidoUnidad } from "./tipos";
+"use client";
+
+import { useRef, useState } from "react";
+import { CarruselTarjetas } from "@/app/ui";
+import { FichaUnidad } from "./FichaUnidad";
+import type { ContenidoUnidad, Giro } from "./tipos";
 
 /**
  * Otros giros: hoteles, hospital y educación.
  *
- * Tres láminas en banda. La señalada se abre y las otras ceden, y eso se resuelve
- * ENTERO EN CSS con `:has()`: `.fila:has(.gr:hover) .gr:not(:hover)` encoge a las
- * que no están bajo el cursor. Sin una línea de JavaScript, sin estado y sin
- * escuchar eventos — ver el bloque en unidad.css.
+ * LA MISMA TARJETA Y LA MISMA FICHA QUE LAS PLAZAS (29 oct 2026): <TarjetaProyecto>
+ * en <CarruselTarjetas>, y al pulsar, <FichaUnidad> con la foto, el dato y la
+ * descripción. Ver CarruselProyectos, que es el mismo montaje.
  *
- * EN TÁCTIL LA DESCRIPCIÓN VA SIEMPRE VISIBLE. Si sólo existiera en el hover, en
- * un teléfono no existiría, y tres láminas con un título y nada más no dicen de
- * qué va la sección. Lo decide `@media (hover: none)`.
- *
- * Son <article> y no <button>: no llevan a ninguna parte ni abren nada. Lo único
- * que hacen es revelar su propio texto, que en táctil ya está revelado.
+ * Antes eran tres láminas en banda que se abrían al pasar el cursor —la señalada
+ * crecía y las otras cedían, todo en CSS con `:has()`— y enseñaban la
+ * descripción encima de la foto. Se fueron con ellas .uni-giros y .uni-gr de la
+ * hoja. El `numero` ("01") y el `eyebrow` siguen en el contenido y ya no se
+ * pintan: la tarjeta de plazas no tiene sitio para ninguno de los dos.
  */
 export function OtrosGiros({ giros }: Pick<ContenidoUnidad, "giros">) {
-  const OTROS_GIROS = giros;
+  const GIROS = giros.bloques;
+  const [activo, setActivo] = useState<Giro | null>(null);
+  /* Quién abrió la ficha, para devolverle el foco al cerrar. */
+  const origen = useRef<HTMLButtonElement | null>(null);
+
   return (
-    <section className="uni-giros" aria-labelledby="giros-titulo">
-      {OTROS_GIROS.eyebrow && (
-        <p className="uni-giros__rotulo">{OTROS_GIROS.eyebrow}</p>
-      )}
-      <h2 className="uni-giros__titulo" id="giros-titulo">
-        {OTROS_GIROS.titulo}
-      </h2>
-
-      <div className="uni-giros__fila">
-        {OTROS_GIROS.bloques.map((giro) => (
-          <article className="uni-gr" key={giro.id}>
-            {giro.image && (
-              <Image
-                src={giro.image}
-                alt={giro.alt ?? ""}
-                fill
-                sizes="(max-width: 900px) 100vw, 60vw"
-                className="uni-gr__img"
-              />
-            )}
-            {/* El velo no es decorativo: es lo que garantiza el contraste del
-                título y la descripción sobre una foto cualquiera. */}
-            <span className="uni-gr__velo" aria-hidden="true" />
-
-            <span className="uni-gr__n" aria-hidden="true">
-              {giro.numero}
-            </span>
-            <div className="uni-gr__t">
-              <h3>{giro.title}</h3>
-              {/*
-                El envoltorio no es decorativo: la caja anima UNA fila de rejilla
-                de 0fr a 1fr y necesita un hijo único con overflow oculto. Con
-                max-height habría que adivinar un alto y se rompería al cambiar
-                el texto.
-              */}
-              {giro.description && (
-                <div className="uni-gr__caja">
-                  <p>{giro.description}</p>
-                </div>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
+    <CarruselTarjetas
+      titulo={giros.titulo}
+      tituloId="giros-titulo"
+      items={GIROS.map((giro) => ({
+        id: giro.id,
+        nombre: giro.title,
+        /* El primer dato —el proyecto o las marcas—, como la ciudad en plazas. */
+        pie: giro.datos?.[0]?.valor ?? "",
+        foto: giro.image,
+        fotoRatio: giro.fotoRatio,
+      }))}
+      onAbrir={(k, boton) => {
+        origen.current = boton;
+        setActivo(GIROS[k] ?? null);
+      }}
+    >
+      <FichaUnidad
+        contenido={
+          activo && {
+            nombre: activo.title,
+            foto: activo.image,
+            fotoRatio: activo.fotoRatio,
+            alt: activo.alt,
+            datos: activo.datos ?? [],
+            descripcion: activo.description,
+          }
+        }
+        onCerrar={() => {
+          setActivo(null);
+          origen.current?.focus();
+        }}
+        etiquetaVacia="Ficha del giro"
+      />
+    </CarruselTarjetas>
   );
 }

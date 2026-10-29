@@ -67,7 +67,7 @@ export const HERO_DIAPOSITIVAS: DiapositivaHero[] = [
   },
   {
     id: "paseo-durango",
-    foto: `${CENTROS}/paseo-durango-altea.webp`,
+    foto: `${CENTROS}/paseo-durango-altea-1.webp`,
     alt: "Paseo Durango, centro comercial de Altea",
     label: "Paseo Durango",
     /** PENDIENTE */
@@ -296,8 +296,9 @@ export const DESCRIPCION_COMERCIAL = {
  *
  * Los dos pares del <dl> salen del propio texto: el FORMATO —Fashion Mall,
  * Strip Mall o Power Center, que el copy declara en la primera frase de cada
- * una— y los VISITANTES, que sólo da para Paseo La Fe y Paseo Juárez. Donde no
- * hay cifra va un guion, no un número inventado.
+ * una—. Los VISITANTES de los seis Paseos los pasó Altea aparte (29 oct 2026) y
+ * no coinciden con lo que dicen los textos de La Fe y Juárez. Donde no hay cifra
+ * va un guion, no un número inventado.
  *
  * ⚠ Paseo Tec entra por fin: estaba fuera esperando confirmación y este copy la
  * da. Su archivo de imagen se llama `paso-tec-altea.webp` —sin la "e"—, que es
@@ -321,7 +322,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "1 millón al mes" },
+      { etiqueta: "Visitantes", valor: "700 mil al mes" },
     ],
   },
   {
@@ -338,7 +339,7 @@ export const PLAZAS: Plaza[] = [
       "Strip Mall ubicado sobre Av. Eugenio Garza Sada, en Distrito Tec, al sur de Monterrey, Nuevo León y a pocos minutos del centro de la ciudad. Su propuesta integra comercio, gastronomía, entretenimiento y servicios para diferentes necesidades. El desarrollo también cuenta con el hotel Fiesta Inn y el salón de eventos GRAND 2411, consolidándose como un punto de encuentro que complementa la vida urbana de la zona Tec.",
     datos: [
       { etiqueta: "Formato", valor: "Strip Mall" },
-      { etiqueta: "Visitantes", valor: "+300 mil al mes" },
+      { etiqueta: "Visitantes", valor: "200 mil al mes" },
     ],
   },
   {
@@ -355,24 +356,26 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado en el centro de Juárez, Nuevo León, que recibe más de 650 mil visitantes al mes. Su oferta comercial reúne marcas reconocidas como Walmart, Cinemex, Suburbia, Coppel y Del Sol, además de una amplia variedad de tiendas, servicios y opciones de entretenimiento, consolidándose como un punto de encuentro para la comunidad de Juárez.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "+650 mil al mes" },
+      { etiqueta: "Visitantes", valor: "580 mil al mes" },
     ],
   },
   {
     id: "paseo-durango",
     nombre: "Paseo Durango",
     ubicacion: "Durango, Durango",
-    foto: `${CENTROS}/paseo-durango-altea.webp`,
-    /* 2000x1333 */
-    fotoRatio: 1.5004,
-    ancla: 0.54,
+    foto: `${CENTROS}/paseo-durango-altea-1.webp`,
+    /* 2000x1500 */
+    fotoRatio: 1.3333,
+    /* Foto aérea nueva (29 oct 2026). Medido renderizado entre 0.40 y 0.60:
+       0.5 es el de más contraste dentro de la palabra en 1440. */
+    ancla: 0.5,
     alt: "",
     label: "Paseo Durango",
     descripcion:
       "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "+900 mil al mes" },
+      { etiqueta: "Visitantes", valor: "600 mil al mes" },
     ],
   },
   {
@@ -389,7 +392,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado entre Av. Rosales y Blvd. Centenario, en Los Mochis, Sinaloa. Es el único Fashion Mall de la ciudad y cuenta con una oferta comercial y de entretenimiento encabezada por marcas como Liverpool, Sears y Cinemex, consolidándose como uno de los principales destinos para compras, servicios y experiencias en Los Mochis.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "+350 mil al mes" },
+      { etiqueta: "Visitantes", valor: "500 mil al mes" },
     ],
   },
   {
@@ -406,7 +409,7 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado en la región de La Laguna, en Gómez Palacio, Durango. Es el centro comercial más nuevo de nuestro portafolio y el único Fashion Mall de la ciudad. Cuenta con marcas como Cinemex, Suburbia y Del Sol, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierten en un nuevo punto de encuentro para la comunidad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "+300 mil al mes" },
+      { etiqueta: "Visitantes", valor: "400 mil al mes" },
     ],
   },
   {
@@ -593,6 +596,9 @@ const OTROS = "/images/comercial";
  * Los tres tienen número, título, descripción y foto. Les faltan `subtitulo` y
  * `remate`, que van marcados opcionales a propósito: montarlos con texto
  * inventado sería peor que no tenerlos.
+ *
+ * Los `datos` de la ficha (29 oct 2026) salen de la propia descripción: las
+ * marcas de hoteles, Sierra Madre, Tálisis y «el centro de Monterrey».
  */
 const GIROS: Giro[] = [
   {
@@ -602,7 +608,10 @@ const GIROS: Giro[] = [
     description:
       "Nuestra experiencia también se extiende al desarrollo de hoteles de marcas reconocidas, integrados en nuestros centros comerciales para crear destinos más completos y funcionales. A través de proyectos como Fiesta Inn, One Hotels y NH Hotels, hemos desarrollado espacios de hospitalidad en distintos puntos de la República Mexicana.",
     image: `${OTROS}/hoteles/fiesta-inn-tec-altea.webp`,
+    /* 1159x766 */
+    fotoRatio: 1.5131,
     alt: "Fiesta Inn dentro de un desarrollo de Altea",
+    datos: [{ etiqueta: "Marcas", valor: "Fiesta Inn, One Hotels y NH Hotels" }],
   },
   {
     id: "hospital",
@@ -611,7 +620,10 @@ const GIROS: Giro[] = [
     description:
       "Sierra Madre implicó la integración de nueva infraestructura con instalaciones existentes, atendiendo los requerimientos técnicos y operativos de un hospital moderno, con el objetivo de entregar un espacio equipado y listo para operar desde el primer día. Con este proyecto, fortalecemos nuestra capacidad para desarrollar espacios especializados que requieren altos estándares de planeación y tecnología.",
     image: `${OTROS}/hospital-y-educacion/hospital-altea.webp`,
+    /* 1376x768 */
+    fotoRatio: 1.7917,
     alt: "Hospital dentro de un desarrollo de Altea",
+    datos: [{ etiqueta: "Proyecto", valor: "Sierra Madre" }],
   },
   {
     id: "educacion",
@@ -620,7 +632,13 @@ const GIROS: Giro[] = [
     description:
       "Tálisis es infraestructura educativa en el centro de Monterrey, para la creciente demanda de espacios académicos del entorno urbano: coworking académico, laboratorios especializados y espacios modulares adaptables a distintas necesidades pedagógicas.",
     image: `${OTROS}/hospital-y-educacion/educacion-altea.webp`,
+    /* 1200x896 */
+    fotoRatio: 1.3393,
     alt: "Centro educativo dentro de un desarrollo de Altea",
+    datos: [
+      { etiqueta: "Proyecto", valor: "Tálisis" },
+      { etiqueta: "Ubicación", valor: "Centro de Monterrey" },
+    ],
   },
 ];
 
@@ -987,7 +1005,7 @@ export const MARCAS_COMERCIAL: MarcaComercial[] = [
 const PROXIMOS = "/images/comercial/proximos-proyectos";
 
 /**
- * Dos: la ampliación de Paseo La Fe y Punto López Mateos. Punto La Pastora
+ * Dos, y las dos son ampliaciones: Paseo La Fe y Punto López Mateos. Punto La Pastora
  * estaba aquí y pasó a las plazas en operación (octubre de 2026), con su copy.
  * La rejilla toma tantas columnas como proyectos, hasta tres, así que con dos no
  * queda un hueco.
@@ -1006,8 +1024,8 @@ export const PROXIMOS_PROYECTOS = {
     },
     {
       slug: "punto-lopez-mateos",
-      name: "Punto López Mateos",
-      unit: "Comercial",
+      name: "Punto López Mateos · Ampliación",
+      unit: "Ampliación comercial",
       location: "Guadalupe, Nuevo León",
       image: `${PROXIMOS}/punto-lopez-mateos-altea-proximo.webp`,
       descripcion:

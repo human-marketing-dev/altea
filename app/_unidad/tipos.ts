@@ -284,17 +284,20 @@ export interface ParDato {
 
 export interface Giro {
   id: string;
-  /** Ordinal grande al lado del texto, p. ej. "01". */
+  /** Ordinal, p. ej. "01". Ya no se pinta: la tarjeta no tiene sitio para él. */
   numero: string;
   title: string;
-  /** Sin descripción la lámina va sólo con el título: no se abre al pasar. */
+  /** El párrafo de la ficha. Sin él, la ficha va con la foto y los datos. */
   description?: string;
-  /**
-   * Sin foto la lámina va sobre ink (ver .uni-gr en la hoja). Es el caso de los
-   * servicios de Forestal, que esperan sus iconos.
-   */
   image?: string;
+  /** Ancho/alto del archivo, medido: la ficha adopta su proporción. */
+  fotoRatio?: number;
   alt?: string;
+  /**
+   * Los pares de la ficha. El primero va además de pie en la tarjeta, como la
+   * ciudad en las plazas. Salen del propio texto de cada giro, no se inventan.
+   */
+  datos?: ParDato[];
   /**
    * PENDIENTE — NO EXISTE TODAVÍA en ninguno de los tres. Versalitas cortas
    * bajo el título; algo como "Cuatro operaciones" o "Tránsito diario". Sin

@@ -235,36 +235,14 @@ const GF = "/images/logo/logos-grupo-firmas-globales";
  */
 /* Va como const TIPADA y no con `satisfies`, para que las entradas sin `logo`
    —Deportes— sigan admitiendo el campo cuando el componente lo consulta. */
-/* Altea primero y Multimedios segundo (octubre de 2026). */
+/* Medios, Deportes, Inmobiliaria, Alimentos, Vinos y Energía (29 oct 2026). */
 const SECTORES: SectorFirma[] = [
-  {
-    id: "inmobiliaria",
-    logo: "/brand/logos/altea-logo-light.svg",
-    logoRatio: 5.037,
-    categoria: "Inmobiliaria",
-    marca: "ALTEA",
-    nuestra: true,
-  },
   {
     id: "medios",
     logo: `${GF}/logo-multimedios-grupo-firma-globales.webp`,
     logoRatio: 7.065,
     categoria: "Medios",
     marca: "Multimedios",
-  },
-  {
-    id: "vinos",
-    categoria: "Vinos y licores",
-    marca: "Bornos",
-    logo: `${GF}/logo-bornos-grupo-firma-globales.webp`,
-    logoRatio: 2.755,
-  },
-  {
-    id: "alimentos",
-    logo: `${GF}/logo-foodplay-grupo-firma-globales.webp`,
-    logoRatio: 2.692,
-    categoria: "Alimentos y diversiones",
-    marca: "Foodplay",
   },
   {
     id: "deportes",
@@ -289,6 +267,28 @@ const SECTORES: SectorFirma[] = [
         ratio: 1.886,
       },
     ],
+  },
+  {
+    id: "inmobiliaria",
+    logo: "/brand/logos/altea-logo-light.svg",
+    logoRatio: 5.037,
+    categoria: "Inmobiliaria",
+    marca: "ALTEA",
+    nuestra: true,
+  },
+  {
+    id: "alimentos",
+    logo: `${GF}/logo-foodplay-grupo-firma-globales.webp`,
+    logoRatio: 2.692,
+    categoria: "Alimentos y diversiones",
+    marca: "Foodplay",
+  },
+  {
+    id: "vinos",
+    categoria: "Vinos y licores",
+    marca: "Bornos",
+    logo: `${GF}/logo-bornos-grupo-firma-globales.webp`,
+    logoRatio: 2.755,
   },
   {
     id: "energia",
@@ -324,22 +324,9 @@ export const GRUPO_FIRMA = {
     /* 537x206. */
     logoRatio: 2.607,
   },
-  /**
-   * Lo que cuelga aparte de la raíz, fuera de la fila de sectores.
-   *
-   * Era Goal Capital con su rótulo «Family office»; desde octubre de 2026 es
-   * Fundación Multimedios, y SÓLO EL LOGOTIPO, sin rótulo (`rol` no va). El
-   * archivo está recortado a su mancha: el original,
-   * logo-fundacion-multimedios-grupo-firmas-globales.webp, es un lienzo de
-   * 2980x1550 con el logotipo en una franja de 475 px.
-   */
-  aparte: {
-    nombre: "Fundación Multimedios",
-    rol: undefined as string | undefined,
-    logo: `${GF}/logo-fundacion-multimedios-grupo-firmas-globales-recorte.webp`,
-    /* 1000x199 */
-    logoRatio: 5.025,
-  },
+  /* Fundación Multimedios colgaba aparte de la raíz, fuera de la fila, y se
+     quitó entero (29 oct 2026) —antes de ella fue Goal Capital—. Su logotipo
+     sigue en el repositorio. */
   sectores: SECTORES,
   pie: ["Seis sectores", "Una sola visión de largo plazo"],
 };

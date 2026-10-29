@@ -186,13 +186,9 @@ export function GrupoFirma() {
       {/*
         LA RAÍZ, CENTRADA, Y EL NUDO DEL QUE CUELGA TODO.
 
-        El nudo es un contenedor de ancho completo con el tronco dibujado en su
-        ::before. Tiene que ser de ancho completo: si el bloque de Goal Capital
-        colgara de la propia línea del tronco —un elemento de 1 px—, sus
-        porcentajes se calcularían contra ese píxel y acabaría en cualquier sitio.
-
-        El codo sale del tronco y va RECTO DE LADO, sin bajar después. Con la
-        bajada, Goal Capital cae sobre la fila de ramas y se monta con ellas.
+        El nudo es sólo el tronco, dibujado en su ::before. Ya no cuelga nada de
+        él: Fundación Multimedios, que salía con un codo hacia un lado, se quitó
+        (29 oct 2026).
       */}
       <div className="nos-firma__raiz">
         <p className="nos-firma__gfg">
@@ -214,31 +210,7 @@ export function GrupoFirma() {
         </p>
       </div>
 
-      <div className="nos-firma__nudo">
-        <span className="nos-firma__codo" aria-hidden="true" />
-        {/* Fundación Multimedios (antes Goal Capital, el family office) cuelga de
-            la raíz, no de la fila: no es un sector operativo, así que no le
-            corresponde una rama. Va sin rótulo: sólo el logotipo. */}
-        <p className="nos-firma__aparte">
-          {GRUPO_FIRMA.aparte.rol && (
-            <span className="nos-firma__cat">{GRUPO_FIRMA.aparte.rol}</span>
-          )}
-          <Image
-            className="nos-firma__logo-aparte"
-            src={GRUPO_FIRMA.aparte.logo}
-            alt={GRUPO_FIRMA.aparte.nombre}
-            width={400}
-            height={Math.round(400 / GRUPO_FIRMA.aparte.logoRatio)}
-            style={{
-              ["--factor" as string]: factorDe(
-                GRUPO_FIRMA.aparte.logo,
-                GRUPO_FIRMA.aparte.logoRatio,
-              ),
-            }}
-            unoptimized
-          />
-        </p>
-      </div>
+      <div className="nos-firma__nudo" aria-hidden="true" />
 
       <ul className="nos-firma__ramas">
         {GRUPO_FIRMA.sectores.map((sector) => (

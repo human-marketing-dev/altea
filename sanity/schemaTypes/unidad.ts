@@ -173,6 +173,8 @@ export const unidad = defineType({
       group: "carpeta",
       description:
         "La frase grande de la carpeta en el home: «Activamos la energía de la ciudad.». Máximo 60 caracteres, y junto con la descripción no más de 233: más larga, la carpeta crece, deja de medir lo mismo que las otras tres y la pila del home se desordena al hacer scroll.",
+      /* El 60 tampoco se midió por separado (inventario: «propuesto»); el que se
+         midió es el combinado, que va en la descripción. Hoy ninguna pasa de 57. */
       validation: (rule) => [
         rule.required(),
         maximo(60, "la carpeta crece y la pila del home se desordena")(rule),
@@ -185,10 +187,11 @@ export const unidad = defineType({
       rows: 4,
       group: "carpeta",
       description:
-        "Va en la carpeta del home y es también la descripción de la página para Google. Máximo 170 caracteres, y junto con la frase no más de 233: más larga, la carpeta crece y la pila del home se desordena.",
+        "Va en la carpeta del home y es también la descripción de la página para Google. Junto con la frase, no más de 233 caracteres: más larga, la carpeta crece y la pila del home se desordena.",
+      /* Sólo el límite combinado: es el que se midió (las dos comparten la caja de
+         la carpeta). El 170 por separado era una propuesta del inventario. */
       validation: (rule) => [
         rule.required(),
-        maximo(170, "la carpeta crece y la pila del home se desordena")(rule),
         rule.custom((v: string | undefined, ctx) => {
           const frase = (ctx.document as { frase?: string } | undefined)?.frase ?? "";
           const total = frase.length + (v?.length ?? 0);

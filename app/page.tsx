@@ -4,10 +4,11 @@ import { CarpetasUnidades } from "./_home/CarpetasUnidades";
 import { CarrilProyectos } from "./_home/CarrilProyectos";
 import { CierrePuntos } from "./_home/CierrePuntos";
 import { CorporateVideo } from "./_home/CorporateVideo";
-import { CONTACT_CTA } from "./_home/content";
+import { CONTACT_CTA, VIDEO } from "./_home/content";
 import { Emblem } from "./_home/Emblem";
 import { FraseCifras } from "./_home/FraseCifras";
 import { HeroA } from "./_home/heroA/HeroA";
+import { VideoYoutube } from "./_home/VideoYoutube";
 import "./_home/home.css";
 import "./_home/hero-a.css";
 import "./_home/secciones.css";
@@ -43,7 +44,9 @@ export default function Home() {
       */}
       <main>
         <FraseCifras />
-        <CorporateVideo />
+        {/* El video completo, de YouTube. Sin `VIDEO.youtube` vuelve el clip
+            local en bucle, que sigue entero en <CorporateVideo>. */}
+        {VIDEO.youtube ? <VideoYoutube /> : <CorporateVideo />}
         <CarpetasUnidades />
         <Emblem />
         <CarrilProyectos />

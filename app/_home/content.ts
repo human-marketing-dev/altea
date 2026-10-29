@@ -60,10 +60,20 @@ export const VIDEO = {
    */
   poster: "/video/poster.webp" as string | undefined,
   caption: "Video corporativo",
+  /**
+   * EL VIDEO COMPLETO, EN YOUTUBE (29 oct 2026): 1:40, con audio, en el canal
+   * de Altea ("ALTEA VIDEO INSTITUCIONAL"). Con el id, el home monta <VideoYoutube> en vez de
+   * <CorporateVideo>; sin él, vuelve el clip local de arriba, que se queda
+   * entero —archivos y componente— por si se regresa.
+   * https://www.youtube.com/watch?v=SfvgCPTsXpw
+   */
+  youtube: "SfvgCPTsXpw" as string | undefined,
+  /** El `title` del iframe: sin él, un lector de pantalla anuncia «marco». */
+  titulo: "Video institucional de Altea",
   /*
-   * PENDIENTE: el video completo con audio va a Vimeo. Cuando esté, aquí va su
-   * URL y el componente ya tiene el hueco donde cuelga el enlace de "ver
-   * completo" — ver .home-video__acciones en CorporateVideo.tsx.
+   * RESUELTO (29 oct 2026): el video completo con audio no fue a Vimeo sino a
+   * YouTube, y se ve en el home en lugar del clip —`youtube`, arriba—. El hueco
+   * de "ver completo" en CorporateVideo.tsx sólo vale si se regresa al clip.
    */
 };
 

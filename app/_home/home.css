@@ -236,6 +236,13 @@
 @media (max-width: 900px) {
   .home-video__controles { right: var(--space-4); bottom: var(--space-4); }
 }
+/* Con el video de YouTube la chapa va ARRIBA a la derecha, donde estaba su
+   botón de volumen: abajo está su propia barra y se pisarían. Un solo botón,
+   así que el `gap` no deja hueco. */
+.home-video__controles--arriba {
+  top: var(--space-5);
+  bottom: auto;
+}
 
 .home-video__player {
   display: block;
@@ -260,6 +267,38 @@
     sacrificaría todo el recorte por arriba.
   */
   object-position: center 70%;
+}
+/*
+ * EL DE YOUTUBE, A SANGRE Y ANCLADO ABAJO (29 oct 2026). Ver VideoYoutube.tsx.
+ *
+ * A todo el ancho en 16:9, PEGADO AL BORDE DE ABAJO de la caja y no centrado:
+ * la caja (alto de siempre, con su tope) lo recorta, y como sobresale sólo por
+ * arriba, todo el recorte se va arriba y la barra de controles de YouTube, que
+ * va abajo, queda dentro del filo inferior. En teléfono la caja ya es 16:9 y no
+ * se recorta nada. Sin parallax: moverlo sacaría la barra de la caja.
+ */
+.home-video__yt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  aspect-ratio: 16 / 9;
+}
+.home-video__poster {
+  object-fit: cover;
+}
+.home-video__iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* Encima del póster sólo cuando ya cargó: mientras, se ve el póster. */
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+.home-video__yt[data-listo] .home-video__iframe {
+  opacity: 1;
 }
 .home-video__play {
   position: absolute;

@@ -2783,6 +2783,22 @@ a.altea-project-card:focus-visible {
   color: rgb(255 255 255 / 0.82);
 }
 
+/*
+ * EL LOGO DE UN DESARROLLO EN SU FICHA (2 nov 2026), en lugar del nombre sobre
+ * la foto. La altura sale de `--alto-logo`, que pone cada ficha, por la
+ * `--escala` de cada logo: misma área para todos. Ver LogoDesarrollo.tsx.
+ * Si un logo muy ancho topa con el ancho de la foto, `contain` lo encoge sin
+ * deformarlo y lo deja pegado abajo a la izquierda, donde iba el nombre.
+ */
+.altea-logo-desarrollo {
+  display: block;
+  width: auto;
+  height: calc(var(--alto-logo, 64px) * var(--escala, 1));
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+}
+
 .altea-tj__txt {
   position: absolute;
   z-index: 2;

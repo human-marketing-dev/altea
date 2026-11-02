@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { LogoDesarrollo } from "@/app/ui";
+import type { LogoDesarrollo as Logo } from "@/lib/logos-desarrollos";
 
 /**
  * La ficha de las páginas de unidad: el <dialog> que abren las tarjetas. Era
@@ -40,6 +42,11 @@ export interface ContenidoFicha {
   descripcion?: string;
   /** El sitio web del proyecto. Con él, la ficha lleva un botón que lo abre. */
   sitio?: string;
+  /**
+   * El logotipo del desarrollo. Con él, va EN LUGAR DEL NOMBRE sobre la foto;
+   * sin él, el nombre en texto. Ver lib/logos-desarrollos.ts.
+   */
+  logo?: Logo;
 }
 
 export function FichaUnidad({
@@ -107,7 +114,17 @@ export function FichaUnidad({
                 className="uni-fx__img"
               />
             )}
-            <h3 className="uni-fx__nombre">{contenido.nombre}</h3>
+            <h3
+              className={
+                contenido.logo ? "uni-fx__nombre uni-fx__nombre--logo" : "uni-fx__nombre"
+              }
+            >
+              {contenido.logo ? (
+                <LogoDesarrollo logo={contenido.logo} nombre={contenido.nombre} />
+              ) : (
+                contenido.nombre
+              )}
+            </h3>
           </div>
 
           <div className="uni-fx__cuerpo">

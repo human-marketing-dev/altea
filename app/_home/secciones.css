@@ -586,6 +586,10 @@
 }
 /* El nombre va sobre la foto, no en una cabecera aparte: la ficha se abre
    mostrando el proyecto y no una etiqueta. */
+/* Con logo, el alto base del logo; ver .altea-logo-desarrollo. */
+.home-ficha__nombre--logo {
+  --alto-logo: clamp(40px, 5vw, 66px);
+}
 .home-ficha__nombre {
   position: absolute;
   z-index: 2;

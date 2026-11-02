@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { CarrilTarjetas } from "@/app/ui";
+import { CarrilTarjetas, LogoDesarrollo } from "@/app/ui";
+import { logoDe } from "@/lib/logos-desarrollos";
 import type { FeaturedProject } from "./content";
 import { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } from "./content";
 
@@ -34,6 +35,7 @@ const ITEMS = FEATURED_PROJECTS.map((p) => ({
 export function CarrilProyectos() {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [activo, setActivo] = useState<FeaturedProject | null>(null);
+  const logoActivo = activo ? logoDe(activo.slug) : undefined;
   /* Quién abrió la ficha, para devolverle el foco al cerrar. */
   const origen = useRef<HTMLButtonElement | null>(null);
 
@@ -92,7 +94,21 @@ export function CarrilProyectos() {
                   className="home-ficha__img"
                 />
               )}
-              <h3 className="home-ficha__nombre">{activo.name}</h3>
+              {/* Con logo del desarrollo, el logo en lugar del nombre (2 nov
+                  2026); ver lib/logos-desarrollos.ts. */}
+              <h3
+                className={
+                  logoActivo
+                    ? "home-ficha__nombre home-ficha__nombre--logo"
+                    : "home-ficha__nombre"
+                }
+              >
+                {logoActivo ? (
+                  <LogoDesarrollo logo={logoActivo} nombre={activo.name} />
+                ) : (
+                  activo.name
+                )}
+              </h3>
             </div>
 
             <div className="home-ficha__cuerpo">

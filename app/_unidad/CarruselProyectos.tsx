@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { CarruselTarjetas } from "@/app/ui";
+import { logoDe } from "@/lib/logos-desarrollos";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, Proyecto } from "./tipos";
 
@@ -90,6 +91,7 @@ export function CarruselProyectos({
             ],
             descripcion: activa.descripcion,
             sitio: activa.sitio,
+            logo: logoDe(activa.id),
           }
         }
         onCerrar={() => {

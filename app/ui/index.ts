@@ -51,6 +51,7 @@ export type { FotoCarrusel } from "./CarruselFotos";
 export type { CarruselTarjetasProps } from "./CarruselTarjetas";
 export { TarjetaProyecto } from "./TarjetaProyecto";
 export type { TarjetaProyectoProps } from "./TarjetaProyecto";
+export { LogoDesarrollo } from "./LogoDesarrollo";
 export type { CarrilTarjetasProps, TarjetaCarril } from "./CarrilTarjetas";
 
 export { ProyectosPaneles } from "./ProyectosPaneles";

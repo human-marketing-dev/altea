@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { CarruselTarjetas } from "@/app/ui";
+import { logoDe } from "@/lib/logos-desarrollos";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, ProximoProyecto } from "./tipos";
 
@@ -52,6 +53,7 @@ export function ProximosProyectos({
             ...(activo.datos ?? []),
           ],
           descripcion: activo.descripcion,
+          logo: logoDe(activo.slug),
         }
       }
       onCerrar={() => {

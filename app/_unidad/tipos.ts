@@ -86,7 +86,7 @@ export interface LineaNegocio {
   parrafos: string[];
   /**
    * Una foto o varias. Con más de una, la caja es un carrusel (<CarruselFotos>):
-   * Viveros Asturias lleva tres.
+   * Viveros Asturias lleva cinco.
    */
   fotos: [FotoLinea, ...FotoLinea[]];
   /** De qué lado va la foto. Alternarlo entre líneas da el ritmo. */

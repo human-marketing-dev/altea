@@ -671,6 +671,10 @@
     rgb(12 15 18 / 0.78)
   );
 }
+/* Con logo, el alto base del logo; ver .altea-logo-desarrollo. */
+.uni-fx__nombre--logo {
+  --alto-logo: clamp(40px, 5vw, 70px);
+}
 .uni-fx__nombre {
   position: absolute;
   z-index: 2;

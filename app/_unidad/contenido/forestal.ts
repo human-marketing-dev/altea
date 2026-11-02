@@ -134,28 +134,45 @@ export const FORESTAL: ContenidoUnidad = {
         "Actualmente, brindamos servicios de jardinería en 23 centros comerciales y mantenimiento en 19 terrenos, con más de 40,000 m² de áreas verdes atendidas mensualmente y más de 18,000 nuevos árboles plantados, contribuyendo a la conservación y mejora de los espacios naturales.",
       ],
       /*
-       * Las tres de la carpeta, en carrusel. ⚠ La 2 y la 3 son 1980x915 —más
-       * apaisadas que la caja— y se recortan mucho por los lados, sobre todo
-       * en escritorio, donde la caja es casi cuadrada.
+       * Del 4 al 8 de la carpeta, en carrusel (2 nov 2026): jardines y áreas
+       * verdes atendidas por Viveros Asturias. Las cinco son casi 16:9. La 1, la
+       * 2 y la 3, que iban antes, siguen en la carpeta sin usarse.
+       *
+       * ⚠ DE LA 4 A LA 7 SON ORIGINALES DE CÁMARA: casi 6000 px y de 10 a 16 MB
+       * cada una. El visitante no los baja —pasan por el optimizador de Next—,
+       * pero pesan en el repositorio y el servidor los tiene que reducir la
+       * primera vez que se piden.
        */
       fotos: [
         {
-          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-1.webp",
-          alt: "Árboles en contenedor en Viveros Asturias",
-          /* 1280x963 */
-          ratio: 1.3292,
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-4.webp",
+          alt: "Jardinera con pasto y setos recortados frente a un local comercial, trabajo de jardinería de Viveros Asturias",
+          /* 5950x3348 */
+          ratio: 1.7772,
         },
         {
-          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-2.webp",
-          alt: "Plántulas en bolsas de vivero, vistas desde arriba, en Viveros Asturias",
-          /* 1980x915 */
-          ratio: 2.1639,
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-5.webp",
+          alt: "Glorieta ajardinada con palmas en un acceso vehicular, con una maceta de palmilla en primer plano",
+          /* 5695x3331 */
+          ratio: 1.7097,
         },
         {
-          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-3.webp",
-          alt: "Plantas de tuya en maceta en Viveros Asturias",
-          /* 1980x915 */
-          ratio: 2.1639,
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-6.webp",
+          alt: "Jardinera con palmas y plantas de sombra junto a la fachada de un edificio",
+          /* 5921x3351 */
+          ratio: 1.7669,
+        },
+        {
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-7.webp",
+          alt: "Jardín con crotos amarillos alrededor de un busto, junto a una banca",
+          /* 5819x3343 */
+          ratio: 1.7407,
+        },
+        {
+          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-8.webp",
+          alt: "Área verde con pasto, setos y árboles, con mantenimiento de Viveros Asturias",
+          /* 1600x900 */
+          ratio: 1.7778,
         },
       ],
       lado: "izquierda",

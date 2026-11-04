@@ -86,7 +86,7 @@ export interface LineaNegocio {
   parrafos: string[];
   /**
    * Una foto o varias. Con más de una, la caja es un carrusel (<CarruselFotos>):
-   * Viveros Asturias lleva cinco.
+   * Viveros Asturias lleva cinco y Teca cuatro.
    */
   fotos: [FotoLinea, ...FotoLinea[]];
   /** De qué lado va la foto. Alternarlo entre líneas da el ritmo. */
@@ -179,6 +179,11 @@ export interface ContenidoUnidad {
 
 /** Ver `cierre` en ContenidoUnidad. */
 export interface CierreConFoto {
+  /**
+   * El titular propio de la unidad (4 nov 2026). Sin él, el de siempre:
+   * CONTACT_CTA.title, el mismo del home y de /nosotros.
+   */
+  titulo?: string;
   /** El fondo del panel: el color de la unidad, como var(). */
   color: string;
   /**

@@ -4,8 +4,7 @@
  * Los lee la FICHA —el pop up— de cada proyecto, en el home y en Comercial,
  * Industrial y Vivienda: donde hay logo, va EN LUGAR DEL NOMBRE sobre la foto.
  * Las tarjetas no cambian. Un proyecto que no está aquí sigue con su nombre en
- * texto: hoy Reserva Mezquital (pendiente), los próximos de Vivienda y los
- * otros giros de Comercial.
+ * texto: hoy los próximos de Vivienda y los otros giros de Comercial.
  *
  * ⚠ SON BLANCOS (algunos con un acento de color): sólo se leen sobre oscuro,
  * por eso van sobre la foto, encima de su degradado, y no en el cuerpo claro
@@ -58,6 +57,8 @@ export const LOGOS_DESARROLLOS: Record<string, LogoDesarrollo> = {
   "punto-lopez-mateos": { src: `${DIR}/punto-lopez-mateos-logo-altea.webp`, ancho: 2400, alto: 175 },
   "punto-rio-nilo": { src: `${DIR}/punto-rio-nilo-logo-altea.webp`, ancho: 2400, alto: 229 },
   "punto-versalles": { src: `${DIR}/punto-versalles-logo-altea.webp`, ancho: 2400, alto: 158 },
+  /* Negro, a pedido (4 nov 2026); el original es gris: ver el comentario de arriba. */
+  "reserva-mezquital": { src: `${DIR}/reserva-mezquital-logo-altea.webp`, ancho: 1985, alto: 746 },
   "salinas-victoria-industrial-park": { src: `${DIR}/salinas-victoria-industrial-park-logo-altea.webp`, ancho: 2400, alto: 116 },
 };
 

@@ -98,11 +98,36 @@ export const FORESTAL: ContenidoUnidad = {
       parrafos: [
         "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, enfocado en recuperar la vocación forestal de tierras degradadas por actividades agrícolas y ganaderas. En 2011, iniciamos la plantación sostenible de 682,853 árboles de teca en 841 hectáreas, un proceso que permitió restaurar la salud del suelo y que contribuye a revitalizar la economía de al menos 100 familias mayas de la región.",
       ],
+      /*
+       * En carrusel, como Viveros (4 nov 2026): la de siempre y tres más de la
+       * plantación. Las cuatro son 4:3.
+       *
+       * ⚠ LA 4 ES ORIGINAL DE CÁMARA: 5712x4284 y 8.9 MB. El visitante no la
+       * baja —pasa por el optimizador de Next—, pero pesa en el repositorio.
+       */
       fotos: [
         {
           src: "/images/forestal/teca/teca-forestal-altea.webp",
           alt: "Plantación de teca de Altea en la Península de Yucatán",
           /* 1980x1485 */
+          ratio: 1.3333,
+        },
+        {
+          src: "/images/forestal/teca/teca-forestal-altea-2.webp",
+          alt: "Camino de terracería entre árboles de teca, con el suelo cubierto de hojas",
+          /* 1195x896 */
+          ratio: 1.3337,
+        },
+        {
+          src: "/images/forestal/teca/teca-forestal-altea-3.webp",
+          alt: "Interior de la plantación de teca, con troncos altos y rectos y vegetación al pie",
+          /* 1195x896 */
+          ratio: 1.3337,
+        },
+        {
+          src: "/images/forestal/teca/teca-forestal-altea-4.webp",
+          alt: "Árboles de teca jóvenes a ambos lados de una brecha en la plantación",
+          /* 5712x4284 */
           ratio: 1.3333,
         },
       ],

@@ -78,7 +78,7 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
       {cierre ? (
         <CierreUnidad
           eyebrow={CONTACT_CTA.eyebrow}
-          title={CONTACT_CTA.title}
+          title={cierre.titulo ?? CONTACT_CTA.title}
           unidad={unidad}
           cierre={cierre}
         />

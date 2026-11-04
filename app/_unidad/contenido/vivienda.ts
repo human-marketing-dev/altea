@@ -161,6 +161,7 @@ export const VIVIENDA: ContenidoUnidad = {
    * navegador guardan por URL: con el mismo nombre seguían sirviendo la vieja.
    */
   cierre: {
+    titulo: "Desarrollos que conectan comunidad y bienestar.",
     color: colorDeUnidad("Vivienda"),
     foto: {
       src: "/images/vivienda/cta/vivienda-cta-portico-5-recorte.webp",

@@ -237,6 +237,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
    * la nave y nada más; WebP sin pérdida.
    */
   cierre: {
+    titulo: "Proyectos que transforman el territorio y conectividad del país",
     color: colorDeUnidad("Industrial"),
     foto: {
       src: "/images/industrial/cta/industrial-cta-recorte.webp",

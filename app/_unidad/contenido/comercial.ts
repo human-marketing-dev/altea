@@ -1129,6 +1129,7 @@ export const COMERCIAL: ContenidoUnidad = {
    * más; WebP sin pérdida, para no ensuciar el filo.
    */
   cierre: {
+    titulo: "Conectamos espacios, personas y marcas.",
     color: colorDeUnidad("Comercial"),
     foto: {
       src: "/images/comercial/cta/comercial-foto-cta-recorte.webp",

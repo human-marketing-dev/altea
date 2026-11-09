@@ -5,8 +5,8 @@
  * Reference copy of the upstream token files: design-system/tokens/*.css.
  *
  * Two deliberate differences from upstream:
- *  1. The Google-Fonts @import is dropped — the brand face is loaded through
- *     next/font in app/layout.tsx, which exposes --font-brand.
+ *  1. The Google-Fonts @import is dropped — the brand face (Gotham) comes from
+ *     Adobe Fonts, linked in app/layout.tsx; --font-brand is set in globals.css.
  *  2. Tokens that live in a Tailwind theme namespace (font, text, tracking,
  *     leading, radius, shadow) are declared in app/globals.css under @theme
  *     instead of here, so they exist exactly once and also generate utilities.

@@ -14,7 +14,7 @@ import {
   LineSegments,
   Mesh,
   MeshStandardMaterial,
-  PCFSoftShadowMap,
+  PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
@@ -278,7 +278,11 @@ export default function Escena3D({
     /* La sombra propia entre piezas es lo que las vuelve materia en lugar de
        siluetas pintadas. */
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = PCFSoftShadowMap;
+    /* PCFShadowMap y no PCFSoftShadowMap (9 nov 2026): three 0.186 quitó el
+       «soft», lo cambiaba por éste al pintar y avisaba en la consola en cada
+       carga. Se ve igual que hasta ahora: es lo que three ya usaba. El
+       `shadow.radius` de abajo es el que suaviza el borde. */
+    renderer.shadowMap.type = PCFShadowMap;
 
     const escena = new Scene();
     const amb = entorno(renderer);

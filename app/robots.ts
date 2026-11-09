@@ -5,8 +5,8 @@ import { SITIO } from "@/lib/idioma";
  * /robots.txt
  *
  * CIERRA EL SITIO COMPLETO A LOS RASTREADORES, y es a propósito: esto es una
- * maqueta para enseñar a Altea, no está publicada, y las fuentes Gotham que usa
- * no tienen licencia web todavía (ver app/layout.tsx).
+ * maqueta para enseñar a Altea y no está publicada. (Gotham ya tiene licencia,
+ * por Adobe Fonts desde el 9 nov 2026: eso ya no frena la publicación.)
  *
  * ⚠ ESTO ES LO QUE HAY QUE QUITAR PARA PUBLICAR. Son dos sitios, no uno:
  *   1. el `disallow: "/"` de aquí abajo, y

@@ -90,7 +90,7 @@ const TEXTOS_PLAZAS: Record<
   "paseo-la-fe": {
     descripcion:
       "Fashion Mall located on Miguel Alemán Avenue, the main access road to Monterrey International Airport, in San Nicolás de los Garza, Nuevo León. With a flow of 1 million visitors per month, it has established itself as one of the leading destinations for shopping, entertainment and experiences in the Monterrey metropolitan area.",
-    datos: fashionMall("700,000 per month"),
+    datos: fashionMall("1 million per month"),
   },
   "paseo-tec": {
     descripcion:
@@ -102,7 +102,7 @@ const TEXTOS_PLAZAS: Record<
   },
   "paseo-juarez": {
     descripcion:
-      "Fashion Mall located in downtown Juárez, Nuevo León, receiving more than 650,000 visitors per month. Its retail offering brings together well-known brands such as Walmart, Cinemex, Suburbia, Coppel and Del Sol, along with a wide variety of stores, services and entertainment options, establishing it as a meeting point for the Juárez community.",
+      "Fashion Mall located in downtown Juárez, Nuevo León, receiving 580,000 visitors per month. Its retail offering brings together well-known brands such as Walmart, Cinemex, Suburbia, Coppel and Del Sol, along with a wide variety of stores, services and entertainment options, establishing it as a meeting point for the Juárez community.",
     datos: fashionMall("580,000 per month"),
   },
   "paseo-durango": {

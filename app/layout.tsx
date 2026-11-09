@@ -1,33 +1,30 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { RevealOnScroll } from "@/app/ui/RevealOnScroll";
 import { GoogleTag } from "./GoogleTag";
 import { SITIO } from "@/lib/idioma";
 import "./globals.css";
 
 /**
- * Tipografía de marca: Gotham, como especifica el manual de identidad.
+ * TIPOGRAFÍA DE MARCA: GOTHAM, DESDE ADOBE FONTS (9 nov 2026).
  *
- * ⚠ SOLO PARA LA MAQUETA LOCAL. Estos archivos no tienen licencia web. Antes de
- * desplegar esto a cualquier dominio, Altea tiene que comprar la licencia web de
- * Gotham en typography.com y reemplazar los .woff2 por los suyos. Los archivos
- * están fuera de git a propósito (ver .gitignore) para que no viajen con el
- * repo — si el build falla en otra máquina por fuentes faltantes, es la señal.
+ * Con licencia, por el proyecto web `egf6btn` de Adobe Fonts. Las fuentes de
+ * Adobe no se alojan en el servidor: las sirve Adobe desde use.typekit.net con
+ * su hoja de estilos, que declara la familia "gotham". Por eso ya no hay .woff2
+ * en el repo ni next/font: los archivos que había no tenían licencia web y se
+ * quitaron.
  *
- * El manual usa dos pesos y nada más: Medium para cuerpo, Bold para display.
- * El sistema pide 600 en algunos lados (títulos de sección, botones, tags); sin
- * un Semibold real el navegador sube a Bold, así que esos elementos se ven algo
- * más contundentes que con Montserrat.
+ * El manual usa dos pesos: Medium (500) para el texto y Bold (700) para los
+ * títulos. El proyecto web trae más (Book, Light, itálicas y las versiones
+ * Narrow y Condensed), pero el navegador sólo descarga los que la página usa.
+ * Lo que pide 600 cae en Bold, como antes.
+ *
+ * ⚠ LA LICENCIA VA ATADA A LA SUSCRIPCIÓN DE CREATIVE CLOUD que creó el
+ * proyecto. Si se cancela, el sitio deja de mostrar Gotham y cae a la de
+ * respaldo (-apple-system / Segoe UI), sin dar error. Si se cambia de proyecto,
+ * cambia el ID de la URL de abajo y nada más: la familia se sigue llamando
+ * "gotham" (ver --font-brand en globals.css).
  */
-const brandFont = localFont({
-  variable: "--font-brand",
-  display: "swap",
-  fallback: ["Montserrat", "-apple-system", "Segoe UI", "sans-serif"],
-  src: [
-    { path: "./fonts/Gotham-Medium.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/Gotham-Bold.woff2", weight: "700", style: "normal" },
-  ],
-});
+const ADOBE_FONTS = "https://use.typekit.net/egf6btn.css";
 
 export const metadata: Metadata = {
   /*
@@ -61,8 +58,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es-MX"
-      className={`${brandFont.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
+      <head>
+        {/* La conexión con el servidor de las fuentes se abre ya, en paralelo
+            con la hoja; `crossOrigin` porque las fuentes se piden con CORS. */}
+        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={ADOBE_FONTS} />
+      </head>
       {/*
         Aquí había dos <link rel="preload"> de la intro —el cielo y el edificio,
         1.67 MB— que se pedían con prioridad alta en TODAS las páginas. La intro

@@ -296,9 +296,10 @@ export const DESCRIPCION_COMERCIAL = {
  *
  * Los dos pares del <dl> salen del propio texto: el FORMATO —Fashion Mall,
  * Strip Mall o Power Center, que el copy declara en la primera frase de cada
- * una—. Los VISITANTES de los seis Paseos los pasó Altea aparte (29 oct 2026) y
- * no coinciden con lo que dicen los textos de La Fe y Juárez. Donde no hay cifra
- * va un guion, no un número inventado.
+ * una—. Los VISITANTES de los seis Paseos los pasó Altea aparte (29 oct 2026).
+ * Los textos de La Fe y Juárez decían otra cifra y Altea confirmó las del dato
+ * (9 nov 2026): La Fe, un millón; Juárez, 580 mil (el texto decía «más de 650
+ * mil»). Donde no hay cifra va un guion, no un número inventado.
  *
  * ⚠ Paseo Tec entra por fin: estaba fuera esperando confirmación y este copy la
  * da. Su archivo de imagen se llama `paso-tec-altea.webp` —sin la "e"—, que es
@@ -322,7 +323,9 @@ export const PLAZAS: Plaza[] = [
       "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
-      { etiqueta: "Visitantes", valor: "700 mil al mes" },
+      /* Altea lo confirmó el 9 nov 2026: un millón, como dice el texto. Antes
+         decía 700 mil. */
+      { etiqueta: "Visitantes", valor: "1 millón al mes" },
     ],
   },
   {
@@ -353,7 +356,7 @@ export const PLAZAS: Plaza[] = [
     alt: "",
     label: "Paseo Juárez",
     descripcion:
-      "Fashion Mall ubicado en el centro de Juárez, Nuevo León, que recibe más de 650 mil visitantes al mes. Su oferta comercial reúne marcas reconocidas como Walmart, Cinemex, Suburbia, Coppel y Del Sol, además de una amplia variedad de tiendas, servicios y opciones de entretenimiento, consolidándose como un punto de encuentro para la comunidad de Juárez.",
+      "Fashion Mall ubicado en el centro de Juárez, Nuevo León, que recibe 580 mil visitantes al mes. Su oferta comercial reúne marcas reconocidas como Walmart, Cinemex, Suburbia, Coppel y Del Sol, además de una amplia variedad de tiendas, servicios y opciones de entretenimiento, consolidándose como un punto de encuentro para la comunidad de Juárez.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
       { etiqueta: "Visitantes", valor: "580 mil al mes" },

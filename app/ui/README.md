@@ -55,10 +55,9 @@ Same visual output, different mechanics — worth knowing before you diff:
    `public/brand/` and in `design-system/assets/`. **This defect still exists in
    the Claude Design project** and will come back on the next import unless it
    is fixed upstream.
-7. **The brand face loads via `next/font`,** not the Google Fonts `@import`.
-   The CSS variable is `--font-brand`, so swapping families touches only
-   `app/layout.tsx`. Gotham is the spec; Montserrat stands in until Altea
-   supplies web-licensed files — see `public/fonts/README.md`.
+7. **The brand face is Gotham from Adobe Fonts** (web project linked in
+   `app/layout.tsx`), not the Google Fonts `@import`. The CSS variable is
+   `--font-brand`, set in `app/globals.css`.
 8. **Two components added** that upstream has no counterpart for:
    `MediaSlot` (the production stand-in for `<image-slot>`: renders a labelled
    hueco instead of invented stock photography) and `CountUp` (the 0→N counter
@@ -72,9 +71,6 @@ Same visual output, different mechanics — worth knowing before you diff:
 
 ## Pending from the brand owner
 
-- **Gotham Bold/Medium.** The identity manual specifies it; no web-licensed
-  files exist yet, so Montserrat substitutes. `app/layout.tsx` carries the
-  ready-to-uncomment `next/font/local` block.
 - **Project photography.** Nothing real exists yet; `ProjectCard` placeholders
   stand in.
 - **UI icon set.** The manual defines none. If one is needed, use a neutral line

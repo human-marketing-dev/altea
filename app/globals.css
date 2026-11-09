@@ -19,10 +19,14 @@
  * app/ui/components.css and the generated utilities resolve to. The remaining
  * tokens (brand/semantic colors, spacing, motion) live in app/ui/tokens.css.
  *
- * Brand spec is Gotham Bold/Medium; no licensed files were supplied, so
- * Montserrat stands in. The family is chosen in app/layout.tsx — these names
- * only ever point at --font-brand. See design-system/readme.md.
+ * La familia de marca es Gotham (Medium y Bold), que llega de Adobe Fonts por
+ * la hoja que enlaza app/layout.tsx. Estos nombres sólo apuntan a --font-brand,
+ * así que cambiar de familia es cambiar esa variable.
  */
+:root {
+  --font-brand: "gotham";
+}
+
 @theme {
   --font-display: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
@@ -116,9 +120,14 @@
  * Gotham: los tamaños valen igual, esos dos valores son punto de partida.
  *
  * ⚠ LOS PESOS SON TOKEN A PROPÓSITO, para poder probar y revertir cambiando
- * cinco números en este archivo. Gotham carga sólo Medium (500) y Bold (700)
- * —app/layout.tsx—, así que hoy 400 se pinta en Medium: --peso-texto no se ve
- * hasta que se cargue Book. No existe 600; pedirlo da Bold.
+ * cinco números en este archivo. No existe 600; pedirlo da Bold.
+ *
+ * ⚠ EL TEXTO VA EN MEDIUM (500), Y AHORA LO DICE EL TOKEN (9 nov 2026). Antes
+ * pedía 400, pero sólo se cargaban Medium y Bold, así que 400 se pintaba en
+ * Medium: el sitio aprobado tiene el texto en Medium. Al pasar a Adobe Fonts,
+ * el proyecto web trae también Book (400), y con el token en 400 todo el texto
+ * corrido salía más delgado. Se fijó en 500 para que se vea igual que siempre,
+ * traiga lo que traiga el proyecto de Adobe.
  *
  * `static`: Tailwind sólo emite las variables de @theme que detecta en uso, y la
  * mayoría de estas se usan desde hojas que importan los componentes, no desde
@@ -162,8 +171,8 @@
   /* Bold, como antes (pedía 600, que en Gotham es Bold). */
   --peso-rotulo: 700;
 
-  /* El párrafo. Ver la nota de pesos arriba: hoy se pinta en Medium. */
-  --peso-texto: 400;
+  /* El párrafo: Medium. Ver la nota de pesos arriba. */
+  --peso-texto: 500;
 
   --text-titulo-pagina--line-height: var(--lh-titulo-pagina);
   --text-titulo-pagina--letter-spacing: var(--ls-titulo-pagina);
@@ -233,7 +242,8 @@
    * resuelven a los mismos tokens que el CSS propio. `font-semibold` va a Bold
    * porque Gotham no tiene 600 y el navegador ya lo pintaba en Bold.
    */
-  --font-weight-normal: var(--weight-regular);
+  /* `font-normal` es el peso del texto (Medium), no Book: ver --peso-texto. */
+  --font-weight-normal: var(--peso-texto);
   --font-weight-medium: var(--weight-medium);
   --font-weight-semibold: var(--weight-bold);
   --font-weight-bold: var(--weight-bold);

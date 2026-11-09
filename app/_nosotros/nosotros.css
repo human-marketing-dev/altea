@@ -1041,6 +1041,73 @@
   color: color-mix(in srgb, var(--altea-cream) 56%, transparent);
 }
 
+/*
+ * EL MAPA EN TÁCTIL (9 nov 2026): la pista que toca y la lista para elegir.
+ * «Táctil» es lo que no tiene un puntero fino que pueda quedarse encima:
+ * teléfonos y tabletas, aunque una tableta acostada pase de 1000 px de ancho.
+ * Con ratón, todo sigue como estaba.
+ */
+.nos-mapa__pista-tactil,
+.nos-mapa__elegir {
+  display: none;
+}
+@media (hover: none), (pointer: coarse) {
+  .nos-mapa__pista-cursor {
+    display: none;
+  }
+  .nos-mapa__pista-tactil {
+    display: inline;
+  }
+  .nos-mapa__elegir {
+    display: block;
+  }
+}
+/*
+ * La lista va sobre el ink de la sección, así que no lleva la piel de los
+ * formularios (.altea-field, pensada para fondo claro): borde y texto en cream,
+ * con la flecha dibujada para que no dependa del aspecto nativo de cada
+ * teléfono. 44 px de alto como mínimo: es un blanco para el dedo.
+ */
+.nos-mapa__elegir {
+  position: relative;
+  margin-top: clamp(16px, 2.6vh, 26px);
+  max-width: 340px;
+}
+.nos-mapa__elegir select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 44px 0 16px;
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--altea-cream) 34%, transparent);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--altea-cream);
+  font: inherit;
+  font-size: var(--text-small);
+  letter-spacing: 0.01em;
+}
+.nos-mapa__elegir select:focus-visible {
+  outline: 2px solid var(--accent-on-ink);
+  outline-offset: 2px;
+}
+/* Las opciones las pinta el sistema sobre su propio fondo claro: si heredaran
+   el cream quedarían blanco sobre blanco. */
+.nos-mapa__elegir option {
+  color: var(--altea-ink);
+}
+.nos-mapa__elegir::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid var(--altea-cream);
+  border-bottom: 1.5px solid var(--altea-cream);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
 /* ═══ 6 · responsabilidad social ══════════════════════════════════════════ */
 
 .nos-rs {

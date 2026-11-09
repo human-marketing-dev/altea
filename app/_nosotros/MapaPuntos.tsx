@@ -106,6 +106,13 @@ const RADIO_CAMPO = 3.0;
  */
 const RADIO_MINIMO_PX = 0.45;
 
+/**
+ * EL MARGEN DEL DEDO, en píxeles de pantalla (9 nov 2026). Un toque que cae en
+ * el mar o en el borde de un estado elige el más cercano dentro de este radio:
+ * es más o menos lo que mide una yema. Sólo en táctil; el cursor señala exacto.
+ */
+const TOLERANCIA_TOQUE_PX = 20;
+
 /** Gris de partida y coral de llegada, en RGB para mezclarlos en el lienzo. */
 const GRIS = [231, 223, 209] as const;
 const CORAL = [241, 93, 77] as const;
@@ -126,9 +133,20 @@ const RAMPA = Array.from({ length: TRAMOS + 1 }, (_, i) => {
   return `rgb(${c(GRIS[0], CORAL[0])},${c(GRIS[1], CORAL[1])},${c(GRIS[2], CORAL[2])})`;
 });
 
+/**
+ * Los estados con presencia, en orden alfabético y con su índice en
+ * ESTADOS_MAPA: las opciones de la lista para elegir. Ver el <select> de abajo.
+ */
+const OPCIONES = ESTADOS_MAPA.map((e, i) => ({ e, i }))
+  .filter(({ e }) => e.m2)
+  .sort((a, b) => a.e.nombre.localeCompare(b.e.nombre, "es"));
+
 export function MapaPuntos() {
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [activo, setActivo] = useState<number | null>(null);
+  /* La lista para elegir vive fuera del lienzo y del efecto: esto es lo que le
+     deja fijar un estado dentro de él. Ver `fijar`. */
+  const fijarRef = useRef<(indice: number | null) => void>(() => {});
 
   useGSAP(
     () => {
@@ -167,10 +185,41 @@ export function MapaPuntos() {
         contorno.closePath();
       }
 
+      /*
+       * EL CENTRO DE CADA ESTADO: la media de sus puntos. Es donde se enciende el
+       * foco cuando el estado se elige de la lista o con un toque que cayó fuera
+       * de él —el centroide geométrico puede caer fuera de un estado curvo; la
+       * media de sus puntos no se aleja de ellos—.
+       */
+      const centros = ESTADOS_MAPA.map(() => ({ x: 0, y: 0, n: 0 }));
+      for (let p = 0; p < nube.x.length; p++) {
+        const c = centros[nube.dueno[p]];
+        if (!c) continue;
+        c.x += nube.x[p];
+        c.y += nube.y[p];
+        c.n++;
+      }
+      const centroDe = (d: number) => {
+        const c = centros[d];
+        return c.n ? { x: c.x / c.n, y: c.y / c.n } : null;
+      };
+
       /** Un solo valor que recorre de 0 a 1. Ver la nota del tween. */
       const estado = { entra: 0 };
-      /** El foco, en unidades del viewBox. null = el puntero está fuera. */
-      let foco: { x: number; y: number } | null = null;
+      /*
+       * DOS FUENTES DE SELECCIÓN (9 nov 2026), en unidades del viewBox:
+       *
+       *   · `cursor`: el ratón encima. Señala mientras está y se va al salir.
+       *   · `fijado`: lo elegido con el dedo o con la lista. Se QUEDA hasta que
+       *     se elige otro o se toca el mar. Antes sólo existía el cursor, y en
+       *     táctil no funcionaba: un toque no mueve el puntero, y al levantar el
+       *     dedo el navegador lo daba por salido y borraba lo marcado.
+       *
+       * Manda el cursor si lo hay; si no, lo fijado.
+       */
+      let cursor: { x: number; y: number } | null = null;
+      let fijado: number | null = null;
+      let puntoFijado: { x: number; y: number } | null = null;
       let esc = 1;
 
       const dimensionar = () => {
@@ -187,6 +236,7 @@ export function MapaPuntos() {
         const caja = canvas.getBoundingClientRect();
         ctx.clearRect(0, 0, caja.width, caja.height);
         const { x, y } = nube;
+        const foco = cursor ?? puntoFijado;
 
         /*
          * El contorno va PRIMERO, para que los puntos queden encima.
@@ -290,7 +340,7 @@ export function MapaPuntos() {
            * cambia de verdad — una docena de veces en todo el recorrido, no cien
            * por segundo.
            */
-          const d = foco ? duenoEn(foco.x, foco.y) : null;
+          const d = cursor ? duenoEn(cursor.x, cursor.y) : fijado;
           if (d !== duenoVisto) {
             duenoVisto = d;
             setActivo(d);
@@ -319,23 +369,77 @@ export function MapaPuntos() {
         return p < 0 ? null : nube.dueno[p];
       };
 
-      const alMover = (evento: PointerEvent) => {
+      /*
+       * EL ESTADO MÁS CERCANO AL DEDO. Primero el dueño exacto de la celda; si
+       * es mar, el de la celda con dueño más cercana dentro de
+       * TOLERANCIA_TOQUE_PX. Fuera de ese radio, null: tocar el mar lejos de la
+       * costa deselecciona.
+       */
+      const duenoCerca = (vx: number, vy: number) => {
+        const exacto = duenoEn(vx, vy);
+        if (exacto !== null) return exacto;
+        const radio = Math.ceil(TOLERANCIA_TOQUE_PX / esc / nube.paso);
+        const cx = Math.floor(vx / nube.paso);
+        const cy = Math.floor(vy / nube.paso);
+        let mejor: number | null = null;
+        let mejorD = Infinity;
+        for (let iy = cy - radio; iy <= cy + radio; iy++) {
+          for (let ix = cx - radio; ix <= cx + radio; ix++) {
+            if (ix < 0 || iy < 0 || ix >= nube.cols || iy >= nube.filas) continue;
+            const p = nube.indice[iy * nube.cols + ix];
+            if (p < 0) continue;
+            const d2 = (ix - cx) ** 2 + (iy - cy) ** 2;
+            if (d2 <= radio * radio && d2 < mejorD) {
+              mejorD = d2;
+              mejor = nube.dueno[p];
+            }
+          }
+        }
+        return mejor;
+      };
+
+      const aViewBox = (evento: PointerEvent) => {
         const caja = canvas.getBoundingClientRect();
-        foco = { x: (evento.clientX - caja.left) / esc, y: (evento.clientY - caja.top) / esc };
+        return { x: (evento.clientX - caja.left) / esc, y: (evento.clientY - caja.top) / esc };
+      };
+
+      /** Fija un estado —o lo suelta con null— y enciende el foco donde toca. */
+      const fijar = (d: number | null, punto?: { x: number; y: number }) => {
+        fijado = d;
+        puntoFijado = d === null ? null : (punto ?? centroDe(d));
+        repintarPronto();
+      };
+      fijarRef.current = (d) => fijar(d);
+
+      /* El RATÓN señala al moverse y suelta al salir. El dedo no: ver alTocar. */
+      const alMover = (evento: PointerEvent) => {
+        if (evento.pointerType !== "mouse") return;
+        cursor = aViewBox(evento);
         repintarPronto();
       };
 
-      const alSalir = () => {
-        foco = null;
-        if (duenoVisto !== null) {
-          duenoVisto = null;
-          setActivo(null);
-        }
+      const alSalir = (evento: PointerEvent) => {
+        if (evento.pointerType !== "mouse") return;
+        cursor = null;
         repintarPronto();
+      };
+
+      /*
+       * EL DEDO ELIGE AL LEVANTARSE. Si el gesto era un desplazamiento —el lienzo
+       * deja pasar el scroll vertical—, el navegador manda `pointercancel` en vez
+       * de `pointerup` y aquí no llega nada: bajar por la página con el dedo
+       * encima del mapa no elige estados.
+       */
+      const alTocar = (evento: PointerEvent) => {
+        if (evento.pointerType === "mouse") return;
+        const v = aViewBox(evento);
+        const d = duenoCerca(v.x, v.y);
+        fijar(d, d !== null && duenoEn(v.x, v.y) === d ? v : undefined);
       };
 
       canvas.addEventListener("pointermove", alMover);
       canvas.addEventListener("pointerleave", alSalir);
+      canvas.addEventListener("pointerup", alTocar);
 
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         /*
@@ -366,6 +470,8 @@ export function MapaPuntos() {
       return () => {
         canvas.removeEventListener("pointermove", alMover);
         canvas.removeEventListener("pointerleave", alSalir);
+        canvas.removeEventListener("pointerup", alTocar);
+        fijarRef.current = () => {};
         observador.disconnect();
         if (pedido) cancelAnimationFrame(pedido);
       };
@@ -422,9 +528,37 @@ export function MapaPuntos() {
         <p className="nos-mapa__reposo">
           <small>{HUELLA.mapa.etiqueta}</small>
           <b>{HUELLA.mapa.titulo}</b>
-          <em>{HUELLA.mapa.pista}</em>
+          {/* La pista según cómo se señala: cursor o dedo. Las dos van en el
+              marcado y la hoja enseña una con (hover: none). */}
+          <em>
+            <span className="nos-mapa__pista-cursor">{HUELLA.mapa.pista}</span>
+            <span className="nos-mapa__pista-tactil">{HUELLA.mapa.pistaTactil}</span>
+          </em>
         </p>
       </div>
+
+      {/*
+        LA LISTA PARA ELEGIR (9 nov 2026), sólo en táctil —ver .nos-mapa__elegir—.
+        En un teléfono el mapa mide 350 px de ancho y los estados del centro
+        quedan de 3 a 15: ningún dedo atina ahí. Elegir aquí hace lo mismo que
+        tocar el estado: lo fija y el mapa lo enciende.
+      */}
+      <label className="nos-mapa__elegir">
+        <span className="sr-only">{HUELLA.mapa.elegir}</span>
+        <select
+          value={activo ?? ""}
+          onChange={(evento) =>
+            fijarRef.current(evento.target.value === "" ? null : Number(evento.target.value))
+          }
+        >
+          <option value="">{HUELLA.mapa.elegir}</option>
+          {OPCIONES.map(({ e, i }) => (
+            <option key={e.id} value={i}>
+              {e.nombre}
+            </option>
+          ))}
+        </select>
+      </label>
 
       {/*
         La lista que sustituye al lienzo para quien no lo ve.

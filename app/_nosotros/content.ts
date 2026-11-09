@@ -385,6 +385,10 @@ export const HUELLA = {
     etiqueta: "Presencia",
     titulo: `${ESTADOS_CON_PRESENCIA.length} estados de México`,
     pista: "Señala un estado para ver su superficie construida.",
+    /* En táctil (9 nov 2026): no hay cursor que señale. */
+    pistaTactil: "Toca un estado o elígelo de la lista.",
+    /* La lista para elegir, debajo del mapa en táctil. */
+    elegir: "Elige un estado",
     /* Y lo que dice cuando sí. */
     etiquetaEstado: "Superficie construida",
     sinDato: "Sin superficie construida registrada",

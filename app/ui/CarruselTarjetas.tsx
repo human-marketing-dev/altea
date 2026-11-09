@@ -110,6 +110,53 @@ export function CarruselTarjetas({
    */
   const fija = items.length <= rejillaHasta;
 
+  /*
+   * ⚠ LA TARJETA CABE EN LA VENTANA (9 nov 2026). Su tamaño salía sólo del
+   * ANCHO —hasta 480×640—, así que en una ventana baja no se veía completa:
+   * con el título encima le faltaban de 52 px (1440×789) a 158 (1280×600). El
+   * carril del home ya se acotaba al hueco real; esto es lo mismo para el
+   * carrusel.
+   *
+   * Se mide lo que queda bajo la barra de navegación pegada y la cabecera de la
+   * sección, y se publica como --alto-tarjeta: la hoja toma el MENOR entre ese
+   * alto y el de siempre, así que en ventanas altas y en teléfono no cambia
+   * nada. Ver .altea-carrusel__pista .altea-tj en components.css.
+   */
+  useEffect(() => {
+    const carril = pista.current;
+    const seccion = carril?.closest("section");
+    const cab = seccion?.querySelector<HTMLElement>(".altea-carrusel__cab");
+    if (!carril || !cab) return;
+    const navbar = document.querySelector<HTMLElement>(".altea-navbar");
+    /** Aire bajo la tarjeta: el de la pista y la barra de avance. */
+    const AIRE = 28;
+    /** Por debajo de esto la tarjeta ya no se lee: mejor que no quepa. */
+    const MINIMO = 320;
+
+    const medir = () => {
+      const navAbajo = navbar
+        ? (parseFloat(getComputedStyle(navbar).top) || 0) + navbar.offsetHeight
+        : 0;
+      const cabAlto =
+        cab.offsetHeight + (parseFloat(getComputedStyle(cab).marginBottom) || 0);
+      const libre = window.innerHeight - navAbajo - cabAlto - AIRE;
+      carril.style.setProperty(
+        "--alto-tarjeta",
+        `${Math.max(MINIMO, Math.round(libre))}px`,
+      );
+    };
+    medir();
+    /* La cabecera cambia de alto al partirse el título o al llegar la fuente;
+       la ventana, al redimensionarse. */
+    const obs = new ResizeObserver(medir);
+    obs.observe(cab);
+    window.addEventListener("resize", medir);
+    return () => {
+      obs.disconnect();
+      window.removeEventListener("resize", medir);
+    };
+  }, []);
+
   useEffect(() => {
     const carril = pista.current;
     if (!carril || fija) return;

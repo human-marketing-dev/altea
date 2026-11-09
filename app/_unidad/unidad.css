@@ -1042,6 +1042,32 @@
 .uni-ln__img {
   object-fit: cover;
 }
+/*
+ * ⚠ PERO NUNCA MÁS ALTA QUE LA VENTANA, Y PEGADA MIENTRAS SE LEE (9 nov 2026).
+ *
+ * Estirada al texto, en ventanas bajas la caja quedaba más alta que la pantalla
+ * y la foto no se veía entera: medido, Viveros se salía 190 px a 1440x700 y 22
+ * a 1440x900; Teca, 57 a 1440x700. Y como la caja quedaba muy vertical (0.72),
+ * de las fotos de Viveros, casi 16:9, se veía el 40 % del centro.
+ *
+ * Ahora mide lo que mide el texto, con tope en lo que cabe bajo la barra de
+ * navegación, y se pega bajo ella mientras el texto sigue: así nunca queda un
+ * hueco junto a un texto largo y el carrusel se ve completo todo el tiempo.
+ * Sólo en dos columnas; en una, la foto va debajo con su proporción (bloque de
+ * 900).
+ *
+ * 96 px = la barra pegada termina en 79 en todos los anchos de escritorio
+ * (16 de margen + 63 de píldora) y 17 de aire. Si cambia la barra, cambia esto.
+ */
+@media (min-width: 901px) {
+  .uni-ln__foto {
+    position: sticky;
+    top: 96px;
+    align-self: start;
+    height: 100%;
+    max-height: calc(100svh - 96px - 24px);
+  }
+}
 
 /* El carrusel de fotos de una línea (Viveros Asturias) es <CarruselFotos>, en
    ui/; sus estilos viven en components.css (.altea-cf). Aquí sólo pone la caja,

@@ -210,6 +210,17 @@
   background: var(--surface-page);
 }
 /*
+ * VENTANAS BAJAS (9 nov 2026): cuando la carpeta no cabe bajo el título pegado,
+ * el componente pone `data-baja` y el título deja de ser pegajoso: se va con el
+ * scroll y las carpetas se pegan bajo la barra de navegación. Sin esto, en
+ * ventanas de menos de ~700 de alto el pie de la carpeta —el botón— quedaba
+ * bajo el borde de la pantalla. Ver `medir` en CarpetasUnidades.tsx.
+ */
+.home-carpetas[data-baja] .home-carpetas__cab {
+  position: relative;
+  top: auto;
+}
+/*
  * 38ch y no 17ch, y no es un ajuste tipográfico: ES DE DONDE SALE EL ESPACIO.
  *
  * El titular tiene 65 caracteres, así que a 17ch rompía en cuatro líneas —unos
@@ -360,7 +371,10 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(26px, 3.6vw, 54px);
+  /* El aire también sale del ALTO (9 nov 2026): con sólo el ancho, una ventana
+     ancha y baja se quedaba con 52 px arriba y abajo en una carpeta que no
+     tenía sitio. A 900 de alto o más no cambia nada. */
+  padding: clamp(26px, min(3.6vw, 7vh), 54px);
   min-width: 0;
 }
 .home-carpetas__num {

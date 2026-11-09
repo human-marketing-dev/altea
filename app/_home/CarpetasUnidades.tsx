@@ -79,18 +79,73 @@ export function CarpetasUnidades() {
      * por 32 px a 1366x768 y por 38 a 1280x720: en portátiles de 13" es lo único
      * que actúa.
      */
+    /**
+     * LO QUE PIDE EL TEXTO DE LA CARPETA MÁS CARGADA (9 nov 2026): el relleno
+     * más el alto natural de sus dos hijos —la numeración y el bloque con el
+     * botón—. Se suman los hijos y no se lee el `scrollHeight` de la columna
+     * porque ésta se estira al alto de la carpeta: devolvería el alto que ya
+     * tiene, no el que necesita. `offsetHeight` no ve el `scale` del apilado.
+     */
+    const pideTexto = () =>
+      Math.max(
+        ...cajas.map((caja) => {
+          const txt = caja.querySelector<HTMLElement>(".home-carpetas__txt");
+          if (!txt) return 0;
+          const s = getComputedStyle(txt);
+          let alto = parseFloat(s.paddingTop) + parseFloat(s.paddingBottom);
+          for (const hijo of Array.from(txt.children) as HTMLElement[]) {
+            alto += hijo.offsetHeight;
+          }
+          return Math.ceil(alto);
+        }),
+      );
+    const escritorio = window.matchMedia("(min-width: 901px)");
+    const navbar = document.querySelector<HTMLElement>(".altea-navbar");
+
     /** Dónde se pega la última carpeta: ver el título en `pintar`. */
     let pegadaUltima = 0;
     const medir = () => {
+      /* Primero sin el modo bajo: el título se mide en su sitio de siempre. */
+      delete nodo.dataset.baja;
       const arriba = parseFloat(getComputedStyle(cab).top) || 0;
       const abajoCab = arriba + cab.offsetHeight;
       const libre = window.innerHeight - abajoCab;
 
-      const alto = Math.round(Math.max(300, Math.min(560, libre * 0.62)));
-      const bloque = alto + ESCALON * (total - 1);
-      const tope = Math.round(
-        Math.max(abajoCab + 24, (window.innerHeight - bloque) / 2),
+      /*
+       * ⚠ NUNCA MÁS BAJA QUE SU TEXTO (9 nov 2026). El suelo era 300 px fijos,
+       * y en ventanas de menos de ~700 de alto el texto pedía unos 385: el
+       * botón «Explorar» quedaba cortado 27–34 px por la carpeta. Ahora el
+       * suelo es lo que el texto pide.
+       */
+      const alto = Math.round(
+        Math.max(300, pideTexto(), Math.min(560, libre * 0.62)),
       );
+      const bloque = alto + ESCALON * (total - 1);
+
+      /*
+       * ⚠ Y SI NO CABE BAJO EL TÍTULO, EL TÍTULO SUELTA SU SITIO. El título
+       * pegado se come unos 120 px de arriba; con una carpeta que ya no encoge,
+       * en una ventana baja su pie —el botón— quedaba bajo el borde de la
+       * pantalla mientras estaba pegada. En ese caso el título deja de ser
+       * pegajoso y se va con el scroll, y las carpetas se pegan justo bajo la
+       * barra de navegación. Sólo en escritorio: en móvil las carpetas tienen
+       * alto automático y otra composición. Ver .home-carpetas[data-baja].
+       */
+      const cabeBajoTitulo = abajoCab + 24 + bloque <= window.innerHeight;
+      let tope: number;
+      if (cabeBajoTitulo || !escritorio.matches) {
+        tope = Math.round(
+          Math.max(abajoCab + 24, (window.innerHeight - bloque) / 2),
+        );
+      } else {
+        nodo.dataset.baja = "";
+        const navAbajo = navbar
+          ? (parseFloat(getComputedStyle(navbar).top) || 0) + navbar.offsetHeight
+          : arriba;
+        tope = Math.round(
+          Math.max(navAbajo + 12, (window.innerHeight - bloque) / 2),
+        );
+      }
 
       pila.style.setProperty("--hueco", `${alto}px`);
       pila.style.setProperty("--tope", `${tope}px`);
@@ -98,9 +153,16 @@ export function CarpetasUnidades() {
     };
     medir();
     window.addEventListener("resize", medir);
+    /* El alto del texto depende de la tipografía: con la fuente de respaldo
+       mide otra cosa. Se vuelve a medir cuando llega la de verdad. */
+    let vivo = true;
+    document.fonts.ready.then(() => vivo && medir());
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return () => window.removeEventListener("resize", medir);
+      return () => {
+        vivo = false;
+        window.removeEventListener("resize", medir);
+      };
     }
 
     /** Cuánto ha subido la siguiente sobre ésta, de 0 a 1. Ver la cabecera. */
@@ -152,6 +214,7 @@ export function CarpetasUnidades() {
     window.addEventListener("resize", alScroll);
 
     return () => {
+      vivo = false;
       window.removeEventListener("resize", medir);
       window.removeEventListener("scroll", alScroll);
       window.removeEventListener("resize", alScroll);

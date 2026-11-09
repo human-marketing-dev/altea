@@ -2969,9 +2969,15 @@ a.altea-project-card:focus-visible {
 }
 
 /* EN EL CARRUSEL MANDA EL ANCHO: no hay hueco fijo contra el que medir, así que
-   la tarjeta se dimensiona por su lado largo y el alto sale de la proporción. */
+   la tarjeta se dimensiona por su lado largo y el alto sale de la proporción.
+   ⚠ Pero acotado al ALTO que queda en la ventana (9 nov 2026): el ancho es el
+   menor entre el de diseño y el que da --alto-tarjeta por la proporción 3/4.
+   Lo mide <CarruselTarjetas>; sin JS, 100svh, que no acota nada. */
 .altea-carrusel__pista .altea-tj {
-  width: clamp(260px, 32vw, 480px);
+  width: min(
+    clamp(260px, 32vw, 480px),
+    calc(var(--alto-tarjeta, 100svh) * 3 / 4)
+  );
   height: auto;
 }
 
@@ -2991,7 +2997,10 @@ a.altea-project-card:focus-visible {
 
 @media (max-width: 820px) {
   .altea-carrusel__pista .altea-tj {
-    width: clamp(220px, 74vw, 320px);
+    width: min(
+      clamp(220px, 74vw, 320px),
+      calc(var(--alto-tarjeta, 100svh) * 3 / 4)
+    );
   }
   /* Donde se arrastra con el dedo, las flechas sobran. */
   .altea-carrusel__fl {
@@ -3019,6 +3028,9 @@ a.altea-project-card:focus-visible {
 .altea-carrusel[data-fija] .altea-carrusel__pista .altea-tj {
   width: 100%;
   aspect-ratio: 4 / 3;
+  /* En la rejilla manda el ancho de la columna; el alto se acota igual al de la
+     ventana (9 nov 2026). Si topa, la foto se recorta por `cover`. */
+  max-height: var(--alto-tarjeta, none);
 }
 .altea-carrusel[data-fija] .altea-tj__foto {
   left: 0;

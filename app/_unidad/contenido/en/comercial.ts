@@ -89,7 +89,7 @@ const TEXTOS_PLAZAS: Record<
 > = {
   "paseo-la-fe": {
     descripcion:
-      "Fashion Mall located on Miguel Alemán Avenue, the main access road to Monterrey International Airport, in San Nicolás de los Garza, Nuevo León. With a flow of 1 million visitors per month, it has established itself as one of the leading destinations for shopping, entertainment and experiences in the Monterrey metropolitan area.",
+      "Paseo La Fe is a shopping center located on Miguel Alemán Avenue, one of the main access routes to Monterrey International Airport, in San Nicolás de los Garza, Nuevo León. It receives approximately one million visitors per month and is one of the leading shopping, entertainment, and experience destinations in the Monterrey metropolitan area.",
     datos: fashionMall("1 million per month"),
   },
   "paseo-tec": {

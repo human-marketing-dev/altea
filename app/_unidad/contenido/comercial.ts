@@ -319,8 +319,10 @@ export const PLAZAS: Plaza[] = [
     ancla: 0.5,
     alt: "",
     label: "Paseo La Fe",
+    /* El texto de Altea del 9 nov 2026, el mismo que en el home. Ya no dice
+       «Fashion Mall» en la primera frase; el formato sigue en su par. */
     descripcion:
-      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
+      "Paseo La Fe es un centro comercial ubicado sobre la avenida Miguel Alemán, una de las principales vías de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Recibe aproximadamente un millón de visitantes al mes y es uno de los principales destinos de compras, entretenimiento y experiencias de la zona metropolitana de Monterrey.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
       /* Altea lo confirmó el 9 nov 2026: un millón, como dice el texto. Antes

@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { TarjetaProyecto } from "./TarjetaProyecto";
 import type { TarjetaCarril } from "./CarrilTarjetas";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Las mismas tarjetas, movidas a mano: un carrusel con desplazamiento nativo.
@@ -88,6 +90,7 @@ export function CarruselTarjetas({
   children,
   rejillaHasta = 2,
 }: CarruselTarjetasProps) {
+  const tx = textos(useIdioma());
   const pista = useRef<HTMLUListElement>(null);
   const contador = useRef<HTMLSpanElement>(null);
   const barra = useRef<HTMLSpanElement>(null);
@@ -401,7 +404,7 @@ export function CarruselTarjetas({
                 type="button"
                 className="altea-carrusel__bt"
                 ref={ant}
-                aria-label="Anterior"
+                aria-label={tx.carrusel.anterior}
               >
                 ←
               </button>
@@ -409,7 +412,7 @@ export function CarruselTarjetas({
                 type="button"
                 className="altea-carrusel__bt"
                 ref={sig}
-                aria-label="Siguiente"
+                aria-label={tx.carrusel.siguiente}
               >
                 →
               </button>

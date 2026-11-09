@@ -115,7 +115,7 @@ export const VIVIENDA: ContenidoUnidad = {
         alt: "",
         label: "Reserva Mezquital",
         descripcion:
-          "Reserva Mezquital es un desarrollo de 238 lotes residenciales en Apodaca, Nuevo León. Con terrenos desde 127.5 m², ubicados en una zona con alta conectividad y potencial de crecimiento. El proyecto cuenta con acceso controlado, áreas verdes, área social, juegos infantiles, cancha deportiva, ejercitadores y área para mascotas; espacios pensados para disfrutar, convivir y construir un hogar.",
+          "Reserva Mezquital es un desarrollo de 238 lotes residenciales en Apodaca, Nuevo León, con terrenos desde 127.5 m². Se ubica en una zona con conectividad y potencial de crecimiento e incluye acceso controlado, áreas verdes, espacio social, juegos infantiles, cancha deportiva, ejercitadores y área para mascotas.",
         datos: [
           LOTES,
           /* "(en colaboración con Terra Regia)", que en el copy va junto al nombre. */
@@ -183,7 +183,7 @@ export const VIVIENDA: ContenidoUnidad = {
         /* 1980x1106 */
         fotoRatio: 1.7902,
         descripcion:
-          "Desarrollo residencial sobre Prolongación Eloy Cavazos, con una ubicación que facilita la conexión con las principales vialidades de la zona, así como con centros educativos, áreas comerciales y servicios de salud. Un proyecto pensado para integrar vivienda y conectividad en un entorno con potencial de crecimiento.",
+          "Desarrollo residencial ubicado sobre la prolongación Eloy Cavazos, con conexión a vialidades principales y cercanía a centros educativos, comercios y servicios de salud. Su propuesta integra vivienda y conectividad en una zona con potencial de crecimiento.",
       },
       {
         slug: "huajuquito",
@@ -194,7 +194,7 @@ export const VIVIENDA: ContenidoUnidad = {
         /* 1980x1105 */
         fotoRatio: 1.7919,
         descripcion:
-          "Proyecto de lotes habitacionales que brinda la libertad de construir una residencia a la medida, complementada por la cercanía de una zona comercial. Una propuesta que integra vivienda, servicios y espacios para la vida cotidiana dentro de un mismo entorno.",
+          "Proyecto de lotes habitacionales que permite construir una residencia a la medida, con acceso cercano a una zona comercial. Integra vivienda y servicios para facilitar la vida cotidiana.",
       },
       {
         slug: "margaritas",
@@ -216,7 +216,7 @@ export const VIVIENDA: ContenidoUnidad = {
         /* 1980x1566 */
         fotoRatio: 1.2644,
         descripcion:
-          "Desarrollo residencial ubicado en la zona Cumbres, al poniente de Monterrey. Un proyecto que integra arquitectura contemporánea y vistas hacia las montañas, en un entorno pensado para combinar calidad de vida, conectividad y naturaleza.",
+          "Desarrollo residencial ubicado en zona Cumbres, al poniente de Monterrey. Integra arquitectura contemporánea y vistas a las montañas en un entorno que combina conectividad, naturaleza y calidad de vida.",
       },
     ],
   },

@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { ruta } from "@/lib/rutas";
-import { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } from "./content";
+import { textos } from "@/app/ui/textos";
+import { rutaDe } from "@/lib/idioma";
+import { contenidoHome } from "./contenido";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Las cuatro unidades de negocio, en carpetas que se apilan.
@@ -46,6 +48,8 @@ const ENCOGE = 0.07;
 const APAGA = 0.34;
 
 export function CarpetasUnidades() {
+  const idioma = useIdioma();
+  const { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } = contenidoHome(idioma);
   const raiz = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -272,9 +276,9 @@ export function CarpetasUnidades() {
                       no se leía como nada. */}
                   <Link
                     className="altea-btn altea-btn--dark altea-btn--md home-carpetas__ir"
-                    href={ruta(`/${unidad.slug}`)}
+                    href={rutaDe(`/${unidad.slug}`, idioma)}
                   >
-                    Explorar
+                    {textos(idioma).carpetas.explorar}
                     <span className="altea-btn__arrow" aria-hidden="true">
                       →
                     </span>

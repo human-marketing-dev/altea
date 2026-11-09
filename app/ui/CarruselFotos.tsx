@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 export interface FotoCarrusel {
   src: string;
@@ -42,6 +44,7 @@ export function CarruselFotos({
   /** La caja: su tamaño, su proporción y su radio. */
   className?: string;
 }) {
+  const tx = textos(useIdioma());
   const pista = useRef<HTMLDivElement>(null);
   const [actual, setActual] = useState(0);
   const total = fotos.length;
@@ -84,7 +87,7 @@ export function CarruselFotos({
     <div
       className={className ? `altea-cf ${className}` : "altea-cf"}
       role="region"
-      aria-roledescription="carrusel"
+      aria-roledescription={tx.carrusel.rolCarrusel}
       aria-label={etiqueta}
     >
       <div className="altea-cf__pista" ref={pista}>
@@ -93,8 +96,8 @@ export function CarruselFotos({
             className="altea-cf__foto"
             key={foto.src}
             role="group"
-            aria-roledescription="foto"
-            aria-label={`${i + 1} de ${total}`}
+            aria-roledescription={tx.carrusel.rolFoto}
+            aria-label={tx.carrusel.deTotal(i + 1, total)}
           >
             <Image
               src={foto.src}
@@ -110,7 +113,7 @@ export function CarruselFotos({
       <button
         type="button"
         className="altea-cf__bt altea-cf__bt--ant"
-        aria-label="Foto anterior"
+        aria-label={tx.carrusel.fotoAnterior}
         onClick={() => ir(actual - 1)}
       >
         <span aria-hidden="true">←</span>
@@ -118,7 +121,7 @@ export function CarruselFotos({
       <button
         type="button"
         className="altea-cf__bt altea-cf__bt--sig"
-        aria-label="Foto siguiente"
+        aria-label={tx.carrusel.fotoSiguiente}
         onClick={() => ir(actual + 1)}
       >
         <span aria-hidden="true">→</span>
@@ -130,7 +133,7 @@ export function CarruselFotos({
             type="button"
             className="altea-cf__punto"
             key={foto.src}
-            aria-label={`Ver foto ${i + 1} de ${total}`}
+            aria-label={tx.carrusel.verFoto(i + 1, total)}
             aria-current={i === actual ? "true" : undefined}
             onClick={() => ir(i)}
           />

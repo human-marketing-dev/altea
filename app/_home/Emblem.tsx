@@ -4,7 +4,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMemo, useRef } from "react";
-import { EMBLEM } from "./content";
+import { contenidoHome } from "./contenido";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -44,6 +45,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const POR_CARACTER = 0.028;
 
 export function Emblem() {
+  const idioma = useIdioma();
+  const { EMBLEM } = contenidoHome(idioma);
   const raiz = useRef<HTMLElement>(null);
 
   /**
@@ -61,7 +64,7 @@ export function Emblem() {
       for (const c of palabra) salida.push({ c, acento });
     });
     return salida;
-  }, []);
+  }, [EMBLEM]);
 
   useGSAP(
     () => {

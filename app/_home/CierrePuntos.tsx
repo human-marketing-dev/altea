@@ -1,8 +1,10 @@
 "use client";
 
-import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
+import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
 import { CampoBanderola } from "@/app/ui/CampoBanderola";
-import { ruta } from "@/lib/rutas";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
+import { rutaDe } from "@/lib/idioma";
 import "./cierre-puntos.css";
 
 /**
@@ -56,6 +58,8 @@ export function CierrePuntos({
   eyebrow: string;
   title: string;
 }) {
+  const idioma = useIdioma();
+  const t = textos(idioma).cta;
 
 
   return (
@@ -72,20 +76,20 @@ export function CierrePuntos({
           <div className="home-cp__acciones">
             <a
               className="altea-btn altea-btn--primary altea-btn--lg"
-              href={enlaceWhatsApp()}
+              href={enlaceWhatsApp(MENSAJE_WHATSAPP[idioma])}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Contáctanos por WhatsApp
+              {t.whatsapp}
               <span className="altea-btn__arrow" aria-hidden="true">
                 →
               </span>
             </a>
             <a
               className="altea-btn altea-btn--outline altea-btn--lg"
-              href={ruta("/contacto")}
+              href={rutaDe("/contacto", idioma)}
             >
-              Ir a contacto
+              {t.irContacto}
               <span className="altea-btn__arrow" aria-hidden="true">
                 →
               </span>

@@ -1,0 +1,26 @@
+/*
+ * La 404 (ver Pagina404.tsx). Ocupa casi una pantalla para que el pie no suba
+ * a media ventana, con el texto centrado en lo alto.
+ */
+.p404 {
+  min-height: 72svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-7, 40px);
+}
+
+.p404__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px 32px;
+}
+
+/* El enlace de texto del sistema va en tinta; aquí el fondo es ink. */
+.p404__secundario {
+  color: #fff;
+}
+.p404__secundario:hover {
+  color: var(--altea-coral);
+}

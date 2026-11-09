@@ -5,6 +5,13 @@
  * (4e75110c-7f68-47eb-8039-f58407737c9d). The verbatim upstream source lives in
  * `design-system/` at the repo root; treat it as the reference, this folder as
  * the code the app consumes.
+ *
+ * ⚠ LA APP NO IMPORTA DE AQUÍ, SINO DE CADA ARCHIVO (9 nov 2026):
+ * `import { NavBar } from "@/app/ui/NavBar"`, no `from "@/app/ui"`. Turbopack no
+ * descarta lo que no se usa de un índice con componentes de cliente: con el
+ * índice, el layout metía en TODAS las páginas GSAP, la intro, el mapa, el
+ * formulario y el resto (19 KB comprimidos de más por página, 65 KB en las
+ * legales). Este archivo se queda como catálogo del sistema.
  */
 export { Button } from "./Button";
 export type { ButtonProps, ButtonSize, ButtonVariant } from "./Button";
@@ -87,4 +94,3 @@ export type { MarcasProps } from "./Marcas";
 export { Publicaciones } from "./Publicaciones";
 export type { PublicacionesProps } from "./Publicaciones";
 
-export { default as IntroAltea } from "./intro/IntroAltea";

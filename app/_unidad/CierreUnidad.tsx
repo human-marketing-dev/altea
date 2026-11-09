@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
+import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
+import { rutaDe } from "@/lib/idioma";
 import type { Unidad } from "@/lib/contacto";
-import { ruta } from "@/lib/rutas";
 import type { CierreConFoto } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * El cierre de una unidad con la foto que SE SALE DEL PANEL por arriba.
@@ -38,8 +40,10 @@ export function CierreUnidad({
   unidad: Unidad;
   cierre: CierreConFoto;
 }) {
+  const idiomaPagina = useIdioma();
+  const tx = textos(idiomaPagina);
   const raiz = useRef<HTMLElement>(null);
-  const contacto = ruta(`/contacto?unidad=${unidad.toLowerCase()}`);
+  const contacto = rutaDe(`/contacto?unidad=${unidad.toLowerCase()}`, idiomaPagina);
 
   /*
    * LA ENTRADA CON EL SCROLL, la de los demás bloques: un valor de 0 a 1 que
@@ -97,11 +101,11 @@ export function CierreUnidad({
           <div className="uni-cta__acciones">
             <a
               className="altea-btn altea-btn--dark altea-btn--lg"
-              href={enlaceWhatsApp()}
+              href={enlaceWhatsApp(MENSAJE_WHATSAPP[idiomaPagina])}
               target="_blank"
               rel="noopener noreferrer"
             >
-              Contáctanos por WhatsApp
+              {tx.cta.whatsapp}
               <span className="altea-btn__arrow" aria-hidden="true">
                 →
               </span>
@@ -110,7 +114,7 @@ export function CierreUnidad({
               className="altea-btn altea-btn--outline altea-btn--lg uni-cta__secundario"
               href={contacto}
             >
-              Ir a contacto
+              {tx.cta.irContacto}
               <span className="altea-btn__arrow" aria-hidden="true">
                 →
               </span>

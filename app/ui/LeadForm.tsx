@@ -7,6 +7,8 @@ import { UNIDADES, type Unidad } from "@/lib/contacto";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { Select } from "./Select";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 export interface LeadFormProps {
   /** Preselecciona la unidad, p. ej. desde la página de Industrial. */
@@ -38,6 +40,9 @@ export function LeadForm({
   ficha = "",
   className,
 }: LeadFormProps) {
+  const idioma = useIdioma();
+  const tx = textos(idioma);
+  const f = tx.formulario;
   const [estado, accion, pendiente] = useActionState<EstadoLead, FormData>(
     enviarLead,
     ESTADO_LEAD_INICIAL,
@@ -61,12 +66,12 @@ export function LeadForm({
         <p
           className={`m-0 font-display text-titulo-bloque ${oscuro ? "text-cream" : "text-ink"}`}
         >
-          Gracias, recibimos tu mensaje.
+          {f.gracias}
         </p>
         <p
           className={`m-0 text-body leading-relaxed ${oscuro ? "text-cream-60" : "text-ink-70"}`}
         >
-          Un asesor de Altea te contactará para revisar tu proyecto.
+          {f.gracias2}
         </p>
       </div>
     );
@@ -88,9 +93,9 @@ export function LeadForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Input
-            label="Nombre"
+            label={f.nombre}
             name="nombre"
-            placeholder="Tu nombre"
+            placeholder={f.nombrePista}
             autoComplete="name"
             defaultValue={valores.nombre}
             required
@@ -106,10 +111,10 @@ export function LeadForm({
 
         <div>
           <Input
-            label="Correo electrónico"
+            label={f.correo}
             name="correo"
             type="email"
-            placeholder="tu@correo.com"
+            placeholder={f.correoPista}
             autoComplete="email"
             defaultValue={valores.correo}
             required
@@ -127,7 +132,7 @@ export function LeadForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Input
-            label="Teléfono (opcional)"
+            label={f.telefono}
             name="telefono"
             type="tel"
             placeholder="81 0000 0000"
@@ -144,14 +149,14 @@ export function LeadForm({
         </div>
 
         <Select
-          label="Unidad de interés"
+          label={f.unidad}
           name="unidad"
           defaultValue={valores.unidad ?? unidadPorDefecto ?? ""}
         >
-          <option value="">Selecciona una</option>
+          <option value="">{f.unidadElegir}</option>
           {UNIDADES.map((unidad) => (
             <option key={unidad} value={unidad}>
-              {unidad}
+              {tx.nav[unidad.toLowerCase() as "comercial" | "industrial" | "vivienda" | "forestal"]}
             </option>
           ))}
         </Select>
@@ -159,10 +164,10 @@ export function LeadForm({
 
       <div>
         <Input
-          label="Mensaje"
+          label={f.mensaje}
           name="mensaje"
           as="textarea"
-          placeholder="Cuéntanos sobre tu proyecto"
+          placeholder={f.mensajePista}
           required
           defaultValue={valores.mensaje}
           aria-invalid={Boolean(errorDe("mensaje"))}
@@ -176,11 +181,13 @@ export function LeadForm({
       </div>
 
       <input type="hidden" name="ficha" value={ficha} />
+      {/* Para que los avisos del servidor vuelvan en el idioma de la página. */}
+      <input type="hidden" name="idioma" value={idioma} />
 
       {/* Trampa para bots. Fuera de pantalla, no anunciado, no tabulable. */}
       <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
         <label>
-          No llenar
+          {f.noLlenar}
           <input type="text" name="sitio-web" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
@@ -193,7 +200,7 @@ export function LeadForm({
       )}
 
       <Button type="submit" variant="primary" size="lg" disabled={pendiente} className="self-start">
-        {pendiente ? "Enviando…" : "Enviar mensaje"}
+        {pendiente ? f.enviando : f.enviar}
       </Button>
     </form>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useIdioma } from "./useIdioma";
 
 export interface CountUpProps {
   /** Valor final. */
@@ -27,6 +28,7 @@ export function CountUp({
   className,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
+  const idioma = useIdioma();
   const [value, setValue] = useState(to);
   /*
    * Los decimales que trae `to`, para contar con ellos. Con Math.round a secas un
@@ -90,13 +92,17 @@ export function CountUp({
     <span ref={ref} className={className}>
       <span aria-hidden="true">
         {prefix && <span className="altea-count__prefijo">{prefix}</span>}
-        {value.toLocaleString("es-MX", {
+        {value.toLocaleString(idioma === "en" ? "en-US" : "es-MX", {
           minimumFractionDigits: decimales,
           maximumFractionDigits: decimales,
         })}
         {suffix && <span className="altea-count__sufijo">{suffix}</span>}
       </span>
-      <span className="sr-only">{enPalabras(to, prefix, suffix, decimales)}</span>
+      <span className="sr-only">
+        {idioma === "en"
+          ? inWords(to, prefix, suffix, decimales)
+          : enPalabras(to, prefix, suffix, decimales)}
+      </span>
     </span>
   );
 }
@@ -174,4 +180,33 @@ function enPalabras(
       : c.texto;
   }
   return [p && (PREFIJOS[p] ?? p), valor].filter(Boolean).join(" ");
+}
+
+/**
+ * Lo mismo en inglés (noviembre de 2026):
+ *   "+3M"    → "more than 3 million"
+ *   "+18.8M" → "more than 18.8 million"
+ *   "960K"   → "960 thousand"
+ *   "94%"    → "94 percent"
+ *
+ * Aquí el punto decimal sí se queda: las voces en inglés lo leen como decimal
+ * sin ambigüedad, que es lo que obligaba en español a decirlo en millones y miles.
+ */
+const PREFIXES: Record<string, string> = { "+": "more than" };
+const UNITS: Record<string, string> = { "%": "percent", "m²": "square meters" };
+
+function inWords(n: number, prefix: string, suffix: string, decimals: number) {
+  const p = prefix.trim();
+  const s = suffix.trim();
+  const num = n.toLocaleString("en-US", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+  const value =
+    s === "M"
+      ? `${num} million`
+      : s === "K"
+        ? `${num} thousand`
+        : [num, s && (UNITS[s] ?? s)].filter(Boolean).join(" ");
+  return [p && (PREFIXES[p] ?? p), value].filter(Boolean).join(" ");
 }

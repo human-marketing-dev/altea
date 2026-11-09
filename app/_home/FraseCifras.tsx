@@ -4,8 +4,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Fragment, useRef } from "react";
-import { CountUp } from "@/app/ui";
-import { STATS, STATS_INTRO } from "./content";
+import { CountUp } from "@/app/ui/CountUp";
+import { contenidoHome } from "./contenido";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -23,6 +24,8 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * sección deja de ser un énfasis y se convierte en un tic.
  */
 export function FraseCifras() {
+  const idioma = useIdioma();
+  const { STATS, STATS_INTRO } = contenidoHome(idioma);
   const raiz = useRef<HTMLElement>(null);
 
   useGSAP(

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import type { Atributo, ContenidoUnidad, IconoAtributo } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Tres atributos de la unidad, bajo el hero: icono y título, nada más.
@@ -422,6 +424,7 @@ export function Atributos({
       otra, así que no lo hereda. */
   color?: string;
 }) {
+  const tx = textos(useIdioma());
   return (
     <section
       className="uni-at"
@@ -429,7 +432,7 @@ export function Atributos({
       style={color ? { ["--color-unidad" as string]: color } : undefined}
     >
       <h2 className="sr-only" id="atributos-titulo">
-        Por qué Altea {unidad}
+        {tx.atributos.porQue(tx.nav[unidad.toLowerCase() as "comercial" | "industrial" | "vivienda" | "forestal"])}
       </h2>
       <ListaAtributos items={atributos} />
     </section>

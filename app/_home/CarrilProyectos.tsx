@@ -2,10 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { CarrilTarjetas, LogoDesarrollo } from "@/app/ui";
+import { CarrilTarjetas } from "@/app/ui/CarrilTarjetas";
+import { LogoDesarrollo } from "@/app/ui/LogoDesarrollo";
 import { logoDe } from "@/lib/logos-desarrollos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
+import type { Idioma } from "@/lib/idioma";
 import type { FeaturedProject } from "./content";
-import { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } from "./content";
+import { contenidoHome } from "./contenido";
 
 /**
  * Los proyectos del home, en un recorrido horizontal.
@@ -23,16 +27,25 @@ import { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } from "./content";
  * carril entero —otro juego de ScrollTriggers, otro oyente de resize y la
  * entrada de las tarjetas repetida— encima del anterior.
  */
-const ITEMS = FEATURED_PROJECTS.map((p) => ({
-  id: p.slug,
-  nombre: p.name,
-  /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
-     lista que mezcla comercial, industrial y vivienda. */
-  pie: p.unit,
-  foto: p.image,
-}));
+const itemsDe = (idioma: Idioma) =>
+  contenidoHome(idioma).FEATURED_PROJECTS.map((p) => ({
+    id: p.slug,
+    nombre: p.name,
+    /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
+       lista que mezcla comercial, industrial y vivienda. */
+    pie: p.unit,
+    foto: p.image,
+  }));
+/* Una lista por idioma, armada una sola vez: ver la nota de arriba. */
+const ITEMS: Record<Idioma, ReturnType<typeof itemsDe>> = {
+  es: itemsDe("es"),
+  en: itemsDe("en"),
+};
 
 export function CarrilProyectos() {
+  const idioma = useIdioma();
+  const { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } = contenidoHome(idioma);
+  const t = textos(idioma).ficha;
   const dialogo = useRef<HTMLDialogElement>(null);
   const [activo, setActivo] = useState<FeaturedProject | null>(null);
   const logoActivo = activo ? logoDe(activo.slug) : undefined;
@@ -52,7 +65,7 @@ export function CarrilProyectos() {
     <CarrilTarjetas
       titulo={FEATURED_PROJECTS_INTRO.titulo}
       tituloId="carril-titulo"
-      items={ITEMS}
+      items={ITEMS[idioma]}
       onAbrir={(k, boton) => {
         origen.current = boton;
         setActivo(FEATURED_PROJECTS[k] ?? null);
@@ -61,7 +74,7 @@ export function CarrilProyectos() {
       <dialog
         ref={dialogo}
         className="home-ficha"
-        aria-label={activo ? `Ficha de ${activo.name}` : "Ficha del proyecto"}
+        aria-label={activo ? t.de(activo.name) : t.delProyecto}
         onClose={() => {
           setActivo(null);
           origen.current?.focus();
@@ -77,7 +90,7 @@ export function CarrilProyectos() {
               type="button"
               className="home-ficha__x"
               onClick={() => setActivo(null)}
-              aria-label="Cerrar ficha"
+              aria-label={t.cerrar}
             >
               ×
             </button>
@@ -114,15 +127,15 @@ export function CarrilProyectos() {
             <div className="home-ficha__cuerpo">
               <dl className="home-ficha__datos">
                 <div className="home-ficha__d">
-                  <dt>Unidad</dt>
+                  <dt>{t.unidad}</dt>
                   <dd>{activo.unit}</dd>
                 </div>
                 <div className="home-ficha__d">
-                  <dt>Ubicación</dt>
+                  <dt>{t.ubicacion}</dt>
                   <dd>{activo.location}</dd>
                 </div>
                 <div className="home-ficha__d">
-                  <dt>Estado</dt>
+                  <dt>{t.estado}</dt>
                   <dd>{activo.estado}</dd>
                 </div>
               </dl>

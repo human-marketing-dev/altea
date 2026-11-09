@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITIO } from "@/lib/idioma";
 
 /**
  * /robots.txt
@@ -23,8 +24,8 @@ import type { MetadataRoute } from "next";
  * habría sido la cadena vacía, que en robots.txt significa "no bloquees nada" y
  * habría abierto el sitio entero sin que se notara.
  *
- * No hay `sitemap.ts` en el proyecto, así que no hace falta excluir nada de un
- * sitemap: no existe.
+ * El sitemap (app/sitemap.ts) ya se declara aquí; mientras siga el `disallow`
+ * los rastreadores no lo siguen, así que puede quedarse así el día que se abra.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -32,5 +33,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       disallow: "/",
     },
+    sitemap: `${SITIO}/sitemap.xml`,
   };
 }

@@ -1,6 +1,7 @@
-import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
+import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
+import { rutaDe, type Idioma } from "@/lib/idioma";
+import { textos } from "./textos";
 import type { Unidad } from "@/lib/contacto";
-import { ruta } from "@/lib/rutas";
 import { MediaSlot } from "./MediaSlot";
 import { SectionHeading } from "./SectionHeading";
 
@@ -31,9 +32,12 @@ export function CierreContacto({
   title,
   image,
   unidad,
-}: CierreContactoProps) {
-  const contacto = ruta(
+  idioma = "es",
+}: CierreContactoProps & { idioma?: Idioma }) {
+  const tx = textos(idioma);
+  const contacto = rutaDe(
     unidad ? `/contacto?unidad=${unidad.toLowerCase()}` : "/contacto",
+    idioma,
   );
 
   return (
@@ -60,11 +64,11 @@ export function CierreContacto({
         <div className="altea-cierre__acciones">
           <a
             className="altea-btn altea-btn--primary altea-btn--lg"
-            href={enlaceWhatsApp()}
+            href={enlaceWhatsApp(MENSAJE_WHATSAPP[idioma])}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Contáctanos por WhatsApp
+            {tx.cta.whatsapp}
             <span className="altea-btn__arrow" aria-hidden="true">
               →
             </span>
@@ -77,7 +81,7 @@ export function CierreContacto({
             className="altea-btn altea-btn--outline altea-btn--lg altea-cierre__secundario"
             href={contacto}
           >
-            Ir a contacto
+            {tx.cta.irContacto}
             <span className="altea-btn__arrow" aria-hidden="true">
               →
             </span>

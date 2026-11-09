@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
-import { RevealOnScroll } from "@/app/ui";
+import { RevealOnScroll } from "@/app/ui/RevealOnScroll";
 import { GoogleTag } from "./GoogleTag";
+import { SITIO } from "@/lib/idioma";
 import "./globals.css";
 
 /**
@@ -29,12 +29,13 @@ const brandFont = localFont({
   ],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
+  /*
+   * El dominio de producción: con él Next vuelve absolutas la canónica, los
+   * `hreflang` y la imagen de vista previa (9 nov 2026). Sin él salían
+   * relativos, y Google ignora los `hreflang` relativos. Ver SITIO.
+   */
+  metadataBase: new URL(SITIO),
   title: "Altea",
   description:
     "Inmobiliaria con sólida experiencia y una vasta reserva territorial: proyectos comerciales, industriales y de vivienda.",
@@ -60,13 +61,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es-MX"
-      className={`${brandFont.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${brandFont.variable} h-full antialiased`}
     >
       {/*
         Aquí había dos <link rel="preload"> de la intro —el cielo y el edificio,
         1.67 MB— que se pedían con prioridad alta en TODAS las páginas. La intro
-        (app/ui/intro) ya no se monta en ninguna, así que competían con la foto
-        principal de cada página por nada. Si vuelve, que vuelvan con ella.
+        ya no se monta en ninguna (salió del proyecto; ver PaginaHome), así que
+        competían con la foto principal de cada página por nada. Si vuelve, que
+        vuelvan con ella.
       */}
       <body className="min-h-full flex flex-col">
         {children}

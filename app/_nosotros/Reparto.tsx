@@ -4,7 +4,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
-import { HUELLA } from "./content";
+import { contenidoNosotros } from "./contenido";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -19,9 +20,12 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * El total sale de sumar el desglose, así que si entra una cuarta línea las
  * proporciones se recalculan solas.
  */
-const TOTAL = HUELLA.desglose.reduce((a, d) => a + d.value, 0);
+/* Las cifras son las mismas en los dos idiomas: el total sale del español. */
+const TOTAL = contenidoNosotros("es").HUELLA.desglose.reduce((a, d) => a + d.value, 0);
 
 export function Reparto() {
+  const idioma = useIdioma();
+  const { HUELLA } = contenidoNosotros(idioma);
   const raiz = useRef<HTMLDListElement>(null);
 
   useGSAP(
@@ -65,7 +69,7 @@ export function Reparto() {
                 />
               </span>
             </div>
-            <dd className="nos-rp__v">{d.value.toLocaleString("es-MX")} m²</dd>
+            <dd className="nos-rp__v">{d.value.toLocaleString(idioma === "en" ? "en-US" : "es-MX")} m²</dd>
           </div>
         );
       })}

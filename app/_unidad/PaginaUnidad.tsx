@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { preload } from "react-dom";
-import { CONTACT_CTA } from "@/app/_home/content";
-import { CierreContacto, Footer, NavBar } from "@/app/ui";
+import { contenidoHome } from "@/app/_home/contenido";
+import { metadatosDe, type Idioma } from "@/lib/idioma";
+import { CierreContacto } from "@/app/ui/CierreContacto";
+import { Footer } from "@/app/ui/Footer";
+import { NavBar } from "@/app/ui/NavBar";
 import { Atributos } from "./Atributos";
 import { CarruselProyectos } from "./CarruselProyectos";
 import { CierreUnidad } from "./CierreUnidad";
@@ -32,7 +35,15 @@ import "./unidad.css";
  * Industrial, Vivienda y Forestal con menos secciones que Comercial: es lo que
  * hay de contenido, no un recorte de la estructura.
  */
-export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
+export function PaginaUnidad({
+  contenido,
+  idioma = "es",
+}: {
+  contenido: ContenidoUnidad;
+  /** El de la página: lo pasan app/<unidad>/page.tsx y app/en/<unit>/page.tsx. */
+  idioma?: Idioma;
+}) {
+  const { CONTACT_CTA } = contenidoHome(idioma);
   const {
     hero,
     cifras,
@@ -65,7 +76,7 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
           <Atributos atributos={atributos} unidad={unidad} color={hero.color} />
         )}
         {lineas && lineas.length > 0 && (
-          <LineasNegocio lineas={lineas} color={hero.color} />
+          <LineasNegocio lineas={lineas} color={hero.color} idioma={idioma} />
         )}
         {proyectos.lista.length > 0 && <CarruselProyectos proyectos={proyectos} />}
         {giros.bloques.length > 0 && <OtrosGiros giros={giros} />}
@@ -83,13 +94,19 @@ export function PaginaUnidad({ contenido }: { contenido: ContenidoUnidad }) {
           cierre={cierre}
         />
       ) : (
-        <CierreContacto {...CONTACT_CTA} unidad={unidad} />
+        <CierreContacto {...CONTACT_CTA} unidad={unidad} idioma={idioma} />
       )}
-      <Footer />
+      <Footer idioma={idioma} />
     </>
   );
 }
 
-/** Los metadatos de la ruta, desde el mismo contenido. */
-export const metadataDe = (contenido: ContenidoUnidad): Metadata =>
-  contenido.metadata;
+/**
+ * Los metadatos de la ruta, desde el mismo contenido, con la canónica, los
+ * `hreflang` y la vista previa al compartir. Ver `metadatosDe` en lib/idioma.ts.
+ */
+export const metadataDe = (
+  contenido: ContenidoUnidad,
+  caminoEs: string,
+  idioma: Idioma = "es",
+): Metadata => metadatosDe(caminoEs, idioma, contenido.metadata);

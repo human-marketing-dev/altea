@@ -4,7 +4,9 @@ import { headers } from "next/headers";
 import {
   esRepetido,
   gastarFicha,
+  liberarLimite,
   limpiarTexto,
+  olvidarMensaje,
   revisarContenido,
   revisarFicha,
   revisarLimite,
@@ -12,6 +14,7 @@ import {
 import { enviarCorreo, faltantesBrevo } from "@/lib/brevo";
 import { CANALES, UNIDADES } from "@/lib/contacto";
 import type { EstadoLead } from "./estado-lead";
+import type { Idioma } from "@/lib/idioma";
 
 /**
  * Recepción de leads del formulario de contacto.
@@ -54,6 +57,47 @@ const escapar = (s: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+/**
+ * LOS MENSAJES PARA LA PERSONA, en el idioma de la página desde la que escribe
+ * (noviembre de 2026). El formulario manda `idioma` en un campo oculto. El
+ * correo que le llega a Altea sigue en español: sólo agrega el idioma, para que
+ * sepan en cuál contestar.
+ */
+const MENSAJES = {
+  es: {
+    nombre: "Escribe tu nombre.",
+    nombreLargo: "El nombre es demasiado largo.",
+    correo: "Revisa tu correo electrónico.",
+    telefono: "Revisa tu teléfono.",
+    mensajeCorto: "Cuéntanos un poco más sobre tu proyecto.",
+    mensajeLargo: (max: number) => `El mensaje es demasiado largo (máximo ${max} caracteres).`,
+    envio: (correo: string) =>
+      `No pudimos enviar tu mensaje. Inténtalo de nuevo en unos minutos, o escríbenos a ${correo} o por WhatsApp.`,
+  },
+  en: {
+    nombre: "Please enter your name.",
+    nombreLargo: "The name is too long.",
+    correo: "Please check your email address.",
+    telefono: "Please check your phone number.",
+    mensajeCorto: "Please tell us a little more about your project.",
+    mensajeLargo: (max: number) => `The message is too long (maximum ${max} characters).`,
+    envio: (correo: string) =>
+      `We could not send your message. Please try again in a few minutes, or write to us at ${correo} or via WhatsApp.`,
+  },
+} as const;
+
+/** Los avisos del antispam (lib/antispam.ts) vienen en español: aquí su inglés. */
+function avisoEn(mensaje: string): string {
+  if (mensaje.startsWith("La página lleva mucho tiempo abierta"))
+    return "This page has been open for a long time. Please reload it and submit again.";
+  if (mensaje.startsWith("Recibimos varios mensajes"))
+    return "We received several messages in a short time. Please wait a few minutes or contact us directly.";
+  const enlaces = mensaje.match(/^Tu mensaje tiene demasiados enlaces\. Deja (\d+)/);
+  if (enlaces)
+    return `Your message contains too many links. Please include no more than ${enlaces[1]}.`;
+  return mensaje;
+}
+
 export async function enviarLead(
   _previo: EstadoLead,
   datos: FormData,
@@ -63,6 +107,9 @@ export async function enviarLead(
   if (String(datos.get("sitio-web") ?? "").trim()) {
     return { estado: "enviado" };
   }
+
+  const idioma: Idioma = datos.get("idioma") === "en" ? "en" : "es";
+  const M = MENSAJES[idioma];
 
   // La ficha firmada que puso la página: sin ella, o demasiado rápida, es bot.
   const ficha = String(datos.get("ficha") ?? "");
@@ -82,14 +129,12 @@ export async function enviarLead(
 
   // La validación del cliente es conveniencia; ésta es la que cuenta.
   const errores: Record<string, string> = {};
-  if (nombre.length < 2) errores.nombre = "Escribe tu nombre.";
-  else if (nombre.length > MAX.nombre) errores.nombre = "El nombre es demasiado largo.";
-  if (!CORREO.test(correo) || correo.length > MAX.correo)
-    errores.correo = "Revisa tu correo electrónico.";
-  if (telefono.length > MAX.telefono) errores.telefono = "Revisa tu teléfono.";
-  if (mensaje.length < 10) errores.mensaje = "Cuéntanos un poco más sobre tu proyecto.";
-  else if (mensaje.length > MAX.mensaje)
-    errores.mensaje = `El mensaje es demasiado largo (máximo ${MAX.mensaje} caracteres).`;
+  if (nombre.length < 2) errores.nombre = M.nombre;
+  else if (nombre.length > MAX.nombre) errores.nombre = M.nombreLargo;
+  if (!CORREO.test(correo) || correo.length > MAX.correo) errores.correo = M.correo;
+  if (telefono.length > MAX.telefono) errores.telefono = M.telefono;
+  if (mensaje.length < 10) errores.mensaje = M.mensajeCorto;
+  else if (mensaje.length > MAX.mensaje) errores.mensaje = M.mensajeLargo(MAX.mensaje);
 
   const valores = { nombre, correo, telefono, unidad: unidad ?? "", mensaje };
 
@@ -101,7 +146,7 @@ export async function enviarLead(
      enlaces, demasiados envíos seguidos. Lo que escribió se le devuelve. */
   const aviso = (mensajeAviso: string): EstadoLead => ({
     estado: "error",
-    errores: { envio: mensajeAviso },
+    errores: { envio: idioma === "en" ? avisoEn(mensajeAviso) : mensajeAviso },
     valores,
   });
   if (!deFicha.ok) return aviso(deFicha.mensaje);
@@ -110,13 +155,25 @@ export async function enviarLead(
   if (!deContenido.ok)
     return deContenido.silencio ? { estado: "enviado" } : aviso(deContenido.mensaje);
 
-  /* La IP la pone el proxy del hosting. Sin proxy delante, x-forwarded-for la
-     escribe el cliente y se puede falsear: por eso existe también el techo
-     global, que no depende de ella. */
+  /*
+   * LA IP LA PONE EL SERVIDOR, NO EL VISITANTE (9 nov 2026). Antes se tomaba la
+   * PRIMERA de x-forwarded-for, y ésa la puede escribir cualquiera: el nginx de
+   * RunCloud AÑADE la IP real al final de lo que mande el cliente. Con una IP
+   * inventada por envío se saltaba el límite por IP, y se podía agotar el techo
+   * global y bloquear una hora a los visitantes reales.
+   *
+   * Ahora, en orden: x-real-ip, que nginx pone con la IP de la conexión y
+   * sustituye a la que mande el cliente; si no viene, la ÚLTIMA de
+   * x-forwarded-for, que es la que añadió el proxy más cercano.
+   *
+   * ⚠ Si algún día se pone Cloudflare u otro proxy delante, las dos traerían la
+   * IP del proxy y no la del visitante: habría que leer la suya
+   * (cf-connecting-ip) y revisar esto.
+   */
   const cabeceras = await headers();
   const ip =
-    cabeceras.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     cabeceras.get("x-real-ip")?.trim() ||
+    cabeceras.get("x-forwarded-for")?.split(",").at(-1)?.trim() ||
     "desconocida";
   const deLimite = revisarLimite(ip);
   if (!deLimite.ok)
@@ -125,11 +182,19 @@ export async function enviarLead(
   /* El mismo mensaje dos veces —doble clic, recarga— llega una sola vez. */
   if (esRepetido(correo, mensaje)) return { estado: "enviado" };
 
+  /* Si no sale, ni el límite ni el «repetido» cuentan: el visitante tiene que
+     poder reintentar. Ver liberarLimite y olvidarMensaje en lib/antispam.ts. */
+  const noSalio = () => {
+    liberarLimite(ip);
+    olvidarMensaje(correo, mensaje);
+    return errorDeEnvio(valores, idioma);
+  };
+
   const destino = process.env.CONTACTO_DESTINO?.trim();
   const faltan = faltantesBrevo();
   if (!destino || faltan.length) {
     console.error("[lead] Brevo sin configurar; faltan:", faltan.join(", "));
-    return errorDeEnvio(valores);
+    return noSalio();
   }
 
   const fecha = new Intl.DateTimeFormat("es-MX", {
@@ -143,6 +208,7 @@ export async function enviarLead(
     ["Correo", correo],
     ["Teléfono", telefono || "—"],
     ["Unidad de interés", unidad ?? "Sin especificar"],
+    ["Idioma del sitio", idioma === "en" ? "Inglés" : "Español"],
     ["Fecha", fecha],
   ];
 
@@ -191,7 +257,7 @@ ${filas
   if (!resultado.ok) {
     /* El motivo técnico al log del servidor; el usuario no lo necesita. */
     console.error("[lead] Brevo no entregó el mensaje:", resultado.motivo);
-    return errorDeEnvio(valores);
+    return noSalio();
   }
 
   gastarFicha(ficha);
@@ -199,12 +265,10 @@ ${filas
 }
 
 /** El fallo de envío, con los canales directos para que el contacto no se pierda. */
-function errorDeEnvio(valores: Record<string, string>): EstadoLead {
+function errorDeEnvio(valores: Record<string, string>, idioma: Idioma): EstadoLead {
   return {
     estado: "error",
     valores,
-    errores: {
-      envio: `No pudimos enviar tu mensaje. Inténtalo de nuevo en unos minutos, o escríbenos a ${CANALES.correo} o por WhatsApp.`,
-    },
+    errores: { envio: MENSAJES[idioma].envio(CANALES.correo) },
   };
 }

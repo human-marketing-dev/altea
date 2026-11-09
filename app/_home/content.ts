@@ -36,8 +36,17 @@ export const STATS_INTRO =
   "Creamos soluciones que responden a diferentes necesidades, usos y oportunidades.";
 
 export const VIDEO = {
-  /** Clip de 20s en 1080p, en bucle (lleva audio; arranca silenciado). */
-  url: "/video/altea-institucional.mp4" as string | undefined,
+  /**
+   * ⚠ LOS ARCHIVOS DEL CLIP SE BORRARON (9 nov 2026): `url` y `urlMovil` van
+   * vacíos. El home usa el video de YouTube (`youtube`, abajo), y los 19 MB del
+   * clip sólo pesaban en el despliegue. Para volver al clip local, se recuperan
+   * del historial de git —`git checkout 51a61ae -- public/video`— y se reponen
+   * las dos rutas: "/video/altea-institucional.mp4" y
+   * "/video/altea-institucional-720.mp4". El póster sigue: lo usa el de YouTube.
+   *
+   * Clip de 20s en 1080p, en bucle (lleva audio; arranca silenciado).
+   */
+  url: undefined as string | undefined,
   /**
    * La misma, en 720p, para teléfonos (hasta 600 px de ancho): 4.6 MB contra
    * 14.2. Al ancho que la pinta un teléfono no se distingue: 43.8 dB de PSNR
@@ -48,7 +57,7 @@ export const VIDEO = {
    * -movflags +faststart -c:a aac -b:a 96k altea-institucional-720.mp4
    * Si cambia el video, se vuelve a sacar con lo mismo.
    */
-  urlMovil: "/video/altea-institucional-720.mp4" as string | undefined,
+  urlMovil: undefined as string | undefined,
   /**
    * Lo que se ve mientras carga y, en iOS con ahorro de batería o con
    * movimiento reducido, lo único que se ve si el clip no arranca solo.
@@ -63,8 +72,8 @@ export const VIDEO = {
   /**
    * EL VIDEO COMPLETO, EN YOUTUBE (29 oct 2026): 1:40, con audio, en el canal
    * de Altea ("ALTEA VIDEO INSTITUCIONAL"). Con el id, el home monta <VideoYoutube> en vez de
-   * <CorporateVideo>; sin él, vuelve el clip local de arriba, que se queda
-   * entero —archivos y componente— por si se regresa.
+   * <CorporateVideo>; sin él, vuelve el clip local de arriba —el componente
+   * sigue; los archivos hay que recuperarlos de git, ver `url`—.
    * https://www.youtube.com/watch?v=SfvgCPTsXpw
    */
   youtube: "SfvgCPTsXpw" as string | undefined,
@@ -275,7 +284,8 @@ export interface FeaturedProject {
    * frases tal cual y no hay una tercera; si mañana aparece "En construcción",
    * se añade aquí y el componente no se entera.
    */
-  estado: "En operación" | "En desarrollo";
+  /* Un texto que sólo se muestra: en inglés va "In operation" / "Under development". */
+  estado: string;
   /** Sin imagen, el panel muestra el hueco etiquetado. */
   image?: string;
   /**
@@ -301,7 +311,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "San Nicolás, Nuevo León",
     image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
     descripcion:
-      "Fashion Mall ubicado sobre Av. Miguel Alemán, principal vía de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Cuenta con una afluencia de 1 millón de visitantes al mes, consolidándose como uno de los principales destinos comerciales, de entretenimiento y experiencias de la zona metropolitana de Monterrey.",
+      "Paseo La Fe es un centro comercial ubicado sobre la avenida Miguel Alemán, una de las principales vías de acceso al Aeropuerto Internacional de Monterrey, en San Nicolás de los Garza, Nuevo León. Recibe aproximadamente un millón de visitantes al mes y es uno de los principales destinos de compras, entretenimiento y experiencias de la zona metropolitana de Monterrey.",
   },
   {
     estado: "En operación",
@@ -312,7 +322,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea-1.webp",
     descripcion:
-      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
+      "Ubicado sobre Boulevard Felipe Pescador, en el centro de Durango, es el único centro comercial de la ciudad y reúne marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino. Su oferta comercial, de entretenimiento y servicios lo convierte en uno de los principales destinos de la ciudad.",
   },
   {
     estado: "En operación",
@@ -355,7 +365,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     image:
       "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
     descripcion:
-      "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque industrial que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.",
+      "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Se encuentra en un entorno empresarial consolidado, cerca de Pocket Park Aeropuerto - desarrollado por Altea en colaboración con Garza Ponce - junto al Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.",
   },
   {
     estado: "En desarrollo",
@@ -368,6 +378,6 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Zona Sur de Monterrey, Nuevo León",
     image: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
     descripcion:
-      "Próximo desarrollo de lotes residenciales ubicado en la Zona Sur de Monterrey, sobre Carretera Nacional. Un proyecto que integra ubicación estratégica y amenidades de alto nivel, creando un entorno pensado para vivir, crecer y construir patrimonio.",
+      "Próximo desarrollo de lotes residenciales cercano a Carretera Nacional al sur de Monterrey. Integra una ubicación estratégica y amenidades de alto nivel en un entorno pensado para vivir y construir patrimonio.",
   },
 ];

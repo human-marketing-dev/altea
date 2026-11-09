@@ -372,7 +372,7 @@ export const PLAZAS: Plaza[] = [
     alt: "",
     label: "Paseo Durango",
     descripcion:
-      "Fashion Mall ubicado sobre Blvd. Felipe Pescador, en la zona centro de Durango, Durango. Único Fashion Mall de la ciudad, cuenta con marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino, además de una amplia oferta comercial, de entretenimiento y servicios que lo convierte en uno de los principales destinos de la ciudad.",
+      "Ubicado sobre Boulevard Felipe Pescador, en el centro de Durango, es el único centro comercial de la ciudad y reúne marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino. Su oferta comercial, de entretenimiento y servicios lo convierte en uno de los principales destinos de la ciudad.",
     datos: [
       { etiqueta: "Formato", valor: "Fashion Mall" },
       { etiqueta: "Visitantes", valor: "600 mil al mes" },
@@ -1021,7 +1021,7 @@ export const PROXIMOS_PROYECTOS = {
       location: "San Nicolás, Nuevo León",
       image: `${PROXIMOS}/paseo-la-fe-altea-proximo.webp`,
       descripcion:
-        "El proyecto contempla un Master Plan integral dividido en tres etapas que ampliará la oferta comercial de servicios, entretenimiento y vivienda dentro de un mismo ecosistema urbano. Como parte de esta evolución, destaca la llegada del Acuario Michin así como la incorporación futura de componentes hoteleros, hospitalarios y residenciales. El desarrollo contempla más de 36 mil m² adicionales de expansión comercial y de entretenimiento, así como cerca de 19 mil m² de área rentable para el Acuario.",
+        "El proyecto contempla un plan maestro integral en tres etapas para ampliar la oferta de comercio, servicios, entretenimiento y vivienda. Entre sus componentes previstos se encuentran el Acuario Michin y futuros espacios hoteleros, hospitalarios y residenciales. Se proyectan más de 36 mil m² adicionales de expansión comercial y de entretenimiento, incluidos cerca de 19 mil m² de área rentable para el acuario.",
     },
     {
       slug: "punto-lopez-mateos",
@@ -1030,7 +1030,7 @@ export const PROXIMOS_PROYECTOS = {
       location: "Guadalupe, Nuevo León",
       image: `${PROXIMOS}/punto-lopez-mateos-altea-proximo.webp`,
       descripcion:
-        "La ampliación comercial de Punto López Mateos surge como una intervención destinada a fortalecer y ampliar la oferta comercial del conjunto, donde actualmente se encuentra BBVA, así como la incorporación de nuevos establecimientos como Firehouse y Dreambox. El proyecto busca revitalizar el conjunto y amplificar la diversidad de usos disponibles para los visitantes, dentro de una propuesta arquitectónica renovada y funcional.",
+        "La ampliación de Punto López Mateos busca fortalecer su oferta comercial, que actualmente incluye BBVA, e incorporar establecimientos como Firehouse y Dreambox. El proyecto propone renovar el conjunto arquitectónico y diversificar los servicios disponibles para sus visitantes.",
     },
   ],
 };

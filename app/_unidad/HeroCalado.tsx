@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
-import { CountUp } from "@/app/ui";
+import { CountUp } from "@/app/ui/CountUp";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import type { ContenidoUnidad, FormaBandera } from "./tipos";
 

@@ -1,5 +1,7 @@
 import Image from "next/image";
-import { RESPONSABILIDAD, type FotoGaleria } from "./content";
+import { contenidoNosotros } from "./contenido";
+import type { Idioma } from "@/lib/idioma";
+import { type FotoGaleria } from "./content";
 
 /**
  * Responsabilidad social: el título solo, arriba, y dos bloques en ZIGZAG
@@ -33,7 +35,8 @@ import { RESPONSABILIDAD, type FotoGaleria } from "./content";
  * cualquiera no tiene contraste garantizado. Ver el bloque @media (hover: none).
  * Las de entornos verdes no tienen pie, y sin pie no hay velo.
  */
-export function ResponsabilidadSocial() {
+export function ResponsabilidadSocial({ idioma = "es" }: { idioma?: Idioma }) {
+  const { RESPONSABILIDAD } = contenidoNosotros(idioma);
   const { verdes } = RESPONSABILIDAD;
   return (
     <section className="nos-rs" aria-labelledby="rs-titulo">

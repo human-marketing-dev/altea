@@ -11,7 +11,10 @@ import {
   MAPA_ANCHO,
   type Nube,
 } from "@/lib/mapa-puntos";
-import { HUELLA } from "./content";
+import { contenidoNosotros } from "./contenido";
+import { textos } from "@/app/ui/textos";
+import type { Idioma } from "@/lib/idioma";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -137,11 +140,30 @@ const RAMPA = Array.from({ length: TRAMOS + 1 }, (_, i) => {
  * Los estados con presencia, en orden alfabético y con su índice en
  * ESTADOS_MAPA: las opciones de la lista para elegir. Ver el <select> de abajo.
  */
-const OPCIONES = ESTADOS_MAPA.map((e, i) => ({ e, i }))
-  .filter(({ e }) => e.m2)
-  .sort((a, b) => a.e.nombre.localeCompare(b.e.nombre, "es"));
+/**
+ * El nombre de un estado en el idioma de la página. Sólo cambian dos: los demás
+ * son nombres propios y se quedan como en español, con sus acentos.
+ */
+const NOMBRES_EN: Record<string, string> = {
+  "Ciudad de México": "Mexico City",
+  "Estado de México": "State of Mexico",
+};
+const nombreEn = (nombre: string, idioma: Idioma) =>
+  idioma === "en" ? (NOMBRES_EN[nombre] ?? nombre) : nombre;
+
+const opcionesDe = (idioma: Idioma) =>
+  ESTADOS_MAPA.map((e, i) => ({ e, i, nombre: nombreEn(e.nombre, idioma) }))
+    .filter(({ e }) => e.m2)
+    .sort((a, b) => a.nombre.localeCompare(b.nombre, idioma));
+const OPCIONES: Record<Idioma, ReturnType<typeof opcionesDe>> = {
+  es: opcionesDe("es"),
+  en: opcionesDe("en"),
+};
 
 export function MapaPuntos() {
+  const idioma = useIdioma();
+  const { HUELLA } = contenidoNosotros(idioma);
+  const formato = idioma === "en" ? "en-US" : "es-MX";
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [activo, setActivo] = useState<number | null>(null);
   /* La lista para elegir vive fuera del lienzo y del efecto: esto es lo que le
@@ -496,7 +518,7 @@ export function MapaPuntos() {
           className="nos-mapa__lienzo"
           style={{ aspectRatio: `${MAPA_ANCHO} / ${MAPA_ALTO}` }}
           role="img"
-          aria-label="Mapa de presencia de Altea en México"
+          aria-label={textos(idioma).mapa.lienzo}
         />
 
         {/*
@@ -515,9 +537,9 @@ export function MapaPuntos() {
           {estado && (
             <>
               <small>{HUELLA.mapa.etiquetaEstado}</small>
-              <b>{estado.nombre}</b>
+              <b>{nombreEn(estado.nombre, idioma)}</b>
               {estado.m2 ? (
-                <span>{estado.m2.toLocaleString("es-MX")} m²</span>
+                <span>{estado.m2.toLocaleString(formato)} m²</span>
               ) : (
                 <em>{HUELLA.mapa.sinDato}</em>
               )}
@@ -552,9 +574,9 @@ export function MapaPuntos() {
           }
         >
           <option value="">{HUELLA.mapa.elegir}</option>
-          {OPCIONES.map(({ e, i }) => (
+          {OPCIONES[idioma].map(({ e, i, nombre }) => (
             <option key={e.id} value={i}>
-              {e.nombre}
+              {nombre}
             </option>
           ))}
         </select>
@@ -569,11 +591,15 @@ export function MapaPuntos() {
       */}
       <ul className="sr-only">
         {[...ESTADOS_MAPA]
-          .sort((a, b) => a.nombre.localeCompare(b.nombre, "es"))
+          .sort((a, b) =>
+            nombreEn(a.nombre, idioma).localeCompare(nombreEn(b.nombre, idioma), idioma),
+          )
           .map((e) => (
             <li key={e.id}>
-              {e.nombre}:{" "}
-              {e.m2 ? `${e.m2.toLocaleString("es-MX")} m² construidos` : HUELLA.mapa.sinDato}
+              {nombreEn(e.nombre, idioma)}:{" "}
+              {e.m2
+                ? `${e.m2.toLocaleString(formato)} ${textos(idioma).mapa.construidos}`
+                : HUELLA.mapa.sinDato}
             </li>
           ))}
       </ul>

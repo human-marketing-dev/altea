@@ -2,10 +2,12 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { CarruselTarjetas } from "@/app/ui";
+import { CarruselTarjetas } from "@/app/ui/CarruselTarjetas";
 import { logoDe } from "@/lib/logos-desarrollos";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, ProximoProyecto } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Próximos proyectos: tres tarjetas verticales que abren ficha.
@@ -31,6 +33,7 @@ import type { ContenidoUnidad, ProximoProyecto } from "./tipos";
 export function ProximosProyectos({
   proximos,
 }: Pick<ContenidoUnidad, "proximos">) {
+  const tx = textos(useIdioma());
   const PROXIMOS_PROYECTOS = proximos;
   const [activo, setActivo] = useState<ProximoProyecto | null>(null);
   /* Quién abrió la ficha, para devolverle el foco al cerrar. */
@@ -48,8 +51,8 @@ export function ProximosProyectos({
           /* Unidad · Ubicación: el giro clasifica y la ciudad sitúa, el mismo
              orden que la ficha de plazas. */
           datos: [
-            { etiqueta: "Unidad", valor: activo.unit },
-            { etiqueta: "Ubicación", valor: activo.location },
+            { etiqueta: tx.ficha.unidad, valor: activo.unit },
+            { etiqueta: tx.ficha.ubicacion, valor: activo.location },
             ...(activo.datos ?? []),
           ],
           descripcion: activo.descripcion,
@@ -60,7 +63,7 @@ export function ProximosProyectos({
         setActivo(null);
         origen.current?.focus();
       }}
-      etiquetaVacia="Ficha del proyecto"
+      etiquetaVacia={tx.ficha.delProyecto}
     />
   );
 

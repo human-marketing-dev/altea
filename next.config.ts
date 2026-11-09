@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /* Que las respuestas no anuncien «X-Powered-By: Next.js» (9 nov 2026). */
+  poweredByHeader: false,
+
   /*
    * Las extensiones por defecto, más `dev.tsx` sólo en desarrollo.
    *
@@ -37,6 +40,64 @@ const nextConfig: NextConfig = {
    * al final de la lista para todo lo demás (`/nosotros/` → `/nosotros`).
    */
   skipTrailingSlashRedirect: true,
+
+  /*
+   * CACHÉ DE LOS ARCHIVOS DE /public (noviembre de 2026). Next los sirve con
+   * `max-age=0`: el navegador vuelve a preguntar por cada foto, logo y textura
+   * en cada visita, de 13 a 60 consultas por página.
+   *
+   * Un día fresco y una semana de margen, no un año: los nombres de estos
+   * archivos no llevan huella (`paseo-la-fe.webp`, no `paseo-la-fe.a81f.webp`),
+   * así que una foto reemplazada con el mismo nombre tiene que poder llegar. Con
+   * esto, quien vuelve el mismo día no consulta nada; después, el navegador
+   * enseña la que tiene y la revisa por detrás, y la nueva se ve en la visita
+   * siguiente.
+   *
+   * Lo de /_next/static ya va como inmutable y /_next/image trae sus 4 horas;
+   * eso lo pone Next y no se toca.
+   */
+  async headers() {
+    const cache = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
+    /*
+     * ENCABEZADOS DE SEGURIDAD (9 nov 2026), en todas las respuestas. No cambian
+     * nada de lo que se ve; le dicen al navegador qué no permitir:
+     *
+     * · X-Frame-Options: que otro sitio no pueda meter éste en un <iframe> (el
+     *   truco de poner botones invisibles encima). SAMEORIGIN y no DENY para
+     *   que el propio Studio de Sanity, que vive en el mismo dominio, pueda
+     *   enseñar el sitio dentro si algún día se usa su vista previa.
+     * · X-Content-Type-Options: que el navegador no adivine el tipo de un
+     *   archivo; si dice imagen, se trata como imagen.
+     * · Referrer-Policy: a otros sitios sólo se les dice el dominio de donde
+     *   viene el visitante, no la página. Es lo que ya hacen los navegadores por
+     *   defecto; aquí queda explícito. YouTube necesita ese dato (error 153 sin
+     *   él), y con esto lo sigue recibiendo.
+     * · Permissions-Policy: el sitio no usa cámara, micrófono ni ubicación, así
+     *   que nadie dentro de él —tampoco un iframe— puede pedirlos. Lo que sí usa
+     *   el video de YouTube (autoplay, pantalla completa) no se toca.
+     *
+     * Sin Content-Security-Policy, a propósito: una mal ajustada rompe Google
+     * Analytics, YouTube o el Studio sin dar error visible. Y sin HSTS: ése va en
+     * el servidor (RunCloud) cuando el certificado SSL esté puesto y probado.
+     */
+    const seguridad = [
+      { key: "X-Frame-Options", value: "SAMEORIGIN" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ];
+    return [
+      { source: "/:path*", headers: seguridad },
+      ...["/images/:path*", "/brand/:path*", "/video/:path*"].map(
+        (source) => ({ source, headers: cache }),
+      ),
+    ];
+  },
 
   /*
    * LAS URLs DEL SITIO VIEJO (el WordPress de www.alteadesarrollos.com), para

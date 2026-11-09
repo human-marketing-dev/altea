@@ -1,6 +1,7 @@
 import { Trophy } from "lucide-react";
 import Image from "next/image";
-import { GRUPO_FIRMA } from "./content";
+import { contenidoNosotros } from "./contenido";
+import type { Idioma } from "@/lib/idioma";
 
 /**
  * Grupo Firmas: los seis sectores, en fila.
@@ -173,7 +174,8 @@ function factorDe(logo: string | undefined, ratio: number) {
   const archivo = logo?.slice(logo.lastIndexOf("/") + 1);
   return (archivo && AJUSTES[archivo]) ?? factorOptico(ratio);
 }
-export function GrupoFirma() {
+export function GrupoFirma({ idioma = "es" }: { idioma?: Idioma }) {
+  const { GRUPO_FIRMA } = contenidoNosotros(idioma);
   return (
     <section className="nos-firma" aria-labelledby="firma-titulo">
       <div className="nos-firma__cab">

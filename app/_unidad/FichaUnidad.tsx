@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { LogoDesarrollo } from "@/app/ui";
+import { LogoDesarrollo } from "@/app/ui/LogoDesarrollo";
 import type { LogoDesarrollo as Logo } from "@/lib/logos-desarrollos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * La ficha de las páginas de unidad: el <dialog> que abren las tarjetas. Era
@@ -60,6 +62,7 @@ export function FichaUnidad({
   /** Lo que se anuncia mientras no hay nada abierto. */
   etiquetaVacia: string;
 }) {
+  const tx = textos(useIdioma());
   const dialogo = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -75,7 +78,7 @@ export function FichaUnidad({
     <dialog
       ref={dialogo}
       className="uni-fx"
-      aria-label={contenido ? `Ficha de ${contenido.nombre}` : etiquetaVacia}
+      aria-label={contenido ? tx.ficha.de(contenido.nombre) : etiquetaVacia}
       onClose={onCerrar}
       onClick={(evento) => {
         // El backdrop es el propio <dialog>: un clic fuera cierra.
@@ -88,7 +91,7 @@ export function FichaUnidad({
             type="button"
             className="uni-fx__x"
             onClick={onCerrar}
-            aria-label="Cerrar ficha"
+            aria-label={tx.ficha.cerrar}
           >
             ×
           </button>
@@ -148,8 +151,8 @@ export function FichaUnidad({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Visitar sitio web
-                    <span className="sr-only"> (se abre en otra pestaña)</span>
+                    {tx.ficha.visitarSitio}
+                    <span className="sr-only">{tx.ficha.otraPestana}</span>
                     <span className="altea-btn__arrow" aria-hidden="true">
                       →
                     </span>

@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CarruselTarjetas } from "@/app/ui";
+import { CarruselTarjetas } from "@/app/ui/CarruselTarjetas";
 import { logoDe } from "@/lib/logos-desarrollos";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, Proyecto } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Los proyectos de la unidad, en carrusel, con la misma tarjeta que los del home.
@@ -39,6 +41,7 @@ import type { ContenidoUnidad, Proyecto } from "./tipos";
 export function CarruselProyectos({
   proyectos,
 }: Pick<ContenidoUnidad, "proyectos">) {
+  const tx = textos(useIdioma());
   const PLAZAS = proyectos.lista;
   const [activa, setActiva] = useState<Proyecto | null>(null);
   const origen = useRef<HTMLButtonElement | null>(null);
@@ -86,7 +89,7 @@ export function CarruselProyectos({
                es Visitantes, sólo en los Paseos; en Industrial, las superficies. */
             datos: [
               activa.datos[0],
-              { etiqueta: "Ubicación", valor: activa.ubicacion },
+              { etiqueta: tx.ficha.ubicacion, valor: activa.ubicacion },
               ...activa.datos.slice(1),
             ],
             descripcion: activa.descripcion,
@@ -98,7 +101,7 @@ export function CarruselProyectos({
           setActiva(null);
           origen.current?.focus();
         }}
-        etiquetaVacia="Ficha de la plaza"
+        etiquetaVacia={tx.ficha.deLaPlaza}
       />
     </CarruselTarjetas>
   );

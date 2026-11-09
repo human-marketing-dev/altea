@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MediaSlot } from "@/app/ui";
+import { MediaSlot } from "@/app/ui/MediaSlot";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
 import { VIDEO } from "./content";
 

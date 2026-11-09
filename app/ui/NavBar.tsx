@@ -3,8 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ruta } from "@/lib/rutas";
+import { rutaDe, rutaEquivalente, type Idioma } from "@/lib/idioma";
 import { useEffect, useState } from "react";
+import { textos } from "./textos";
+import { useIdioma } from "./useIdioma";
 
 export interface NavLink {
   label: string;
@@ -32,16 +34,22 @@ export interface NavBarProps {
   className?: string;
 }
 
-/** Orden y contenido tomados del wireframe de portada. */
-export const DEFAULT_NAV_LINKS: NavLink[] = [
-  { label: "Inicio", href: ruta("/") },
-  { label: "Nosotros", href: ruta("/nosotros") },
-  { label: "Comercial", href: ruta("/comercial") },
-  { label: "Industrial", href: ruta("/industrial") },
-  { label: "Vivienda", href: ruta("/vivienda") },
-  { label: "Forestal", href: ruta("/forestal") },
-  { label: "Contacto", href: ruta("/contacto"), destacado: true },
-];
+/** Orden y contenido tomados del wireframe de portada, en cada idioma. */
+export const enlacesNav = (idioma: Idioma): NavLink[] => {
+  const t = textos(idioma).nav;
+  return [
+    { label: t.inicio, href: rutaDe("/", idioma) },
+    { label: t.nosotros, href: rutaDe("/nosotros", idioma) },
+    { label: t.comercial, href: rutaDe("/comercial", idioma) },
+    { label: t.industrial, href: rutaDe("/industrial", idioma) },
+    { label: t.vivienda, href: rutaDe("/vivienda", idioma) },
+    { label: t.forestal, href: rutaDe("/forestal", idioma) },
+    { label: t.contacto, href: rutaDe("/contacto", idioma), destacado: true },
+  ];
+};
+
+/** Los de siempre, en español. */
+export const DEFAULT_NAV_LINKS: NavLink[] = enlacesNav("es");
 
 /**
  * Barra superior. Sticky, con el wordmark y los enlaces principales.
@@ -50,12 +58,16 @@ export const DEFAULT_NAV_LINKS: NavLink[] = [
  * panel que abre con el botón de menú.
  */
 export function NavBar({
-  links = DEFAULT_NAV_LINKS,
+  links,
   tone = "light",
   transicionIntro = false,
-  homeHref = ruta("/"),
+  homeHref,
   className,
 }: NavBarProps) {
+  const idioma = useIdioma();
+  const t = textos(idioma).nav;
+  const enlaces = links ?? enlacesNav(idioma);
+  const inicio = homeHref ?? rutaDe("/", idioma);
   const isLight = tone === "light";
   const [abierto, setAbierto] = useState(false);
   const [pegada, setPegada] = useState(false);
@@ -132,8 +144,8 @@ export function NavBar({
   return (
     <nav className={classes}>
       <Link
-        href={homeHref}
-        aria-label="Altea — inicio"
+        href={inicio}
+        aria-label={t.marcaInicio}
         className="altea-navbar__marca"
       >
         <Image
@@ -152,7 +164,7 @@ export function NavBar({
         className="altea-navbar__toggle"
         aria-expanded={abierto}
         aria-controls="altea-nav-menu"
-        aria-label={abierto ? "Cerrar menú" : "Abrir menú"}
+        aria-label={abierto ? t.cerrarMenu : t.abrirMenu}
         onClick={() => {
           setAbierto((valor) => !valor);
           /* Con el menú abierto la barra no puede esconderse: se llevaría el
@@ -172,7 +184,7 @@ export function NavBar({
           ella. En escritorio es `display: contents` y no existe. */}
       <div id="altea-nav-menu" className="altea-navbar__links">
         <div className="altea-navbar__links-int">
-        {links.map((link) => (
+        {enlaces.map((link) => (
           <Link
             key={link.href}
             href={link.href}
@@ -189,6 +201,34 @@ export function NavBar({
             {link.label}
           </Link>
         ))}
+        {/*
+          EL CAMBIO DE IDIOMA (noviembre de 2026): lleva a la MISMA página en el
+          otro idioma —ver rutaEquivalente en lib/idioma.ts—. Sin detección
+          automática: el sitio abre en español y el visitante elige. Cada
+          opción se anuncia en su propio idioma, con su `lang` y su `hrefLang`.
+        */}
+        <div className="altea-navbar__idioma" role="group" aria-label={t.idioma}>
+          {(["es", "en"] as const).map((opcion, i) => (
+            <span key={opcion} className="altea-navbar__idioma-op">
+              {i > 0 && (
+                <span className="altea-navbar__idioma-sep" aria-hidden="true">
+                  |
+                </span>
+              )}
+              <Link
+                href={rutaEquivalente(rutaActual ?? "/", opcion)}
+                hrefLang={opcion}
+                lang={opcion}
+                aria-label={opcion === "es" ? "Español" : "English"}
+                aria-current={idioma === opcion ? "true" : undefined}
+                className="altea-navbar__idioma-enlace"
+                onClick={() => setAbierto(false)}
+              >
+                {opcion.toUpperCase()}
+              </Link>
+            </span>
+          ))}
+        </div>
         </div>
       </div>
     </nav>

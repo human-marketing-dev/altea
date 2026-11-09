@@ -74,8 +74,14 @@ export type Veredicto =
 
 export function revisarFicha(ficha: string): Veredicto {
   const s = secreto();
+  if (!s) {
+    /* Sin clave no hay ficha que validar y todo envío se descartaría sin
+       rastro: que al menos quede en el log del servidor. */
+    console.error("[lead] Sin FORM_SECRET ni BREVO_API_KEY: el formulario no puede enviar.");
+    return { ok: false, silencio: true };
+  }
   const [hora, firma] = ficha.split(".");
-  if (!s || !hora || !firma) return { ok: false, silencio: true };
+  if (!hora || !firma) return { ok: false, silencio: true };
 
   const esperada = Buffer.from(firmar(hora, s));
   const recibida = Buffer.from(firma);
@@ -134,6 +140,8 @@ export function revisarLimite(ip: string): Veredicto {
     };
   }
 
+  /* Se anota ya, antes de enviar, para que diez envíos simultáneos no pasen
+     todos la revisión; si el envío falla, `liberarLimite` lo devuelve. */
   marcas.push(ahora);
   porIp.set(ip, marcas);
   globales.push(ahora);
@@ -145,19 +153,45 @@ export function revisarLimite(ip: string): Veredicto {
   return { ok: true };
 }
 
+/**
+ * EL INTENTO QUE NO SALIÓ NO CUENTA (9 nov 2026). Si Brevo falla, el visitante
+ * ve «no pudimos enviar» y reintenta; antes ese intento fallido ya contaba, y
+ * con tres fallos quedaba bloqueado diez minutos por algo que no hizo.
+ */
+export function liberarLimite(ip: string) {
+  porIp.get(ip)?.pop();
+  globales.pop();
+}
+
 /* ── Repetidos ───────────────────────────────────────────────────────── */
 
 const vistos = new Map<string, number>();
 
-/** true si este correo ya mandó este mismo mensaje en las últimas 24 h. */
-export function esRepetido(correo: string, mensaje: string): boolean {
-  limpiar(vistos, 24 * 3_600_000);
-  const huella = createHash("sha256")
+const huellaDe = (correo: string, mensaje: string) =>
+  createHash("sha256")
     .update(`${correo.toLowerCase()}\n${mensaje.replace(/\s+/g, " ").toLowerCase()}`)
     .digest("hex");
+
+/**
+ * true si este correo ya mandó este mismo mensaje en las últimas 24 h. Lo
+ * anota al revisarlo, para que un doble clic no salga dos veces; si el envío
+ * falla, `olvidarMensaje` lo borra.
+ */
+export function esRepetido(correo: string, mensaje: string): boolean {
+  limpiar(vistos, 24 * 3_600_000);
+  const huella = huellaDe(correo, mensaje);
   if (vistos.has(huella)) return true;
   vistos.set(huella, Date.now());
   return false;
+}
+
+/**
+ * ⚠ SIN ESTO, EL REINTENTO SE PERDÍA (9 nov 2026). El mensaje quedaba anotado
+ * aunque Brevo hubiera fallado; al pulsar «Enviar» otra vez se tomaba por
+ * repetido, el visitante veía «Gracias» y no salía nada durante 24 horas.
+ */
+export function olvidarMensaje(correo: string, mensaje: string) {
+  vistos.delete(huellaDe(correo, mensaje));
 }
 
 /* ── Contenido ───────────────────────────────────────────────────────── */

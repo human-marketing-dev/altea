@@ -96,7 +96,7 @@ export const FORESTAL: ContenidoUnidad = {
         alto: 376,
       },
       parrafos: [
-        "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, enfocado en recuperar la vocación forestal de tierras degradadas por actividades agrícolas y ganaderas. En 2011, iniciamos la plantación sostenible de 682,853 árboles de teca en 841 hectáreas, un proceso que permitió restaurar la salud del suelo y que contribuye a revitalizar la economía de al menos 100 familias mayas de la región.",
+        "Proyecto de plantación forestal comercial ubicado en Tizimín, Yucatán, orientado a recuperar el uso forestal de terrenos degradados por actividades agrícolas y ganaderas. En 2011 iniciamos la plantación de 682,853 árboles de teca en 841 hectáreas. El proyecto busca contribuir a la recuperación del suelo y a la economía de al menos 100 familias mayas de la región.",
       ],
       /*
        * En carrusel, como Viveros (4 nov 2026): la de siempre y tres más de la
@@ -127,7 +127,9 @@ export const FORESTAL: ContenidoUnidad = {
         {
           src: "/images/forestal/teca/teca-forestal-altea-4.webp",
           alt: "Árboles de teca jóvenes a ambos lados de una brecha en la plantación",
-          /* 5712x4284 */
+          /* 2400x1800. Era el original de cámara, 5712x4284 y 8.9 MB; se
+             reexportó a 2400 px, WebP 82 (9 nov 2026), como Viveros 4 a 7. El
+             original sigue en el historial de git. */
           ratio: 1.3333,
         },
       ],
@@ -163,34 +165,35 @@ export const FORESTAL: ContenidoUnidad = {
        * verdes atendidas por Viveros Asturias. Las cinco son casi 16:9. La 1, la
        * 2 y la 3, que iban antes, siguen en la carpeta sin usarse.
        *
-       * ⚠ DE LA 4 A LA 7 SON ORIGINALES DE CÁMARA: casi 6000 px y de 10 a 16 MB
-       * cada una. El visitante no los baja —pasan por el optimizador de Next—,
-       * pero pesan en el repositorio y el servidor los tiene que reducir la
-       * primera vez que se piden.
+       * DE LA 4 A LA 7 ERAN ORIGINALES DE CÁMARA, de casi 6000 px y 10 a 16 MB.
+       * Se reexportaron a 2400 px de ancho, WebP 82 (9 nov 2026): en pantallas
+       * retina la página pide 3840 px, y con el original el optimizador sí los
+       * mandaba a ese ancho, de 1 a 2 MB cada una. Los originales siguen en el
+       * historial de git (commit 51a61ae y anteriores).
        */
       fotos: [
         {
           src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-4.webp",
           alt: "Jardinera con pasto y setos recortados frente a un local comercial, trabajo de jardinería de Viveros Asturias",
-          /* 5950x3348 */
+          /* 2400x1350 (original 5950x3348) */
           ratio: 1.7772,
         },
         {
           src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-5.webp",
           alt: "Glorieta ajardinada con palmas en un acceso vehicular, con una maceta de palmilla en primer plano",
-          /* 5695x3331 */
+          /* 2400x1404 (original 5695x3331) */
           ratio: 1.7097,
         },
         {
           src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-6.webp",
           alt: "Jardinera con palmas y plantas de sombra junto a la fachada de un edificio",
-          /* 5921x3351 */
+          /* 2400x1358 (original 5921x3351) */
           ratio: 1.7669,
         },
         {
           src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-7.webp",
           alt: "Jardín con crotos amarillos alrededor de un busto, junto a una banca",
-          /* 5819x3343 */
+          /* 2400x1379 (original 5819x3343) */
           ratio: 1.7407,
         },
         {

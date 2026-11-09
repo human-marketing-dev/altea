@@ -1,46 +1,14 @@
 import type { Metadata } from "next";
-import { Footer, NavBar } from "@/app/ui";
-import { CierrePuntos } from "@/app/_home/CierrePuntos";
-import { CONTACT_CTA } from "@/app/_home/content";
-import { GrupoFirma } from "../_nosotros/GrupoFirma";
-import { HeroNube } from "../_nosotros/HeroNube";
-import { Huella } from "../_nosotros/Huella";
-import { Origen } from "../_nosotros/Origen";
-import { Pilares } from "../_nosotros/Pilares";
-import { ResponsabilidadSocial } from "../_nosotros/ResponsabilidadSocial";
-import "../_nosotros/nosotros.css";
+import { PaginaNosotros } from "../_nosotros/PaginaNosotros";
+import { metadatosDe } from "@/lib/idioma";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = metadatosDe("/nosotros", "es", {
   title: "Nosotros — Altea",
   description:
     "Con presencia en 21 estados de México, Estados Unidos, España y Costa Rica, Altea impulsa desarrollos que se vuelven parte de entornos vivos, dinámicos y duraderos.",
-};
+});
 
+/* La composición vive en app/_nosotros/PaginaNosotros.tsx, que comparte con /en. */
 export default function Nosotros() {
-  return (
-    <>
-      {/*
-        La misma barra del home, pero SIN transicionIntro: aquí es `sticky` y
-        ocupa su hueco, que es lo que mantiene el aire sobre el hero. El prop sólo
-        lo pasa el home, donde el hero tiene que empezar en la coordenada 0.
-
-        El aspecto —cápsula, velo a los 24px, esconderse al bajar— es el mismo en
-        las siete rutas y no depende de nada que la página tenga que pasar.
-      */}
-      <NavBar tone="light" />
-      <main>
-        <HeroNube />
-        <Origen />
-        <Pilares />
-        <GrupoFirma />
-        <Huella />
-        <ResponsabilidadSocial />
-        {/* El cierre del home, el de la banderola de puntos (octubre de 2026).
-            Para volver al de la foto: <CierreContacto {...CONTACT_CTA} />,
-            fuera de <main>, como estaba. */}
-        <CierrePuntos eyebrow={CONTACT_CTA.eyebrow} title={CONTACT_CTA.title} />
-      </main>
-      <Footer />
-    </>
-  );
+  return <PaginaNosotros />;
 }

@@ -35,6 +35,14 @@ export const CANALES = {
   telefono: "+52 81 1772 7272",
   /* Octubre de 2026. Lo pintan /contacto y el pie. */
   domicilio: "Paricutín 390, Colonia Roma, Monterrey, N.L.",
+  /*
+   * La ficha de Altea en Google Maps, con el enlace de «Compartir» de Maps
+   * (9 nov 2026): abre el perfil del negocio —fotos, horario, «Cómo llegar»— y
+   * en el teléfono la app. NO un enlace de google.com/search: esos llevan
+   * parámetros de la sesión de quien los copió y abren resultados de búsqueda.
+   * Resuelve a /maps/place/Altea, ficha /g/11hzxk1p35.
+   */
+  mapa: "https://maps.app.goo.gl/BsYj3sF3HHhSGDbu8",
 } as const;
 
 /** Redes sociales. Los tres enlaces los confirmó Altea. */
@@ -52,6 +60,12 @@ export const REDES = [
     icono: "linkedin",
   },
 ] as const;
+
+/** El mensaje que llega escrito al abrir WhatsApp, en cada idioma del sitio. */
+export const MENSAJE_WHATSAPP = {
+  es: CANALES.whatsappMensaje,
+  en: "Hello Altea, I would like to learn more about your projects.",
+} as const;
 
 /** Enlace de WhatsApp ya armado, para no repetir el encodeURIComponent. */
 export const enlaceWhatsApp = (mensaje: string = CANALES.whatsappMensaje) =>

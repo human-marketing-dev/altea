@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CANALES, REDES, enlaceWhatsApp } from "@/lib/contacto";
-import { ruta } from "@/lib/rutas";
+import { CANALES, MENSAJE_WHATSAPP, REDES, enlaceWhatsApp } from "@/lib/contacto";
+import { rutaDe, type Idioma } from "@/lib/idioma";
+import { textos } from "./textos";
 import { ICONOS, ICONOS_RED, type NombreIcono } from "./Iconos";
 
 export interface FooterLink {
@@ -28,55 +29,69 @@ export interface FooterProps {
   description?: string;
   columns?: FooterColumn[];
   legalLinks?: { label: string; href: string }[];
+  /** El idioma de la página. Es componente de servidor: no lee la URL. */
+  idioma?: Idioma;
   className?: string;
 }
 
 /**
  * Tres columnas con contenido distinto cada una. La versión anterior repetía
  * "Proyectos / Contacto" bajo las cuatro unidades: cuatro columnas para dos
- * links únicos.
+ * links únicos. En el idioma de la página (noviembre de 2026).
  */
-const DEFAULT_COLUMNS: FooterColumn[] = [
-  {
-    title: "Unidades de negocio",
-    links: [
-      { label: "Comercial", href: ruta("/comercial") },
-      { label: "Industrial", href: ruta("/industrial") },
-      { label: "Vivienda", href: ruta("/vivienda") },
-      { label: "Forestal", href: ruta("/forestal") },
-    ],
-  },
-  {
-    title: "Altea",
-    links: [
-      { label: "Inicio", href: ruta("/") },
-      { label: "Nosotros", href: ruta("/nosotros") },
-      { label: "Contacto", href: ruta("/contacto") },
-    ],
-  },
-  {
-    title: "Contacto",
-    links: [
-      { label: CANALES.correo, href: `mailto:${CANALES.correo}`, icono: "correo" },
-      { label: CANALES.telefono, href: `tel:${CANALES.telefono.replace(/\s/g, "")}`, icono: "telefono" },
-      { label: "WhatsApp", href: enlaceWhatsApp(), externo: true, icono: "whatsapp" },
-      { label: CANALES.domicilio, icono: "ubicacion" },
-    ],
-  },
-];
+const columnasDe = (idioma: Idioma): FooterColumn[] => {
+  const t = textos(idioma);
+  return [
+    {
+      title: t.footer.unidades,
+      links: [
+        { label: t.nav.comercial, href: rutaDe("/comercial", idioma) },
+        { label: t.nav.industrial, href: rutaDe("/industrial", idioma) },
+        { label: t.nav.vivienda, href: rutaDe("/vivienda", idioma) },
+        { label: t.nav.forestal, href: rutaDe("/forestal", idioma) },
+      ],
+    },
+    {
+      title: t.footer.altea,
+      links: [
+        { label: t.nav.inicio, href: rutaDe("/", idioma) },
+        { label: t.nav.nosotros, href: rutaDe("/nosotros", idioma) },
+        { label: t.nav.contacto, href: rutaDe("/contacto", idioma) },
+      ],
+    },
+    {
+      title: t.footer.contacto,
+      links: [
+        { label: CANALES.correo, href: `mailto:${CANALES.correo}`, icono: "correo" },
+        { label: CANALES.telefono, href: `tel:${CANALES.telefono.replace(/\s/g, "")}`, icono: "telefono" },
+        {
+          label: t.footer.whatsapp,
+          href: enlaceWhatsApp(MENSAJE_WHATSAPP[idioma]),
+          externo: true,
+          icono: "whatsapp",
+        },
+        /* El domicilio no se traduce: es una dirección postal. */
+        { label: CANALES.domicilio, href: CANALES.mapa, externo: true, icono: "ubicacion" },
+      ],
+    },
+  ];
+};
 
-const DEFAULT_LEGAL_LINKS = [
-  { label: "Aviso de privacidad", href: ruta("/aviso-de-privacidad") },
-  { label: "Términos", href: ruta("/terminos") },
+const legalesDe = (idioma: Idioma) => [
+  { label: textos(idioma).footer.aviso, href: rutaDe("/aviso-de-privacidad", idioma) },
+  { label: textos(idioma).footer.terminos, href: rutaDe("/terminos", idioma) },
 ];
 
 /** Pie de sitio: marca y descripción a la izquierda, navegación a la derecha. */
 export function Footer({
   description,
-  columns = DEFAULT_COLUMNS,
-  legalLinks = DEFAULT_LEGAL_LINKS,
+  columns,
+  legalLinks,
+  idioma = "es",
   className,
 }: FooterProps) {
+  const columnas = columns ?? columnasDe(idioma);
+  const legales = legalLinks ?? legalesDe(idioma);
   const classes = ["altea-footer", className].filter(Boolean).join(" ");
   const year = new Date().getFullYear();
 
@@ -84,7 +99,7 @@ export function Footer({
     <footer className={classes}>
       <div className="altea-footer__top">
         <div className="altea-footer__marca">
-          <Link href={ruta("/")} aria-label="Altea — inicio">
+          <Link href={rutaDe("/", idioma)} aria-label={textos(idioma).nav.marcaInicio}>
             <Image
               className="altea-footer__logo"
               src="/brand/logos/altea-logo-light.svg"
@@ -120,7 +135,7 @@ export function Footer({
         </div>
 
         <div className="altea-footer__columns">
-          {columns.map((column) => (
+          {columnas.map((column) => (
             <div key={column.title} className="altea-footer__column">
               <span className="altea-footer__column-title">{column.title}</span>
               {column.links.map((link) => {
@@ -165,9 +180,9 @@ export function Footer({
       </div>
 
       <div className="altea-footer__legal">
-        <span>© {year} Altea. Todos los derechos reservados.</span>
+        <span>© {year} Altea. {textos(idioma).footer.derechos}</span>
         <div className="altea-footer__legal-links">
-          {legalLinks.map((link) => (
+          {legales.map((link) => (
             <Link key={link.href} href={link.href} className="altea-footer__link">
               {link.label}
             </Link>

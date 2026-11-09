@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
-import { VIDEO } from "./content";
+import { contenidoHome } from "./contenido";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * El video institucional completo, desde YouTube (29 oct 2026).
@@ -59,6 +61,8 @@ const YT = "https://www.youtube-nocookie.com";
 const REPRODUCIENDO = 1;
 
 export function VideoYoutube() {
+  const idioma = useIdioma();
+  const { VIDEO } = contenidoHome(idioma);
   const raiz = useRef<HTMLElement>(null);
   const marco = useRef<HTMLIFrameElement>(null);
   const reducido = useMovimientoReducido();
@@ -88,7 +92,7 @@ export function VideoYoutube() {
     );
     cerca.observe(nodo);
     return () => cerca.disconnect();
-  }, []);
+  }, [VIDEO.youtube]);
 
   /* 2 · Pausa al salir y sigue al volver. */
   useEffect(() => {
@@ -262,7 +266,9 @@ export function VideoYoutube() {
             <button
               type="button"
               className="home-video__control"
-              aria-label={conSonido ? "Silenciar video" : "Activar sonido del video"}
+              aria-label={
+                conSonido ? textos(idioma).video.silenciar : textos(idioma).video.activarSonido
+              }
               onClick={() => mandarRef.current(conSonido ? "mute" : "unMute")}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

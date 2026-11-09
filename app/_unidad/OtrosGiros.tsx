@@ -1,9 +1,11 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { CarruselTarjetas } from "@/app/ui";
+import { CarruselTarjetas } from "@/app/ui/CarruselTarjetas";
 import { FichaUnidad } from "./FichaUnidad";
 import type { ContenidoUnidad, Giro } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
  * Otros giros: hoteles, hospital y educación.
@@ -19,6 +21,7 @@ import type { ContenidoUnidad, Giro } from "./tipos";
  * pintan: la tarjeta de plazas no tiene sitio para ninguno de los dos.
  */
 export function OtrosGiros({ giros }: Pick<ContenidoUnidad, "giros">) {
+  const tx = textos(useIdioma());
   const GIROS = giros.bloques;
   const [activo, setActivo] = useState<Giro | null>(null);
   /* Quién abrió la ficha, para devolverle el foco al cerrar. */
@@ -82,7 +85,7 @@ export function OtrosGiros({ giros }: Pick<ContenidoUnidad, "giros">) {
           setActivo(null);
           origen.current?.focus();
         }}
-        etiquetaVacia="Ficha del giro"
+        etiquetaVacia={tx.ficha.delGiro}
       />
     </>
   );

@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { ListaAtributos } from "./Atributos";
-import { CarruselFotos } from "@/app/ui";
+import { CarruselFotos } from "@/app/ui/CarruselFotos";
 import type { ContenidoUnidad, FotoLinea, LineaNegocio } from "./tipos";
+import { textos } from "@/app/ui/textos";
+import type { Idioma } from "@/lib/idioma";
 
 /**
  * Las líneas de negocio de una unidad, una sección cada una: texto y foto a dos
@@ -20,17 +22,28 @@ import type { ContenidoUnidad, FotoLinea, LineaNegocio } from "./tipos";
 export function LineasNegocio({
   lineas,
   color,
+  idioma = "es",
 }: {
   lineas: NonNullable<ContenidoUnidad["lineas"]>;
+  /** Es componente de servidor: el idioma se lo pasa la página. */
+  idioma?: Idioma;
   /** El color de la unidad, para los iconos: ver <Atributos>. */
   color?: string;
 }) {
   return lineas.map((linea) => (
-    <Linea key={linea.id} linea={linea} color={color} />
+    <Linea key={linea.id} linea={linea} color={color} idioma={idioma} />
   ));
 }
 
-function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
+function Linea({
+  linea,
+  color,
+  idioma,
+}: {
+  linea: LineaNegocio;
+  color?: string;
+  idioma: Idioma;
+}) {
   const tituloId = `linea-${linea.id}`;
   /*
    * EL ANCHO QUE SE PINTA, NO EL DE LA CAJA. La foto es más apaisada que su caja,
@@ -111,7 +124,7 @@ function Linea({ linea, color }: { linea: LineaNegocio; color?: string }) {
             className="uni-ln__foto"
             fotos={linea.fotos}
             sizes={linea.fotos.map(sizesDe)}
-            etiqueta={`Fotos de ${linea.titulo}`}
+            etiqueta={textos(idioma).carrusel.fotosDe(linea.titulo)}
           />
         ) : (
           <div className="uni-ln__foto">

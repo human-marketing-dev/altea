@@ -4,8 +4,11 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Fragment, useRef } from "react";
-import { CarruselFotos, MediaSlot } from "@/app/ui";
-import { ORIGEN } from "./content";
+import { CarruselFotos } from "@/app/ui/CarruselFotos";
+import { MediaSlot } from "@/app/ui/MediaSlot";
+import { contenidoNosotros } from "./contenido";
+import { textos } from "@/app/ui/textos";
+import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -37,6 +40,8 @@ const sizesDe = (ratio: number) => {
 };
 
 export function Origen() {
+  const idioma = useIdioma();
+  const { ORIGEN } = contenidoNosotros(idioma);
   const raiz = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -127,7 +132,7 @@ export function Origen() {
             className="nos-origen__foto"
             fotos={ORIGEN.fotos}
             sizes={ORIGEN.fotos.map((foto) => sizesDe(foto.ratio))}
-            etiqueta="Fotos de la historia de Altea"
+            etiqueta={textos(idioma).carrusel.historia}
           />
         ) : (
           <MediaSlot

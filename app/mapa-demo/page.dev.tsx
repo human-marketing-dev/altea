@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MapaProyectos } from "@/app/ui";
+import { MapaProyectos } from "@/app/ui/MapaProyectos";
 import { ESTADOS_CON_PRESENCIA } from "@/lib/proyectos";
 
 /*

@@ -27,7 +27,6 @@
   --font-display: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
   --font-sans: var(--font-brand), -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono);
 
   /* Los títulos NO van aquí: tienen su escala propia, abajo (@theme static).
      Lo que queda son los tamaños de texto que no son título. */
@@ -291,6 +290,19 @@ body {
  * Con `hyphens: auto` y el idioma del <html> (es-MX), el navegador parte
  * palabras con guion al final de línea. Sin eso, en columnas angostas —las
  * fichas, el pie, el teléfono— el justificado abre «ríos» de espacio.
+ *
+ * ⚠ PERO CON LÍMITES (noviembre de 2026). Sin ellos partía casi cualquier
+ * palabra —«ex-periencia», «gene-rar»— y a veces varios renglones seguidos:
+ *   · sólo palabras de 7 letras o más, con al menos 3 antes y 3 después del
+ *     guion (`hyphenate-limit-chars: 7 3 3`);
+ *   · nunca dos renglones seguidos terminados en guion (`…-limit-lines: 1`).
+ * Lo que se deja de cortar se reparte en espacio entre palabras: habrá menos
+ * guiones y, de vez en cuando, un renglón más abierto. Es el intercambio del
+ * justificado en pantalla.
+ *
+ * Chrome y Edge leen `hyphenate-limit-chars`. Safari lee las versiones con
+ * prefijo -webkit- de antes/después/renglones; está pendiente confirmarlo en un
+ * iPhone real. Un navegador que no entienda alguna, la ignora y corta como antes.
  */
 :is(
     .nos-hero__bajada,
@@ -310,4 +322,9 @@ body {
   text-align: justify;
   -webkit-hyphens: auto;
   hyphens: auto;
+  hyphenate-limit-chars: 7 3 3;
+  -webkit-hyphenate-limit-before: 3;
+  -webkit-hyphenate-limit-after: 3;
+  -webkit-hyphenate-limit-lines: 1;
+  hyphenate-limit-lines: 1;
 }

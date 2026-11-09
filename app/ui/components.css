@@ -585,6 +585,80 @@ a.altea-project-card:focus-visible {
   color: #fff;
 }
 
+/*
+ * ESCRITORIO ANGOSTO, 901–1180 px (noviembre de 2026). Con el «ES | EN» la
+ * barra ya no cabía: entre 901 y ~1010 se salía unos 90 px, y en inglés «About
+ * us» se partía en dos renglones a 1024. Ningún enlace se parte y el aire entre
+ * ellos baja de 32 a 20 px sólo en este tramo; de 1180 para arriba, como estaba.
+ */
+.altea-navbar__link {
+  white-space: nowrap;
+}
+@media (min-width: 901px) and (max-width: 1180px) {
+  .altea-navbar__links {
+    gap: 20px;
+  }
+}
+/* Y en el tramo más angosto, hasta 980, 12: con 20 todavía se salía hasta 44 px
+   a 901 en inglés. */
+@media (min-width: 901px) and (max-width: 980px) {
+  .altea-navbar__links {
+    gap: 12px;
+  }
+}
+
+/*
+ * EL CAMBIO DE IDIOMA, «ES | EN» (noviembre de 2026). Discreto: la misma letra
+ * de los enlaces pero en el gris del texto secundario, y el idioma en el que
+ * estás, en tinta plena. En móvil va dentro del menú, al final. Ver NavBar.tsx.
+ */
+.altea-navbar__idioma {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-small);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-wide);
+}
+.altea-navbar__idioma-op {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.altea-navbar__idioma-sep {
+  color: color-mix(in srgb, var(--altea-ink) 30%, transparent);
+  font-weight: var(--weight-medium);
+}
+.altea-navbar__idioma-enlace {
+  /* 44 px de blanco para el dedo sin agrandar la letra. */
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  min-height: 44px;
+  color: color-mix(in srgb, var(--altea-ink) 55%, transparent);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.altea-navbar__idioma-enlace:hover {
+  color: var(--altea-coral);
+}
+.altea-navbar__idioma-enlace[aria-current="true"] {
+  color: var(--altea-ink);
+}
+.altea-navbar__idioma-enlace:focus-visible {
+  outline: 2px solid var(--altea-coral);
+  outline-offset: 2px;
+}
+.altea-navbar--dark .altea-navbar__idioma-sep {
+  color: color-mix(in srgb, var(--altea-cream) 30%, transparent);
+}
+.altea-navbar--dark .altea-navbar__idioma-enlace {
+  color: color-mix(in srgb, var(--altea-cream) 55%, transparent);
+}
+.altea-navbar--dark .altea-navbar__idioma-enlace[aria-current="true"] {
+  color: var(--altea-cream);
+}
+
 /* Botón de menú: sólo existe en pantallas chicas. */
 .altea-navbar__toggle {
   display: none;
@@ -696,6 +770,10 @@ a.altea-project-card:focus-visible {
     transform: none;
   }
   .altea-navbar__link--destacado {
+    align-self: flex-start;
+  }
+  /* El idioma, al final del menú y alineado a la izquierda como lo demás. */
+  .altea-navbar__idioma {
     align-self: flex-start;
   }
 

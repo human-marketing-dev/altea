@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { PILARES } from "./content";
+import { contenidoNosotros } from "./contenido";
+import type { Idioma } from "@/lib/idioma";
 
 /**
  * Los tres pilares, sobre ink: ICONO Y NOMBRE, SIN TEXTO.
@@ -18,7 +19,8 @@ import { PILARES } from "./content";
  * debajo, y describir una retícula atravesada por una diagonal no añade nada a
  * "Innovación disruptiva".
  */
-export function Pilares() {
+export function Pilares({ idioma = "es" }: { idioma?: Idioma }) {
+  const { PILARES } = contenidoNosotros(idioma);
   return (
     <section className="nos-pilares" aria-labelledby="pilares-titulo">
       <h2 className="nos-pilares__titulo" id="pilares-titulo">

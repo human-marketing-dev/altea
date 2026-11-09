@@ -70,7 +70,7 @@ export const ORIGEN = {
   ] as { texto: string; acento?: boolean }[],
 
   parrafos: [
-    "En Altea contamos con más de 40 años de experiencia en el desarrollo inmobiliario en México. Nuestros orígenes se remontan a ser propietarios de cines, donde iniciamos nuestra trayectoria desarrollando espacios de entretenimiento y adquiriendo una experiencia que con el tiempo nos permitió ampliar nuestra visión y capacidades.",
+    "En Altea contamos con más de 40 años de experiencia en el desarrollo inmobiliario en México. Nuestra historia comenzó como propietarios de salas de cine, donde desarrollamos espacios de entretenimiento y adquirimos experiencia que, con el tiempo, nos permitió ampliar nuestras capacidades y visión.",
     "Gracias a nuestra constante evolución y adaptación, en Altea seguimos construyendo el futuro con el mismo compromiso de nuestros inicios: generar valor, calidad y oportunidades en cada metro cuadrado que transformamos.",
   ],
 
@@ -353,9 +353,9 @@ export const HUELLA = {
    * que avisaba de que estos tres países sólo existían escritos dentro de este
    * texto en vez de leerse de allí.
    */
-  body: `Nuestra presencia abarca ${ESTADOS_CON_PRESENCIA.length} estados de México, ${enumerar(
+  body: `Tenemos presencia en ${ESTADOS_CON_PRESENCIA.length} estados de México, así como en ${enumerar(
     PRESENCIA_INTERNACIONAL,
-  )}, reflejando la capacidad de Altea para llevar nuestra visión de desarrollo a distintos territorios.`,
+  )}. Esta cobertura refleja nuestra capacidad para desarrollar proyectos en distintos territorios.`,
   /**
    * El botón del final de la sección.
    *

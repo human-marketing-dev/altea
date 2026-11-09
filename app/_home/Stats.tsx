@@ -1,4 +1,4 @@
-import { CountUp } from "@/app/ui";
+import { CountUp } from "@/app/ui/CountUp";
 import { STATS, STATS_INTRO } from "./content";
 
 /** Texto introductorio + las cifras clave con conteo animado. */

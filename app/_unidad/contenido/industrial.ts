@@ -258,7 +258,7 @@ export const INDUSTRIAL: ContenidoUnidad = {
         /* 1980x1098 */
         fotoRatio: 1.8033,
         descripcion:
-          "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Forma parte de un entorno empresarial consolidado, se encuentra próximo a Pocket Park Aeropuerto, parque que desarrollamos en colaboración con Garza Ponce, y a un costado el Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.",
+          "Próximo parque industrial ubicado sobre la Autopista al Aeropuerto Internacional de Monterrey, en Apodaca, Nuevo León. Se encuentra en un entorno empresarial consolidado, cerca de Pocket Park Aeropuerto - desarrollado por Altea en colaboración con Garza Ponce - junto al Centro de Innovación y Diseño Estratégico de Productos del Tecnológico de Monterrey.",
         datos: [
           { etiqueta: "4 Naves", valor: "Desde 10,087 m² hasta 13,891 m²" },
           { etiqueta: "Área Rentable Total", valor: "50,712 m²" },

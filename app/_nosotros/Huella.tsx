@@ -1,5 +1,7 @@
-import { Button, CountUp } from "@/app/ui";
-import { HUELLA } from "./content";
+import { Button } from "@/app/ui/Button";
+import { CountUp } from "@/app/ui/CountUp";
+import { contenidoNosotros } from "./contenido";
+import type { Idioma } from "@/lib/idioma";
 import { MapaPuntos } from "./MapaPuntos";
 import { Reparto } from "./Reparto";
 
@@ -14,7 +16,8 @@ import { Reparto } from "./Reparto";
  * texto tienen que ocupar UNA celda entre los tres, no tres celdas. Sin él, la
  * rejilla repartiría titular, cifras, reparto y mapa en cuatro huecos.
  */
-export function Huella() {
+export function Huella({ idioma = "es" }: { idioma?: Idioma }) {
+  const { HUELLA } = contenidoNosotros(idioma);
   return (
     <section className="nos-huella" aria-labelledby="huella-titulo">
       <div className="nos-huella__info">

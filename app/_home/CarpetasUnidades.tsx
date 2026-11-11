@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { textos } from "@/app/ui/textos";
 import { rutaDe } from "@/lib/idioma";
@@ -46,6 +48,8 @@ const ESCALON = 14;
 /** Lo que se encoge y se apaga una carpeta cuando la tapa la siguiente. */
 const ENCOGE = 0.07;
 const APAGA = 0.34;
+
+gsap.registerPlugin(ScrollTrigger);
 
 export function CarpetasUnidades() {
   const idioma = useIdioma();
@@ -155,12 +159,33 @@ export function CarpetasUnidades() {
       pila.style.setProperty("--tope", `${tope}px`);
       pegadaUltima = tope + ESCALON * (total - 1);
     };
+    /*
+     * ⚠ Y DESPUÉS DE MEDIR, LOS SCROLLTRIGGER DE ABAJO SE VUELVEN A CALCULAR
+     * (11 nov 2026). El carril de proyectos (<CarrilTarjetas>) y el emblema
+     * crean sus ScrollTrigger ANTES de que esto corra —useGSAP va en un efecto
+     * de maquetación, esto en uno normal—, así que miden la página con el alto
+     * de respaldo del CSS (--hueco: 58svh). Al escribir aquí el alto real, la
+     * sección cambia de tamaño y todo lo de abajo se mueve, pero sus disparadores
+     * se quedaban donde estaban: el carril arrancaba tarde y no terminaba (1440 ×
+     * 900: -1 248 de -1 589 al soltarse) o arrancaba antes de llegar (1280 × 600),
+     * según la pantalla. Lo vio el cliente en la suya.
+     *
+     * En `resize` no hace falta: ScrollTrigger ya se recalcula solo, después.
+     */
     medir();
+    ScrollTrigger.refresh();
     window.addEventListener("resize", medir);
     /* El alto del texto depende de la tipografía: con la fuente de respaldo
-       mide otra cosa. Se vuelve a medir cuando llega la de verdad. */
+       mide otra cosa. Se vuelve a medir cuando llega la de verdad —Gotham
+       viene de Adobe Fonts y puede llegar tarde—, y con ella se recalculan los
+       ScrollTrigger, porque al cambiar de fuente cambia el alto de todo el
+       texto de la página. */
     let vivo = true;
-    document.fonts.ready.then(() => vivo && medir());
+    document.fonts.ready.then(() => {
+      if (!vivo) return;
+      medir();
+      ScrollTrigger.refresh();
+    });
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return () => {

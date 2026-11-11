@@ -44,8 +44,6 @@ const ALTS: Record<string, string> = {
     "Landscaped roundabout with palms at a vehicle entrance, with a potted palm in the foreground",
   "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-6.webp":
     "Planter with palms and shade plants next to the facade of a building",
-  "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-7.webp":
-    "Garden with yellow crotons around a bust, next to a bench",
   "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-8.webp":
     "Green area with grass, hedges and trees, maintained by Viveros Asturias",
 };

@@ -162,8 +162,9 @@ export const FORESTAL: ContenidoUnidad = {
       ],
       /*
        * Del 4 al 8 de la carpeta, en carrusel (2 nov 2026): jardines y áreas
-       * verdes atendidas por Viveros Asturias. Las cinco son casi 16:9. La 1, la
-       * 2 y la 3, que iban antes, siguen en la carpeta sin usarse.
+       * verdes atendidas por Viveros Asturias. Son casi 16:9. La 1, la 2 y la
+       * 3, que iban antes, siguen en la carpeta sin usarse, y la 7 —la del
+       * busto— se quitó el 11 nov 2026 (el archivo sigue en la carpeta).
        *
        * DE LA 4 A LA 7 ERAN ORIGINALES DE CÁMARA, de casi 6000 px y 10 a 16 MB.
        * Se reexportaron a 2400 px de ancho, WebP 82 (9 nov 2026): en pantallas
@@ -189,12 +190,6 @@ export const FORESTAL: ContenidoUnidad = {
           alt: "Jardinera con palmas y plantas de sombra junto a la fachada de un edificio",
           /* 2400x1358 (original 5921x3351) */
           ratio: 1.7669,
-        },
-        {
-          src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-7.webp",
-          alt: "Jardín con crotos amarillos alrededor de un busto, junto a una banca",
-          /* 2400x1379 (original 5819x3343) */
-          ratio: 1.7407,
         },
         {
           src: "/images/forestal/viveros-asturias/viveros-asturias-forestal-altea-8.webp",

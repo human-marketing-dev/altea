@@ -26,7 +26,7 @@ export const HERO = {
     [{ texto: "opportunities", acento: true }],
   ] as { texto: string; acento?: boolean }[][],
   bajada:
-    "We are a full-service real estate developer based in Monterrey, Nuevo León, with solid experience and an extensive land bank.",
+    "We are a full-service real estate developer based in Monterrey, Nuevo León, with a proven track record and an extensive land bank.",
   pie: {
     isotipo: `${ESTADOS_CON_PRESENCIA.length} states · ${PRESENCIA_INTERNACIONAL.length + 1} countries`,
     piramide: "Four decades of building",
@@ -41,8 +41,8 @@ export const ORIGEN = {
     { texto: "transforming square meters into opportunities." },
   ] as { texto: string; acento?: boolean }[],
   parrafos: [
-    "At Altea, we have more than 40 years of experience in real estate development in Mexico. Our history began as movie theater owners, where we developed entertainment venues and gained experience that, over time, allowed us to broaden our capabilities and vision.",
-    "Through our constant evolution and adaptation, at Altea we continue to build the future with the same commitment we had at the outset: to generate value, quality and opportunities in every square meter we transform.",
+    "At Altea, we have more than 40 years of experience in real estate development in Mexico. We started out as movie theater owners, developing entertainment venues and gaining the expertise that, over time, allowed us to expand our capabilities and vision.",
+    "By constantly evolving and adapting, we continue to build the future with the same commitment we started with: delivering value, quality, and opportunity in every square meter we transform.",
   ],
   fotos: ES.ORIGEN.fotos.map((foto, i) => ({
     ...foto,
@@ -81,7 +81,7 @@ const SECTORES: SectorFirma[] = porId(ES.GRUPO_FIRMA.sectores, {
 export const GRUPO_FIRMA = {
   title: "We are part of Grupo Firmas Globales",
   intro:
-    "At Altea, we are part of a business group that brings together different brands and capabilities, allowing us to work strategically alongside resources that strengthen every stage of our developments.",
+    "Altea is part of a business group that brings together a range of brands and capabilities, allowing us to collaborate strategically and draw on resources that strengthen every stage of our developments.",
   raiz: ES.GRUPO_FIRMA.raiz,
   sectores: SECTORES,
   pie: ["Six sectors", "One long-term vision"],
@@ -112,9 +112,14 @@ export const HUELLA = {
     ...ES.HUELLA.cta,
     texto: "Discover our scale",
   },
+  /* "400+" y "44,000,000+ m²" (12 nov 2026, texto de Altea): en inglés el "+"
+     va detrás de la cifra, así que sale del prefijo y entra al sufijo. CountUp
+     lo sigue leyendo «more than». */
   stats: ES.HUELLA.stats.map((stat, i) => ({
     ...stat,
-    label: ["Properties", "Area"][i] ?? stat.label,
+    prefix: undefined,
+    suffix: `+${stat.suffix ?? ""}`,
+    label: ["Properties", "Land area"][i] ?? stat.label,
   })),
   desglose: ES.HUELLA.desglose.map((d, i) => ({
     ...d,
@@ -211,11 +216,11 @@ export const RESPONSABILIDAD = {
   subtitulo: "Our commitment to communities",
   descripcion: [
     "At Altea, we believe our commitment to communities goes beyond the projects we develop. That is why we promote initiatives that allow us to contribute closely and actively to our surroundings.",
-    "Because creating projects that make dreams come true also means helping to build more humane, connected and supportive communities.",
+    "Because creating projects that bring dreams to life also means helping build more human, connected, and caring communities.",
   ],
   galeria: GALERIA_RS,
   verdes: {
-    titulo: "We promote the creation of greener environments",
+    titulo: "Fostering greener environments",
     descripcion: [
       "We have more than 40,000 trees of various species and six ranches dedicated to forestry activities, together covering more than 350 hectares. Through these actions, we contribute to the conservation of green areas and the development of more sustainable spaces.",
     ],

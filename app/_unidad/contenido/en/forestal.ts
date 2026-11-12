@@ -63,21 +63,21 @@ const TEXTOS_LINEAS: Record<
     /* El nombre de la marca, como en el logotipo. */
     logoAlt: "Teca San Miguel",
     parrafos: [
-      "Commercial forest plantation project located in Tizimín, Yucatán, aimed at restoring the forestry use of land degraded by agricultural and livestock activities. In 2011, we began planting 682,853 teak trees across 841 hectares. The project seeks to contribute to soil recovery and to the economy of at least 100 Maya families in the region.",
+      "A commercial forestry plantation in Tizimín, Yucatán, aimed at restoring forest use on land degraded by farming and ranching. In 2011, we began planting 682,853 teak trees across 841 hectares. The project seeks to support soil recovery and the livelihoods of at least 100 Maya families in the region.",
     ],
     rotulo: "Applications",
     items: {
       mobiliario: "Furniture",
       construccion: "Construction",
       hoteleria: "Hospitality",
-      embarcaciones: "Boats",
+      embarcaciones: "Boatbuilding",
     },
   },
   "viveros-asturias": {
     titulo: "Viveros Asturias",
     logoAlt: "Viveros Asturias",
     parrafos: [
-      "We offer comprehensive solutions in urban trees, landscaping and green space conservation for corporate and government projects. Our services range from the production and supply of trees to their maintenance and preservation, using specialized techniques that support their development.",
+      "We offer comprehensive solutions in urban trees, landscaping and green space conservation for corporate and government projects. Our services range from tree production and supply to maintenance and preservation, using specialized techniques that promote healthy growth.",
       "We currently provide landscaping services at 23 shopping centers and maintenance at 19 properties, with more than 40,000 m² of green areas serviced monthly and more than 18,000 new trees planted, contributing to the conservation and improvement of natural spaces.",
     ],
     rotulo: "Services",

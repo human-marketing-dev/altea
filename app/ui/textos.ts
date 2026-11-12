@@ -146,8 +146,8 @@ const EN: Textos = {
     derechos: "All rights reserved.",
   },
   cta: {
-    whatsapp: "Contact us via WhatsApp",
-    irContacto: "Go to contact",
+    whatsapp: "Chat with us on WhatsApp",
+    irContacto: "Contact us",
   },
   ficha: {
     cerrar: "Close",

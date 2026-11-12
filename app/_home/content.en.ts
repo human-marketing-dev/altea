@@ -17,15 +17,19 @@ import { VIDEO as VIDEO_ES } from "./content";
 /*
  * "960 mil" se escribe "960K": mismo esquema que el "44M" de al lado (cifra +
  * sufijo corto), y es la forma natural en inglés para una cifra destacada.
+ *
+ * "44M+" y no "+44M" (12 nov 2026, texto de Altea): en inglés el "+" va detrás.
+ * Por eso va en el sufijo y no en el prefijo; CountUp lo lee «more than 44
+ * million».
  */
 export const STATS: HomeStat[] = [
-  { prefix: "+", to: 44, suffix: "M", note: "m²", label: "of land" },
+  { to: 44, suffix: "M+", note: "m²", label: "of land" },
   { to: 960, suffix: "K", note: "m²", label: "built" },
   { to: 88, label: "projects developed" },
 ];
 
 export const STATS_INTRO =
-  "We create solutions that respond to different needs, uses, and opportunities.";
+  "We create solutions tailored to a wide range of needs, uses, and opportunities.";
 
 export const VIDEO: typeof VIDEO_ES = {
   ...VIDEO_ES,
@@ -36,7 +40,7 @@ export const VIDEO: typeof VIDEO_ES = {
 export const BUSINESS_UNITS_INTRO = {
   titulo: "Business Units",
   descripcion:
-    "A comprehensive vision, multiple ways to transform the land.",
+    "An integrated vision, many ways to shape the land.",
 };
 
 /* El slug se queda en español: es la ruta en español que luego traduce rutaDe. */
@@ -47,7 +51,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
     color: colorDeUnidad("Comercial"),
     apertura: "We activate the energy of the city.",
     descripcion:
-      "We create commercial spaces that connect people, brands, and experiences, integrating entertainment, services, hotels, healthcare, and education to bring urban environments to life.",
+      "We create commercial spaces that connect people, brands, and experiences, combining entertainment, services, hotels, healthcare, and education to bring urban environments to life.",
     image: "/images/home/unidades-de-negocio/comercial-paseo-la-fe-altea.webp",
     alt: "Paseo La Fe, a commercial development by Altea",
   },
@@ -55,9 +59,9 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
     name: "Industrial",
     slug: "industrial",
     color: colorDeUnidad("Industrial"),
-    apertura: "Infrastructure that drives the future.",
+    apertura: "Infrastructure that powers the future.",
     descripcion:
-      "We develop industrial, logistics, and connectivity projects that enable new operations and strengthen the links between companies, cities, and regions.",
+      "We develop industrial, logistics, and connectivity projects that enable new operations and strengthen ties between businesses, cities, and regions.",
     image:
       "/images/home/unidades-de-negocio/industrial-huinala-industrial-park-altea.webp",
     alt: "Huinala Industrial Park, an industrial development by Altea",
@@ -83,12 +87,12 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
   },
 ];
 
-export const TITULO_HERO = "Creating projects that turn dreams into reality";
+export const TITULO_HERO = "Creating developments that turn dreams into reality";
 
 /* Mismos trozos que en español: se atenúa el "that", el equivalente del "que". */
 export const HERO_A = {
   lineas: [
-    [{ texto: "Creating projects" }],
+    [{ texto: "Creating developments" }],
     [{ texto: "that", atenuado: true }, { texto: "turn dreams into reality" }],
   ] as TrozoTitular[][],
 };
@@ -157,7 +161,7 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea-1.webp",
     descripcion:
-      "Located on Felipe Pescador Boulevard in downtown Durango, it is the city's only shopping center and brings together brands such as Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears, and Play City Casino. Its retail, entertainment, and service offering makes it one of the city's main destinations.",
+      "Located on Felipe Pescador Boulevard in downtown Durango, it is the city's only shopping center and brings together brands such as Sephora, Bershka, Pull&Bear, Maja, Liverpool, Sears, and Play City Casino. Its retail, entertainment, and service offering makes it one of the city's main destinations.",
   },
   {
     estado: "In operation",

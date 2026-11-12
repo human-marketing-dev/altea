@@ -322,7 +322,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     location: "Durango, Durango",
     image: "/images/comercial/centros-comerciales/paseo-durango-altea-1.webp",
     descripcion:
-      "Ubicado sobre Boulevard Felipe Pescador, en el centro de Durango, es el único centro comercial de la ciudad y reúne marcas como Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears y Play City Casino. Su oferta comercial, de entretenimiento y servicios lo convierte en uno de los principales destinos de la ciudad.",
+      "Ubicado sobre Boulevard Felipe Pescador, en el centro de Durango, es el único centro comercial de la ciudad y reúne marcas como Sephora, Bershka, Pull&Bear, Maja, Liverpool, Sears y Play City Casino. Su oferta comercial, de entretenimiento y servicios lo convierte en uno de los principales destinos de la ciudad.",
   },
   {
     estado: "En operación",

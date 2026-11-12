@@ -39,7 +39,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Amarantha",
     descripcion:
-      "Upcoming residential lot development located in the southern area of Monterrey, on Carretera Nacional. It offers approximately 323 lots from 200 m², as well as amenities such as a clubhouse, pool, gym, padel court, children's play area, pet park, cowork, sports bar, grills and social areas. A project that combines a strategic location with high-end amenities, creating an environment designed for living, growing and building wealth.",
+      "An upcoming residential lot development in southern Monterrey, on Carretera Nacional. It will offer approximately 323 lots starting at 200 m², along with amenities such as a clubhouse, swimming pool, gym, padel court, playground, pet park, coworking space, sports bar, barbecue area, and social areas. A project that combines a strategic location with high-end amenities, creating a place designed for living, growing, and building long-term wealth.",
     datos: [
       LOTES,
       { etiqueta: "Lots", valor: "Approximately 323" },
@@ -53,10 +53,10 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Reserva Mezquital",
     descripcion:
-      "Reserva Mezquital is a development of 238 residential lots in Apodaca, Nuevo León, with plots from 127.5 m². It is located in an area with connectivity and growth potential and includes controlled access, green areas, a social space, children's play area, sports court, outdoor fitness equipment and a pet area.",
+      "Reserva Mezquital is a development of 238 residential lots in Apodaca, Nuevo León, with lot sizes starting at 127.5 m². It is located in a well-connected area with growth potential and includes gated access, green areas, a social area, a playground, a sports court, outdoor fitness equipment, and a pet area.",
     datos: [
       LOTES,
-      { etiqueta: "In collaboration with", valor: "Terra Regia" },
+      { etiqueta: "In partnership with", valor: "Terra Regia" },
       { etiqueta: "Lots", valor: "238" },
       { etiqueta: "From", valor: "127.5 m²" },
     ],
@@ -79,7 +79,7 @@ const TEXTOS_PROXIMOS: Record<
     unit: "Residential",
     location: "Juárez, Nuevo León",
     descripcion:
-      "Residential development located on the Eloy Cavazos extension, with connections to main roads and close to schools, retail and health services. Its proposal integrates housing and connectivity in an area with growth potential.",
+      "A residential development on Prolongación Eloy Cavazos, with connections to main roads and close to schools, shops, and healthcare services. It offers well-connected housing in an area with growth potential.",
   },
   huajuquito: {
     name: "Huajuquito",
@@ -100,7 +100,7 @@ const TEXTOS_PROXIMOS: Record<
     unit: "Residential",
     location: "Monterrey, Nuevo León",
     descripcion:
-      "Residential development located in the Cumbres area, west of Monterrey. It integrates contemporary architecture and mountain views in an environment that combines connectivity, nature and quality of life.",
+      "A residential development in the Cumbres area of western Monterrey. It pairs contemporary architecture with mountain views in a setting that combines connectivity, nature, and quality of life.",
   },
 };
 
@@ -124,10 +124,11 @@ export const VIVIENDA: ContenidoUnidad = {
     descripcion: TARJETA.descripcion,
   },
   cifras: [
+    /* "18.8M+", con el "+" detrás, como lo escribe Altea en inglés (12 nov
+       2026). La de abajo la dejó con el "+" delante: así va. */
     {
-      prefijo: "+",
       valor: 18.8,
-      signo: "M",
+      signo: "M+",
       etiqueta: "developable m², equivalent to 30+ land parcels",
     },
     { prefijo: "+", valor: 376034, etiqueta: "m² under development" },

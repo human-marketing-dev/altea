@@ -63,13 +63,16 @@ const inWords = (n: number) => EN_WORDS[n] ?? String(n);
 
 /* Mismo orden que CIFRAS_COMERCIAL. */
 const ETIQUETAS_CIFRAS = [
-  "visitors per month",
-  "commercial developments",
+  "monthly visitors",
+  "shopping centers",
   "occupancy rate",
 ];
 
+/* "3M+" y no "+3M" (12 nov 2026, texto de Altea): en inglés el "+" va detrás,
+   así que pasa del prefijo al signo. CountUp lo sigue leyendo «more than». */
 const CIFRAS: Cifra[] = CIFRAS_COMERCIAL.map((c, i) => ({
   ...c,
+  ...(c.prefijo === "+" ? { prefijo: undefined, signo: `${c.signo ?? ""}+` } : {}),
   etiqueta: ETIQUETAS_CIFRAS[i] ?? c.etiqueta,
 }));
 
@@ -89,7 +92,7 @@ const TEXTOS_PLAZAS: Record<
 > = {
   "paseo-la-fe": {
     descripcion:
-      "Paseo La Fe is a shopping center located on Miguel Alemán Avenue, one of the main access routes to Monterrey International Airport, in San Nicolás de los Garza, Nuevo León. It receives approximately one million visitors per month and is one of the leading shopping, entertainment, and experience destinations in the Monterrey metropolitan area.",
+      "Paseo La Fe is a shopping center in San Nicolás de los Garza, Nuevo León, on Avenida Miguel Alemán, one of the main routes to Monterrey International Airport. It welcomes around one million visitors a month and is one of the leading shopping, entertainment, and leisure destinations in the Monterrey metropolitan area.",
     datos: fashionMall("1 million per month"),
   },
   "paseo-tec": {
@@ -107,7 +110,7 @@ const TEXTOS_PLAZAS: Record<
   },
   "paseo-durango": {
     descripcion:
-      "Located on Felipe Pescador Boulevard, in downtown Durango, it is the only shopping center in the city and brings together brands such as Sephora, Bershka, Pull and Bear, Maja, Liverpool, Sears and Play City Casino. Its retail, entertainment and services offering makes it one of the city's main destinations.",
+      "Located on Felipe Pescador Boulevard, in downtown Durango, it is the only shopping center in the city and brings together brands such as Sephora, Bershka, Pull&Bear, Maja, Liverpool, Sears and Play City Casino. Its retail, entertainment and services offering makes it one of the city's main destinations.",
     datos: fashionMall("600,000 per month"),
   },
   "paseo-los-mochis": {
@@ -122,27 +125,27 @@ const TEXTOS_PLAZAS: Record<
   },
   "punto-huinala": {
     descripcion:
-      "Power Center located at the intersection of Miguel Alemán Highway and Huinalá Highway, in Apodaca, Nuevo León. Its location offers a privileged connection to Monterrey International Airport and to one of the area's main industrial corridors, while its retail offering is led by Bodega Aurrera and Cinépolis, complemented by a range of stores and services.",
+      "A power center at the intersection of Carretera Miguel Alemán and Carretera Huinalá in Apodaca, Nuevo León. Its location offers excellent access to Monterrey International Airport and one of the area's main industrial corridors. It is anchored by Bodega Aurrera and Cinépolis, complemented by a variety of shops and services.",
     datos: POWER_CENTER,
   },
   "punto-rio-nilo": {
     descripcion:
-      "Power Center located on Río Nilo Avenue, in Tonalá, Jalisco. Its offering is led by Walmart and Cinépolis, complemented by a variety of stores and services.",
+      "A power center on Avenida Río Nilo in Tonalá, Jalisco. It is anchored by Walmart and Cinépolis, complemented by a variety of shops and services.",
     datos: POWER_CENTER,
   },
   "punto-la-pastora": {
     descripcion:
-      "Power Center located on Eloy Cavazos Avenue, in Guadalupe, Nuevo León. It has become a key location in the area thanks to its high traffic volume and its connectivity on one of the municipality's main arteries. It features brands such as Pastelería Lety, McDonald's, Firehouse Subs, Bolerama, Swiss Lab, Gorditas Doña Tota, Universidad INSUCO and Helados Dreambox.",
+      "A power center on Avenida Eloy Cavazos in Guadalupe, Nuevo León. Its high traffic volume and location on one of the city's main thoroughfares have made it a key spot in the area. It is home to brands such as Pastelería Lety, McDonald's, Firehouse Subs, Bolerama, Swiss Lab, Gorditas Doña Tota, Universidad INSUCO, and Helados Dreambox.",
     datos: POWER_CENTER,
   },
   "punto-cumbres": {
     descripcion:
-      "Power Center located on Paseo de los Leones Avenue, in Monterrey, Nuevo León. Set in a sector characterized by sustained growth and purchasing power, the center brings together retailers such as Arbolitos de Cajeme, Maxi Home, Las Espadas, Kuchen, Todo Empanadas, Bolerama, Helados Dreambox and KFC. Its restaurant- and entertainment-oriented profile encourages longer visits and a high average ticket among consumers.",
+      "A power center on Avenida Paseo de los Leones in Monterrey, Nuevo León. Set in an area known for its steady growth and strong purchasing power, the center brings together brands such as Arbolitos de Cajeme, Maxi Home, Las Espadas, Kuchen, Todo Empanadas, Bolerama, Helados Dreambox, and KFC. Its focus on dining and entertainment encourages longer visits and higher average spending.",
     datos: POWER_CENTER,
   },
   "punto-las-misiones": {
     descripcion:
-      "Power Center located in the south of the city on Carretera Nacional, in Monterrey, Nuevo León. The center was developed to serve a market with high purchasing power. Its established tenants include KFC, Tim Hortons, Taco Palenque, U'gurt, Pescados Martínez Tijerina, Helados Dreambox, Firehouse Subs, Wok, John Ham, Blue Pilates and Divisas La Rioja. By bringing together international franchises and local services, it offers a solid retail environment and a high retention rate among our tenants.",
+      "A power center on Carretera Nacional in southern Monterrey, Nuevo León. It was developed to serve an affluent market. Its established tenants include KFC, Tim Hortons, Taco Palenque, U'gurt, Pescados Martínez Tijerina, Helados Dreambox, Firehouse Subs, Wok, John Ham, Blue Pilates, and Divisas La Rioja. By bringing together international franchises and local services, it offers a strong retail environment and a high tenant retention rate.",
     datos: POWER_CENTER,
   },
   "punto-guaymas": {
@@ -157,7 +160,9 @@ const TEXTOS_PLAZAS: Record<
   },
   "punto-lincoln": {
     descripcion:
-      "Power Center located on Abraham Lincoln Avenue, one of the roads with the highest traffic and population density in the metropolitan area, in Monterrey, Nuevo León. Its business model is based on a concentration of essential services, bringing together the INE office, CFE, Capillas Éxodo, Farmacias Guadalajara, Universidad INSUCO, Quick Learning and AT&T, along with businesses such as Maxi Home, Little Caesars, Grease Monkey and KFC. This mix ensures daily visits driven by government procedures, everyday purchases or educational services.",
+      /* La primera frase es la de Altea (12 nov 2026); el resto, la traducción
+         anterior, porque su texto sólo traía esa frase. */
+      "A power center in Monterrey, Nuevo León, on Avenida Abraham Lincoln, one of the busiest and most densely populated corridors in the metropolitan area. Its business model is based on a concentration of essential services, bringing together the INE office, CFE, Capillas Éxodo, Farmacias Guadalajara, Universidad INSUCO, Quick Learning and AT&T, along with businesses such as Maxi Home, Little Caesars, Grease Monkey and KFC. This mix ensures daily visits driven by government procedures, everyday purchases or educational services.",
     datos: POWER_CENTER,
   },
 };
@@ -190,7 +195,7 @@ const TEXTOS_GIROS: Record<
   educacion: {
     title: "Education",
     description:
-      "We adapted an existing building in downtown Monterrey into an educational space aligned with Tálisis guidelines. The project responds to the growing demand for academic infrastructure in the area, incorporating coworking areas, specialized laboratories and modular spaces that adapt to different learning needs.",
+      "We repurposed an existing building in downtown Monterrey into an educational facility designed to Tálisis's standards. The project meets the growing demand for academic infrastructure in the area, featuring coworking areas, specialized labs, and modular spaces that adapt to different learning needs.",
     alt: "Educational center within an Altea development",
     datos: [
       { etiqueta: "Project", valor: "Tálisis" },
@@ -202,7 +207,7 @@ const TEXTOS_GIROS: Record<
 const GIROS_EN: ContenidoUnidad["giros"] = {
   eyebrow: "Other sectors",
   titulo: "We develop, transform and adapt projects.",
-  nota: "We identify the potential of each property to turn it into functional spaces that meet the needs of different sectors, offering solutions aligned with each client's objectives.",
+  nota: "We unlock the potential of each property, turning it into functional spaces that meet the needs of different industries and offering solutions aligned with each client's goals.",
   bloques: OTROS_GIROS.bloques.map((g) => ({
     ...g,
     ...texto(TEXTOS_GIROS, g.id, "giro"),
@@ -219,13 +224,13 @@ const TEXTOS_PROXIMOS: Record<
     name: "Paseo La Fe · Expansion",
     unit: "Commercial expansion",
     descripcion:
-      "The project comprises a comprehensive three-phase master plan to expand the retail, services, entertainment and residential offering. Its planned components include the Acuario Michin and future hotel, hospital and residential spaces. More than 36,000 m² of additional retail and entertainment expansion is projected, including approximately 19,000 m² of leasable area for the aquarium.",
+      "The project calls for a comprehensive three-phase master plan to expand its retail, services, entertainment, and residential offering. Planned components include Acuario Michin and future hotel, healthcare, and residential spaces. More than 36,000 m² of additional retail and entertainment space is planned, including about 19,000 m² of leasable area for the aquarium.",
   },
   "punto-lopez-mateos": {
     name: "Punto López Mateos · Expansion",
     unit: "Commercial expansion",
     descripcion:
-      "The expansion of Punto López Mateos seeks to strengthen its retail offering, which currently includes BBVA, and to incorporate establishments such as Firehouse and Dreambox. The project proposes renovating the architectural complex and diversifying the services available to its visitors.",
+      "The expansion of Punto López Mateos aims to strengthen its retail mix, which currently includes BBVA, and add businesses such as Firehouse Subs and Helados Dreambox. The project plans to renovate the complex's architecture and diversify the services available to visitors.",
   },
 };
 

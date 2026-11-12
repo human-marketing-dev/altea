@@ -196,8 +196,12 @@ const PREFIXES: Record<string, string> = { "+": "more than" };
 const UNITS: Record<string, string> = { "%": "percent", "m²": "square meters" };
 
 function inWords(n: number, prefix: string, suffix: string, decimals: number) {
-  const p = prefix.trim();
-  const s = suffix.trim();
+  /* "44M+" o "400+ m²" —el "+" detrás, como se escribe en inglés— se lee igual
+     que "+44M": «more than 44 million». */
+  const crudo = suffix.trim();
+  const masDetras = crudo.startsWith("+") || crudo.endsWith("+");
+  const p = masDetras ? "+" : prefix.trim();
+  const s = masDetras ? crudo.replace(/^\+|\+$/g, "").trim() : crudo;
   const num = n.toLocaleString("en-US", {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,

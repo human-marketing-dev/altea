@@ -40,7 +40,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Saltillo Airport",
     descripcion:
-      "Renovation, modernization and expansion project for the Plan de Guadalupe International Airport in Saltillo, Coahuila, in which we participate as partners in both its development and its operation. The project seeks to revitalize and modernize its facilities, comprehensively improve its waiting areas and generate new business opportunities that contribute to the growth and development of the region.",
+      "The renovation, modernization, and expansion of Plan de Guadalupe International Airport in Saltillo, Coahuila, where we are partners in both development and operations. The project aims to revitalize and update the airport's facilities, fully upgrade its waiting areas, and create new business opportunities that contribute to the region's growth and development.",
     datos: [{ etiqueta: "Format", valor: "Airport infrastructure" }],
   },
   "bajio-industrial-park": {
@@ -49,7 +49,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Bajío Industrial Park",
     descripcion:
-      "Industrial park strategically located at the entrance to the Mazda plant, with direct access to the Salamanca-Irapuato toll-free highway (45) and alongside the toll highway to León. Its connectivity facilitates industrial and logistics operations and access to the region's main production corridors.",
+      "An industrial park strategically located at the entrance to the Mazda plant, with direct access to the toll-free Highway 45 (Salamanca–Irapuato) and adjacent to the toll road to León. Its connectivity supports industrial and logistics operations and provides access to the region's main manufacturing corridors.",
     datos: [PARQUE, { etiqueta: "Total area", valor: "107,374 m²" }],
   },
   "pocket-park-aeropuerto": {
@@ -58,7 +58,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Pocket Park Aeropuerto",
     descripcion:
-      "Industrial park located on the Monterrey International Airport Highway, in Apodaca, Nuevo León. Designed for logistics and light manufacturing, it offers flexible spaces that facilitate the operations of companies requiring an accessible location and connection to major transportation routes.",
+      "An industrial park on the highway to Monterrey International Airport, in Apodaca, Nuevo León. Designed for logistics and light manufacturing, it offers flexible spaces for companies that need an accessible location with connections to major transportation routes.",
     datos: [PARQUE, { etiqueta: "Total area", valor: "53,140 m²" }],
   },
   "primavera-industrial-park": {
@@ -67,7 +67,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Primavera Industrial Park",
     descripcion:
-      "Industrial park located on Miguel Alemán Avenue, in Apodaca, Nuevo León. It features SME industrial buildings and modular spaces designed to adapt to the needs of supply chain providers and regional distribution companies, with access to one of the area's main industrial corridors.",
+      "An industrial park on Avenida Miguel Alemán in Apodaca, Nuevo León. It offers industrial buildings for small and medium-sized businesses, along with modular spaces designed to meet the needs of supply chain vendors and regional distribution companies, with access to one of the area's main industrial corridors.",
     datos: [PARQUE, { etiqueta: "Total area", valor: "6,538 m²" }],
   },
   "huinala-industrial-park": {
@@ -76,7 +76,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "Huinalá Industrial Park",
     descripcion:
-      "Industrial park located on Miguel Alemán Avenue, in Apodaca, Nuevo León. Its direct connection to the highway facilitates access to Monterrey International Airport and the main roads of the metropolitan area, supporting the operations and mobility of industrial and logistics companies.",
+      "An industrial park on Avenida Miguel Alemán in Apodaca, Nuevo León. Its direct highway connection provides easy access to Monterrey International Airport and the metropolitan area's main roads, supporting the operations and mobility of industrial and logistics companies.",
     datos: [PARQUE, { etiqueta: "Total area", valor: "18,410 m²" }],
   },
   "lopez-mateos-industrial-park": {
@@ -85,7 +85,7 @@ const TEXTOS_PROYECTOS: Record<
     alt: "",
     label: "López Mateos Industrial Park",
     descripcion:
-      "Industrial park located on López Mateos Avenue, in San Nicolás de los Garza, Nuevo León. Its direct connection to this major artery facilitates logistics integration with the Monterrey metropolitan area and provides access to a broad local labor pool, supporting the operations and growth of companies.",
+      "An industrial park on Avenida López Mateos in San Nicolás de los Garza, Nuevo León. Its direct connection to this major thoroughfare streamlines logistics across the Monterrey metropolitan area and provides access to a large local workforce, supporting companies' operations and growth.",
     datos: [PARQUE, { etiqueta: "Total area", valor: "20,825 m²" }],
   },
 };
@@ -105,9 +105,10 @@ const TEXTOS_PROXIMOS: Record<
     name: "Aeropuerto Industrial Park",
     unit: "Industrial",
     location: "Apodaca, Nuevo León",
-    /* Los guiones del inciso, igual que en el español. */
+    /* El inciso va entre paréntesis en el texto de Altea en inglés (12 nov
+       2026); el español sigue con sus guiones. */
     descripcion:
-      "Upcoming industrial park located on the Monterrey International Airport Highway, in Apodaca, Nuevo León. It is situated in a consolidated business environment, near Pocket Park Aeropuerto - developed by Altea in collaboration with Garza Ponce - next to the Tecnológico de Monterrey Center for Innovation and Strategic Product Design.",
+      "An upcoming industrial park on the highway to Monterrey International Airport, in Apodaca, Nuevo León. It is set in an established business area, near Pocket Park Aeropuerto (developed by Altea in partnership with Garza Ponce) and next to Tecnológico de Monterrey's Center for Innovation and Strategic Product Design.",
     datos: [
       { etiqueta: "4 Industrial Buildings", valor: "From 10,087 m² to 13,891 m²" },
       { etiqueta: "Total Leasable Area", valor: "50,712 m²" },
@@ -161,12 +162,13 @@ export const INDUSTRIAL: ContenidoUnidad = {
     descripcion: TARJETA.descripcion,
   },
   /*
-   * "+400 mil" se escribe con todas sus cifras (400,000), como "700 mil" en
-   * Comercial: "thousand" no cabe de sufijo.
+   * "+400 mil" se escribe con todas sus cifras (400,000): "thousand" no cabe de
+   * sufijo. Y "400,000+", con el "+" detrás, como lo escribe Altea en inglés
+   * (12 nov 2026); CountUp lo lee «more than».
    */
   cifras: [
-    { prefijo: "+", valor: 400000, etiqueta: "m² developed" },
-    { valor: 4, signo: "M", etiqueta: "developable m²" },
+    { valor: 400000, signo: "+", etiqueta: "m² developed" },
+    { valor: 4, signo: "M", etiqueta: "m² of developable land" },
   ],
   atributos: [
     { titulo: "Strategic location", icono: "ubicacion" },

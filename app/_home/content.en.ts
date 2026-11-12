@@ -72,7 +72,7 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
     color: colorDeUnidad("Vivienda"),
     apertura: "We create spaces where a new way of living begins.",
     descripcion:
-      "We develop residential projects and integrate planning and strategic alliances to transform opportunities into communities.",
+      "We develop residential projects, bringing together planning and strategic partnerships to turn opportunities into communities.",
     image: "/images/home/unidades-de-negocio/vivienda-unidad-altea.webp",
     alt: "Residential development by Altea",
   },
@@ -80,8 +80,8 @@ export const BUSINESS_UNITS: BusinessUnitCard[] = [
     name: "Forestry",
     slug: "forestal",
     color: colorDeUnidad("Forestal"),
-    apertura: "Long-term forest plantation and management.",
-    descripcion: "Services that sustain our environmental commitment.",
+    apertura: "Long-term tree planting and forest management.",
+    descripcion: "Services that uphold our environmental commitment.",
     image: "/images/home/unidades-de-negocio/forestal-teca-altea.webp",
     alt: "Teak plantation, Altea's forestry division",
   },
@@ -150,7 +150,7 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     location: "San Nicolás, Nuevo León",
     image: "/images/comercial/centros-comerciales/paseo-la-fe-altea.webp",
     descripcion:
-      "Paseo La Fe is a shopping center located on Miguel Alemán Avenue, one of the main access routes to Monterrey International Airport, in San Nicolás de los Garza, Nuevo León. It receives approximately one million visitors per month and is one of the leading shopping, entertainment, and experience destinations in the Monterrey metropolitan area.",
+      "Paseo La Fe is a shopping center in San Nicolás de los Garza, Nuevo León, on Avenida Miguel Alemán, one of the main routes to Monterrey International Airport. It welcomes around one million visitors a month and is one of the leading shopping, entertainment, and leisure destinations in the Monterrey metropolitan area.",
   },
   {
     estado: "In operation",
@@ -173,7 +173,7 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     location: "Saltillo, Coahuila",
     image: "/images/industrial/aeropuerto/aeropuerto-saltillo-altea-2.webp",
     descripcion:
-      "Renovation project developed in collaboration with Plan de Guadalupe International Airport in Saltillo, Coahuila, focused on reactivating the airport and generating new business opportunities for the region.",
+      "The renovation, modernization, and expansion of Plan de Guadalupe International Airport in Saltillo, Coahuila, where we are partners in both development and operations. The project aims to revitalize and update the airport's facilities, fully upgrade its waiting areas, and create new business opportunities that contribute to the region's growth and development.",
   },
   {
     estado: "In operation",
@@ -185,7 +185,7 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     image:
       "/images/industrial/naves-industriales/bajio-undustrial-park-altea.webp",
     descripcion:
-      "Industrial park strategically located at the entrance to the Mazda plant, with direct access to the Salamanca-Irapuato toll-free highway (45) and adjacent to the toll highway to León. Its connectivity facilitates industrial and logistics operations and access to the region's main production corridors.",
+      "An industrial park strategically located at the entrance to the Mazda plant, with direct access to the toll-free Highway 45 (Salamanca–Irapuato) and adjacent to the toll road to León. Its connectivity supports industrial and logistics operations and provides access to the region's main manufacturing corridors.",
   },
   {
     estado: "Under development",
@@ -197,7 +197,7 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     image:
       "/images/industrial/proximos-proyectos/aeropuerto-industrial-park.webp",
     descripcion:
-      "Upcoming industrial park located on the Monterrey International Airport Highway in Apodaca, Nuevo León. It is set in a consolidated business environment, near Pocket Park Aeropuerto (developed by Altea in collaboration with Garza Ponce), next to the Tecnológico de Monterrey Center for Innovation and Strategic Product Design.",
+      "An upcoming industrial park on the highway to Monterrey International Airport, in Apodaca, Nuevo León. It is set in an established business area, near Pocket Park Aeropuerto (developed by Altea in partnership with Garza Ponce) and next to Tecnológico de Monterrey's Center for Innovation and Strategic Product Design.",
   },
   {
     estado: "Under development",
@@ -208,6 +208,6 @@ export const FEATURED_PROJECTS: FeaturedProjectEn[] = [
     location: "Southern Monterrey, Nuevo León",
     image: "/images/vivienda/amarantha/amarantha-vivienda-altea.webp",
     descripcion:
-      "Upcoming residential lot development near Carretera Nacional, south of Monterrey. It combines a strategic location and high-end amenities in a setting designed for living and building wealth.",
+      "An upcoming residential lot development in southern Monterrey, on Carretera Nacional. It will offer approximately 323 lots starting at 200 m², along with amenities such as a clubhouse, swimming pool, gym, padel court, playground, pet park, coworking space, sports bar, barbecue area, and social areas. A project that combines a strategic location with high-end amenities, creating a place designed for living, growing, and building long-term wealth.",
   },
 ];

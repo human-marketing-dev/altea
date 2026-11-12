@@ -86,7 +86,7 @@ const TEXTOS_PROXIMOS: Record<
     unit: "Residential",
     location: "Santiago, Nuevo León",
     descripcion:
-      "Residential lot project that allows owners to build a custom home, with nearby access to a commercial area. It integrates housing and services to make daily life easier.",
+      "A residential lot development where you can build a custom home, with a retail area close by. It brings housing and services together to make everyday life easier.",
   },
   margaritas: {
     name: "Margaritas",
@@ -124,14 +124,14 @@ export const VIVIENDA: ContenidoUnidad = {
     descripcion: TARJETA.descripcion,
   },
   cifras: [
-    /* "18.8M+", con el "+" detrás, como lo escribe Altea en inglés (12 nov
-       2026). La de abajo la dejó con el "+" delante: así va. */
+    /* "18.8M+" y "376,034+", con el "+" detrás, como lo escribe Altea en
+       inglés (12 nov 2026). CountUp los lee «more than». */
     {
       valor: 18.8,
       signo: "M+",
       etiqueta: "developable m², equivalent to 30+ land parcels",
     },
-    { prefijo: "+", valor: 376034, etiqueta: "m² under development" },
+    { valor: 376034, signo: "+", etiqueta: "m² under development" },
   ],
   proyectos: {
     titulo: "Our residential developments",

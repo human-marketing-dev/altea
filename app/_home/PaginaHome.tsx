@@ -6,6 +6,7 @@ import { CarpetasUnidades } from "./CarpetasUnidades";
 import { CarrilProyectos } from "./CarrilProyectos";
 import { CierrePuntos } from "./CierrePuntos";
 import { CorporateVideo } from "./CorporateVideo";
+import { DatosEstructurados } from "./DatosEstructurados";
 import { contenidoHome } from "./contenido";
 import type { Idioma } from "@/lib/idioma";
 import { Emblem } from "./Emblem";
@@ -29,6 +30,7 @@ export function PaginaHome({ idioma = "es" }: { idioma?: Idioma }) {
           recorrido — o sea, invisible durante toda la escena, que es justo donde
           tiene que verse flotando. */}
       <NavBar tone="light" transicionIntro />
+      <DatosEstructurados idioma={idioma} />
       {/* El hero anterior, la intro de nubes (<IntroAltea />), salió del
           proyecto el 9 nov 2026 para que pesara menos. Está respaldada, con sus
           imágenes y un README para reusarla, en

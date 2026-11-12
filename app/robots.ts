@@ -4,34 +4,22 @@ import { SITIO } from "@/lib/idioma";
 /**
  * /robots.txt
  *
- * CIERRA EL SITIO COMPLETO A LOS RASTREADORES, y es a propósito: esto es una
- * maqueta para enseñar a Altea y no está publicada. (Gotham ya tiene licencia,
- * por Adobe Fonts desde el 9 nov 2026: eso ya no frena la publicación.)
+ * ABIERTO A LOS RASTREADORES DESDE EL LANZAMIENTO (13 nov 2026). Mientras el
+ * sitio fue maqueta, aquí había un `disallow: "/"` y el layout llevaba
+ * `noindex`; se quitaron los dos juntos.
  *
- * ⚠ ESTO ES LO QUE HAY QUE QUITAR PARA PUBLICAR. Son dos sitios, no uno:
- *   1. el `disallow: "/"` de aquí abajo, y
- *   2. el `robots: { index: false, follow: false }` del metadata de
- *      app/layout.tsx.
+ * Sólo queda fuera /studio, el Studio de Sanity: es el panel de edición, no
+ * contenido. (next-sanity le pone además su propio `noindex`.)
  *
- * Los dos NO son redundantes ni se refuerzan: son dos mecanismos que se
- * estorban. Una ruta bloqueada aquí no se descarga nunca, así que su
- * <meta name="robots"> jamás se lee. El cinturón de verdad es este `disallow`;
- * el `noindex` es la red por si alguien llega por un enlace externo y este
- * archivo cambia o se sirve mal.
- *
- * Antes el `disallow` apuntaba a /plantilla, el subárbol donde vivía la maqueta.
- * Al mover todo a la raíz pasó a "/" — OJO, no a BASE: con BASE vacío el valor
- * habría sido la cadena vacía, que en robots.txt significa "no bloquees nada" y
- * habría abierto el sitio entero sin que se notara.
- *
- * El sitemap (app/sitemap.ts) ya se declara aquí; mientras siga el `disallow`
- * los rastreadores no lo siguen, así que puede quedarse así el día que se abra.
+ * ⚠ OJO si alguna vez se vuelve a cerrar: el valor es "/", nunca la cadena
+ * vacía, que en robots.txt significa «no bloquees nada».
  */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      disallow: "/",
+      allow: "/",
+      disallow: "/studio",
     },
     sitemap: `${SITIO}/sitemap.xml`,
   };

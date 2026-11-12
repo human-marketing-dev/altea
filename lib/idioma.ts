@@ -61,13 +61,15 @@ export function rutaEquivalente(pathname: string, destino: Idioma): string {
 }
 
 /**
- * El dominio de producción, para lo que necesita URLs absolutas (el sitemap).
+ * El dominio de producción, para lo que necesita URLs absolutas: canónicas,
+ * `hreflang`, sitemap, robots.txt y la imagen de vista previa.
  *
- * ⚠ PENDIENTE DE CONFIRMAR CON ALTEA: con www o sin él. Hoy el WordPress
- * responde en www y redirige ahí todo lo demás, y es lo que Google tiene
- * indexado; por eso va así. Ver docs/seo.md, §2.
+ * SIN WWW (13 nov 2026, decidido): el servidor sirve el sitio en
+ * alteadesarrollos.com y manda www.alteadesarrollos.com ahí con un 301. Esto
+ * tiene que coincidir con esa redirección: si dijera www, cada página
+ * declararía como oficial una dirección que redirige a otra.
  */
-export const SITIO = "https://www.alteadesarrollos.com";
+export const SITIO = "https://alteadesarrollos.com";
 
 /** Las rutas indexables, en español. Cada una tiene su versión en /en. */
 export const RUTAS_PUBLICAS = Object.keys(RUTAS_EN);

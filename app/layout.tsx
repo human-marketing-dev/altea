@@ -37,21 +37,12 @@ export const metadata: Metadata = {
   description:
     "Inmobiliaria con sólida experiencia y una vasta reserva territorial: proyectos comerciales, industriales y de vivienda.",
   /*
-   * NO INDEXABLE, Y HAY QUE QUITARLO PARA PUBLICAR.
-   *
-   * Venía de un layout propio en app/plantilla/, que marcaba solo ese subárbol;
-   * al mover el sitio a la raíz el subárbol desapareció y la marca subió aquí,
-   * donde cubre todas las rutas por herencia: cualquier página emite
-   * `<meta name="robots" content="noindex, nofollow">` sin repetirlo en su propio
-   * `metadata`, y una página nueva queda cubierta por el mero hecho de nacer.
-   *
-   * El `nofollow` impide además que un rastreador siga los enlaces internos y
-   * vaya descubriendo el resto de las rutas.
-   *
-   * Es la red, no el cinturón: el bloqueo de verdad está en app/robots.ts, y los
-   * dos se quitan juntos. Ver el comentario de ese archivo.
+   * INDEXABLE DESDE EL LANZAMIENTO (13 nov 2026). Aquí iba
+   * `robots: { index: false, follow: false }`, que marcaba todo el sitio como
+   * no indexable mientras era maqueta; se quitó junto con el `disallow` de
+   * app/robots.ts. El Studio (/studio) sigue fuera: lo bloquea robots.txt y
+   * next-sanity le pone su propio `noindex`.
    */
-  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1159,7 +1159,17 @@
   .uni-ln__lista {
     order: 2;
   }
+  /*
+   * ⚠ EL `width: 100%` ES LO QUE LA HACE EXISTIR EN SAFARI (13 nov 2026). Con
+   * sólo la proporción, Chrome estiraba la caja al ancho de la columna, pero
+   * WebKit —Safari y todos los navegadores del iPhone— alinea a `start` un
+   * elemento de rejilla con `aspect-ratio`, así que la caja tomaba el ancho de
+   * su contenido; y el contenido (la foto o el carrusel) va en posición
+   * absoluta, así que medía 0 × 0. En el iPhone no se veía ninguna foto de
+   * Teca ni de Viveros. Medido en WebKit: 0 × 0 antes, 350 × 263 después.
+   */
   .uni-ln__foto {
+    width: 100%;
     aspect-ratio: 4 / 3;
     min-height: 0;
   }

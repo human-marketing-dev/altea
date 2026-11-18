@@ -13,6 +13,7 @@ import {
 } from "@/lib/antispam";
 import { enviarCorreo, faltantesBrevo } from "@/lib/brevo";
 import { CANALES, UNIDADES } from "@/lib/contacto";
+import { datosSitio } from "@/lib/sanity/sitio";
 import type { EstadoLead } from "./estado-lead";
 import type { Idioma } from "@/lib/idioma";
 
@@ -265,10 +266,13 @@ ${filas
 }
 
 /** El fallo de envío, con los canales directos para que el contacto no se pierda. */
-function errorDeEnvio(valores: Record<string, string>, idioma: Idioma): EstadoLead {
+async function errorDeEnvio(valores: Record<string, string>, idioma: Idioma): Promise<EstadoLead> {
+  /* El correo de «Datos de contacto» en Sanity; si Sanity no responde, el de
+     lib/contacto.ts: este mensaje no puede fallar. */
+  const correo = await datosSitio().then((d) => d.correo, () => CANALES.correo);
   return {
     estado: "error",
     valores,
-    errores: { envio: MENSAJES[idioma].envio(CANALES.correo) },
+    errores: { envio: MENSAJES[idioma].envio(correo) },
   };
 }

@@ -4,9 +4,11 @@
  */
 import { createElement, type ReactNode } from "react";
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { IDIOMAS } from "../bilingue";
 import {
   PREFIJOS,
   SIGNOS,
+  SIGNOS_EN,
   anchoMinimo,
   maximo,
   maximoCifra,
@@ -39,6 +41,8 @@ export const lineaTitular = (opciones: {
   marca: "atenuado" | "acento";
   max: number;
   motivo: string;
+  /** La versión en inglés: el límite avisa en vez de bloquear (ver bilingue.ts). */
+  aviso?: boolean;
 }) =>
   defineType({
     name: opciones.name,
@@ -71,9 +75,17 @@ export const lineaTitular = (opciones: {
           ? "Sin saltos de línea: el renglón lo decide el diseño."
           : true,
       ),
-      maximo(opciones.max, opciones.motivo)(rule),
+      opciones.aviso
+        ? maximo(opciones.max, opciones.motivo)(rule).warning()
+        : maximo(opciones.max, opciones.motivo)(rule),
     ],
   });
+
+/** Las dos versiones de una línea de titular: `nombre` (español) y `nombreEn`. */
+export const lineasTitular = (opciones: Parameters<typeof lineaTitular>[0]) => [
+  lineaTitular(opciones),
+  lineaTitular({ ...opciones, name: `${opciones.name}En`, aviso: true }),
+];
 
 /* ── Cifras ───────────────────────────────────────────────────────────── */
 
@@ -120,32 +132,81 @@ export const cifra = (opciones: {
         initialValue: "",
         description: "Se pinta en el color de la unidad. «M» se lee «millones».",
       }),
+      /*
+       * LA CIFRA EN INGLÉS, SÓLO SI SE ESCRIBE DISTINTO (nov 2026). El «+» pasa
+       * solo detrás del número («+44M» → «44M+»); esto es para lo que no sale
+       * de cambiar de lugar el «+»: «960 mil» → «960K», «+400 mil» → «400,000+»,
+       * «18 mil» → «18,000». Vacíos, el inglés usa el número y el signo de
+       * arriba.
+       */
+      defineField({
+        name: "valorEn",
+        title: "Número en inglés (sólo si cambia)",
+        type: "number",
+        description: "Para «mil»: en inglés se escribe la cifra completa (400000) o con «K» (960 y signo K).",
+        validation: (rule) => rule.min(0),
+      }),
+      defineField({
+        name: "signoEn",
+        title: "Después del número, en inglés (sólo si cambia)",
+        type: "string",
+        options: { list: SIGNOS_EN, layout: "radio", direction: "horizontal" },
+      }),
       ...(opciones.conNota
         ? [
             defineField({
               name: "nota",
               title: "Inicio de la etiqueta",
-              type: "string",
+              type: "object",
+              options: { columns: 2 },
               description:
                 "La parte que va pegada al número, p. ej. «de m²». Cuenta junto con la etiqueta para el máximo.",
+              fields: IDIOMAS.map(({ id, titulo }) =>
+                defineField({ name: id, title: titulo, type: "string" }),
+              ),
             }),
           ]
         : []),
       defineField({
         name: "etiqueta",
         title: "Etiqueta",
-        type: "string",
-        description: `Lo que va debajo del número. Máximo ${opciones.maxEtiqueta} caracteres${opciones.conNota ? " junto con el inicio" : ""}: más larga, ${opciones.motivoEtiqueta}.`,
-        validation: (rule) =>
-          rule.required().custom((etiqueta, ctx) => {
-            const nota = opciones.conNota
-              ? ((ctx.parent as { nota?: string } | undefined)?.nota ?? "")
-              : "";
-            const total = (nota ? `${nota} ` : "") + (etiqueta ?? "");
-            return total.length <= opciones.maxEtiqueta
-              ? true
-              : `«${total}» tiene ${total.length} caracteres y el máximo es ${opciones.maxEtiqueta}: más larga, ${opciones.motivoEtiqueta}.`;
+        type: "object",
+        options: { columns: 2 },
+        description: `Lo que va debajo del número. Máximo ${opciones.maxEtiqueta} caracteres${opciones.conNota ? " junto con el inicio" : ""}: más larga, ${opciones.motivoEtiqueta}. En inglés el máximo sólo avisa.`,
+        fields: IDIOMAS.map(({ id, titulo }) =>
+          defineField({
+            name: id,
+            title: titulo,
+            type: "string",
+            validation: (rule) => {
+              return [
+                rule.required().error(id === "es" ? "Falta la etiqueta en español." : "Falta la etiqueta en inglés."),
+                ((r) => (id === "es" ? r : r.warning()))(
+                  rule.custom((etiqueta: string | undefined, ctx) => {
+                    /* `ctx.parent` es el objeto { es, en } de la etiqueta; la nota
+                       vive en la cifra, un nivel arriba: se lee del documento con
+                       la ruta. */
+                    const ruta = ctx.path ?? [];
+                    let nodo: unknown = ctx.document;
+                    for (const paso of ruta.slice(0, -2)) {
+                      if (nodo == null) break;
+                      if (typeof paso === "object" && paso && "_key" in paso)
+                        nodo = (nodo as { _key?: string }[]).find((x) => x?._key === (paso as { _key: string })._key);
+                      else nodo = (nodo as Record<string | number, unknown>)[paso as string | number];
+                    }
+                    const nota = opciones.conNota
+                      ? ((nodo as { nota?: Record<string, string> } | undefined)?.nota?.[id] ?? "")
+                      : "";
+                    const total = (nota ? `${nota} ` : "") + (etiqueta ?? "");
+                    return total.length <= opciones.maxEtiqueta
+                      ? true
+                      : `«${total}» tiene ${total.length} caracteres y el máximo es ${opciones.maxEtiqueta}: más larga, ${opciones.motivoEtiqueta}.`;
+                  }),
+                ),
+              ];
+            },
           }),
+        ),
       }),
     ],
     validation: (rule) => maximoCifra(opciones.maxCifra, opciones.motivoCifra)(rule),
@@ -153,7 +214,7 @@ export const cifra = (opciones: {
       select: { prefijo: "prefijo", valor: "valor", signo: "signo", etiqueta: "etiqueta", nota: "nota" },
       prepare: ({ prefijo, valor, signo, etiqueta, nota }) => ({
         title: `${prefijo ?? ""}${typeof valor === "number" ? valor.toLocaleString("es-MX") : "—"}${signo ?? ""}`,
-        subtitle: [nota, etiqueta].filter(Boolean).join(" "),
+        subtitle: [nota?.es, etiqueta?.es].filter(Boolean).join(" "),
       }),
     },
   });
@@ -187,21 +248,36 @@ export const foto = (opciones: {
     ]
       .filter(Boolean)
       .join(" "),
-    fields: [
-      defineField({
-        name: "alt",
-        title: "Descripción de la foto",
-        type: "string",
-        description:
-          "Qué se ve, para quien no puede verla (lector de pantalla) y para Google. Una frase: «Fachada de Paseo La Fe al atardecer».",
-        validation: (rule) =>
-          opciones.altObligatorio ? rule.required().error("Describe la foto.") : rule,
-      }),
-    ],
+    /* `?? false`: sin decirlo, la descripción es opcional (las fotos de las
+       tarjetas). El valor por defecto de altBilingue es obligatoria. */
+    fields: [altBilingue(opciones.altObligatorio ?? false)],
     validation: (rule) => [
       rule.required().error("Falta la foto."),
       anchoMinimo(opciones.ancho, opciones.donde)(rule),
     ],
+  });
+
+/**
+ * La descripción de una foto en los dos idiomas. Qué se ve, para quien no puede
+ * verla (lector de pantalla) y para Google.
+ */
+export const altBilingue = (obligatorio = true) =>
+  defineField({
+    name: "alt",
+    title: "Descripción de la foto",
+    type: "object",
+    options: { columns: 2 },
+    description:
+      "Qué se ve, para quien no puede verla (lector de pantalla) y para Google. Una frase: «Fachada de Paseo La Fe al atardecer».",
+    fields: IDIOMAS.map(({ id, titulo }) =>
+      defineField({
+        name: id,
+        title: titulo,
+        type: "string",
+        validation: (rule) =>
+          obligatorio ? rule.required().error(id === "es" ? "Describe la foto en español." : "Describe la foto en inglés.") : rule,
+      }),
+    ),
   });
 
 /* ── Texto legal con formato ──────────────────────────────────────────── */

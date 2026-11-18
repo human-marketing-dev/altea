@@ -3,15 +3,17 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   construirNube,
   ESTADOS_MAPA,
+  estadosMapaDe,
+  type EstadoMapa,
   MAPA_ALTO,
   MAPA_ANCHO,
   type Nube,
 } from "@/lib/mapa-puntos";
-import { contenidoNosotros } from "./contenido";
+import { useContenidoNosotros } from "./ContenidoNosotros";
 import { textos } from "@/app/ui/textos";
 import type { Idioma } from "@/lib/idioma";
 import { useIdioma } from "@/app/ui/useIdioma";
@@ -151,18 +153,20 @@ const NOMBRES_EN: Record<string, string> = {
 const nombreEn = (nombre: string, idioma: Idioma) =>
   idioma === "en" ? (NOMBRES_EN[nombre] ?? nombre) : nombre;
 
-const opcionesDe = (idioma: Idioma) =>
-  ESTADOS_MAPA.map((e, i) => ({ e, i, nombre: nombreEn(e.nombre, idioma) }))
+const opcionesDe = (estados: readonly EstadoMapa[], idioma: Idioma) =>
+  estados.map((e, i) => ({ e, i, nombre: nombreEn(e.nombre, idioma) }))
     .filter(({ e }) => e.m2)
     .sort((a, b) => a.nombre.localeCompare(b.nombre, idioma));
-const OPCIONES: Record<Idioma, ReturnType<typeof opcionesDe>> = {
-  es: opcionesDe("es"),
-  en: opcionesDe("en"),
-};
 
 export function MapaPuntos() {
   const idioma = useIdioma();
-  const { HUELLA } = contenidoNosotros(idioma);
+  const { HUELLA, PRESENCIA_M2 } = useContenidoNosotros();
+  /* Los m² de cada estado, de «Presencia» en Sanity; sin ellos, los del código. */
+  const estados = useMemo(
+    () => (PRESENCIA_M2 ? estadosMapaDe(PRESENCIA_M2) : ESTADOS_MAPA),
+    [PRESENCIA_M2],
+  );
+  const opciones = useMemo(() => opcionesDe(estados, idioma), [estados, idioma]);
   const formato = idioma === "en" ? "en-US" : "es-MX";
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [activo, setActivo] = useState<number | null>(null);
@@ -179,7 +183,7 @@ export function MapaPuntos() {
       /* El campo se calcula UNA vez, al construir los puntos. En cada repintado
          sólo se leen los valores. Medido: 1 856 puntos, 10 ms la rasterización
          completa y 0.9 ms el campo. */
-      const nube: Nube = construirNube();
+      const nube: Nube = construirNube(estados);
       const radioFoco = FOCO_CELDAS * nube.paso;
 
       /* La curva se aplica UNA vez, como el campo: en el bucle de pintura sería
@@ -213,7 +217,7 @@ export function MapaPuntos() {
        * de él —el centroide geométrico puede caer fuera de un estado curvo; la
        * media de sus puntos no se aleja de ellos—.
        */
-      const centros = ESTADOS_MAPA.map(() => ({ x: 0, y: 0, n: 0 }));
+      const centros = estados.map(() => ({ x: 0, y: 0, n: 0 }));
       for (let p = 0; p < nube.x.length; p++) {
         const c = centros[nube.dueno[p]];
         if (!c) continue;
@@ -501,7 +505,7 @@ export function MapaPuntos() {
     { scope: lienzo },
   );
 
-  const estado = activo !== null ? ESTADOS_MAPA[activo] : undefined;
+  const estado = activo !== null ? estados[activo] : undefined;
 
   return (
     /*
@@ -574,7 +578,7 @@ export function MapaPuntos() {
           }
         >
           <option value="">{HUELLA.mapa.elegir}</option>
-          {OPCIONES[idioma].map(({ e, i, nombre }) => (
+          {opciones.map(({ e, i, nombre }) => (
             <option key={e.id} value={i}>
               {nombre}
             </option>
@@ -590,7 +594,7 @@ export function MapaPuntos() {
         que es el dato que el mapa comunica con el color.
       */}
       <ul className="sr-only">
-        {[...ESTADOS_MAPA]
+        {[...estados]
           .sort((a, b) =>
             nombreEn(a.nombre, idioma).localeCompare(nombreEn(b.nombre, idioma), idioma),
           )

@@ -1,9 +1,11 @@
 /**
- * Un panel de «Otros giros» en Comercial: hoteles, hospital, educación. El
- * número grande del panel («01») sale de su posición en la lista de la unidad;
- * no se escribe.
+ * Una tarjeta de «Otros giros» en Comercial: hoteles, hospital, educación. Es la
+ * misma tarjeta y la misma ficha que las plazas (desde el 29 oct 2026): foto,
+ * título, el primer dato como pie, y al pulsar, la ficha con los datos y la
+ * descripción.
  */
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
+import { bi } from "../bilingue";
 import { foto } from "./objetos";
 
 export const giro = defineType({
@@ -11,27 +13,45 @@ export const giro = defineType({
   title: "Giro",
   type: "document",
   fields: [
-    defineField({
+    bi({
       name: "titulo",
       title: "Título",
       type: "string",
-      description: "El título del panel: «Hoteles».",
-      validation: (rule) => rule.required(),
+      requerido: true,
+      description: "El título de la tarjeta: «Hoteles».",
     }),
-    defineField({
+    bi({
       name: "descripcion",
       title: "Descripción",
       type: "text",
       rows: 4,
-      description: "El texto que aparece al pasar el cursor por el panel.",
+      description: "El párrafo de la ficha que se abre al pulsar la tarjeta.",
     }),
     foto({
       name: "imagen",
       title: "Foto",
       ancho: "giro",
-      donde: "el panel",
+      donde: "la tarjeta",
       altObligatorio: true,
     }),
+    defineField({
+      name: "datos",
+      title: "Datos",
+      type: "array",
+      description:
+        "Los pares de la ficha: «Marcas · Fiesta Inn, One Hotels y NH Hotels». El primero también va de pie en la tarjeta.",
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "datoGiro",
+          fields: [
+            bi({ name: "etiqueta", title: "Etiqueta", type: "string", requerido: true }),
+            bi({ name: "valor", title: "Valor", type: "string", requerido: true }),
+          ],
+          preview: { select: { title: "etiqueta.es", subtitle: "valor.es" } },
+        }),
+      ],
+    }),
   ],
-  preview: { select: { title: "titulo", subtitle: "descripcion", media: "imagen" } },
+  preview: { select: { title: "titulo.es", subtitle: "descripcion.es", media: "imagen" } },
 });

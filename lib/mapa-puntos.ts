@@ -76,12 +76,6 @@ const ESCALA_CAMPO = ANCHO_CAMPO / MAPA_ANCHO;
  * de cero cuando el máximo son 24 millones—, y quien lo resuelve es el panel, que
  * sí dice su cifra.
  */
-const VALORES = Object.values(M2_CONSTRUIDOS);
-const LOG_MIN = Math.min(...VALORES.map(Math.log10));
-const LOG_MAX = Math.max(...VALORES.map(Math.log10));
-
-const nivel = (m2: number | undefined) =>
-  m2 ? (Math.log10(m2) - LOG_MIN) / (LOG_MAX - LOG_MIN) : 0;
 
 export type EstadoMapa = {
   id: string;
@@ -96,10 +90,24 @@ export type EstadoMapa = {
  * Los 32 estados, con su nivel. El orden es el del archivo generado, y los
  * índices de esta lista son lo que guarda la tabla de propiedad.
  */
-export const ESTADOS_MAPA: readonly EstadoMapa[] = ESTADOS.map((e) => {
-  const m2 = M2_CONSTRUIDOS[e.id as keyof typeof M2_CONSTRUIDOS];
-  return { id: e.id, nombre: e.nombre, m2, nivel: nivel(m2) };
-});
+export function estadosMapaDe(m2PorEstado: Partial<Record<string, number>>): EstadoMapa[] {
+  const valores = Object.values(m2PorEstado).filter((v): v is number => typeof v === "number" && v > 0);
+  const logMin = Math.min(...valores.map(Math.log10));
+  const logMax = Math.max(...valores.map(Math.log10));
+  /* Con un solo estado (o todos iguales) el rango es cero: todos al máximo. */
+  const nivel = (m2: number | undefined) =>
+    m2 ? (logMax > logMin ? (Math.log10(m2) - logMin) / (logMax - logMin) : 1) : 0;
+  return ESTADOS.map((e) => {
+    const m2 = m2PorEstado[e.id];
+    return { id: e.id, nombre: e.nombre, m2, nivel: nivel(m2) };
+  });
+}
+
+/**
+ * Con los m² del código (lib/proyectos.ts). Desde noviembre de 2026 la página
+ * los toma de «Presencia» en Sanity con `estadosMapaDe`; éste es el respaldo.
+ */
+export const ESTADOS_MAPA: readonly EstadoMapa[] = estadosMapaDe(M2_CONSTRUIDOS);
 
 /** Un anillo cerrado, en unidades del viewBox. */
 export type Anillo = readonly (readonly [number, number])[];
@@ -167,7 +175,7 @@ export type Nube = {
   msCampo: number;
 };
 
-export function construirNube(): Nube {
+export function construirNube(estados: readonly EstadoMapa[] = ESTADOS_MAPA): Nube {
   const mapa = ESTADOS.map((e) => ({ anillos: anillos(e.d) }));
 
   /* Caja de cada estado, para descartar sin probar los anillos. Sin esto, cada
@@ -227,7 +235,7 @@ export function construirNube(): Nube {
   const centros = ESTADOS.map((e, i) => ({
     x: e.centroide[0] * ESCALA_CAMPO,
     y: e.centroide[1] * ESCALA_CAMPO,
-    k: ESTADOS_MAPA[i].nivel,
+    k: estados[i].nivel,
   }));
 
   const t0 = typeof performance !== "undefined" ? performance.now() : 0;

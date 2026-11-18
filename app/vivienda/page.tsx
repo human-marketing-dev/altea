@@ -1,7 +1,7 @@
-import { metadataDe, PaginaUnidad } from "../_unidad/PaginaUnidad";
-import { VIVIENDA } from "../_unidad/contenido/vivienda";
+import { VIVIENDA } from "@/app/_unidad/contenido/vivienda";
+import { rutaDeUnidad } from "@/app/_unidad/rutaUnidad";
 
-export const metadata = metadataDe(VIVIENDA, "/vivienda");
-export default function Vivienda() {
-  return <PaginaUnidad contenido={VIVIENDA} />;
-}
+/* El contenido editable viene de Sanity; ver app/_unidad/rutaUnidad.tsx. */
+const ruta = rutaDeUnidad("vivienda", "es", VIVIENDA, "/vivienda");
+export const generateMetadata = ruta.generateMetadata;
+export default ruta.Pagina;

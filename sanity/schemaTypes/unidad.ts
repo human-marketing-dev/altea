@@ -9,9 +9,26 @@
  * cierre, el orden de las secciones y los logos de Forestal y del muro de
  * marcas. Son diseño o lógica y viven en el código.
  */
-import { defineArrayMember, defineField, defineType, type ArrayRule } from "sanity";
+import { defineArrayMember, defineField, defineType, type ArrayRule, type Rule } from "sanity";
+import { bi, segunIdioma, type Idioma } from "../bilingue";
 import { UNIDADES, anchoMinimo, cantidad, claveDeUnidad, maximo, textoDeAncho } from "../reglas";
-import { cifra, foto } from "./objetos";
+import { altBilingue, cifra, foto } from "./objetos";
+
+/** Un límite de caracteres: error en español, aviso en inglés. */
+const max = (n: number, motivo: string) => (r: Rule, i: Idioma) =>
+  segunIdioma(maximo(n, motivo)(r), i);
+
+/** Un ícono con su título en los dos idiomas (atributos y listas de Forestal). */
+const itemConIcono = (name: string) =>
+  defineArrayMember({
+    type: "object",
+    name,
+    fields: [
+      bi({ name: "titulo", title: "Título", type: "string", requerido: true }),
+      defineField({ name: "icono", title: "Icono", type: "string", options: { list: ICONOS }, validation: (r) => r.required() }),
+    ],
+    preview: { select: { title: "titulo.es", subtitle: "icono" } },
+  });
 
 /** Las opciones de icono: los diez dibujados en `app/_unidad/Atributos.tsx`. */
 export const ICONOS = [
@@ -86,19 +103,19 @@ const lineaForestal = (name: string, title: string, lista: string, nItems: [numb
     hidden: soloEn("forestal"),
     options: { collapsible: true, collapsed: false },
     fields: [
-      defineField({
+      bi({
         name: "rotulo",
         title: "Rótulo",
         type: "string",
-        description: "La línea pequeña sobre el logo, p. ej. «Plantación forestal comercial». Opcional.",
+        description: "La línea pequeña sobre el logo, p. ej. «Plantación forestal comercial». Opcional: hoy ninguna lo lleva.",
       }),
-      defineField({
+      bi({
         name: "parrafos",
         title: "Párrafos",
         type: "array",
-        of: [defineArrayMember({ type: "text", rows: 4 })],
+        of: [{ type: "text", rows: 4 }],
         description: "Uno o dos párrafos junto a la foto.",
-        validation: (rule) => cantidad(1, 3, "es el texto junto a la foto")(rule),
+        reglas: (r) => cantidad(1, 3, "es el texto junto a la foto")(r),
       }),
       defineField({
         name: "fotos",
@@ -109,25 +126,18 @@ const lineaForestal = (name: string, title: string, lista: string, nItems: [numb
           defineArrayMember({
             type: "image",
             options: { hotspot: true },
-            fields: [
-              defineField({
-                name: "alt",
-                title: "Descripción de la foto",
-                type: "string",
-                validation: (r) => r.required().error("Describe la foto."),
-              }),
-            ],
+            fields: [altBilingue(true)],
             validation: (r) => anchoMinimo("lineaForestal", "la caja de la línea")(r),
           }),
         ],
         // Decidido, no medido: la maqueta no cambia en este número.
         validation: (rule) => cantidad(1, 5, "es la caja de la foto de la línea")(rule),
       }),
-      defineField({
+      bi({
         name: "listaTitulo",
         title: `Título de la lista (hoy «${lista}»)`,
         type: "string",
-        validation: (rule) => rule.required(),
+        requerido: true,
       }),
       defineField({
         name: "listaItems",
@@ -135,23 +145,7 @@ const lineaForestal = (name: string, title: string, lista: string, nItems: [numb
         type: "array",
         description:
           "Icono y título. Con 3 van en tres columnas; con 4, en cuatro. El icono se elige de los dibujados para el sitio.",
-        of: [
-          defineArrayMember({
-            type: "object",
-            name: "itemLista",
-            fields: [
-              defineField({ name: "titulo", title: "Título", type: "string", validation: (r) => r.required() }),
-              defineField({
-                name: "icono",
-                title: "Icono",
-                type: "string",
-                options: { list: ICONOS },
-                validation: (r) => r.required(),
-              }),
-            ],
-            preview: { select: { title: "titulo", subtitle: "icono" } },
-          }),
-        ],
+        of: [itemConIcono("itemLista")],
         validation: (rule) =>
           cantidad(nItems[0], nItems[1], "la lista está diseñada en tres o cuatro columnas")(rule),
       }),
@@ -170,44 +164,46 @@ export const unidad = defineType({
     { name: "giros", title: "Otros giros" },
     { name: "atributos", title: "Por qué Altea" },
     { name: "lineas", title: "Líneas de negocio" },
+    { name: "cierre", title: "Cierre" },
     { name: "seo", title: "Buscadores" },
   ],
   fields: [
     /* ── Carpeta del home ── */
-    defineField({
+    bi({
       name: "frase",
       title: "Frase de apertura",
       type: "string",
       group: "carpeta",
+      requerido: true,
       description:
         "La frase grande de la carpeta en el home: «Activamos la energía de la ciudad.». Máximo 60 caracteres, y junto con la descripción no más de 233: más larga, la carpeta crece, deja de medir lo mismo que las otras tres y la pila del home se desordena al hacer scroll.",
       /* El 60 tampoco se midió por separado (inventario: «propuesto»); el que se
-         midió es el combinado, que va en la descripción. Hoy ninguna pasa de 57. */
-      validation: (rule) => [
-        rule.required(),
-        maximo(60, "la carpeta crece y la pila del home se desordena")(rule),
-      ],
+         midió es el combinado, que va en la descripción. */
+      reglas: (r, i) => segunIdioma(maximo(60, "la carpeta crece y la pila del home se desordena")(r), i),
     }),
-    defineField({
+    bi({
       name: "descripcion",
       title: "Descripción",
       type: "text",
       rows: 4,
       group: "carpeta",
+      requerido: true,
       description:
         "Va en la carpeta del home y es también la descripción de la página para Google. Junto con la frase, no más de 233 caracteres: más larga, la carpeta crece y la pila del home se desordena.",
       /* Sólo el límite combinado: es el que se midió (las dos comparten la caja de
-         la carpeta). El 170 por separado era una propuesta del inventario. */
-      validation: (rule) => [
-        rule.required(),
-        rule.custom((v: string | undefined, ctx) => {
-          const frase = (ctx.document as { frase?: string } | undefined)?.frase ?? "";
-          const total = frase.length + (v?.length ?? 0);
-          return total <= 233
-            ? true
-            : `Frase y descripción suman ${total} caracteres y el máximo juntas es 233: comparten la caja de la carpeta y, más largas, la carpeta crece y la pila del home se desordena.`;
-        }),
-      ],
+         la carpeta), en cada idioma con su frase. */
+      reglas: (rule, idioma) =>
+        segunIdioma(
+          rule.custom((v: unknown, ctx) => {
+            const frase =
+              (ctx.document as { frase?: Record<string, string> } | undefined)?.frase?.[idioma] ?? "";
+            const total = frase.length + (typeof v === "string" ? v.length : 0);
+            return total <= 233
+              ? true
+              : `Frase y descripción suman ${total} caracteres y el máximo juntas es 233: comparten la caja de la carpeta y, más largas, la carpeta crece y la pila del home se desordena.`;
+          }),
+          idioma,
+        ),
     }),
     foto({
       name: "fotoCarpeta",
@@ -250,14 +246,14 @@ export const unidad = defineType({
     }),
 
     /* ── Proyectos ── */
-    defineField({
+    bi({
       name: "tituloProyectos",
       title: "Título de la sección",
       type: "string",
       group: "proyectos",
       hidden: soloEn("comercial", "industrial", "vivienda"),
       description: "«Nuestros centros comerciales». Máximo 35 caracteres: más largo, agrega un renglón en teléfono.",
-      validation: (rule) => maximo(35, "agrega un renglón en teléfono")(rule),
+      reglas: max(35, "agrega un renglón en teléfono"),
     }),
     defineField({
       name: "proyectos",
@@ -279,14 +275,14 @@ export const unidad = defineType({
     }),
 
     /* ── Próximos ── */
-    defineField({
+    bi({
       name: "tituloProximos",
       title: "Título de la sección",
       type: "string",
       group: "proximos",
       hidden: soloEn("comercial", "industrial", "vivienda"),
-      description: "Hoy «Próximos proyectos». Máximo 26 caracteres: más largo, agrega un renglón en escritorio.",
-      validation: (rule) => maximo(26, "agrega un renglón en escritorio")(rule),
+      description: "Hoy «Próximos proyectos». Máximo 26 caracteres: más largo, agrega un renglón en escritorio. El renglón lo decide el diseño: un salto de línea no se pinta.",
+      reglas: max(26, "agrega un renglón en escritorio"),
     }),
     defineField({
       name: "proximos",
@@ -308,7 +304,7 @@ export const unidad = defineType({
     }),
 
     /* ── Otros giros (Comercial) ── */
-    defineField({
+    bi({
       name: "girosRotulo",
       title: "Rótulo",
       type: "string",
@@ -316,14 +312,23 @@ export const unidad = defineType({
       hidden: soloEn("comercial"),
       description: "La línea pequeña sobre el título: «Otros giros».",
     }),
-    defineField({
+    bi({
       name: "girosTitulo",
       title: "Título",
       type: "string",
       group: "giros",
       hidden: soloEn("comercial"),
       description: "Máximo 65 caracteres: más largo, agrega un renglón en teléfono.",
-      validation: (rule) => maximo(65, "agrega un renglón en teléfono")(rule),
+      reglas: max(65, "agrega un renglón en teléfono"),
+    }),
+    bi({
+      name: "girosNota",
+      title: "Texto bajo el título",
+      type: "text",
+      rows: 3,
+      group: "giros",
+      hidden: soloEn("comercial"),
+      description: "«Encontramos el potencial de cada inmueble…».",
     }),
     defineField({
       name: "giros",
@@ -332,18 +337,18 @@ export const unidad = defineType({
       group: "giros",
       hidden: soloEn("comercial"),
       of: [defineArrayMember({ type: "reference", to: [{ type: "giro" }], options: { disableNew: true } })],
-      description: "El número grande de cada panel («01», «02») sale del orden.",
+      description: "Las tarjetas de hoteles, hospital y educación, en orden.",
       // Decidido, no medido: la maqueta no cambia en este número.
       validation: (rule) => [
         rule.unique(),
         rule.custom((l: unknown[] | undefined, ctx) =>
           claveDeUnidad((ctx.document as { _id?: string } | undefined)?._id) === "comercial"
-            ? contar(l, 2, 3, "los paneles comparten una fila; con 4 se aprietan")
+            ? contar(l, 2, 3, "en escritorio van todas en una fila, del mismo tamaño")
             : true,
         ),
       ],
     }),
-    defineField({
+    bi({
       name: "marcasTitulo",
       title: "Título del muro de marcas",
       type: "string",
@@ -360,17 +365,7 @@ export const unidad = defineType({
       type: "array",
       group: "atributos",
       hidden: soloEn("industrial"),
-      of: [
-        defineArrayMember({
-          type: "object",
-          name: "atributo",
-          fields: [
-            defineField({ name: "titulo", title: "Título", type: "string", validation: (r) => r.required() }),
-            defineField({ name: "icono", title: "Icono", type: "string", options: { list: ICONOS }, validation: (r) => r.required() }),
-          ],
-          preview: { select: { title: "titulo", subtitle: "icono" } },
-        }),
-      ],
+      of: [itemConIcono("atributo")],
       description: "Icono y título, en tres columnas.",
       // Decidido, no medido: la maqueta no cambia en este número.
       validation: (rule) =>
@@ -385,14 +380,25 @@ export const unidad = defineType({
     lineaForestal("viveros", "Viveros Asturias", "Servicios", [3, 4]),
     lineaForestal("teca", "Teca San Miguel", "Aplicaciones", [3, 4]),
 
+    /* ── Cierre ── */
+    bi({
+      name: "cierreTitulo",
+      title: "Título del cierre",
+      type: "string",
+      group: "cierre",
+      requerido: true,
+      description:
+        "La frase grande del final de la página, junto a los botones de WhatsApp y contacto: «Desarrollemos espacios comerciales que conecten marcas, personas y comunidades.».",
+    }),
+
     /* ── Buscadores ── */
-    defineField({
+    bi({
       name: "metaTitulo",
       title: "Título en Google y en la pestaña",
       type: "string",
       group: "seo",
+      requerido: true,
       description: "Hoy «Comercial — Altea». La descripción para Google es la de la carpeta.",
-      validation: (rule) => rule.required(),
     }),
   ],
   /* La unidad la da el id del documento (`unidad-comercial`): no es un campo. */

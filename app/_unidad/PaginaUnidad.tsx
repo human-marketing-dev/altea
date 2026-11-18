@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { preload } from "react-dom";
-import { contenidoHome } from "@/app/_home/contenido";
+import { cierreSitio } from "@/lib/sanity/cierre";
 import { metadatosDe, type Idioma } from "@/lib/idioma";
 import { CierreContacto } from "@/app/ui/CierreContacto";
 import { Footer } from "@/app/ui/Footer";
@@ -35,7 +35,7 @@ import "./unidad.css";
  * Industrial, Vivienda y Forestal con menos secciones que Comercial: es lo que
  * hay de contenido, no un recorte de la estructura.
  */
-export function PaginaUnidad({
+export async function PaginaUnidad({
   contenido,
   idioma = "es",
 }: {
@@ -43,7 +43,8 @@ export function PaginaUnidad({
   /** El de la página: lo pasan app/<unidad>/page.tsx y app/en/<unit>/page.tsx. */
   idioma?: Idioma;
 }) {
-  const { CONTACT_CTA } = contenidoHome(idioma);
+  /* El rótulo «Trabajemos juntos» de Sanity; el título del cierre es el de la unidad. */
+  const CONTACT_CTA = await cierreSitio(idioma);
   const {
     hero,
     cifras,

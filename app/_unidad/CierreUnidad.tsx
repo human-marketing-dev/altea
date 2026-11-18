@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
+import { enlaceWhatsAppDe } from "@/lib/sanity/sitio-datos";
+import { useSitio } from "@/app/ui/SitioContexto";
 import { rutaDe } from "@/lib/idioma";
 import type { Unidad } from "@/lib/contacto";
 import type { CierreConFoto } from "./tipos";
@@ -42,6 +43,7 @@ export function CierreUnidad({
 }) {
   const idiomaPagina = useIdioma();
   const tx = textos(idiomaPagina);
+  const datos = useSitio();
   const raiz = useRef<HTMLElement>(null);
   const contacto = rutaDe(`/contacto?unidad=${unidad.toLowerCase()}`, idiomaPagina);
 
@@ -101,7 +103,7 @@ export function CierreUnidad({
           <div className="uni-cta__acciones">
             <a
               className="altea-btn altea-btn--dark altea-btn--lg"
-              href={enlaceWhatsApp(MENSAJE_WHATSAPP[idiomaPagina])}
+              href={enlaceWhatsAppDe(datos, idiomaPagina)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -120,8 +122,8 @@ export function CierreUnidad({
               </span>
             </a>
           </div>
-          <a className="uni-cta__correo" href={`mailto:${CANALES.correo}`}>
-            {CANALES.correo}
+          <a className="uni-cta__correo" href={`mailto:${datos.correo}`}>
+            {datos.correo}
           </a>
         </div>
       </div>

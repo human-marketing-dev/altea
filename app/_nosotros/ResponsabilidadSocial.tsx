@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { contenidoNosotros } from "./contenido";
+import type { ContenidoNosotros } from "@/lib/sanity/nosotros";
 import type { Idioma } from "@/lib/idioma";
 import { type FotoGaleria } from "./content";
 
@@ -35,8 +36,15 @@ import { type FotoGaleria } from "./content";
  * cualquiera no tiene contraste garantizado. Ver el bloque @media (hover: none).
  * Las de entornos verdes no tienen pie, y sin pie no hay velo.
  */
-export function ResponsabilidadSocial({ idioma = "es" }: { idioma?: Idioma }) {
-  const { RESPONSABILIDAD } = contenidoNosotros(idioma);
+export function ResponsabilidadSocial({
+  idioma = "es",
+  contenido,
+}: {
+  idioma?: Idioma;
+  /** El de Sanity, que arma PaginaNosotros; sin él, el del código. */
+  contenido?: ContenidoNosotros;
+}) {
+  const { RESPONSABILIDAD } = contenido ?? contenidoNosotros(idioma);
   const { verdes } = RESPONSABILIDAD;
   return (
     <section className="nos-rs" aria-labelledby="rs-titulo">

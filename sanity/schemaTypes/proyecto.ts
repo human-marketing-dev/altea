@@ -8,6 +8,7 @@
  */
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { UNIDADES, maximo } from "../reglas";
+import { bi, segunIdioma } from "../bilingue";
 import { foto } from "./objetos";
 
 /**
@@ -33,13 +34,14 @@ export const proyecto = defineType({
     { name: "ficha", title: "Ficha" },
   ],
   fields: [
-    defineField({
+    bi({
       name: "nombre",
       title: "Nombre",
       type: "string",
       group: "tarjeta",
-      description: "Como aparece en la tarjeta y en la ficha: «Paseo La Fe».",
-      validation: (rule) => rule.required(),
+      description:
+        "Como aparece en la tarjeta y en la ficha: «Paseo La Fe». En inglés, sólo si cambia (p. ej. «Paseo La Fe · Expansion»); vacío, se usa el español.",
+      reglas: (r, i) => (i === "es" ? r.required().error("Falta el nombre.") : r),
     }),
     defineField({
       name: "unidad",
@@ -69,18 +71,18 @@ export const proyecto = defineType({
         "«Próximo» lo pone en la sección Próximos proyectos de su unidad; los otros dos, en la lista de proyectos.",
       validation: (rule) => rule.required(),
     }),
-    defineField({
+    bi({
       name: "ubicacion",
       title: "Ubicación",
       type: "string",
       group: "tarjeta",
       description:
-        "«Ciudad, Estado», con la coma: «Monterrey, Nuevo León». El sitio la pone en mayúsculas. Máximo 44 caracteres: más larga, se monta sobre la chapa de la tarjeta en teléfono. En Comercial, el sitio cuenta los estados a partir de lo que va después de la coma.",
-      validation: (rule) => [
-        maximo(44, "se monta sobre la chapa de la tarjeta en teléfono")(rule),
-        rule.custom((v: string | undefined, ctx) => {
+        "«Ciudad, Estado», con la coma: «Monterrey, Nuevo León». El sitio la pone en mayúsculas. Máximo 44 caracteres: más larga, se monta sobre la chapa de la tarjeta en teléfono. En Comercial, el sitio cuenta los estados a partir de lo que va después de la coma. En inglés, sólo si cambia; vacío, se usa el español.",
+      reglas: (rule, idioma) => [
+        segunIdioma(maximo(44, "se monta sobre la chapa de la tarjeta en teléfono")(rule), idioma),
+        rule.custom((v: unknown, ctx) => {
           const proximo = (ctx.document as { estado?: string } | undefined)?.estado === "proximo";
-          if (!v) return proximo ? true : "Falta la ubicación.";
+          if (typeof v !== "string" || !v) return proximo || idioma === "en" ? true : "Falta la ubicación.";
           return /^[^,]+, [^,]+$/.test(v)
             ? true
             : "Escríbela como «Ciudad, Estado», con una sola coma y un espacio después.";
@@ -112,15 +114,22 @@ export const proyecto = defineType({
       description:
         "La misma foto va en la tarjeta (recortada en vertical) y en la ficha (entera).",
     }),
-    defineField({
+    bi({
       name: "descripcion",
       title: "Descripción",
       type: "text",
       rows: 6,
       group: "ficha",
+      requerido: true,
       description:
-        "El párrafo de la ficha que se abre al pulsar la tarjeta. Sin límite: la ficha hace scroll. Un salto de línea se respeta.",
-      validation: (rule) => rule.required(),
+        "El párrafo de la ficha que se abre al pulsar la tarjeta, en su unidad y en el carril del home. Sin límite: la ficha hace scroll. Un salto de línea se respeta.",
+    }),
+    bi({
+      name: "aviso",
+      title: "Chapa sobre la foto",
+      type: "string",
+      group: "tarjeta",
+      description: "Opcional. Una chapa en la esquina de la tarjeta, p. ej. «Próximamente».",
     }),
     defineField({
       name: "datos",
@@ -134,24 +143,24 @@ export const proyecto = defineType({
           type: "object",
           name: "dato",
           fields: [
-            defineField({ name: "etiqueta", title: "Etiqueta", type: "string", validation: (r) => r.required() }),
-            defineField({ name: "valor", title: "Valor", type: "string", description: "Vacío, la ficha pinta un guion." }),
+            bi({ name: "etiqueta", title: "Etiqueta", type: "string", requerido: true }),
+            bi({ name: "valor", title: "Valor", type: "string", description: "Vacío, la ficha pinta un guion." }),
           ],
-          preview: { select: { title: "etiqueta", subtitle: "valor" } },
+          preview: { select: { title: "etiqueta.es", subtitle: "valor.es" } },
         }),
       ],
       validation: (rule) =>
-        rule.custom((lista: { etiqueta?: string }[] | undefined) => {
+        rule.custom((lista: { etiqueta?: { es?: string } }[] | undefined) => {
           const vistas = new Set<string>();
           for (const d of lista ?? []) {
-            const k = (d.etiqueta ?? "").trim().toLowerCase();
-            if (vistas.has(k)) return `La etiqueta «${d.etiqueta}» está repetida.`;
+            const k = (d.etiqueta?.es ?? "").trim().toLowerCase();
+            if (vistas.has(k)) return `La etiqueta «${d.etiqueta?.es}» está repetida.`;
             vistas.add(k);
           }
           return true;
         }),
     }),
-    defineField({
+    bi({
       name: "etiquetaUnidad",
       title: "Texto de «Unidad» en la ficha",
       type: "string",
@@ -170,10 +179,10 @@ export const proyecto = defineType({
     }),
   ],
   orderings: [
-    { title: "Nombre", name: "nombre", by: [{ field: "nombre", direction: "asc" }] },
+    { title: "Nombre", name: "nombre", by: [{ field: "nombre.es", direction: "asc" }] },
   ],
   preview: {
-    select: { title: "nombre", unidad: "unidad", estado: "estado", ubicacion: "ubicacion", media: "foto" },
+    select: { title: "nombre.es", unidad: "unidad", estado: "estado", ubicacion: "ubicacion.es", media: "foto" },
     prepare: ({ title, unidad, estado, ubicacion, media }) => ({
       title: title || "Proyecto sin nombre",
       subtitle: [

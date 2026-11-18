@@ -1,7 +1,7 @@
-import { metadataDe, PaginaUnidad } from "../_unidad/PaginaUnidad";
-import { INDUSTRIAL } from "../_unidad/contenido/industrial";
+import { INDUSTRIAL } from "@/app/_unidad/contenido/industrial";
+import { rutaDeUnidad } from "@/app/_unidad/rutaUnidad";
 
-export const metadata = metadataDe(INDUSTRIAL, "/industrial");
-export default function Industrial() {
-  return <PaginaUnidad contenido={INDUSTRIAL} />;
-}
+/* El contenido editable viene de Sanity; ver app/_unidad/rutaUnidad.tsx. */
+const ruta = rutaDeUnidad("industrial", "es", INDUSTRIAL, "/industrial");
+export const generateMetadata = ruta.generateMetadata;
+export default ruta.Pagina;

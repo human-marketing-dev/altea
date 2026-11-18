@@ -4,8 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMemo, useRef } from "react";
-import { contenidoHome } from "./contenido";
-import { useIdioma } from "@/app/ui/useIdioma";
+import { useContenidoHome } from "./ContenidoHome";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -45,8 +44,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const POR_CARACTER = 0.028;
 
 export function Emblem() {
-  const idioma = useIdioma();
-  const { EMBLEM } = contenidoHome(idioma);
+  const { EMBLEM } = useContenidoHome();
   const raiz = useRef<HTMLElement>(null);
 
   /**

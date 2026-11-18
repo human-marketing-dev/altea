@@ -1,6 +1,7 @@
 "use client";
 
-import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
+import { enlaceWhatsAppDe } from "@/lib/sanity/sitio-datos";
+import { useSitio } from "@/app/ui/SitioContexto";
 import { CampoBanderola } from "@/app/ui/CampoBanderola";
 import { textos } from "@/app/ui/textos";
 import { useIdioma } from "@/app/ui/useIdioma";
@@ -60,6 +61,7 @@ export function CierrePuntos({
 }) {
   const idioma = useIdioma();
   const t = textos(idioma).cta;
+  const datos = useSitio();
 
 
   return (
@@ -76,7 +78,7 @@ export function CierrePuntos({
           <div className="home-cp__acciones">
             <a
               className="altea-btn altea-btn--primary altea-btn--lg"
-              href={enlaceWhatsApp(MENSAJE_WHATSAPP[idioma])}
+              href={enlaceWhatsAppDe(datos, idioma)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -95,8 +97,8 @@ export function CierrePuntos({
               </span>
             </a>
           </div>
-          <a className="home-cp__correo" href={`mailto:${CANALES.correo}`}>
-            {CANALES.correo}
+          <a className="home-cp__correo" href={`mailto:${datos.correo}`}>
+            {datos.correo}
           </a>
         </div>
         {/* Decorativo: el titular ya dice lo que dice el dibujo. */}

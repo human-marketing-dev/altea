@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Fragment, useRef } from "react";
 import { CarruselFotos } from "@/app/ui/CarruselFotos";
 import { MediaSlot } from "@/app/ui/MediaSlot";
-import { contenidoNosotros } from "./contenido";
+import { useContenidoNosotros } from "./ContenidoNosotros";
 import { textos } from "@/app/ui/textos";
 import { useIdioma } from "@/app/ui/useIdioma";
 
@@ -41,7 +41,7 @@ const sizesDe = (ratio: number) => {
 
 export function Origen() {
   const idioma = useIdioma();
-  const { ORIGEN } = contenidoNosotros(idioma);
+  const { ORIGEN } = useContenidoNosotros();
   const raiz = useRef<HTMLElement>(null);
 
   useGSAP(

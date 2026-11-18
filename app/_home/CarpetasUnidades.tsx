@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef } from "react";
 import { textos } from "@/app/ui/textos";
 import { rutaDe } from "@/lib/idioma";
-import { contenidoHome } from "./contenido";
+import { useContenidoHome } from "./ContenidoHome";
 import { useIdioma } from "@/app/ui/useIdioma";
 
 /**
@@ -53,7 +53,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function CarpetasUnidades() {
   const idioma = useIdioma();
-  const { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } = contenidoHome(idioma);
+  const { BUSINESS_UNITS, BUSINESS_UNITS_INTRO } = useContenidoHome();
   const raiz = useRef<HTMLElement>(null);
 
   useEffect(() => {

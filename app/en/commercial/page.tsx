@@ -1,7 +1,7 @@
-import { metadataDe, PaginaUnidad } from "@/app/_unidad/PaginaUnidad";
 import { COMERCIAL } from "@/app/_unidad/contenido/en/comercial";
+import { rutaDeUnidad } from "@/app/_unidad/rutaUnidad";
 
-export const metadata = metadataDe(COMERCIAL, "/comercial", "en");
-export default function CommercialEn() {
-  return <PaginaUnidad contenido={COMERCIAL} idioma="en" />;
-}
+/* El contenido editable viene de Sanity; ver app/_unidad/rutaUnidad.tsx. */
+const ruta = rutaDeUnidad("comercial", "en", COMERCIAL, "/comercial");
+export const generateMetadata = ruta.generateMetadata;
+export default ruta.Pagina;

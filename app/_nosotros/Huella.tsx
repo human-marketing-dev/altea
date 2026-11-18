@@ -1,6 +1,7 @@
 import { Button } from "@/app/ui/Button";
 import { CountUp } from "@/app/ui/CountUp";
 import { contenidoNosotros } from "./contenido";
+import type { ContenidoNosotros } from "@/lib/sanity/nosotros";
 import type { Idioma } from "@/lib/idioma";
 import { MapaPuntos } from "./MapaPuntos";
 import { Reparto } from "./Reparto";
@@ -16,8 +17,15 @@ import { Reparto } from "./Reparto";
  * texto tienen que ocupar UNA celda entre los tres, no tres celdas. Sin él, la
  * rejilla repartiría titular, cifras, reparto y mapa en cuatro huecos.
  */
-export function Huella({ idioma = "es" }: { idioma?: Idioma }) {
-  const { HUELLA } = contenidoNosotros(idioma);
+export function Huella({
+  idioma = "es",
+  contenido,
+}: {
+  idioma?: Idioma;
+  /** El de Sanity, que arma PaginaNosotros; sin él, el del código. */
+  contenido?: ContenidoNosotros;
+}) {
+  const { HUELLA } = contenido ?? contenidoNosotros(idioma);
   return (
     <section className="nos-huella" aria-labelledby="huella-titulo">
       <div className="nos-huella__info">

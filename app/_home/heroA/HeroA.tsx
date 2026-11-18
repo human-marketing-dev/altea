@@ -6,8 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
-import { contenidoHome } from "../contenido";
-import { useIdioma } from "@/app/ui/useIdioma";
+import { useContenidoHome } from "../ContenidoHome";
 import {
   ALTO_MEDIO,
   estadoFinal,
@@ -60,8 +59,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 const Escena3D = dynamic(() => import("./Escena3D"), { ssr: false });
 
 export function HeroA() {
-  const idioma = useIdioma();
-  const { HERO_A } = contenidoHome(idioma);
+  const { HERO_A } = useContenidoHome();
   const raiz = useRef<HTMLDivElement>(null);
   const reducido = useMovimientoReducido();
   /*

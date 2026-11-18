@@ -1,4 +1,4 @@
-import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp } from "@/lib/contacto";
+import { datosSitio, enlaceWhatsAppDe } from "@/lib/sanity/sitio";
 import { rutaDe, type Idioma } from "@/lib/idioma";
 import { textos } from "./textos";
 import type { Unidad } from "@/lib/contacto";
@@ -27,7 +27,7 @@ export interface CierreContactoProps {
  * Conserva el id="contacto" que tenía aquél: es el ancla de la página y el
  * selector que usan motion.css y RevealOnScroll para la aparición al scroll.
  */
-export function CierreContacto({
+export async function CierreContacto({
   eyebrow,
   title,
   image,
@@ -35,6 +35,7 @@ export function CierreContacto({
   idioma = "es",
 }: CierreContactoProps & { idioma?: Idioma }) {
   const tx = textos(idioma);
+  const datos = await datosSitio();
   const contacto = rutaDe(
     unidad ? `/contacto?unidad=${unidad.toLowerCase()}` : "/contacto",
     idioma,
@@ -64,7 +65,7 @@ export function CierreContacto({
         <div className="altea-cierre__acciones">
           <a
             className="altea-btn altea-btn--primary altea-btn--lg"
-            href={enlaceWhatsApp(MENSAJE_WHATSAPP[idioma])}
+            href={enlaceWhatsAppDe(datos, idioma)}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -90,8 +91,8 @@ export function CierreContacto({
 
         {/* El correo, como tercera vía sin botón: quien prefiere escribir no
             tiene que abrir otra página para encontrarlo. */}
-        <a className="altea-cierre__correo" href={`mailto:${CANALES.correo}`}>
-          {CANALES.correo}
+        <a className="altea-cierre__correo" href={`mailto:${datos.correo}`}>
+          {datos.correo}
         </a>
       </div>
     </section>

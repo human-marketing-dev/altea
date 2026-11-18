@@ -1,15 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CarrilTarjetas } from "@/app/ui/CarrilTarjetas";
 import { LogoDesarrollo } from "@/app/ui/LogoDesarrollo";
 import { logoDe } from "@/lib/logos-desarrollos";
 import { textos } from "@/app/ui/textos";
 import { useIdioma } from "@/app/ui/useIdioma";
-import type { Idioma } from "@/lib/idioma";
 import type { FeaturedProject } from "./content";
-import { contenidoHome } from "./contenido";
+import { useContenidoHome } from "./ContenidoHome";
 
 /**
  * Los proyectos del home, en un recorrido horizontal.
@@ -21,30 +20,30 @@ import { contenidoHome } from "./contenido";
  */
 
 /*
- * ⚠ FUERA DEL COMPONENTE, NO EN EL RENDER. <CarrilTarjetas> rehace su
- * animación cuando cambia `items`, y un `.map()` en el JSX es un arreglo nuevo
- * en cada render: abrir o cerrar una ficha (setActivo) volvía a montar el
- * carril entero —otro juego de ScrollTriggers, otro oyente de resize y la
- * entrada de las tarjetas repetida— encima del anterior.
+ * ⚠ LOS ITEMS, MEMORIZADOS, NO EN EL JSX. <CarrilTarjetas> rehace su animación
+ * cuando cambia `items`, y un `.map()` en el JSX es un arreglo nuevo en cada
+ * render: abrir o cerrar una ficha (setActivo) volvía a montar el carril entero
+ * —otro juego de ScrollTriggers, otro oyente de resize y la entrada de las
+ * tarjetas repetida— encima del anterior. Antes se armaban una vez al cargar el
+ * módulo; desde que el contenido viene de Sanity (nov 2026), con useMemo.
  */
-const itemsDe = (idioma: Idioma) =>
-  contenidoHome(idioma).FEATURED_PROJECTS.map((p) => ({
-    id: p.slug,
-    nombre: p.name,
-    /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
-       lista que mezcla comercial, industrial y vivienda. */
-    pie: p.unit,
-    foto: p.image,
-  }));
-/* Una lista por idioma, armada una sola vez: ver la nota de arriba. */
-const ITEMS: Record<Idioma, ReturnType<typeof itemsDe>> = {
-  es: itemsDe("es"),
-  en: itemsDe("en"),
-};
-
 export function CarrilProyectos() {
   const idioma = useIdioma();
-  const { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } = contenidoHome(idioma);
+  const { FEATURED_PROJECTS, FEATURED_PROJECTS_INTRO } = useContenidoHome();
+  /* Una lista estable mientras no cambie el contenido: ver la nota de arriba
+     sobre por qué el carril no puede recibir un arreglo nuevo en cada render. */
+  const items = useMemo(
+    () =>
+      FEATURED_PROJECTS.map((p) => ({
+        id: p.slug,
+        nombre: p.name,
+        /* La unidad de negocio: es lo que distingue a un proyecto de otro en una
+           lista que mezcla comercial, industrial y vivienda. */
+        pie: p.unit,
+        foto: p.image,
+      })),
+    [FEATURED_PROJECTS],
+  );
   const t = textos(idioma).ficha;
   const dialogo = useRef<HTMLDialogElement>(null);
   const [activo, setActivo] = useState<FeaturedProject | null>(null);
@@ -65,7 +64,7 @@ export function CarrilProyectos() {
     <CarrilTarjetas
       titulo={FEATURED_PROJECTS_INTRO.titulo}
       tituloId="carril-titulo"
-      items={ITEMS[idioma]}
+      items={items}
       onAbrir={(k, boton) => {
         origen.current = boton;
         setActivo(FEATURED_PROJECTS[k] ?? null);

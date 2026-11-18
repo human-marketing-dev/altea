@@ -1,6 +1,7 @@
 import { Trophy } from "lucide-react";
 import Image from "next/image";
 import { contenidoNosotros } from "./contenido";
+import type { ContenidoNosotros } from "@/lib/sanity/nosotros";
 import type { Idioma } from "@/lib/idioma";
 
 /**
@@ -174,8 +175,15 @@ function factorDe(logo: string | undefined, ratio: number) {
   const archivo = logo?.slice(logo.lastIndexOf("/") + 1);
   return (archivo && AJUSTES[archivo]) ?? factorOptico(ratio);
 }
-export function GrupoFirma({ idioma = "es" }: { idioma?: Idioma }) {
-  const { GRUPO_FIRMA } = contenidoNosotros(idioma);
+export function GrupoFirma({
+  idioma = "es",
+  contenido,
+}: {
+  idioma?: Idioma;
+  /** El de Sanity, que arma PaginaNosotros; sin él, el del código. */
+  contenido?: ContenidoNosotros;
+}) {
+  const { GRUPO_FIRMA } = contenido ?? contenidoNosotros(idioma);
   return (
     <section className="nos-firma" aria-labelledby="firma-titulo">
       <div className="nos-firma__cab">

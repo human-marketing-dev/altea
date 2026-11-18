@@ -142,6 +142,15 @@ export const SIGNOS = [
   { title: "m²", value: " m²" },
 ];
 
+/** Los signos de la cifra en inglés: sin «mil», con «K» (miles). */
+export const SIGNOS_EN = [
+  { title: "Sin signo", value: "" },
+  { title: "M (millions)", value: "M" },
+  { title: "K (thousand)", value: "K" },
+  { title: "%", value: "%" },
+  { title: "m²", value: " m²" },
+];
+
 /** La cifra exactamente como se ve: «+376,034», «+18.8M», «94%». */
 export function cifraVisible(c: { prefijo?: string; valor?: number; signo?: string } | undefined) {
   if (!c || typeof c.valor !== "number") return "";

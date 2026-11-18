@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CANALES, MENSAJE_WHATSAPP, REDES, enlaceWhatsApp } from "@/lib/contacto";
+import { datosSitio, enlaceTelefono, enlaceWhatsAppDe, type DatosSitio } from "@/lib/sanity/sitio";
 import { rutaDe, type Idioma } from "@/lib/idioma";
 import { textos } from "./textos";
 import { ICONOS, ICONOS_RED, type NombreIcono } from "./Iconos";
@@ -39,7 +39,7 @@ export interface FooterProps {
  * "Proyectos / Contacto" bajo las cuatro unidades: cuatro columnas para dos
  * links únicos. En el idioma de la página (noviembre de 2026).
  */
-const columnasDe = (idioma: Idioma): FooterColumn[] => {
+const columnasDe = (idioma: Idioma, d: DatosSitio): FooterColumn[] => {
   const t = textos(idioma);
   return [
     {
@@ -62,16 +62,16 @@ const columnasDe = (idioma: Idioma): FooterColumn[] => {
     {
       title: t.footer.contacto,
       links: [
-        { label: CANALES.correo, href: `mailto:${CANALES.correo}`, icono: "correo" },
-        { label: CANALES.telefono, href: `tel:${CANALES.telefono.replace(/\s/g, "")}`, icono: "telefono" },
+        { label: d.correo, href: `mailto:${d.correo}`, icono: "correo" },
+        { label: d.telefono, href: enlaceTelefono(d.telefono), icono: "telefono" },
         {
           label: t.footer.whatsapp,
-          href: enlaceWhatsApp(MENSAJE_WHATSAPP[idioma]),
+          href: enlaceWhatsAppDe(d, idioma),
           externo: true,
           icono: "whatsapp",
         },
         /* El domicilio no se traduce: es una dirección postal. */
-        { label: CANALES.domicilio, href: CANALES.mapa, externo: true, icono: "ubicacion" },
+        { label: d.domicilio, href: d.mapa, externo: true, icono: "ubicacion" },
       ],
     },
   ];
@@ -83,14 +83,16 @@ const legalesDe = (idioma: Idioma) => [
 ];
 
 /** Pie de sitio: marca y descripción a la izquierda, navegación a la derecha. */
-export function Footer({
+/* Async: los datos de contacto vienen de Sanity (lib/sanity/sitio.ts). */
+export async function Footer({
   description,
   columns,
   legalLinks,
   idioma = "es",
   className,
 }: FooterProps) {
-  const columnas = columns ?? columnasDe(idioma);
+  const datos = await datosSitio();
+  const columnas = columns ?? columnasDe(idioma, datos);
   const legales = legalLinks ?? legalesDe(idioma);
   const classes = ["altea-footer", className].filter(Boolean).join(" ");
   const year = new Date().getFullYear();
@@ -112,9 +114,9 @@ export function Footer({
           {description && <p className="altea-footer__descripcion">{description}</p>}
 
           {/* Fila propia: las redes son navegación, no datos de contacto. */}
-          {REDES.length > 0 && (
+          {datos.redes.length > 0 && (
             <ul className="altea-footer__redes">
-              {REDES.map((red) => (
+              {datos.redes.map((red) => (
                 <li key={red.nombre}>
                   <a
                     className="altea-footer__red"

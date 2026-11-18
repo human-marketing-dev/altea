@@ -7,7 +7,8 @@ import { CarrilProyectos } from "./CarrilProyectos";
 import { CierrePuntos } from "./CierrePuntos";
 import { CorporateVideo } from "./CorporateVideo";
 import { DatosEstructurados } from "./DatosEstructurados";
-import { contenidoHome } from "./contenido";
+import { contenidoHomeSanity } from "@/lib/sanity/home";
+import { ProveedorContenidoHome } from "./ContenidoHome";
 import type { Idioma } from "@/lib/idioma";
 import { Emblem } from "./Emblem";
 import { FraseCifras } from "./FraseCifras";
@@ -21,10 +22,13 @@ import "./secciones.css";
  * El home, en el idioma que se le pida (noviembre de 2026). Lo montan app/page.tsx
  * en español y app/en/page.tsx en inglés: la composición es una sola.
  */
-export function PaginaHome({ idioma = "es" }: { idioma?: Idioma }) {
-  const { CONTACT_CTA, VIDEO } = contenidoHome(idioma);
+export async function PaginaHome({ idioma = "es" }: { idioma?: Idioma }) {
+  /* El contenido editable, de Sanity; los componentes del navegador lo leen
+     del proveedor (ver ContenidoHome.tsx). */
+  const contenido = await contenidoHomeSanity(idioma);
+  const { CONTACT_CTA, VIDEO } = contenido;
   return (
-    <>
+    <ProveedorContenidoHome valor={contenido}>
       {/* La barra va antes que el hero, aunque el hero sea el primer contenido:
           es sticky, y si se declarara después quedaría anclada bajo los 300svh del
           recorrido — o sea, invisible durante toda la escena, que es justo donde
@@ -79,6 +83,6 @@ export function PaginaHome({ idioma = "es" }: { idioma?: Idioma }) {
         <CierrePuntos eyebrow={CONTACT_CTA.eyebrow} title={CONTACT_CTA.title} />
       </main>
       <Footer idioma={idioma} />
-    </>
+    </ProveedorContenidoHome>
   );
 }

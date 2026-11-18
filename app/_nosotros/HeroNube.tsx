@@ -3,8 +3,7 @@
 import { useEffect, useRef } from "react";
 import { CONTORNO, CONTRAFORMA, dentroDe, SEMI_ALTO } from "@/lib/isotipo";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
-import { contenidoNosotros } from "./contenido";
-import { useIdioma } from "@/app/ui/useIdioma";
+import { useContenidoNosotros } from "./ContenidoNosotros";
 
 /**
  * Hero de /nosotros: una nube de puntos que alterna entre el isotipo y una
@@ -72,8 +71,7 @@ type Punto = {
 };
 
 export function HeroNube() {
-  const idioma = useIdioma();
-  const { HERO } = contenidoNosotros(idioma);
+  const { HERO } = useContenidoNosotros();
   const lienzo = useRef<HTMLCanvasElement>(null);
   const reducido = useMovimientoReducido();
 

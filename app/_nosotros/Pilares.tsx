@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { contenidoNosotros } from "./contenido";
+import type { ContenidoNosotros } from "@/lib/sanity/nosotros";
 import type { Idioma } from "@/lib/idioma";
 
 /**
@@ -19,8 +20,15 @@ import type { Idioma } from "@/lib/idioma";
  * debajo, y describir una retícula atravesada por una diagonal no añade nada a
  * "Innovación disruptiva".
  */
-export function Pilares({ idioma = "es" }: { idioma?: Idioma }) {
-  const { PILARES } = contenidoNosotros(idioma);
+export function Pilares({
+  idioma = "es",
+  contenido,
+}: {
+  idioma?: Idioma;
+  /** El de Sanity, que arma PaginaNosotros; sin él, el del código. */
+  contenido?: ContenidoNosotros;
+}) {
+  const { PILARES } = contenido ?? contenidoNosotros(idioma);
   return (
     <section className="nos-pilares" aria-labelledby="pilares-titulo">
       <h2 className="nos-pilares__titulo" id="pilares-titulo">

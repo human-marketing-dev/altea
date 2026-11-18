@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useMovimientoReducido } from "@/app/ui/useMovimientoReducido";
-import { contenidoHome } from "./contenido";
+import { useContenidoHome } from "./ContenidoHome";
 import { textos } from "@/app/ui/textos";
 import { useIdioma } from "@/app/ui/useIdioma";
 
@@ -62,7 +62,7 @@ const REPRODUCIENDO = 1;
 
 export function VideoYoutube() {
   const idioma = useIdioma();
-  const { VIDEO } = contenidoHome(idioma);
+  const { VIDEO } = useContenidoHome();
   const raiz = useRef<HTMLElement>(null);
   const marco = useRef<HTMLIFrameElement>(null);
   const reducido = useMovimientoReducido();

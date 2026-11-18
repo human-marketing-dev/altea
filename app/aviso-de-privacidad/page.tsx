@@ -1,7 +1,10 @@
-import { metadataDe, PaginaLegal } from "../_legal/PaginaLegal";
-import { AVISO_DE_PRIVACIDAD } from "../_legal/aviso-de-privacidad";
+import { AVISO_DE_PRIVACIDAD } from "@/app/_legal/aviso-de-privacidad";
+import { metadataDe, PaginaLegal } from "@/app/_legal/PaginaLegal";
+import { documentoLegal } from "@/lib/sanity/legal";
 
-export const metadata = metadataDe(AVISO_DE_PRIVACIDAD, "/aviso-de-privacidad");
-export default function AvisoDePrivacidad() {
-  return <PaginaLegal documento={AVISO_DE_PRIVACIDAD} />;
+/* El texto viene de Sanity (un documento por idioma); el del código es respaldo campo por campo. */
+const documento = () => documentoLegal("aviso", "es", AVISO_DE_PRIVACIDAD);
+export const generateMetadata = async () => metadataDe(await documento(), "/aviso-de-privacidad", "es");
+export default async function Pagina() {
+  return <PaginaLegal documento={await documento()} idioma="es" />;
 }

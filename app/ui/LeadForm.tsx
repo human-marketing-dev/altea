@@ -28,6 +28,8 @@ export interface LeadFormProps {
    */
   ficha?: string;
   className?: string;
+  /** El mensaje al enviar, si la página trae el suyo (Sanity). Vacío, el de textos.ts. */
+  exito?: { titulo?: string; texto?: string };
 }
 
 /**
@@ -39,6 +41,7 @@ export function LeadForm({
   tono = "oscuro",
   ficha = "",
   className,
+  exito,
 }: LeadFormProps) {
   const idioma = useIdioma();
   const tx = textos(idioma);
@@ -66,12 +69,12 @@ export function LeadForm({
         <p
           className={`m-0 font-display text-titulo-bloque ${oscuro ? "text-cream" : "text-ink"}`}
         >
-          {f.gracias}
+          {exito?.titulo || f.gracias}
         </p>
         <p
           className={`m-0 text-body leading-relaxed ${oscuro ? "text-cream-60" : "text-ink-70"}`}
         >
-          {f.gracias2}
+          {exito?.texto || f.gracias2}
         </p>
       </div>
     );

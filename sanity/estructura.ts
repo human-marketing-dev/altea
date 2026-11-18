@@ -38,6 +38,8 @@ export const estructura: StructureResolver = (S) =>
               S.divider(),
               unico(S, "legal-aviso"),
               unico(S, "legal-terminos"),
+              unico(S, "legal-aviso-en"),
+              unico(S, "legal-terminos-en"),
             ]),
         ),
       S.listItem()

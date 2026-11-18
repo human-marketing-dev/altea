@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
      * del recorte es lo primero que se ensucia al comprimir.
      */
     qualities: [75, 90],
+    /* Las fotos que se editan en Sanity llegan de su CDN (noviembre de 2026). */
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io", pathname: "/images/**" }],
   },
 
   /*

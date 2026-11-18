@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { RevealOnScroll } from "@/app/ui/RevealOnScroll";
 import { GoogleTag } from "./GoogleTag";
 import { SITIO } from "@/lib/idioma";
+import { datosSitio } from "@/lib/sanity/sitio";
+import { ProveedorSitio } from "@/app/ui/SitioContexto";
 import "./globals.css";
 
 /**
@@ -45,7 +47,10 @@ export const metadata: Metadata = {
    */
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  /* Los datos de contacto de Sanity, para los componentes del navegador (los
+     cierres). Ver app/ui/SitioContexto.tsx. */
+  const sitio = await datosSitio();
   return (
     <html
       lang="es-MX"
@@ -65,9 +70,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         vuelvan con ella.
       */}
       <body className="min-h-full flex flex-col">
-        {children}
-        <RevealOnScroll />
-        <GoogleTag />
+        <ProveedorSitio datos={sitio}>
+          {children}
+          <RevealOnScroll />
+          <GoogleTag />
+        </ProveedorSitio>
       </body>
     </html>
   );

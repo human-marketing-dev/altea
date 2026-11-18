@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef } from "react";
-import { contenidoNosotros } from "./contenido";
+import { useContenidoNosotros } from "./ContenidoNosotros";
 import { useIdioma } from "@/app/ui/useIdioma";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -21,11 +21,12 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * proporciones se recalculan solas.
  */
 /* Las cifras son las mismas en los dos idiomas: el total sale del español. */
-const TOTAL = contenidoNosotros("es").HUELLA.desglose.reduce((a, d) => a + d.value, 0);
 
 export function Reparto() {
   const idioma = useIdioma();
-  const { HUELLA } = contenidoNosotros(idioma);
+  const { HUELLA } = useContenidoNosotros();
+  /* El total, de las mismas barras: si cambian en Sanity, cambia con ellas. */
+  const TOTAL = HUELLA.desglose.reduce((a, d) => a + d.value, 0);
   const raiz = useRef<HTMLDListElement>(null);
 
   useGSAP(

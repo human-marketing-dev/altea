@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import { CANALES, enlaceWhatsApp } from "@/lib/contacto";
+import { enlaceWhatsAppDe } from "@/lib/sanity/sitio-datos";
+import { useSitio } from "./SitioContexto";
+import { useIdioma } from "./useIdioma";
 import { IconoWhatsApp } from "./Iconos";
 
 export interface WhatsAppFabProps {
@@ -23,6 +25,8 @@ const SALUDO =
  * ⚠ El número todavía es provisional — ver lib/contacto.ts.
  */
 export function WhatsAppFab({ mensaje }: WhatsAppFabProps) {
+  const datos = useSitio();
+  const idioma = useIdioma();
   const [abierto, setAbierto] = useState(false);
   const [texto, setTexto] = useState("");
   const id = useId();
@@ -36,7 +40,7 @@ export function WhatsAppFab({ mensaje }: WhatsAppFabProps) {
     return () => window.removeEventListener("keydown", alTeclear);
   }, [abierto]);
 
-  const destino = enlaceWhatsApp(texto.trim() || mensaje);
+  const destino = enlaceWhatsAppDe(datos, idioma, texto.trim() || mensaje);
 
   return (
     <div className="altea-wa">
@@ -90,7 +94,7 @@ export function WhatsAppFab({ mensaje }: WhatsAppFabProps) {
           </form>
 
           <p className="altea-wa__pie">
-            Se abrirá WhatsApp con {CANALES.telefono}
+            Se abrirá WhatsApp con {datos.telefono}
           </p>
         </div>
       )}

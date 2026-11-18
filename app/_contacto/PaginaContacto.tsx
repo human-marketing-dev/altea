@@ -3,10 +3,12 @@ import { LeadForm } from "@/app/ui/LeadForm";
 import { NavBar } from "@/app/ui/NavBar";
 import { SectionHeading } from "@/app/ui/SectionHeading";
 import { CampoBanderola } from "@/app/ui/CampoBanderola";
-import { CANALES, MENSAJE_WHATSAPP, enlaceWhatsApp, type Unidad } from "@/lib/contacto";
+import type { Unidad } from "@/lib/contacto";
+import { datosSitio, enlaceTelefono, enlaceWhatsAppDe, type DatosSitio } from "@/lib/sanity/sitio";
 import "../contacto/contacto.css";
 import type { Idioma } from "@/lib/idioma";
 import { textos } from "@/app/ui/textos";
+import type { TextosContacto } from "@/lib/sanity/contacto";
 
 
 /** Canales directos. Cada uno es un enlace real, no texto suelto. */
@@ -32,20 +34,20 @@ const TEXTOS = {
   },
 };
 
-const canalesDe = (idioma: Idioma) => {
+const canalesDe = (idioma: Idioma, d: DatosSitio, textoWhatsapp?: string) => {
   const t = TEXTOS[idioma];
   return [
-    { etiqueta: t.correo, valor: CANALES.correo, href: `mailto:${CANALES.correo}` },
+    { etiqueta: t.correo, valor: d.correo, href: `mailto:${d.correo}` },
     {
       etiqueta: t.whatsapp,
-      valor: t.whatsappValor,
-      href: enlaceWhatsApp(MENSAJE_WHATSAPP[idioma]),
+      valor: textoWhatsapp || t.whatsappValor,
+      href: enlaceWhatsAppDe(d, idioma),
       externo: true,
     },
     {
       etiqueta: t.telefono,
-      valor: CANALES.telefono,
-      href: `tel:${CANALES.telefono.replace(/\s/g, "")}`,
+      valor: d.telefono,
+      href: enlaceTelefono(d.telefono),
     },
   ];
 };
@@ -56,17 +58,21 @@ const canalesDe = (idioma: Idioma) => {
  * app/contacto/page.tsx y app/en/contact/page.tsx, que leen `?unidad=` y la ficha
  * antispam y se las pasan.
  */
-export function PaginaContacto({
+export async function PaginaContacto({
   idioma = "es",
   unidadPorDefecto,
   ficha,
+  editables,
 }: {
   idioma?: Idioma;
   unidadPorDefecto?: Unidad;
   ficha: string;
+  /** Los textos que vienen de Sanity (lib/sanity/contacto.ts); lo que falte, el de TEXTOS. */
+  editables?: TextosContacto;
 }) {
-  const t = TEXTOS[idioma];
-  const CANALES_DIRECTOS = canalesDe(idioma);
+  const t = { ...TEXTOS[idioma], ...(editables?.titulo ? { titulo: editables.titulo } : {}), ...(editables?.descripcion ? { descripcion: editables.descripcion } : {}) };
+  const datos = await datosSitio();
+  const CANALES_DIRECTOS = canalesDe(idioma, datos, editables?.textoWhatsapp);
   return (
     <>
       <NavBar tone="light" />
@@ -115,12 +121,12 @@ export function PaginaContacto({
                   </span>
                   {/* A la ficha de Altea en Google Maps: ver CANALES.mapa. */}
                   <a
-                    href={CANALES.mapa}
+                    href={datos.mapa}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-body font-medium text-ink underline underline-offset-4 transition-colors hover:text-coral"
                   >
-                    {CANALES.domicilio}
+                    {datos.domicilio}
                   </a>
                 </li>
               </ul>
@@ -133,6 +139,7 @@ export function PaginaContacto({
             unidadPorDefecto={unidadPorDefecto}
             tono="claro"
             ficha={ficha}
+            exito={{ titulo: editables?.exitoTitulo, texto: editables?.exitoTexto }}
           />
         </section>
       </main>

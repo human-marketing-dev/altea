@@ -1,7 +1,7 @@
-import { metadataDe, PaginaUnidad } from "../_unidad/PaginaUnidad";
-import { FORESTAL } from "../_unidad/contenido/forestal";
+import { FORESTAL } from "@/app/_unidad/contenido/forestal";
+import { rutaDeUnidad } from "@/app/_unidad/rutaUnidad";
 
-export const metadata = metadataDe(FORESTAL, "/forestal");
-export default function Forestal() {
-  return <PaginaUnidad contenido={FORESTAL} />;
-}
+/* El contenido editable viene de Sanity; ver app/_unidad/rutaUnidad.tsx. */
+const ruta = rutaDeUnidad("forestal", "es", FORESTAL, "/forestal");
+export const generateMetadata = ruta.generateMetadata;
+export default ruta.Pagina;

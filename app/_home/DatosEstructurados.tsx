@@ -1,4 +1,4 @@
-import { CANALES, REDES } from "@/lib/contacto";
+import { datosSitio } from "@/lib/sanity/sitio";
 import { SITIO, rutaDe, type Idioma } from "@/lib/idioma";
 
 /**
@@ -25,7 +25,8 @@ const DESCRIPCION: Record<Idioma, string> = {
   en: "Full-service real estate developer based in Monterrey, Nuevo León, with commercial, industrial, residential and forestry projects.",
 };
 
-export function DatosEstructurados({ idioma }: { idioma: Idioma }) {
+export async function DatosEstructurados({ idioma }: { idioma: Idioma }) {
+  const sitio = await datosSitio();
   const organizacion = `${SITIO}/#organizacion`;
   const datos = {
     "@context": "https://schema.org",
@@ -39,8 +40,8 @@ export function DatosEstructurados({ idioma }: { idioma: Idioma }) {
         /* El isotipo en PNG de 180 × 180: Google pide al menos 112 × 112. */
         logo: `${SITIO}/apple-icon.png`,
         description: DESCRIPCION[idioma],
-        email: CANALES.correo,
-        telephone: CANALES.telefono,
+        email: sitio.correo,
+        telephone: sitio.telefono,
         address: {
           "@type": "PostalAddress",
           streetAddress: "Paricutín 390, Colonia Roma",
@@ -51,12 +52,12 @@ export function DatosEstructurados({ idioma }: { idioma: Idioma }) {
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "sales",
-          telephone: CANALES.telefono,
-          email: CANALES.correo,
+          telephone: sitio.telefono,
+          email: sitio.correo,
           areaServed: "MX",
           availableLanguage: ["Spanish", "English"],
         },
-        sameAs: REDES.map((r) => r.url),
+        sameAs: sitio.redes.map((r) => r.url),
       },
       {
         "@type": "WebSite",

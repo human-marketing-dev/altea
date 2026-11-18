@@ -75,9 +75,8 @@ export const lineaTitular = (opciones: {
           ? "Sin saltos de línea: el renglón lo decide el diseño."
           : true,
       ),
-      opciones.aviso
-        ? maximo(opciones.max, opciones.motivo)(rule).warning()
-        : maximo(opciones.max, opciones.motivo)(rule),
+      /* La versión en inglés no revisa el largo: ver segunIdioma en bilingue.ts. */
+      ...(opciones.aviso ? [] : [maximo(opciones.max, opciones.motivo)(rule)]),
     ],
   });
 
@@ -181,7 +180,7 @@ export const cifra = (opciones: {
             validation: (rule) => {
               return [
                 rule.required().error(id === "es" ? "Falta la etiqueta en español." : "Falta la etiqueta en inglés."),
-                ((r) => (id === "es" ? r : r.warning()))(
+                ...(id === "es" ? [
                   rule.custom((etiqueta: string | undefined, ctx) => {
                     /* `ctx.parent` es el objeto { es, en } de la etiqueta; la nota
                        vive en la cifra, un nivel arriba: se lee del documento con
@@ -202,7 +201,7 @@ export const cifra = (opciones: {
                       ? true
                       : `«${total}» tiene ${total.length} caracteres y el máximo es ${opciones.maxEtiqueta}: más larga, ${opciones.motivoEtiqueta}.`;
                   }),
-                ),
+                ] : []),
               ];
             },
           }),

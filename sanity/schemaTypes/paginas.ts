@@ -43,7 +43,7 @@ const textoDeLista = (name: string, title: string, maxN?: number, motivo?: strin
         type: "string",
         validation: (r) => [
           r.required(),
-          ...(maxN ? [segunIdioma(maximo(maxN, motivo ?? "")(r as unknown as Rule), id)] : []),
+          ...(maxN && id === "es" ? [maximo(maxN, motivo ?? "")(r as unknown as Rule)] : []),
         ],
       }),
     ),
@@ -568,7 +568,7 @@ export const paginaNosotros = defineType({
       title: "Entornos verdes: fotos",
       type: "array",
       group: "rs",
-      of: [fotoDeLista("galeria", "la galería de entornos verdes")],
+      of: [fotoDeLista("verdes", "la galería de entornos verdes")],
       description: "Cuatro fotos. La primera es la grande.",
       validation: (r) => cantidad(4, 4, "la rejilla está diseñada para cuatro")(r),
     }),

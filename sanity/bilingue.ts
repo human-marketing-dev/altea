@@ -29,10 +29,15 @@ export const IDIOMAS: { id: Idioma; titulo: string }[] = [
  * o varias reglas. Para que un límite sea error en español y aviso en inglés,
  * usar `segunIdioma` (abajo).
  */
-type ReglaDeIdioma = (rule: Rule, idioma: Idioma) => Rule | Rule[];
+type ReglaDeIdioma = (rule: Rule, idioma: Idioma) => Rule | null | (Rule | null)[];
 
-/** Error en español, aviso en inglés. */
-export const segunIdioma = (r: Rule, idioma: Idioma) => (idioma === "es" ? r.error() : r.warning());
+/**
+ * El límite cuenta sólo en español (error: bloquea «Publicar»). En inglés no se
+ * revisa: Altea no quiere avisos (18 nov 2026), y los textos en inglés ya
+ * aprobados rebasan algunos límites medidos en español sin romper el diseño.
+ * Devuelve `null` en inglés; `bi()` lo descarta.
+ */
+export const segunIdioma = (r: Rule, idioma: Idioma): Rule | null => (idioma === "es" ? r.error() : null);
 
 type Opciones = {
   name: string;
@@ -94,7 +99,7 @@ export function bi(o: Opciones) {
             );
           if (o.reglas) {
             const r = o.reglas(rule, id);
-            reglas.push(...(Array.isArray(r) ? r : [r]));
+            for (const x of Array.isArray(r) ? r : [r]) if (x) reglas.push(x);
           }
           return reglas;
         } } : {}),

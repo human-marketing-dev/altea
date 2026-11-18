@@ -85,8 +85,9 @@ export const ANCHO = {
    * Primavera, 1 200); la siguiente ya es de 1 536. Esas dos fijan el número.
    */
   tarjeta: { minimo: 1078, sePinta: 2641 },
-  /** Líneas de Forestal. Hoy la más chica: Viveros Asturias 1, 1 280; las otras, 1 980. */
-  lineaForestal: { minimo: 1280, sePinta: 3598 },
+  /** Líneas de Forestal. Hoy las más chicas: Teca 2 y 3, 1 195 (nov 2026; antes el
+      mínimo lo fijaba Viveros Asturias 1, 1 280, que ya no está en el carrusel). */
+  lineaForestal: { minimo: 1195, sePinta: 3598 },
   /** La historia de /nosotros. Hoy la más chica: 1 363. */
   origen: { minimo: 1363, sePinta: 2040 },
   /** Paneles de Otros giros (Comercial). Hoy el más chico: Fiesta Inn, 1 159. */
@@ -95,6 +96,13 @@ export const ANCHO = {
   carpeta: { minimo: 1980, sePinta: 1400 },
   /** Galería de Responsabilidad social. Hoy: 1 980. */
   galeria: { minimo: 1980, sePinta: 1052 },
+  /**
+   * Entornos verdes, el segundo bloque de Responsabilidad social (nov 2026).
+   * Antes usaba el mínimo de la galería, 1 980, y avisaba en sus cuatro fotos
+   * sin motivo. Medido en el sitio: la grande se pinta hasta a 1 332 px reales
+   * (1920 × 1080 a 2×) y las otras a 1 038. Hoy la más chica mide 1 204.
+   */
+  verdes: { minimo: 1200, sePinta: 1332 },
 } as const;
 
 export type CampoDeFoto = keyof typeof ANCHO;
@@ -103,18 +111,18 @@ export type CampoDeFoto = keyof typeof ANCHO;
  * Bloquea una foto más angosta que el mínimo del campo. Sin esto una foto chica
  * entra sin aviso y nadie se entera hasta verla publicada y blanda.
  */
+/**
+ * ⚠ YA NO REVISA NADA (18 nov 2026): Altea no quiere avisos en el Studio, y una
+ * foto chica se puede publicar igual. El tamaño recomendado sigue en la
+ * descripción de cada campo (`textoDeAncho`). Se conserva la firma para no
+ * tocar los campos que la llaman; si un día se quiere volver a avisar, la regla
+ * era: `anchoDeImagen(valor) >= ANCHO[campo].minimo`, a nivel `warning`.
+ */
 export const anchoMinimo =
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- se conserva la firma (ver arriba)
   (campo: CampoDeFoto, donde: string) =>
   <R extends ReglaConCustom>(rule: R) =>
-    custom(rule, (valor) => {
-      if (!valor) return true;
-      const ancho = anchoDeImagen(valor);
-      if (ancho === null) return true;
-      const { minimo } = ANCHO[campo];
-      return ancho >= minimo
-        ? true
-        : `La imagen mide ${ancho} px de ancho y el mínimo para ${donde} es ${minimo} px: más chica, se vería borrosa. ${textoDeAncho(campo)}`;
-    });
+    rule;
 
 /** «Mínimo 1,979 px de ancho. Se pinta hasta a 4,140 px: si la tienes así de grande, mejor.» */
 export function textoDeAncho(campo: CampoDeFoto): string {

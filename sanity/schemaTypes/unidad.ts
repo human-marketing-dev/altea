@@ -27,12 +27,20 @@ export const ICONOS = [
   { title: "Embarcaciones", value: "embarcaciones" },
 ];
 
+/*
+ * LA ETIQUETA VA HASTA 46 Y EN TELÉFONO LAS CIFRAS SE APILAN, A PROPÓSITO
+ * (decidido el 29 oct 2026). Con dos cifras, a 360 la fila se parte en cuanto una
+ * etiqueta pasa de 23–24 caracteres (22 si las dos son largas) y las cifras van
+ * una sobre otra; así se ven hoy Vivienda (46) y Forestal (27 y 28), y está bien.
+ * El 46 es la más larga de hoy. Medido: apiladas, la etiqueta sigue en una línea
+ * hasta 50 a 360 y 54 a 390; en escritorio, sin problema en todo el rango.
+ */
 export const cifraUnidad = cifra({
   name: "cifraUnidad",
   maxCifra: 10,
   motivoCifra: "en teléfono la fila de cifras salta a otro renglón",
-  maxEtiqueta: 23,
-  motivoEtiqueta: "en teléfono la fila de cifras salta a otro renglón",
+  maxEtiqueta: 46,
+  motivoEtiqueta: "en teléfono la etiqueta se acerca a partirse en dos líneas (pasa a partir de 51)",
 });
 
 const soloEn =
@@ -173,6 +181,8 @@ export const unidad = defineType({
       group: "carpeta",
       description:
         "La frase grande de la carpeta en el home: «Activamos la energía de la ciudad.». Máximo 60 caracteres, y junto con la descripción no más de 233: más larga, la carpeta crece, deja de medir lo mismo que las otras tres y la pila del home se desordena al hacer scroll.",
+      /* El 60 tampoco se midió por separado (inventario: «propuesto»); el que se
+         midió es el combinado, que va en la descripción. Hoy ninguna pasa de 57. */
       validation: (rule) => [
         rule.required(),
         maximo(60, "la carpeta crece y la pila del home se desordena")(rule),
@@ -185,10 +195,11 @@ export const unidad = defineType({
       rows: 4,
       group: "carpeta",
       description:
-        "Va en la carpeta del home y es también la descripción de la página para Google. Máximo 170 caracteres, y junto con la frase no más de 233: más larga, la carpeta crece y la pila del home se desordena.",
+        "Va en la carpeta del home y es también la descripción de la página para Google. Junto con la frase, no más de 233 caracteres: más larga, la carpeta crece y la pila del home se desordena.",
+      /* Sólo el límite combinado: es el que se midió (las dos comparten la caja de
+         la carpeta). El 170 por separado era una propuesta del inventario. */
       validation: (rule) => [
         rule.required(),
-        maximo(170, "la carpeta crece y la pila del home se desordena")(rule),
         rule.custom((v: string | undefined, ctx) => {
           const frase = (ctx.document as { frase?: string } | undefined)?.frase ?? "";
           const total = frase.length + (v?.length ?? 0);
@@ -234,7 +245,7 @@ export const unidad = defineType({
       group: "hero",
       of: [defineArrayMember({ type: "cifraUnidad" })],
       description:
-        "Debajo de la palabra. Cada cifra: máximo 10 caracteres contando el + y el signo, y su etiqueta máximo 23. Más largas, en teléfono la fila salta a otro renglón.",
+        "Debajo de la palabra. Cada cifra: máximo 10 caracteres contando el + y el signo, y su etiqueta máximo 46. Con etiquetas de más de 23 caracteres, en teléfono las cifras van una sobre otra en vez de lado a lado: es a propósito.",
       validation: (rule) => cantidad(2, 3, "el hero está diseñado para dos o tres cifras")(rule),
     }),
 

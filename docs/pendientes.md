@@ -38,6 +38,7 @@ Ronda de solo lectura: no se arregló nada. Cada punto lleva archivo y línea; l
 | 26 | **Se publicarían 56 archivos de `public/` que nadie usa (22.3 MB).** Entre ellos: `video/institucional-prueba.mp4` (6.8 MB), `hero/edificio-altea-home-oldoldoldold.webp` (1.6 MB), `images/comercial/altea-hero-comercial.webp` (2.0 MB; se nombra en el contenido pero no se pinta), `comercial/hoteles/nh-collections-altea.webp` (1.5 MB), `comercial/cta/comercial-foto-cta-vieja.png` y los cinco SVG de create-next-app (`next.svg`, `vercel.svg`…). | `public/` | Puede esperar | Limpiar antes del despliegue. |
 | 27 | **No hay `.env.example`.** Hoy el proyecto no necesita ninguna variable de entorno; en cuanto se conecte el formulario va a necesitar las del destino. | Raíz del repo | Puede esperar | Crearlo junto con la fila 1. |
 | 28 | **El enlace al video completo en Vimeo está pendiente.** El hueco del botón «ver completo» ya existe en el componente. | `app/_home/content.ts:47-50` | Puede esperar | La URL de Vimeo. |
+| 29 | ~~**Las cifras del hero de Forestal y Vivienda se rompen en teléfono.**~~ **Decidido que se apilen** (29 oct 2026): en teléfono esas dos unidades van con las cifras una sobre otra A PROPÓSITO. No es un defecto y no hay que «corregirlo». Pasa a **360 y 390 px**: con dos cifras, la fila se parte en cuanto una etiqueta pasa de **23–24 caracteres** (22 si las dos son largas), y la palabra del hero sube **45 px a 360** (arriba en 355 contra 400 de Industrial) y **46 px a 390** (404 contra 450). Lo provocan las etiquetas de hoy: Vivienda «de m² desarrollables, equivalente +30 terrenos» (**46**); Forestal «hectáreas para uso forestal» (**27**) y «producción de árboles al año» (**28**). Industrial (16 y 20) va lado a lado; Comercial, con tres, va en 2 + 1. En 1280 y 1440 las cuatro van en un renglón. El esquema de Sanity deja la etiqueta hasta 46: apiladas, sigue en una línea hasta 50 a 360 y 54 a 390. | `app/_unidad/contenido/vivienda.ts:63`, `forestal.ts:58`; la fila, `app/_unidad/unidad.css:348` (`.uni-hero__datos`) y `:363` (`.uni-hd`); el límite, `sanity/schemaTypes/unidad.ts` (`cifraUnidad`) | Decidido | Nada. Si un día se quiere lado a lado, es acortar las etiquetas a 23 o menos, no tocar el CSS. |
 
 ## Los ocho que ya sabíamos, hoy
 
@@ -85,6 +86,7 @@ El video institucional pesa 14.2 MB y solo se usa en el home (fila 15). `public/
 - **Bloquea:** 6 (filas 1–6)
 - **Debería:** 16 (filas 7–22)
 - **Puede esperar:** 6 (filas 23–28)
+- **Decidido, no se toca:** fila 29 (las cifras apiladas en teléfono)
 
 ## Lo que no estaba en ninguna lista
 
@@ -139,3 +141,14 @@ Los archivos: `paseo-la-fe-altea.webp` 2000 × 1332 (822 KB), `galeria-industria
 
 **Lo que se probó y no entró:** diferir la precarga de la segunda foto hasta el `load`. Mejoraba más el LCP de Vivienda y Forestal, pero en Comercial, a 10 Mbps, la segunda foto ya no estaba lista en el primer relevo: cambiaba el relevo. Ver la nota en `HeroCalado.tsx` (`pintar`).
 
+
+## Contenido en Sanity: lo inferido
+
+*28 de octubre de 2026, al migrar los `.ts` a Sanity (`scripts/migrar-a-sanity.ts`).*
+
+**El estado de los proyectos es inferido, no dato.** La página de la unidad no
+dice si un proyecto está en operación o en desarrollo. Amarantha quedó «En
+desarrollo» porque así la pone el carril del home; los otros 21 de las listas,
+«En operación» por omisión. Los 9 próximos sí son dato: están en «Próximos
+proyectos». Aeropuerto Industrial Park, que el home llama «En desarrollo», quedó
+como próximo porque así está en su unidad. Que Altea lo confirme.
